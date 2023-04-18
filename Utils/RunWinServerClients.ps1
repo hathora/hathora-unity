@@ -9,11 +9,17 @@
 $PathToExe = "../src/Build-Client/Hathora-Unity.exe"
 $NumClients = Read-Host -Prompt 'Num Clients to Create'
 
+#################################################
+# SERVER
+#################################################
 Write-Host ""
 Write-Host "Creating 1 WinServer @ '$PathToExe' ..."
 & $PathToExe -mode server -single-instance -logfile logs/log-server.txt -memo "Server" 
 Write-Host "Done."
 
+#################################################
+# CLIENT(S)
+#################################################
 Write-Host ""
 Write-Host "Preparing to create $NumClients WinClient(s):"
 for ($i = 0; $i -le $NumClients)

@@ -9,6 +9,20 @@ $PathToWinClient = "../src/Build-Client/Hathora-Unity.exe"
 $PathToLinuxServer = "../src/Build-Server/HathoraServer.x86_64"
 $NumClients = Read-Host -Prompt 'Num Clients to Create'
 
+#################################################
+# SERVER
+#################################################
+Write-Host ""
+Write-Host "Creating 1 LinuxServer @ '$PathToLinuxServer' ..."
+Write-Host ""
+
+$LinuxCmd = $PathToLinuxServer + " -mode server -single-instance -logfile logs/log-server.txt -memo `"`"Server`"`""
+cmd.exe /c start wsl.exe -e $LinuxCmd
+Write-Host "Done."
+
+#################################################
+# CLIENT(S)
+#################################################
 Write-Host ""
 Write-Host "Preparing to create $NumClients WinClient(s):"
 for ($i = 1; $i -le $NumClients)
@@ -17,14 +31,6 @@ for ($i = 1; $i -le $NumClients)
 	& $PathToWinClient -mode client -logfile logs/log-client$i.txt -memo "Client$i"
 	$i++
 } 
-Write-Host "Done."
-
-Write-Host ""
-Write-Host "Creating 1 LinuxServer @ '$PathToLinuxServer' ..."
-Write-Host ""
-
-$LinuxCmd = $PathToLinuxServer + " -mode server -single-instance -logfile logs/log-server.txt -memo `"`"Server`"`""
-cmd.exe /c start wsl.exe -e $LinuxCmd
 Write-Host "Done."
 
 Write-Host ""
