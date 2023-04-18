@@ -35,6 +35,7 @@ namespace Hathora.Utils
         {
             debugMemoText.text = memoStr;
             debugMemoText.gameObject.SetActive(true);
+            Debug.Log($"[NetCmdLine] Debug Memo: '{memoStr}'");
         }
 
         private void initMode(string mode)
