@@ -2,6 +2,7 @@
 // Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
 
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ namespace Hathora.Utils
 {
     public class NetCmdLine : MonoBehaviour
     {
+        [SerializeField]
+        private TextMeshProUGUI debugMemoText;
+        
         private NetworkManager netManager;
 
         private void Start()
@@ -20,9 +24,21 @@ namespace Hathora.Utils
 
             var args = GetCommandlineArgs();
 
-            if (!args.TryGetValue("-mode", out string mode))
-                return;
-            
+            if (args.TryGetValue("-mode", out string mode))
+                initMode(mode);
+
+            if (args.TryGetValue("-memo", out string memoStr))
+                initDebugMemoTxt(memoStr);
+        }
+        
+        private void initDebugMemoTxt(string memoStr)
+        {
+            debugMemoText.text = memoStr;
+            debugMemoText.gameObject.SetActive(true);
+        }
+
+        private void initMode(string mode)
+        {
             switch (mode)
             {
                 case "server":
