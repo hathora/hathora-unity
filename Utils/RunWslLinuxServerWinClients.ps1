@@ -1,5 +1,6 @@
 ##################################################################################
 # ABOUT: Creates 1 LinuxServer (via WSL2) + x WinClients.
+# * It's ok to declare 0 clients if you ONLY want to create a server.
 ##################################################################################
 # ARG LIST: https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html 
 # -batchmode is useful, but it's hard to know when to -quit (or need to end task)

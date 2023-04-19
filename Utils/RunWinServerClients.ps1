@@ -1,5 +1,6 @@
 ##################################################################################
 # ABOUT: Creates 1 WinServer (with gfx so it's easy to close) + x WinClients.
+# * It's ok to declare 0 clients if you ONLY want to create a server.
 ##################################################################################
 # ARG LIST: https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html 
 # -batchmode is useful, but it's hard to know when to -quit (or need to end task)
@@ -22,7 +23,7 @@ Write-Host "Done."
 #################################################
 Write-Host ""
 Write-Host "Preparing to create $NumClients WinClient(s):"
-for ($i = 0; $i -le $NumClients)
+for ($i = 1; $i -le $NumClients)
 {
 	Write-Host "Creating client$i ..."
 	& $PathToExe -mode client -logfile logs/log-client$i.txt -memo "Client$i"
