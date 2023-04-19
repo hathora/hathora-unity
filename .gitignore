@@ -72,3 +72,6 @@ src/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 src/[Aa]ssets/[Ss]treamingAssets/aa.meta
 src/[Aa]ssets/[Ss]treamingAssets/aa/*
 src/.idea
+src/Build*
+Utils/logs/*
+Utils/uploadToHathora/*
