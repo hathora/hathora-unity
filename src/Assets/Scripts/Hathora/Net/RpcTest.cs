@@ -8,10 +8,6 @@ namespace Hathora.Net
 {
     public class RpcTest : NetworkBehaviour
     {
-        void Start()
-        {
-        }
-
         public override void OnNetworkSpawn()
         {
             Debug.Log($"[RpcTest] OnNetworkSpawn");
@@ -28,15 +24,7 @@ namespace Hathora.Net
         [ClientRpc]
         void TestClientRpc(int val, ulong srcNetObjectId)
         {
-            Debug.Log($"[RpcTest] TestClientRpc: Client Received RPC #{val} on NetObj #{srcNetObjectId}");
-            
-            // Only send an RPC to the server on the client that owns the
-            // NetworkObject that owns this NetworkBehaviour instance
-            if (!IsOwner)
-                return;
-            
-            val++;
-            TestServerRpc(val, srcNetObjectId);
+            Debug.Log($"[RpcTest] TestClientRpc: Client Received RPC #{val++} on NetObj #{srcNetObjectId}");
         }
 
         [ServerRpc]
