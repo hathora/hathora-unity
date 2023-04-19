@@ -32,5 +32,8 @@ Remove-Item "$tempPath$archiveName"
 Write-Host "Moving final tarball to the output path..."
 Move-Item -Path "$tempPath$compressedArchiveName" -Destination $outputPath
 
-Write-Output ""
-Write-Output "Done - Ready to upload to Hathora @ '$outputPath'"
+# Clean up the temporary directory
+Write-Host "Cleaning up the temporary directory..."
+Remove-Item -Recurse -Force $tempPath
+
+Write-Host "Process complete."
