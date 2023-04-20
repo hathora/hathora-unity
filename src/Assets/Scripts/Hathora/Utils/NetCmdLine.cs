@@ -2,23 +2,15 @@
 // Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
 
 using System.Collections.Generic;
-using TMPro;
-using Unity.Netcode;
+using Hathora.Net.Common;
 using UnityEngine;
 
 namespace Hathora.Utils
 {
-    public class NetCmdLine : MonoBehaviour
+    public class NetCmdLine : NetMgrBase
     {
-        [SerializeField]
-        private TextMeshProUGUI debugMemoText;
-        
-        private NetworkManager netManager;
-
         private void Start()
         {
-            netManager = GetComponentInParent<NetworkManager>();
-
             if (Application.isEditor) 
                 return;
 
@@ -28,14 +20,7 @@ namespace Hathora.Utils
                 initMode(mode);
 
             if (args.TryGetValue("-memo", out string memoStr))
-                initDebugMemoTxt(memoStr);
-        }
-        
-        private void initDebugMemoTxt(string memoStr)
-        {
-            debugMemoText.text = memoStr;
-            debugMemoText.gameObject.SetActive(true);
-            Debug.Log($"[NetCmdLine] Debug Memo: '{memoStr}'");
+                NetUi.SetShowDebugMemoTxt(memoStr);
         }
 
         private void initMode(string mode)
@@ -43,15 +28,15 @@ namespace Hathora.Utils
             switch (mode)
             {
                 case "server":
-                    netManager.StartServer();
+                    NetMgr.StartServer();
                     break;
                 
                 case "host":
-                    netManager.StartHost();
+                    NetMgr.StartHost();
                     break;
                 
                 case "client":
-                    netManager.StartClient();
+                    NetMgr.StartClient();
                     break;
             }
         }
