@@ -9,6 +9,8 @@ Before you start, ensure you have the following:
 1. Unity 2021 LTS installed.
 2. Linux dedicated server build support (available from Unity Hub).
 
+![image](https://user-images.githubusercontent.com/8840024/233575209-77401a59-5539-4aff-9dd2-d779153ae4f9.png)
+
 ## Project Setup
 
 1. Open the project in Unity 2021 LTS.
@@ -20,6 +22,8 @@ Before you start, ensure you have the following:
 2. Player1 "Host + Join" <> Player2 "Join as Client".
 3. Both players should spawn together.
 
+![image](https://user-images.githubusercontent.com/8840024/233575333-00ff64e9-9728-4c40-9001-5bd773f29718.png)
+
 ## Hathora Dedicated Server
 
 ### Prerequisites
@@ -28,14 +32,18 @@ Before you start, ensure you have the following:
 2. Create an app: Click `Create an Application` >> Ensure the use of `UDP` and port `7777` for this demo >> `Tiny` plan with 1 room-per-process will do.
 3. On the `Upload server build` page, see Quickstart below.
 
+![image](https://user-images.githubusercontent.com/8840024/233575529-bf4bd904-a93a-4d04-b35e-faa9995592bd.png)
+
 ### Quickstart
 
 1. Build via Dedicated Server (Linux) to the project root's `/Build-Server`.
 2. Run the repo root's `/utils/PrepUploadToHathora.ps1` PowerShell script (commented) to prepare for upload.
 3. Drop the archived `/utils/uploadToHathora/Build-Server.tar.gz` in the Hathora `Upload server build` browser window (from prerequisites step #3).
 4. At the top-right, choose your closest region and create a room (normally done programatically) >> Note the IP and port.
+![image](https://user-images.githubusercontent.com/8840024/233578161-630e86bf-0bcd-4c43-9d97-0470367d1cfc.png)
 5. Ensure the logs parity with what you saw in Unity, then hop in your Unity editor's `NetworkManager` inspector.
 6. Within the `Unity Transport` component (at the bottom), change the `address` and paste the ip/port from step #4. Note only IP addresses (not host names) work with NGO; a Unity restriction.
+![image](https://user-images.githubusercontent.com/8840024/233578298-3e884881-2aa2-4fdc-8bd9-104d94f849f4.png)
 7. Press Play within the Unity editor >> "Join as Host" >> Both players should spawn together.
 
 You have now successfully set up and tested your Hathora Unity project! If you encounter any issues or need further assistance, please consult the documentation or reach out to the community for support. Happy coding!
@@ -49,7 +57,8 @@ You have now successfully set up and tested your Hathora Unity project! If you e
 
 > I tried copy+pasting a host name (not a pure IP address) into the NetworkManager's `Address` property, but I'm instantly getting a timeout.
 
-Unity NGO requires raw IP addresses. If you only have a host name, try converting to an IP address via a tool like https://whatismyipaddress.com/hostname-ip 
+* In the NetworkManager's UnityTransport component (from NetMgr GameObject), ensure that `Allow Remote Connections` is checked at the bottom. This won't have much of an issue for local testing, but only when uploaded to Hathora.
+* Unity NGO requires raw IP addresses. If you only have a host name, try converting to an IP address via a tool like https://whatismyipaddress.com/hostname-ip 
 
 > Both `NetworkPlayer`s are stacked on each other and move at the same time - how come?
 
