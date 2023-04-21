@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Net.Common;
-using Hathora.Net.Server;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,12 +11,22 @@ namespace Hathora.Net.Client
     /// </summary>
     public class NetClientMgr : NetMgrBase
     {
-        [SerializeField]
-        private NetServerMgr serverMgr;
+        public static NetClientMgr Singleton;
 
+        private void Start() => setSingleton();
+        
+        private void setSingleton()
+        {
+            if (Singleton != null)
+                Destroy(gameObject);
+
+            Singleton = this;
+        }
+        
         public void JoinAsClient()
         {
-            NetMgr.StartClient();
+            Debug.Log("[NetServerMgr] @ HostAsServer - Finding Server...");
+            s_NetMgr.StartClient();
             NetUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Client);
         }
         
@@ -27,13 +36,13 @@ namespace Hathora.Net.Client
         /// </summary>
         /// <param name="numTimesRpcd"></param>
         /// <param name="srcNetObjId"></param>
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = true)]
         public void TestClientToServerRpc(int numTimesRpcd, ulong srcNetObjId)
         {
             Debug.Log($"[PingRpcTest] TestClientToServerPing: " +
                 $"Server Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
             
-            serverMgr.TestServerToClientRpc(numTimesRpcd, srcNetObjId);
+            s_ServerMgr.TestServerToClientRpc(numTimesRpcd, srcNetObjId);
         }
     }
 }

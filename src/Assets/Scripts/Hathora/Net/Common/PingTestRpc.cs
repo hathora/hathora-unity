@@ -14,12 +14,10 @@ namespace Hathora.Net.Common
     /// </summary>
     public class PingTestRpc : NetworkBehaviour
     {
-        [SerializeField]
-        private NetClientMgr clientMgr;
-
-        private NetServerMgr serverMgr => NetServerMgr.s_NetServerMgr;
+        private NetServerMgr s_serverMgr => NetServerMgr.Singleton;
+        private NetClientMgr s_clientMgr => NetClientMgr.Singleton;
         private int numTimesRpcd = 0;
-        
+
         
         public override void OnNetworkSpawn()
         {
@@ -36,9 +34,9 @@ namespace Hathora.Net.Common
         }
 
         public void TestClientToServerPing() =>
-            clientMgr.TestClientToServerRpc(numTimesRpcd++, NetworkObjectId);
+            s_clientMgr.TestClientToServerRpc(numTimesRpcd++, NetworkObjectId);
         
         public void TestServerToClientPong() =>
-            serverMgr.TestServerToClientRpc(numTimesRpcd++, NetworkObjectId);
+            s_serverMgr.TestServerToClientRpc(numTimesRpcd++, NetworkObjectId);
     }
 }

@@ -25,7 +25,10 @@ namespace Hathora.Net.Common
         private Image backgroundImg;
         [SerializeField]
         private TextMeshProUGUI debugMemoTxt;
-        
+        [SerializeField]
+        private GameObject lobbyWrapperObj;
+        [SerializeField]
+        private GameObject roomWrapperObj;
         
         public void SetShowDebugMemoTxt(string memoStr)
         {
@@ -36,14 +39,13 @@ namespace Hathora.Net.Common
         
         public void ToggleLobbyUi(bool show, NetCommonMgr.NetMode netMode)
         {
-            ToggleHostJoinUiVisible(show);
-            ToggleUiBackground(show);
+            lobbyWrapperObj.SetActive(show);
             toggleRoomUi(!show, netMode);
         }
         
         private void toggleRoomUi(bool show, NetCommonMgr.NetMode netMode)
         {
-            ToggleDisconnectBtnVisible(show);
+            roomWrapperObj.SetActive(show);
 
             switch (netMode)
             {
@@ -55,6 +57,11 @@ namespace Hathora.Net.Common
                 case NetCommonMgr.NetMode.Server:
                     SetShowDebugMemoTxt("Server");
                     sendServerToClientPingBtn.gameObject.SetActive(show);
+                    break;
+                
+                case NetCommonMgr.NetMode.Host:
+                    SetShowDebugMemoTxt("Host (Server+Client)");
+                    sendClientToServerPongBtn.gameObject.SetActive(show);
                     break;
                 
                 case NetCommonMgr.NetMode.None:

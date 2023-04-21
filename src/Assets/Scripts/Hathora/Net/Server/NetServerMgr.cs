@@ -8,25 +8,26 @@ namespace Hathora.Net.Server
 {
     /// <summary>
     /// Server calls Client via [ClientRpc].
-    /// Supports singleton via s_NetServerMgr.
+    /// Supports singleton via Singleton.
     /// </summary>
     public class NetServerMgr : NetMgrBase
     {
-        public static NetServerMgr s_NetServerMgr;
+        public static NetServerMgr Singleton;
 
         private void Start() => setSingleton();
         
         private void setSingleton()
         {
-            if (s_NetServerMgr != null)
+            if (Singleton != null)
                 Destroy(gameObject);
 
-            s_NetServerMgr = this;
+            Singleton = this;
         }
 
         public void HostAsServer()
         {
-            NetMgr.StartServer();
+            Debug.Log("[NetServerMgr] @ HostAsServer - Starting...");
+            s_NetMgr.StartServer();
             NetUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Server);
         }
 

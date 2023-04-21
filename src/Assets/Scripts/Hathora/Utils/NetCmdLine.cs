@@ -2,7 +2,9 @@
 // Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
 
 using System.Collections.Generic;
+using Hathora.Net.Client;
 using Hathora.Net.Common;
+using Hathora.Net.Server;
 using UnityEngine;
 
 namespace Hathora.Utils
@@ -19,7 +21,7 @@ namespace Hathora.Utils
             if (args.TryGetValue("-mode", out string mode))
                 initMode(mode);
 
-            if (args.TryGetValue("-memo", out string memoStr))
+            if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
                 NetUi.SetShowDebugMemoTxt(memoStr);
         }
 
@@ -28,15 +30,15 @@ namespace Hathora.Utils
             switch (mode)
             {
                 case "server":
-                    NetMgr.StartServer();
-                    break;
-                
-                case "host":
-                    NetMgr.StartHost();
+                    s_ServerMgr.HostAsServer();
                     break;
                 
                 case "client":
-                    NetMgr.StartClient();
+                    s_ClientMgr.JoinAsClient();
+                    break;
+                
+                case "host":
+                    s_NetCommonMgr.JoinAsHost();
                     break;
             }
         }
