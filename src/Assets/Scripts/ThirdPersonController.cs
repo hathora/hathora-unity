@@ -1,6 +1,8 @@
-﻿ using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
+ 
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -12,7 +14,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM 
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class ThirdPersonController : MonoBehaviour
+    public class ThirdPersonController : NetworkBehaviour
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
@@ -154,6 +156,7 @@ namespace StarterAssets
 
         private void Update()
         {
+            // TODO: If !IsOwner, return?
             _hasAnimator = TryGetComponent(out _animator);
 
             JumpAndGravity();
