@@ -1,92 +1,67 @@
-# Hathora-Unity
+# Hathora Unity Quickstart Guide
 
+Welcome to the Hathora Unity Quickstart Guide! This guide will help you set up and test a simple 3rd-person 3D Unity project using Unity's Network Game Objects (NGO) as an example. The net code in this project can be replaced with any net code, such as Mirror or Fishnet.
 
+## Prerequisites
 
-## Getting started
+Before you start, ensure you have the following:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+1. Unity 2021 LTS installed.
+2. Linux dedicated server build support (available from Unity Hub).
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Project Setup
 
-## Add your files
+1. Open the project in Unity 2021 LTS.
+2. Open the `Playground` scene.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Local Testing Quickstart
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/i42-hathora/hathora-unity.git
-git branch -M main
-git push -uf origin main
-```
+1. Build to the project root's `/Build` and run.
+2. Player1 "Host + Join" <> Player2 "Join as Client".
+3. Both players should spawn together.
 
-## Integrate with your tools
+## Hathora Dedicated Server
 
-- [ ] [Set up project integrations](https://gitlab.com/i42-hathora/hathora-unity/-/settings/integrations)
+### Prerequisites
 
-## Collaborate with your team
+1. Register or login: https://console.hathora.dev/
+2. Create an app: Click `Create an Application` >> Ensure the use of `UDP` and port `7777` for this demo >> `Tiny` plan with 1 room-per-process will do.
+3. On the `Upload server build` page, see Quickstart below.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### Quickstart
 
-## Test and Deploy
+1. Build via Dedicated Server (Linux) to the project root's `/Build-Server`.
+2. Run the repo root's `/utils/PrepUploadToHathora.ps1` PowerShell script (commented) to prepare for upload.
+3. Drop the archived `/utils/uploadToHathora/Build-Server.tar.gz` in the Hathora `Upload server build` browser window (from prerequisites step #3).
+4. At the top-right, choose your closest region and create a room (normally done programatically) >> Note the IP and port.
+5. Ensure the logs parity with what you saw in Unity, then hop in your Unity editor's `NetworkManager` inspector.
+6. Within the `Unity Transport` component (at the bottom), change the `address` and paste the ip/port from step #4. Note only IP addresses (not host names) work with NGO; a Unity restriction.
+7. Press Play within the Unity editor >> "Join as Host" >> Both players should spawn together.
 
-Use the built-in continuous integration in GitLab.
+You have now successfully set up and tested your Hathora Unity project! If you encounter any issues or need further assistance, please consult the documentation or reach out to the community for support. Happy coding!
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### TODO
 
-***
+1. Add a license to this repo.
+2. Automated powershell script to upload to Hathora via Hathora CLI.
 
-# Editing this README
+# Troubleshooting
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+> I tried copy+pasting a host name (not a pure IP address) into the NetworkManager's `Address` property, but I'm instantly getting a timeout.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Unity NGO requires raw IP addresses. If you only have a host name, try converting to an IP address via a tool like https://whatismyipaddress.com/hostname-ip 
 
-## Name
-Choose a self-explaining name for your project.
+> Both `NetworkPlayer`s are stacked on each other and move at the same time - how come?
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+For your player controller's `Update()`, you may want to add `if (!IsOwner) return` so only the owned network object can be controlled.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+> When using "Host + Join" (Player1), both players spawn; Player1 can move their `NetworkPlayer` and see the movement on Player2 when they used `Join as Client` (Player2). Why can I only move Player1 and not Player2?
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Player2 needs permission from the Server to move: If following another guide, you may be using the `Network Transform` script. While this is server-authoritative and more-secure, the demo makes use of `Client Network Transform` to give power to the Client for demo purposes and to keep code minimal.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+> Why does the other player look like his model isn't using animations; just "gliding" while moving?
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Be sure to add a `Network Transform` component to your Player! To save bandwidth, uncheck the `syncing` options you don't need (such as Scale).
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+# License
+TODO
