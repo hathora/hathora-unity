@@ -78,5 +78,9 @@ Player2 needs permission from the Server to move: If following another guide, yo
 
 Be sure to add a `Network Transform` component to your Player! To save bandwidth, uncheck the `syncing` options you don't need (such as Scale).
 
+> When I override OnNetworkSpawn() and check ownership of the Player (as a client), I'm the owner. The next time I call test ping, I'm not! What's going on?
+
+The server appears to take ownership a few moments *after* the client spawns. You can async/await for !IsOwner. This is likely because clients can join *before* a server kicks in.
+
 # License
 TODO
