@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 9188481532989841167}
   - component: {fileID: 4996627373325220785}
   m_Layer: 8
-  m_Name: PlayerAlt
+  m_Name: NetworkPlayerMinimal
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
