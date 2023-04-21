@@ -32,7 +32,7 @@ Before you start, ensure you have the following:
 2. Create an app: Click `Create an Application` >> Ensure the use of `UDP` and port `7777` for this demo >> `Tiny` plan with 1 room-per-process will do.
 3. On the `Upload server build` page, see Quickstart below.
 
-![image](https://user-images.githubusercontent.com/8840024/233575529-bf4bd904-a93a-4d04-b35e-faa9995592bd.png)
+![image](https://user-images.githubusercontent.com/8840024/233582785-3755eb9c-584f-4cd0-b798-6f29eccacf4a.png)
 
 ### Quickstart
 
@@ -40,6 +40,8 @@ Before you start, ensure you have the following:
 2. Run the repo root's `/utils/PrepUploadToHathora.ps1` PowerShell script (commented) to prepare for upload.
 3. Drop the archived `/utils/uploadToHathora/Build-Server.tar.gz` in the Hathora `Upload server build` browser window (from prerequisites step #3).
 4. At the top-right, choose your closest region and create a room (normally done programatically) >> Note the IP and port.
+
+![image](https://user-images.githubusercontent.com/8840024/233582422-f626f5a0-2a98-4d92-8798-a36ed9393c6a.png)
 
 ![image](https://user-images.githubusercontent.com/8840024/233578161-630e86bf-0bcd-4c43-9d97-0470367d1cfc.png)
 
