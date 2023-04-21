@@ -19,25 +19,33 @@ namespace Hathora.Net.Common
         private static NetworkManager NetMgr => NetworkManager.Singleton;
         private int numTimesRpcd = 0;
 
-        
         public override void OnNetworkSpawn()
         {
-            Debug.Log($"[RpcTest] OnNetworkSpawn");
-
-            // Only send an RPC to the server on the client that owns the
-            // NetworkObject that owns this NetworkBehaviour instance
-            if (IsServer || !IsOwner)
+            base.OnNetworkSpawn();
+            
+            // (!) Clients will always *start* as owners until Server assigns ownership
+            // a few moments after the Server kicks in.
+            if (!IsOwningClientOrHost())
                 return;
              
             // Owning (local) client (!server) should ping the server
             // => server should pong the client back.
-            TestClientToServerPing();
+            TestServerPing();
         }
 
-        public void TestClientToServerPing() =>
-            s_clientMgr.TestClientToServerRpc(numTimesRpcd++, NetworkObjectId);
-        
-        public void TestServerToClientPong() =>
-            s_serverMgr.TestServerToClientRpc(numTimesRpcd++, NetworkObjectId);
+        /// <summary>
+        /// Only send RPCs to the server on the client that owns the
+        /// NetworkObject that owns this NetworkBehaviour instance.
+        /// - a host is both a client *and* server.
+        /// </summary>
+        /// <returns></returns>
+        private bool IsOwningClientOrHost() =>
+            (IsClient || IsHost) && IsOwner;
+
+        public void TestServerPing() =>
+            s_serverMgr.TestServerRpc(numTimesRpcd++, NetworkObjectId);
+
+        public void TestClientPing() =>
+            s_clientMgr.TestClientRpc(numTimesRpcd++, NetworkObjectId);
     }
 }

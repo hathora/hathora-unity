@@ -31,18 +31,16 @@ namespace Hathora.Net.Client
         }
         
         /// <summary>
-        /// Send a ping from client to server => then pong back from server to client.
-        /// - Generally called to trigger NetServerMgr.TestServerToClientRpc().
+        /// Send a pong back from server to client.
+        /// - Generally called after NetClientMgr.TestServerPing().
         /// </summary>
         /// <param name="numTimesRpcd"></param>
         /// <param name="srcNetObjId"></param>
-        [ServerRpc(RequireOwnership = true)]
-        public void TestClientToServerRpc(int numTimesRpcd, ulong srcNetObjId)
+        [ClientRpc]
+        public void TestClientRpc(int numTimesRpcd, ulong srcNetObjId)
         {
-            Debug.Log($"[PingRpcTest] TestClientToServerPing: " +
-                $"Server Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
-            
-            s_ServerMgr.TestServerToClientRpc(numTimesRpcd, srcNetObjId);
+            Debug.Log("[NetServerMgr] TestClientRpc: " +
+                $"Client Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
         }
     }
 }

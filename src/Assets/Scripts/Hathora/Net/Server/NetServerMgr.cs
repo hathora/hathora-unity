@@ -32,16 +32,32 @@ namespace Hathora.Net.Server
         }
 
         /// <summary>
-        /// Send a pong back from server to client.
-        /// - Generally called after NetClientMgr.TestClientToServerPing().
+        /// Send a ping to the server => then pong back from server to client.
+        /// - Generally called to trigger NetServerMgr.TestServerToClientRpc().
         /// </summary>
         /// <param name="numTimesRpcd"></param>
         /// <param name="srcNetObjId"></param>
-        [ClientRpc]
-        public void TestServerToClientRpc(int numTimesRpcd, ulong srcNetObjId)
+        // [ServerRpc(RequireOwnership = true)]
+        [ServerRpc]
+        public void TestServerRpc(int numTimesRpcd, ulong srcNetObjId)
         {
-            Debug.Log("[PingRpcTest] TestServerToClientPong: " +
-                $"Client Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
+            Debug.Log("[NetClientMgr] TestServerPing: " +
+                $"Server Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
+            
+            s_ClientMgr.TestClientRpc(numTimesRpcd, srcNetObjId);
+        }
+        
+        [ServerRpc]
+        public void RequestOwnershipServerRpc(ulong networkObjectId, ServerRpcParams rpcParams = default)
+        {
+            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
+                .TryGetValue(networkObjectId, out NetworkObject networkObject))
+            {
+                return;
+            }
+        
+            // TODO: Validation middleware
+            networkObject.ChangeOwnership(rpcParams.Receive.SenderClientId);
         }
     }
 }

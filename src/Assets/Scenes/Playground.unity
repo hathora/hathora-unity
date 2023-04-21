@@ -1031,7 +1031,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1050161422}
         m_TargetAssemblyTypeName: Hathora.Net.Common.PingTestRpc, Assembly-CSharp
-        m_MethodName: TestServerToClientPong
+        m_MethodName: TestClientPing
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2871,7 +2871,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1050161422}
         m_TargetAssemblyTypeName: Hathora.Net.Common.PingTestRpc, Assembly-CSharp
-        m_MethodName: TestClientToServerPing
+        m_MethodName: TestServerPing
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
