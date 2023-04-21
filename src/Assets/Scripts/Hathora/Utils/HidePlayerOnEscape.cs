@@ -1,3 +1,4 @@
+// Created by dylan@hathora.dev
 using UnityEngine;
 
 namespace Hathora.Utils

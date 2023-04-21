@@ -12,9 +12,9 @@ namespace Hathora.Net.Common
         [SerializeField]
         protected NetUI NetUi;
     
-        protected NetworkManager s_NetMgr => NetworkManager.Singleton;
-        protected NetServerMgr s_ServerMgr => NetServerMgr.Singleton;
-        protected NetClientMgr s_ClientMgr => NetClientMgr.Singleton;
-        protected NetCommonMgr s_NetCommonMgr => NetCommonMgr.Singleton;
+        protected static NetworkManager s_NetMgr => NetworkManager.Singleton;
+        protected static NetServerMgr s_ServerMgr => NetServerMgr.Singleton;
+        protected static NetClientMgr s_ClientMgr => NetClientMgr.Singleton;
+        protected static NetCommonMgr s_NetCommonMgr => NetCommonMgr.Singleton;
     }
 }

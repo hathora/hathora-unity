@@ -2,9 +2,7 @@
 // Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
 
 using System.Collections.Generic;
-using Hathora.Net.Client;
 using Hathora.Net.Common;
-using Hathora.Net.Server;
 using UnityEngine;
 
 namespace Hathora.Utils

@@ -14,8 +14,9 @@ namespace Hathora.Net.Common
     /// </summary>
     public class PingTestRpc : NetworkBehaviour
     {
-        private NetServerMgr s_serverMgr => NetServerMgr.Singleton;
-        private NetClientMgr s_clientMgr => NetClientMgr.Singleton;
+        private static NetServerMgr s_serverMgr => NetServerMgr.Singleton;
+        private static NetClientMgr s_clientMgr => NetClientMgr.Singleton;
+        private static NetworkManager NetMgr => NetworkManager.Singleton;
         private int numTimesRpcd = 0;
 
         
