@@ -40,10 +40,14 @@ Before you start, ensure you have the following:
 2. Run the repo root's `/utils/PrepUploadToHathora.ps1` PowerShell script (commented) to prepare for upload.
 3. Drop the archived `/utils/uploadToHathora/Build-Server.tar.gz` in the Hathora `Upload server build` browser window (from prerequisites step #3).
 4. At the top-right, choose your closest region and create a room (normally done programatically) >> Note the IP and port.
+
 ![image](https://user-images.githubusercontent.com/8840024/233578161-630e86bf-0bcd-4c43-9d97-0470367d1cfc.png)
+
 5. Ensure the logs parity with what you saw in Unity, then hop in your Unity editor's `NetworkManager` inspector.
 6. Within the `Unity Transport` component (at the bottom), change the `address` and paste the ip/port from step #4. Note only IP addresses (not host names) work with NGO; a Unity restriction.
+
 ![image](https://user-images.githubusercontent.com/8840024/233578298-3e884881-2aa2-4fdc-8bd9-104d94f849f4.png)
+
 7. Press Play within the Unity editor >> "Join as Host" >> Both players should spawn together.
 
 You have now successfully set up and tested your Hathora Unity project! If you encounter any issues or need further assistance, please consult the documentation or reach out to the community for support. Happy coding!
