@@ -1,4 +1,4 @@
-// Created by dylan@hathora.dev
+// Created by dylan@imperium42.com
 
 using UnityEditor;
 using UnityEngine;

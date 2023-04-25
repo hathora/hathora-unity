@@ -697,7 +697,7 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     Android: STARTER_ASSETS_PACKAGES_CHECKED
-    Standalone: STARTER_ASSETS_PACKAGES_CHECKED
+    Standalone: STARTER_ASSETS_PACKAGES_CHECKED;FISHNET;FISHNET_V3
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
