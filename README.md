@@ -1,6 +1,8 @@
 # Hathora Unity Quickstart Guide
 
-Welcome to the Hathora Unity Quickstart Guide! This guide will help you set up and test a simple 3rd-person 3D Unity project using Unity's Network Game Objects (NGO) as an example. The net code in this project can be replaced with any net code, such as Mirror or Fishnet.
+Welcome to the Hathora Unity Quickstart Guide! This guide will help you set up and test a simple 3rd-person 3D Unity project using [FishNet](https://github.com/FirstGearGames/FishNet) as an example. 
+
+The net code in this project can be replaced with any others, such as Mirror or Unity NGO.
 
 ## Prerequisites
 
@@ -19,12 +21,14 @@ Before you start, ensure you have the following:
 ## Local Testing Quickstart
 
 1. Build to the project root's `/Build` and run.
-2. Player1 "Host + Join" <> Player2 "Join as Client".
-3. Both players should spawn together.
+2. Player1 clicks "Server" and "Client" (both).
+3. Player2 clicks "Client".
+
+Both players should spawn next to each other and be able to see each other interact!
 
 ![image](https://user-images.githubusercontent.com/8840024/233584587-56352006-9103-4d3c-a817-fbedd21f0fe0.png)
 
-![image](https://user-images.githubusercontent.com/8840024/233575333-00ff64e9-9728-4c40-9001-5bd773f29718.png)
+![image](https://i.imgur.com/dMXjRGy.png)
 
 ## Hathora Dedicated Server
 
