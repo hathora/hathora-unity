@@ -10,7 +10,7 @@ namespace Hathora.Net
     /// As soon as we connect to the server, we send a ping to the server.
     /// => Server will pong us back.
     /// </summary>
-    public class PingTestRpc : NetworkBehaviour
+    public class NetPingTestRpc : NetworkBehaviour
     {
         private int _numTimesRpcdToServer;
         
