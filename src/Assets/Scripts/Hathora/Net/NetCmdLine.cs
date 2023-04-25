@@ -2,12 +2,15 @@
 // Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
 
 using System.Collections.Generic;
-using Hathora.Net.Common;
+using FishNet;
 using UnityEngine;
 
-namespace Hathora.Utils
+namespace Hathora.Net
 {
-    public class NetCmdLine : NetMgrBase
+    /// <summary>
+    /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`
+    /// </summary>
+    public class NetCmdLine : MonoBehaviour
     {
         private void Start()
         {
@@ -20,7 +23,7 @@ namespace Hathora.Utils
                 initMode(mode);
 
             if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
-                s_netUi.SetShowDebugMemoTxt(memoStr);
+                NetUI.Singleton.SetShowDebugMemoTxt(memoStr);
         }
 
         private void initMode(string mode)
@@ -28,15 +31,19 @@ namespace Hathora.Utils
             switch (mode)
             {
                 case "server":
-                    s_ServerMgr.HostAsServer();
+                    Debug.Log("[NetCmdLine] @ initMode - Starting...");
+                    InstanceFinder.ServerManager.StartConnection();
                     break;
                 
                 case "client":
-                    s_ClientMgr.JoinAsClient();
+                    Debug.Log("[NetCmdLine] @ initMode - Starting client ...");
+                    InstanceFinder.ClientManager.StartConnection();
                     break;
                 
                 case "host":
-                    s_NetCommonMgr.JoinAsHost();
+                    Debug.Log("[NetCmdLine] @ initMode - starting host (server+client) ...");
+                    InstanceFinder.ServerManager.StartConnection();
+                    InstanceFinder.ClientManager.StartConnection();
                     break;
             }
         }

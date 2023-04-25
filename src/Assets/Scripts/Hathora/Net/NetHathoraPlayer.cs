@@ -1,20 +1,15 @@
 // Created by dylan@hathora.dev
 
-using System;
 using FishNet.Object;
-using Hathora.Net.Common;
 using UnityEngine;
 
-namespace Hathora.Utils
+namespace Hathora.Net
 {
     /// <summary>
     /// Helpers for the NetworkPlayer. Since NetworkPlayer spawns dynamically
     /// </summary>
-    public class HathoraPlayer : NetBehaviourBase
+    public class HathoraPlayer : NetworkBehaviour
     {
-        [SerializeField]
-        private PingTestRpc pingTest;
-        
         private void Start() =>
             NetworkSpawnLogs();
 

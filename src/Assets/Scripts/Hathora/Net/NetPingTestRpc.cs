@@ -2,10 +2,9 @@
 // Unity NGO: Getting Started | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo
 
 using FishNet.Object;
-using Hathora.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Net.Common
+namespace Hathora.Net
 {
     /// <summary>
     /// As soon as we connect to the server, we send a ping to the server.
@@ -13,8 +12,7 @@ namespace Hathora.Net.Common
     /// </summary>
     public class PingTestRpc : NetworkBehaviour
     {
-        private static NetServerMgr s_serverMgr => NetServerMgr.Singleton;
-        private int numTimesRpcdToServer;
+        private int _numTimesRpcdToServer;
         
         private void Update()
         {
@@ -24,7 +22,7 @@ namespace Hathora.Net.Common
 
         public void TestPingToServer()
         {
-            string msg = $"Ping #{numTimesRpcdToServer++}!";
+            string msg = $"Ping #{_numTimesRpcdToServer++}!";
             Debug.Log($"[PingTestRpc] Sending test ping server == '{msg}'");
             SendMsgServerRpc(msg);   
         }

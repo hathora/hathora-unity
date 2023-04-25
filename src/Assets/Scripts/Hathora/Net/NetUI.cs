@@ -3,7 +3,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Hathora.Net.Common
+namespace Hathora.Net
 {
     public class NetUI : MonoBehaviour
     {
