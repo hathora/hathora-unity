@@ -26,8 +26,27 @@ namespace Hathora.Net.Common
         {
             string msg = $"Ping #{numTimesRpcdToServer++}!";
             Debug.Log($"[PingTestRpc] Sending test ping server == '{msg}'");
-            
-            s_serverMgr.SendMsgServerRpc(msg);   
+            SendMsgServerRpc(msg);   
         }
+        
+        /// <summary>
+        /// Send a msg to the server from an observer.
+        /// </summary>
+        /// <param name="msg">Arbitrary string</param>
+        [ServerRpc]
+        public void SendMsgServerRpc(string msg)
+        {
+            Debug.Log($"[NetServerMgr] SendMsgServerRpc: Received msg on server (from observed client) == '{msg}'");
+            SendMsgObserversRpc(msg); // Ask server to send the msg back to all observers.
+        }
+        
+        /// <summary>
+        /// Send a msg to ALL observers.
+        /// </summary>
+        /// <param name="msg">Arbitrary string</param>
+        // [ServerRpc(RequireOwnership = true)]
+        [ObserversRpc]
+        public void SendMsgObserversRpc(string msg) =>
+            Debug.Log($"[NetServerMgr] SendMsgObserversRpc: Received on observer (from server) == '{msg}'");
     }
 }

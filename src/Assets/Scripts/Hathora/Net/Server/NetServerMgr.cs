@@ -32,17 +32,6 @@ namespace Hathora.Net.Server
             InstanceFinder.ServerManager.StartConnection();
         }
 
-        /// <summary>
-        /// Send a msg to the server from an observer.
-        /// </summary>
-        /// <param name="msg">Arbitrary string</param>
-        // [ServerRpc(RequireOwnership = true)]
-        [ServerRpc]
-        public void SendMsgServerRpc(string msg)
-        {
-            // Send a msg back
-            Debug.Log($"[NetServerMgr] SendMsgServerRpc: Received msg on server (from observed client) == '{msg}'");
-            s_ClientMgr.ReceiveMsgObserverRpc(msg);
-        }
+
     }
 }
