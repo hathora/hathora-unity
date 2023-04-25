@@ -1,20 +1,22 @@
 // Created by dylan@hathora.dev
 
+using FishNet;
+using FishNet.Object;
 using Hathora.Net.Common;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Hathora.Net.Server
 {
     /// <summary>
-    /// Server calls Client via [ClientRpc].
+    /// Server calls Client via [ObserversRpc].
     /// Supports singleton via Singleton.
     /// </summary>
-    public class NetServerMgr : NetMgrBase
+    public class NetServerMgr : NetBehaviourBase
     {
         public static NetServerMgr Singleton;
 
-        private void Start() => setSingleton();
+        private void Awake() => 
+            setSingleton();
         
         private void setSingleton()
         {
@@ -27,37 +29,21 @@ namespace Hathora.Net.Server
         public void HostAsServer()
         {
             Debug.Log("[NetServerMgr] @ HostAsServer - Starting...");
-            s_NetMgr.StartServer();
-            NetUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Server);
+            InstanceFinder.ServerManager.StartConnection();
+            s_netUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Server);
         }
 
         /// <summary>
-        /// Send a ping to the server => then pong back from server to client.
-        /// - Generally called to trigger NetServerMgr.TestServerToClientRpc().
+        /// Send a msg to the server from an observer.
         /// </summary>
-        /// <param name="numTimesRpcd"></param>
-        /// <param name="srcNetObjId"></param>
+        /// <param name="msg">Arbitrary string</param>
         // [ServerRpc(RequireOwnership = true)]
         [ServerRpc]
-        public void TestServerRpc(int numTimesRpcd, ulong srcNetObjId)
+        public void SendMsgServerRpc(string msg)
         {
-            Debug.Log("[NetClientMgr] TestServerPing: " +
-                $"Server Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
-            
-            s_ClientMgr.TestClientRpc(numTimesRpcd, srcNetObjId);
-        }
-        
-        [ServerRpc]
-        public void RequestOwnershipServerRpc(ulong networkObjectId, ServerRpcParams rpcParams = default)
-        {
-            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
-                .TryGetValue(networkObjectId, out NetworkObject networkObject))
-            {
-                return;
-            }
-        
-            // TODO: Validation middleware
-            networkObject.ChangeOwnership(rpcParams.Receive.SenderClientId);
+            // Send a msg back
+            Debug.Log($"[NetServerMgr] SendMsgServerRpc: Received msg on server (from observed client) == '{msg}'");
+            s_ClientMgr.ReceiveMsgObserverRpc(msg);
         }
     }
 }

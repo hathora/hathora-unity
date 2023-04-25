@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Net.Server;
-using Unity.Netcode;
+using FishNet.Object;
 using UnityEngine;
 
 namespace Hathora.Utils
@@ -11,27 +10,19 @@ namespace Hathora.Utils
     /// </summary>
     public class HathoraPlayer : NetworkBehaviour
     {
-        private void Start()
-        {
+        private void Start() =>
             NetworkSpawnLogs();
-        }
         
         private void NetworkSpawnLogs()
         {
-            Debug.Log($"[RpcTest] OnNetworkSpawn, id==={NetworkObjectId}");
+            Debug.Log($"[HathoraPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");
             
-            if (IsServer && IsClient)
-                Debug.Log("OnNetworkSpawn called on host (server+client)");
-            else if (IsServer)
-                Debug.Log("OnNetworkSpawn called on server");
-            else if (IsClient)
-                Debug.Log("OnNetworkSpawn called on client");
-        }
-        
-        public override void OnNetworkSpawn()
-        {
-            base.OnNetworkSpawn();
-            // TODO?
+            if (base.IsHost)
+                Debug.Log("[HathoraPlayer] OnNetworkSpawn called on host (server+client)");
+            else if (base.IsServer)
+                Debug.Log("[HathoraPlayer] OnNetworkSpawn called on server");
+            else if (base.IsClient)
+                Debug.Log("[HathoraPlayer] OnNetworkSpawn called on client");
         }
     }
 }

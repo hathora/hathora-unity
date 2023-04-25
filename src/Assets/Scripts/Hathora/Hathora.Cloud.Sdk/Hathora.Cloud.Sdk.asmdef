@@ -1,7 +1,0 @@
-{
-    "name": "Hathora.Cloud.Sdk",
-    "overrideReferences": true,
-    "precompiledReferences": [
-        "Newtonsoft.Json.dll"
-    ]
-}

@@ -1,12 +1,14 @@
 // Created by dylan@hathora.dev
 
+using FishNet;
 namespace Hathora.Net.Common
 {
-    public class NetCommonMgr : NetMgrBase
+    public class NetCommonMgr : NetBehaviourBase
     {
         public static NetCommonMgr Singleton;
 
-        private void Start() => setSingleton();
+        private void Awake() => 
+            setSingleton();
         
         private void setSingleton()
         {
@@ -26,9 +28,18 @@ namespace Hathora.Net.Common
         
         public void Disconnect()
         {
-            s_NetMgr.Shutdown(discardMessageQueue:true);
-            NetUi.ToggleLobbyUi(show:true, NetMode.None);
-            UnityEngine.Debug.Log("[NetCommonMgr] Disconnected");
+            shutdown();
+            s_netUi.ToggleLobbyUi(show:true, NetMode.None);
+            UnityEngine.Debug.Log("[NetCommonMgr] Network shutdown/Disconnected");
+        }
+        
+        private void shutdown()
+        {
+            UnityEngine.Debug.Log("[NetCommonMgr] Shutting down network ...");
+            if (base.IsClient)
+                InstanceFinder.ClientManager.StopConnection();
+            if (base.IsServer || base.IsHost)
+                InstanceFinder.ServerManager.StopConnection(true);
         }
 
         /// <summary>
@@ -37,8 +48,11 @@ namespace Hathora.Net.Common
         public void JoinAsHost()
         {
             UnityEngine.Debug.Log("[NetServerMgr] @ HostAsServer - Finding Server...");
-            s_NetMgr.StartHost();
-            NetUi.ToggleLobbyUi(show:false, NetMode.Host);
+            
+            s_ServerMgr.HostAsServer();
+            s_ClientMgr.JoinAsClient();
+            
+            s_netUi.ToggleLobbyUi(show:false, NetMode.Host);
         }
     }
 }

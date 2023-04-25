@@ -20,7 +20,7 @@ namespace Hathora.Utils
                 initMode(mode);
 
             if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
-                NetUi.SetShowDebugMemoTxt(memoStr);
+                s_netUi.SetShowDebugMemoTxt(memoStr);
         }
 
         private void initMode(string mode)

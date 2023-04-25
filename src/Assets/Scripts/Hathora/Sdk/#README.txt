@@ -1,0 +1,1 @@
+This entire dir will eventually be replaced by an OpenUPM. For now, we're cloning the entire repo and ignoring irrelevant dirs.

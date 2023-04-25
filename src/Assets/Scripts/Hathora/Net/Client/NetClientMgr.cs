@@ -1,7 +1,8 @@
 // Created by dylan@hathora.dev
 
+using FishNet;
+using FishNet.Object;
 using Hathora.Net.Common;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Hathora.Net.Client
@@ -9,11 +10,12 @@ namespace Hathora.Net.Client
     /// <summary>
     /// Client calls server via [ServerRpc]
     /// </summary>
-    public class NetClientMgr : NetMgrBase
+    public class NetClientMgr : NetBehaviourBase
     {
         public static NetClientMgr Singleton;
 
-        private void Start() => setSingleton();
+        private void Awake() => 
+            setSingleton();
         
         private void setSingleton()
         {
@@ -26,21 +28,19 @@ namespace Hathora.Net.Client
         public void JoinAsClient()
         {
             Debug.Log("[NetServerMgr] @ HostAsServer - Finding Server...");
-            s_NetMgr.StartClient();
-            NetUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Client);
+            
+            InstanceFinder.ClientManager.StartConnection();
+            s_netUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Client);
         }
         
         /// <summary>
-        /// Send a pong back from server to client.
-        /// - Generally called after NetClientMgr.TestServerPing().
+        /// Receive a msg from the server.
         /// </summary>
-        /// <param name="numTimesRpcd"></param>
-        /// <param name="srcNetObjId"></param>
-        [ClientRpc]
-        public void TestClientRpc(int numTimesRpcd, ulong srcNetObjId)
+        /// <param name="msg">Arbitrary string</param>
+        [ObserversRpc]
+        public void ReceiveMsgObserverRpc(string msg)
         {
-            Debug.Log("[NetServerMgr] TestClientRpc: " +
-                $"Client Received RPC #{numTimesRpcd} on NetObj #{srcNetObjId}");
+            Debug.Log($"[NetClientMgr] SendMsgServerRpc: Received msg on observed client (from server) == '{msg}'");
         }
     }
 }

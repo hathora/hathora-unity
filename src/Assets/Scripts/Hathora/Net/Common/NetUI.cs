@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,9 +9,6 @@ namespace Hathora.Net.Common
 {
     public class NetUI : MonoBehaviour
     {
-        private void Start() =>
-            setShowWelcomeLobbyMemoTxt();
-
         [SerializeField]
         private Button hostAsServerBtn;
         [SerializeField]
@@ -29,6 +27,22 @@ namespace Hathora.Net.Common
         private GameObject lobbyWrapperObj;
         [SerializeField]
         private GameObject roomWrapperObj;
+        
+        public static NetUI Singleton;
+
+        private void Awake() =>
+            setSingleton();
+
+        private void Start() =>
+            setShowWelcomeLobbyMemoTxt();   
+
+        private void setSingleton()
+        {
+            if (Singleton != null)
+                Destroy(gameObject);
+
+            Singleton = this;
+        }
         
         public void SetShowDebugMemoTxt(string memoStr)
         {
