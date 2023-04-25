@@ -8,7 +8,7 @@ namespace Hathora.Net
     /// <summary>
     /// Helpers for the NetworkPlayer. Since NetworkPlayer spawns dynamically
     /// </summary>
-    public class HathoraPlayer : NetworkBehaviour
+    public class NetHathoraPlayer : NetworkBehaviour
     {
         private void Start() =>
             NetworkSpawnLogs();
