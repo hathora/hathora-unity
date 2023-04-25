@@ -30,7 +30,6 @@ namespace Hathora.Net.Server
         {
             Debug.Log("[NetServerMgr] @ HostAsServer - Starting...");
             InstanceFinder.ServerManager.StartConnection();
-            s_netUi.ToggleLobbyUi(show:false, NetCommonMgr.NetMode.Server);
         }
 
         /// <summary>

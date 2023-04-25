@@ -15,6 +15,12 @@ namespace Hathora.Net.Common
     {
         private static NetServerMgr s_serverMgr => NetServerMgr.Singleton;
         private int numTimesRpcdToServer;
+        
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+                TestPingToServer();
+        }
 
         public void TestPingToServer()
         {

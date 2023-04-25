@@ -29,7 +29,6 @@ namespace Hathora.Net.Common
         public void Disconnect()
         {
             shutdown();
-            s_netUi.ToggleLobbyUi(show:true, NetMode.None);
             UnityEngine.Debug.Log("[NetCommonMgr] Network shutdown/Disconnected");
         }
         
@@ -51,8 +50,6 @@ namespace Hathora.Net.Common
             
             s_ServerMgr.HostAsServer();
             s_ClientMgr.JoinAsClient();
-            
-            s_netUi.ToggleLobbyUi(show:false, NetMode.Host);
         }
     }
 }

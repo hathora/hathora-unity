@@ -1,6 +1,8 @@
 // Created by dylan@hathora.dev
 
+using System;
 using FishNet.Object;
+using Hathora.Net.Common;
 using UnityEngine;
 
 namespace Hathora.Utils
@@ -8,11 +10,14 @@ namespace Hathora.Utils
     /// <summary>
     /// Helpers for the NetworkPlayer. Since NetworkPlayer spawns dynamically
     /// </summary>
-    public class HathoraPlayer : NetworkBehaviour
+    public class HathoraPlayer : NetBehaviourBase
     {
+        [SerializeField]
+        private PingTestRpc pingTest;
+        
         private void Start() =>
             NetworkSpawnLogs();
-        
+
         private void NetworkSpawnLogs()
         {
             Debug.Log($"[HathoraPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");

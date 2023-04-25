@@ -1,5 +1,10 @@
-﻿using Unity.Netcode;
+﻿using System;
+using FishNet;
+using FishNet.Object;
+using FishNet.Transporting;
+using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
  
@@ -16,6 +21,10 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : NetworkBehaviour
     {
+        [Header("Hathora")]
+        [SerializeField]
+        private GameObject _camera;
+        
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -124,18 +133,26 @@ namespace StarterAssets
             }
         }
 
-
-        private void Awake()
+        public void Awake()
         {
-            // get a reference to our main camera
-            if (_mainCamera == null)
+            InstanceFinder.ClientManager.OnClientConnectionState += (ClientConnectionStateArgs args) =>
             {
-                _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            }
+                if (args.ConnectionState == LocalConnectionState.Started)
+                    init();
+            };
         }
 
-        private void Start()
+        private void init()
         {
+            if (!base.IsOwner)
+                return;
+            
+            Debug.Log("[ThirdPersonController] @ init (IsOwner)");
+            
+            // get a reference to our main camera
+            if (_mainCamera != null)
+                _camera.SetActive(true);
+            
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
             _hasAnimator = TryGetComponent(out _animator);
@@ -156,7 +173,7 @@ namespace StarterAssets
 
         private void Update()
         {
-            if (!IsOwner)
+            if (!base.IsOwner || InstanceFinder.ClientManager.Clients == null)
                 return;
             
             _hasAnimator = TryGetComponent(out _animator);
@@ -168,6 +185,9 @@ namespace StarterAssets
 
         private void LateUpdate()
         {
+            if (!base.IsOwner || InstanceFinder.ClientManager.Clients == null)
+                return;
+            
             CameraRotation();
         }
 

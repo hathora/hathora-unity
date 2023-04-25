@@ -12,6 +12,6 @@ namespace Hathora.Net.Common
         protected static NetServerMgr s_ServerMgr => NetServerMgr.Singleton;
         protected static NetClientMgr s_ClientMgr => NetClientMgr.Singleton;
         protected static NetCommonMgr s_NetCommonMgr => NetCommonMgr.Singleton;
-        protected static NetUI s_netUi => NetUI.Singleton;
+        protected static NetUI s_NetUi => NetUI.Singleton;
     }
 }
