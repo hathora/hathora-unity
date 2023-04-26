@@ -2486,11 +2486,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unreliableMTU: 1023
-  _ipv4BindAddress: 1.proxy.hathora.dev
+  _ipv4BindAddress: 
   _ipv6BindAddress: 
-  _port: 21084
+  _port: 7777
   _maximumClients: 65
-  _clientAddress: 1.proxy.hathora.dev
+  _clientAddress: localhost
   _timeout: 15
 --- !u!114 &8635938460796269350
 MonoBehaviour:
