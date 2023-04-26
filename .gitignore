@@ -75,3 +75,5 @@ src/.idea
 src/Build*
 Utils/logs/*
 Utils/uploadToHathora/*
+utils/PrepUploadToHathora.ps1
+src/Dockerfile - Copy
