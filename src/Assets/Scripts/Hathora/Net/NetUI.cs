@@ -12,8 +12,11 @@ namespace Hathora.Net
         
         public static NetUI Singleton;
 
-        private void Awake() =>
+        private void Awake()
+        {
             setSingleton();
+            DontDestroyOnLoad(gameObject);
+        }
 
         private void setSingleton()
         {

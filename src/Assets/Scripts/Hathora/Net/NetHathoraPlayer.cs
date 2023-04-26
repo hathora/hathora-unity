@@ -15,7 +15,7 @@ namespace Hathora.Net
     /// <summary>
     /// Helpers for the NetworkPlayer. Since NetworkPlayer spawns dynamically
     /// </summary>
-    public class HathoraPlayer : NetworkBehaviour
+    public class NetHathoraPlayer : NetworkBehaviour
     {
         #region Serialized Fields
         // ---------------------------------------------------
@@ -32,15 +32,17 @@ namespace Hathora.Net
         // ---------------------------------------------------
         [Header("CreateLobbyRequest (Demo)")]
         [SerializeField, Tooltip("Optional")]
-        private CreateLobbyRequest.VisibilityEnum lobbyVisibility = CreateLobbyRequest.VisibilityEnum.Public;
+        private CreateLobbyRequest.VisibilityEnum lobbyVisibility = 
+            CreateLobbyRequest.VisibilityEnum.Public;
         
         // ---------------------------------------------------
         [Header("CreateRoomRequest (Demo)")]
         [SerializeField, Tooltip("Optional - Recommended leave empty")]
         private string roomId;
-        
-        [SerializeField, Tooltip("Optional - Initial state kvp")]
-        private Dictionary<string, string> roomInitConfig;
+
+        //// TODO: For this, we need to break it up and build our own Dictionary. 
+        // [SerializeField, Tooltip("Optional - Initial state kvp")]
+        // private Dictionary<string, string> roomInitConfig;
         #endregion // Serialized Fields
         
 
@@ -52,14 +54,14 @@ namespace Hathora.Net
 
         private void NetworkSpawnLogs()
         {
-            Debug.Log($"[HathoraPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");
+            Debug.Log($"[NetHathoraPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");
             
             if (base.IsHost)
-                Debug.Log("[HathoraPlayer] OnNetworkSpawn called on host (server+client)");
+                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on host (server+client)");
             else if (base.IsServer)
-                Debug.Log("[HathoraPlayer] OnNetworkSpawn called on server");
+                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on server");
             else if (base.IsClient)
-                Debug.Log("[HathoraPlayer] OnNetworkSpawn called on client");
+                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on client");
 
             initHathoraSdk();
         }
@@ -82,36 +84,47 @@ namespace Hathora.Net
         private void createRoomServerRpc() =>
             serverCreateRoomAsync();   
 
+        /// <summary>
+        /// Calls onCreateRoomObserverRpc
+        /// </summary>
         private async Task serverCreateRoomAsync()
         {
             if (!base.IsServer)
                 return;
 
             CreateRoomRequest request = new CreateRoomRequest(region);
+            // request.AdditionalProperties = TODO;
+            
             string roomName = await roomApi.CreateRoomAsync(appId, request, CancellationToken.None);
-            Debug.Log($"[HathoraPlayer] SERVER serverCreateRoomAsync => returned: {roomName}");
+            Debug.Log($"[NetHathoraPlayer] SERVER serverCreateRoomAsync => returned: {roomName}");
             
             onCreateRoomObserverRpc(roomName);
         }
 
-        private async Task serverCreateLobbyAsync()
+        private async Task<Lobby> serverCreateLobbyAsync()
         {
             if (!base.IsServer)
-                return;
+                return null;
+
+            CreateLobbyRequest request = new CreateLobbyRequest(
+                lobbyVisibility, 
+                initialConfig:null, 
+                region);
             
-            CreateLobbyRequest request = new CreateLobbyRequest();
             Lobby lobby = await lobbyApi.CreateLobbyAsync(
                 appId,
                 authToken, 
                 request, 
                 roomId, 
                 CancellationToken.None);
+
+            return lobby;
         }
 
         #region TODO: #if UNITY_SERVER
         [ObserversRpc]
         private void onCreateRoomObserverRpc(string roomName) =>
-            Debug.Log($"[HathoraPlayer] OBSERVER onCreateRoomObserverRpc => roomId: {roomName}");
+            Debug.Log($"[NetHathoraPlayer] OBSERVER onCreateRoomObserverRpc => roomId: {roomName}");
         #endregion // TODO: #if UNITY_SERVER
     }
 }
