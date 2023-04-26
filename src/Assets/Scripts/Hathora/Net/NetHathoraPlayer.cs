@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FishNet.Object;
@@ -8,7 +7,6 @@ using UnityEngine;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using UnityEngine.Serialization;
 
 namespace Hathora.Net
 {
@@ -48,6 +46,7 @@ namespace Hathora.Net
 
         private RoomV1Api roomApi;
         private LobbyV2Api lobbyApi;
+        private AuthV1Api authApi;
         
         private void Start() =>
             NetworkSpawnLogs();
@@ -69,8 +68,29 @@ namespace Hathora.Net
         private void initHathoraSdk()
         {
             Configuration hathoraConfig = new Configuration();
+            authApi = new AuthV1Api(hathoraConfig);
             roomApi = new RoomV1Api(hathoraConfig);
             lobbyApi = new LobbyV2Api(hathoraConfig);
+        }
+        
+        public void OnAuthBtnClick() => 
+            authServerRpc();
+
+        /// <summary>
+        /// Auths with Hathora login server
+        /// </summary>
+        /// <returns>room name str</returns>
+        [ServerRpc]
+        private void authServerRpc() => 
+            serverAuthAsync();
+        
+        private Task serverAuthAsync()
+        {
+            if (!base.IsServer)
+                return null;
+            
+            // Authent
+            return null; // TODO
         }
 
         public void OnCreateRoomBtnClick() => 
