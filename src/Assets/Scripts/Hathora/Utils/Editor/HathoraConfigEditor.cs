@@ -1,9 +1,10 @@
+using Hathora.Net.Server;
 using UnityEditor;
 using UnityEngine;
 
 namespace Hathora.Net
 {
-    [CustomEditor(typeof(HathoraConfig))]
+    [CustomEditor(typeof(HathoraServerConfig))]
     public class HathoraConfigObjectEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
