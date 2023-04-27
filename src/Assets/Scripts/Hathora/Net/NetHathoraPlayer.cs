@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FishNet.Object;
@@ -57,7 +58,7 @@ namespace Hathora.Net
             
             if (base.IsHost)
                 Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on host (server+client)");
-            else if (base.IsServer)
+            else if (base.IsServerOnly)
                 Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on server");
             else if (base.IsClient)
                 Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on client");
@@ -84,13 +85,23 @@ namespace Hathora.Net
         private void authServerRpc() => 
             serverAuthAsync();
         
-        private Task serverAuthAsync()
+        private async Task serverAuthAsync()
         {
-            if (!base.IsServer)
-                return null;
-            
-            // Authent
-            return null; // TODO
+            // Client calls server
+            if (base.IsServerOnly)
+                return;
+
+            try
+            {
+                LoginAnonymous200Response res = await authApi.LoginAnonymousAsync(appId);
+                Debug.Log($"[NetHathoraPlayer] Login result: {!string.IsNullOrEmpty(res.Token)}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[NetHathoraPlayer]**ERR @ serverAuthAsync (LoginAnonymousAsync): // e=={e}");
+                await Task.FromException<Exception>(e);
+                return;
+            }
         }
 
         public void OnCreateRoomBtnClick() => 
@@ -109,7 +120,8 @@ namespace Hathora.Net
         /// </summary>
         private async Task serverCreateRoomAsync()
         {
-            if (!base.IsServer)
+            // Client calls server
+            if (base.IsServerOnly)
                 return;
 
             CreateRoomRequest request = new CreateRoomRequest(region);
@@ -123,7 +135,8 @@ namespace Hathora.Net
 
         private async Task<Lobby> serverCreateLobbyAsync()
         {
-            if (!base.IsServer)
+            // Client calls server
+            if (base.IsServerOnly)
                 return null;
 
             CreateLobbyRequest request = new CreateLobbyRequest(

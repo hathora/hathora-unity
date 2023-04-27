@@ -8,7 +8,8 @@ using UnityEngine;
 namespace Hathora.Net
 {
     /// <summary>
-    /// FishNet Authenticator: This enforces the user to authenticate before they can connect to the server.
+    /// for FishNet Authenticator (NetworkManager.ServerMgr component):
+    /// This enforces the user to authenticate before they can connect to the server.
     /// </summary>
     public class NetAuthenticator : Authenticator
     {
