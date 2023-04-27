@@ -3,30 +3,39 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Net
 {
     public class NetSession : NetworkBehaviour
     {
+        #region Sync'd
         /// <summary>
-        /// Server only.
+        /// Client: From AuthV1 via NetHathoraPlayer.
         /// </summary>
-        [FormerlySerializedAs("AuthToken")]
-        [HideInInspector]
-        public string PlayerAuthToken;
+        [HideInInspector, SyncVar]
+        public string AuthToken;
 
         [HideInInspector, SyncVar]
-        public string CachedRoomName;
-
-        public bool IsAuthed => !string.IsNullOrEmpty(PlayerAuthToken);
-
+        public string RoomName;
+        #endregion // Sync'd
         
         /// <summary>
-        /// Resets and clears the session.
+        /// Server: From HathoraServerConfig file.
         /// </summary>
-        /// <param name="authToken"></param>
-        public void InitNetSession(string authToken)
+        public string DevAuthToken { get; set; }
+        
+        public bool IsAuthed => !string.IsNullOrEmpty(AuthToken);
+
+        /// <summary>
+        /// Server sets - AuthToken and RoomName are SyncVar'd.
+        /// Resets the session to new auth tokens; clears other cache, such as rooms.
+        /// </summary>
+        /// <param name="playerAuthToken">
+        /// Server: Dev token, serialized from HathoraServerConfig file.
+        /// Client: From AuthV1 via NetHathoraPlayer.
+        /// </param>
+        /// <param name="devAuthToken">Server: From HathoraServerConfig file.</param>
+        public void InitNetSession(string playerAuthToken, string devAuthToken = null)
         {
             if (!IsServer)
             {
@@ -34,8 +43,12 @@ namespace Hathora.Net
                 return;
             }
 
-            this.PlayerAuthToken = authToken;
-            this.CachedRoomName = null;
+            this.AuthToken = playerAuthToken;
+            this.RoomName = null;
+            
+            #if UNITY_SERVER || DEBUG
+            this.DevAuthToken = devAuthToken;
+            #endif
         }
     }
 }

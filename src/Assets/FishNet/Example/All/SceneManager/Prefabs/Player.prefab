@@ -1138,6 +1138,7 @@ GameObject:
   - component: {fileID: 360929489047336484}
   - component: {fileID: 6220227561429341025}
   - component: {fileID: 1253781200578746195}
+  - component: {fileID: 4152883124476731263}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1231,6 +1232,7 @@ MonoBehaviour:
   - {fileID: 181022890959971896}
   - {fileID: 360929489047336484}
   - {fileID: 1253781200578746195}
+  - {fileID: 4152883124476731263}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   _isNetworked: 1
@@ -1331,13 +1333,10 @@ MonoBehaviour:
   _componentIndexCache: 3
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
-  appId: app-TODO
-  authToken: auth-token-TODO
-  region: 1
+  hathoraServer: {fileID: 4152883124476731263}
   lobbyVisibility: 1
-  roomId: 
-  netPlayerUI: {fileID: 6220227561429341025}
   playerSession: {fileID: 1253781200578746195}
+  netPlayerUI: {fileID: 6220227561429341025}
 --- !u!114 &6220227561429341025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1369,7 +1368,24 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
   PlayerAuthToken: 
-  CachedRoomName: 
+  RoomName: 
+--- !u!114 &4152883124476731263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5090726670223187118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c04a040633f06ff40a0bfb9721d0ccb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 611616139817875448}
+  _networkObjectCache: {fileID: 611616139817875448}
+  hathoraServerConfig: {fileID: 11400000, guid: 9896287ceb7135b4bb86eabf998c255a,
+    type: 2}
 --- !u!1 &5745961210311865676
 GameObject:
   m_ObjectHideFlags: 0
