@@ -50,7 +50,7 @@ namespace Hathora.Net.Server
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
                     hathoraServerConfig.AppId,
-                    hathoraServerConfig.DevAuthToken,
+                    PlayerSession.AuthToken, // Player token; not dev
                     request);
             }
             catch (Exception e)
