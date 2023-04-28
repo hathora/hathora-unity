@@ -2,6 +2,8 @@
 
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Net.Server.Models;
 using UnityEngine;
 
 namespace Hathora.Net
@@ -17,7 +19,11 @@ namespace Hathora.Net
 
         [HideInInspector, SyncVar]
         public string RoomName;
+
+        // [HideInInspector]
+        // public SyncLobby Lobby; // TODO
         #endregion // Sync'd
+
         
         /// <summary>
         /// Server: From HathoraServerConfig file.

@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using Hathora.Cloud.Sdk.Client;
 using UnityEngine;
 
 namespace Hathora.Net.Server.Models
@@ -12,6 +13,23 @@ namespace Hathora.Net.Server.Models
     public struct ServerApiContainer
     {
         [SerializeField]
+        public NetHathoraServerAuth AuthApi;
+        
+        [SerializeField]
         public NetHathoraServerRoom RoomApi;
+        
+        [SerializeField]
+        public NetHathoraServerLobby LobbyApi;
+
+        
+        public void InitAll(
+            Configuration _hathoraSdkConfig, 
+            HathoraServerConfig _hathoraServerConfig, 
+            NetSession _playerSession)
+        {
+            AuthApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            RoomApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            LobbyApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+        }
     }
 }

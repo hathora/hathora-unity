@@ -15,7 +15,7 @@ namespace Hathora.Net.Server.Models
         protected HathoraServerConfig hathoraServerConfig { get; private set; }
         protected NetSession PlayerSession { get; private set; }
 
-        
+
         /// <summary>
         /// Init anytime - these calls use dev token.
         /// </summary>

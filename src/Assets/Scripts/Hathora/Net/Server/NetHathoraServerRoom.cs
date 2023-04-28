@@ -29,7 +29,7 @@ namespace Hathora.Net.Server
 
 
         #region Event Delegates
-        /// <summary>roomName</summary>
+        /// <summary>=> roomName</summary>
         public event EventHandler<string> CreateRoomComplete;
         #endregion // Event Delegates
 
@@ -56,13 +56,13 @@ namespace Hathora.Net.Server
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraPlayer]**ERR @ ServerCreateRoomAsync (CreateRoomAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraServerRoom]**ERR @ ServerCreateRoomAsync (CreateRoomAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 onCreateRoomFail();
                 return;
             }
 
-            Debug.Log($"[NetHathoraPlayer] SERVER ServerCreateRoomAsync => returned: {roomName}");
+            Debug.Log($"[NetHathoraServerRoom] ServerCreateRoomAsync => roomName: {roomName}");
             
             bool createdRoom = !string.IsNullOrEmpty(roomName);
             if (createdRoom)
@@ -74,7 +74,7 @@ namespace Hathora.Net.Server
         
         
         #region Success Callbacks
-        void onServerCreateRoomSuccess(string roomName)
+        private void onServerCreateRoomSuccess(string roomName)
         {
             PlayerSession.RoomName = roomName;
             CreateRoomComplete?.Invoke(this, roomName);

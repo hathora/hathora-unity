@@ -16,10 +16,6 @@ namespace Hathora.Net.Client
         #region Serialized Fields
         [SerializeField, Tooltip("Client will have limited access to this")]
         private NetHathoraServer hathoraServer;
-        
-        [SerializeField, SyncVar, Tooltip("In production, you'd probably make a UI selector")]
-        private CreateLobbyRequest.VisibilityEnum lobbyVisibility = 
-            CreateLobbyRequest.VisibilityEnum.Public;
 
         [SerializeField]
         private NetSession playerSession;
@@ -60,7 +56,7 @@ namespace Hathora.Net.Client
             // Sub to server events
             hathoraServer.AuthComplete += OnAuthComplete;
             hathoraServer.ServerApis.RoomApi.CreateRoomComplete += OnCreateRoomComplete;
-            hathoraServer.CreateLobbyComplete += OnCreateLobbyComplete;
+            hathoraServer.ServerApis.LobbyApi.CreateLobbyComplete += OnCreateLobbyComplete;
         }
 
         private void NetworkSpawnLogs()
@@ -124,10 +120,11 @@ namespace Hathora.Net.Client
         }
         
         [ServerRpc]
-        private void createLobbyServerRpc()
+        private void createLobbyServerRpc(CreateLobbyRequest.VisibilityEnum lobbyVisibility = 
+            CreateLobbyRequest.VisibilityEnum.Public)
         {
 #if UNITY_SERVER || DEBUG
-            hathoraServer.ServerCreateLobbyAsync(lobbyVisibility);
+            hathoraServer.ServerApis.LobbyApi.ServerCreateLobbyAsync(lobbyVisibility);
 #endif
         }
         #endregion // Server RPCs (from Observer to Server)

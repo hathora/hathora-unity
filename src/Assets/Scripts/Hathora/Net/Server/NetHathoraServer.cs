@@ -28,20 +28,14 @@ namespace Hathora.Net.Server
         private Configuration hathoraSdkConfig { get; set; }
         private NetSession playerSession { get; set; }
 
-        private LobbyV2Api lobbyApi { get; set; }
         private AuthV1Api authApi { get; set; }
         
         
         #region Event Delegates
         /// <summary>
-        /// isSuccess
+        /// => isSuccess
         /// </summary>
         public event EventHandler<bool> AuthComplete;
-        
-        /// <summary>
-        /// TODO: Lobby
-        /// </summary>
-        public event EventHandler<Lobby> CreateLobbyComplete;
         #endregion // Event Delegates
         
         
@@ -83,12 +77,8 @@ namespace Hathora.Net.Server
                 // AppId // TODO?
             };
       
-            // Init server APIs
-            authApi = new AuthV1Api(hathoraSdkConfig);
-
-            ServerApis.RoomApi.Init(hathoraSdkConfig, hathoraServerConfig, playerSession);
-            
-            lobbyApi = new LobbyV2Api(hathoraSdkConfig);
+            // Init server APIs: Auth, Room, Lobby
+            ServerApis.InitAll(hathoraSdkConfig, hathoraServerConfig, playerSession);
         }
 
 
@@ -119,36 +109,6 @@ namespace Hathora.Net.Server
             else
                 onServerAuthFail();
         }
-
-        public async Task ServerCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
-        {
-            if (!base.IsServer)
-                return;
-
-            LobbyInitConfig lobbyInitConfig = new();
-            CreateLobbyRequest request = new CreateLobbyRequest(
-                lobbyVisibility, 
-                lobbyInitConfig, 
-                hathoraServerConfig.Region);
-
-            Lobby lobby;
-            try
-            {
-                lobby = await lobbyApi.CreateLobbyAsync(
-                    hathoraServerConfig.AppId,
-                    hathoraServerConfig.DevAuthToken,
-                    request);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[NetHathoraPlayer]**ERR @ ServerCreateLobbyAsync (CreateLobbyAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
-                return;
-            }
-
-            if (lobby != null)
-                onServerCreateLobbySuccess(lobby);
-        }
         #endregion // Server Async Hathora SDK Calls
         
         
@@ -159,13 +119,6 @@ namespace Hathora.Net.Server
             
             const bool isSucccess = true;
             AuthComplete?.Invoke(this, isSucccess);
-        }
-
-        private void onServerCreateLobbySuccess(Lobby lobby)
-        {
-            throw new NotImplementedException();
-            // playerSession.Lobby = lobby;
-            // CreateLobbyComplete?.Invoke(this, lobby);
         }
         #endregion // Success Callbacks
         
