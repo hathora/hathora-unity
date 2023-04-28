@@ -2,7 +2,6 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using FishNet.Object;
 using Hathora.Cloud.Sdk.Api;
@@ -10,20 +9,27 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Net.Server.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Net.Server
 {
     public class NetHathoraServer : NetworkBehaviour
     {
+        [Header("Config")]
         [SerializeField] 
         private HathoraServerConfig hathoraServerConfig;
 
-        private Configuration hathoraSdkConfig;
-        private NetSession playerSession;
-        
-        private RoomV1Api roomApi;
-        private LobbyV2Api lobbyApi;
-        private AuthV1Api authApi;
+        [FormerlySerializedAs("ServerApiCs")]
+        [FormerlySerializedAs("ServerApiContainer")]
+        [Header("Hathora SDK API Wrappers")]
+        [SerializeField]
+        public ServerApiContainer ServerApis;
+
+        private Configuration hathoraSdkConfig { get; set; }
+        private NetSession playerSession { get; set; }
+
+        private LobbyV2Api lobbyApi { get; set; }
+        private AuthV1Api authApi { get; set; }
         
         
         #region Event Delegates
@@ -33,17 +39,16 @@ namespace Hathora.Net.Server
         public event EventHandler<bool> AuthComplete;
         
         /// <summary>
-        /// roomName
-        /// </summary>
-        public event EventHandler<string> CreateRoomComplete;
-        
-        /// <summary>
         /// TODO: Lobby
         /// </summary>
         public event EventHandler<Lobby> CreateLobbyComplete;
         #endregion // Event Delegates
         
         
+        /// <summary>
+        /// If a Player inits as a Server from NetHathoraPlayer, we'll get the session instance.
+        /// </summary>
+        /// <param name="_playerSession"></param>
         public void InitFromPlayer(NetSession _playerSession) =>
             this.playerSession = _playerSession;
 
@@ -77,9 +82,12 @@ namespace Hathora.Net.Server
                 AccessToken = hathoraServerConfig.DevAuthToken,
                 // AppId // TODO?
             };
-            
+      
+            // Init server APIs
             authApi = new AuthV1Api(hathoraSdkConfig);
-            roomApi = new RoomV1Api(hathoraSdkConfig);
+
+            ServerApis.RoomApi.Init(hathoraSdkConfig, hathoraServerConfig, playerSession);
+            
             lobbyApi = new LobbyV2Api(hathoraSdkConfig);
         }
 
@@ -110,39 +118,6 @@ namespace Hathora.Net.Server
                 onServerAuthSuccess(anonLoginResult.Token);
             else
                 onServerAuthFail();
-        }
-
-        /// <summary>
-        /// SERVER ONLY.
-        /// When done, calls onCreateRoomObserverRpc.
-        /// </summary>
-        public async Task ServerCreateRoomAsync()
-        {
-            if (!base.IsServer)
-                return;
-
-            CreateRoomRequest request = new CreateRoomRequest(hathoraServerConfig.Region);
-
-            string roomName;
-            try
-            {
-                roomName = await roomApi.CreateRoomAsync(
-                    hathoraServerConfig.AppId, 
-                    request, 
-                    CancellationToken.None);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[NetHathoraPlayer]**ERR @ ServerCreateRoomAsync (CreateRoomAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
-                return;
-            }
-
-            Debug.Log($"[NetHathoraPlayer] SERVER ServerCreateRoomAsync => returned: {roomName}");
-            
-            bool createdRoom = !string.IsNullOrEmpty(roomName);
-            if (createdRoom)
-                onServerCreateRoomSuccess(roomName);
         }
 
         public async Task ServerCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
@@ -177,7 +152,7 @@ namespace Hathora.Net.Server
         #endregion // Server Async Hathora SDK Calls
         
         
-        #region Client Success Callbacks (From Server)
+        #region Success Callbacks
         void onServerAuthSuccess(string playerAuthToken)
         {
             playerSession.InitNetSession(playerAuthToken, hathoraServerConfig.DevAuthToken);
@@ -185,13 +160,7 @@ namespace Hathora.Net.Server
             const bool isSucccess = true;
             AuthComplete?.Invoke(this, isSucccess);
         }
-        
-        void onServerCreateRoomSuccess(string roomName)
-        {
-            playerSession.RoomName = roomName;
-            CreateRoomComplete?.Invoke(this, roomName);
-        }
-        
+
         private void onServerCreateLobbySuccess(Lobby lobby)
         {
             throw new NotImplementedException();
@@ -207,7 +176,7 @@ namespace Hathora.Net.Server
             const bool isSucccess = false;
             AuthComplete?.Invoke(this,isSucccess);
         }
-        #endregion // Client Success Callbacks (From Server)
+        #endregion // Success Callbacks
     }
 }
 #endif // UNITY_SERVER

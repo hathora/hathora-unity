@@ -17,7 +17,7 @@ namespace Hathora.Net.Client
         [SerializeField, Tooltip("Client will have limited access to this")]
         private NetHathoraServer hathoraServer;
         
-        [SerializeField, SyncVar]
+        [SerializeField, SyncVar, Tooltip("In production, you'd probably make a UI selector")]
         private CreateLobbyRequest.VisibilityEnum lobbyVisibility = 
             CreateLobbyRequest.VisibilityEnum.Public;
 
@@ -59,7 +59,7 @@ namespace Hathora.Net.Client
 
             // Sub to server events
             hathoraServer.AuthComplete += OnAuthComplete;
-            hathoraServer.CreateRoomComplete += OnCreateRoomComplete;
+            hathoraServer.ServerApis.RoomApi.CreateRoomComplete += OnCreateRoomComplete;
             hathoraServer.CreateLobbyComplete += OnCreateLobbyComplete;
         }
 
@@ -119,7 +119,7 @@ namespace Hathora.Net.Client
         private void createRoomServerRpc()
         {
 #if UNITY_SERVER || DEBUG
-            hathoraServer.ServerCreateRoomAsync();   
+            hathoraServer.ServerApis.RoomApi.ServerCreateRoomAsync();   
 #endif
         }
         

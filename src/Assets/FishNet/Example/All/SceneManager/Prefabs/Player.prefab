@@ -1139,6 +1139,7 @@ GameObject:
   - component: {fileID: 6220227561429341025}
   - component: {fileID: 1253781200578746195}
   - component: {fileID: 4152883124476731263}
+  - component: {fileID: 2421061451434774542}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1386,6 +1387,23 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 611616139817875448}
   hathoraServerConfig: {fileID: 11400000, guid: ce186441a02d43142a39f6170f53511e,
     type: 2}
+  ServerApis:
+    RoomApi: {fileID: 2421061451434774542}
+--- !u!114 &2421061451434774542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5090726670223187118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76e89becdb0e9fa46b4e73643aaa6f4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 611616139817875448}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &5745961210311865676
 GameObject:
   m_ObjectHideFlags: 0
