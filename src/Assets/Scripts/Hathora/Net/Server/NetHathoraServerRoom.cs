@@ -70,6 +70,42 @@ namespace Hathora.Net.Server
             else
                 onCreateRoomFail();
         }
+        
+        // /// <summary>
+        // /// SERVER ONLY.
+        // /// When done, calls onCreateRoomObserverRpc.
+        // /// </summary>
+        // public async Task ServerJoinRoomAsync(string roomName)
+        // {
+        //     if (!base.IsServer)
+        //         return;
+        //
+        //     RoomRequ request = new CreateRoomRequest(hathoraServerConfig.Region);
+        //
+        //     string roomName;
+        //     try
+        //     {
+        //         roomName = await roomApi.CreateRoomAsync(
+        //             hathoraServerConfig.AppId, 
+        //             request, 
+        //             CancellationToken.None);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Debug.LogError($"[NetHathoraServerRoom]**ERR @ ServerCreateRoomAsync (CreateRoomAsync): {e.Message}");
+        //         await Task.FromException<Exception>(e);
+        //         onCreateRoomFail();
+        //         return;
+        //     }
+        //
+        //     Debug.Log($"[NetHathoraServerRoom] ServerCreateRoomAsync => roomName: {roomName}");
+        //     
+        //     bool createdRoom = !string.IsNullOrEmpty(roomName);
+        //     if (createdRoom)
+        //         onServerCreateRoomSuccess(roomName);
+        //     else
+        //         onCreateRoomFail();
+        // }
         #endregion // Server Room Async Hathora SDK Calls
         
         

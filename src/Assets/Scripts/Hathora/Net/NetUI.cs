@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using Hathora.Net.Client;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

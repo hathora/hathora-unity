@@ -82,15 +82,34 @@ namespace Hathora.Net.Client
 
         public void OnCreateRoomBtnClick()
         {
-            // TODO: Create room status txt
+            netPlayerUI.SetShowRoomTxt("<color=yellow>Creating Room...</color>");
             createRoomServerRpc();
+        }
+        
+        public void OnJoinRoomBtnClick(string roomName)
+        {
+            netPlayerUI.SetShowRoomTxt("<color=yellow>Getting room info...</color>");
+            // joinRoomServerRpc(roomName); // TODO
         }
 
         public void OnCreateLobbyBtnClick()
         {
-            // TODO: Create lobby status txt
+            netPlayerUI.SetShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
             createLobbyServerRpc();
-        } 
+        }
+        
+        /// <param name="lobbyId">BUG: Currently called roomId</param>
+        public void OnJoinLobbyBtnClick(string lobbyId)
+        {
+            netPlayerUI.SetShowLobbyTxt("<color=yellow>Getting Lobby Info...</color>");
+            // joinLobbyServerRpc(); // TODO
+        }
+        
+        public void OnViewLobbiesBtnClick()
+        {
+            netPlayerUI.SetShowLobbyTxt("<color=yellow>Getting Lobby List...</color>");
+            // viewLobbiesServerRpc(); // TODO
+        }
         #endregion // UI Interactions
 
 
@@ -150,7 +169,7 @@ namespace Hathora.Net.Client
                 return;
             }
             
-            netPlayerUI.OnCreatedRoom(roomName);
+            netPlayerUI.OnJoinedOrCreatedRoom(roomName);
         }
         
         private void OnCreateLobbyComplete(object sender, Lobby lobby)
