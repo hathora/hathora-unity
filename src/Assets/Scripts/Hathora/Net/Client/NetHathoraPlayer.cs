@@ -164,11 +164,5 @@ namespace Hathora.Net.Client
             // netPlayerUI.OnCreateLobby(lobby); // TODO
         }
         #endregion // Event Callbacks
-        
-        
-     
-
-        
-  
     }
 }
