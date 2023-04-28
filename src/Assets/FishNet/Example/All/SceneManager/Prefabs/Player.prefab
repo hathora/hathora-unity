@@ -1367,7 +1367,7 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
-  PlayerAuthToken: 
+  AuthToken: 
   RoomName: 
 --- !u!114 &4152883124476731263
 MonoBehaviour:
@@ -1384,7 +1384,7 @@ MonoBehaviour:
   _componentIndexCache: 5
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
-  hathoraServerConfig: {fileID: 11400000, guid: 9896287ceb7135b4bb86eabf998c255a,
+  hathoraServerConfig: {fileID: 11400000, guid: ce186441a02d43142a39f6170f53511e,
     type: 2}
 --- !u!1 &5745961210311865676
 GameObject:

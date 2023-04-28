@@ -12,12 +12,18 @@ namespace Hathora.Net.Server
     public class HathoraServerConfig : ScriptableObject
     {
         #region Serialized Fields
-        [Header("Hathora Config - to generate a key, see: {TODO_DOC_LINK}")]
+        
+        [Header("Hathora Server Config")]
         [SerializeField, Tooltip("Required")]
         private string appId;
         
 #if UNITY_SERVER || DEBUG
-        [SerializeField, Tooltip("Required (for Server calls). Not to be confused with the AuthV1 'Player' token.")]
+        /// <summary>
+        /// Doc | https://hathora.dev/docs/guides/generate-admin-token 
+        /// </summary>
+        [SerializeField, Tooltip("Required (for Server calls). " +
+             "Not to be confused with the AuthV1 'Player' token. " +
+             "See HathoraServerConfig.cs for doc links.")]
         private string devAuthToken;
 #endif
 

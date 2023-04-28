@@ -2,7 +2,6 @@
 
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Net.Server;
 using UnityEngine;
@@ -39,7 +38,7 @@ namespace Hathora.Net.Client
         public override void OnStartServer()
         {
             base.OnStartServer();
-            
+
 #if UNITY_SERVER || DEBUG
             hathoraServer.InitFromPlayer(playerSession);
 #endif

@@ -17,7 +17,7 @@ namespace Hathora.Net.Server
         [SerializeField] 
         private HathoraServerConfig hathoraServerConfig;
 
-        private Configuration hathoraConfig;
+        private Configuration hathoraSdkConfig;
         private NetSession playerSession;
         
         private RoomV1Api roomApi;
@@ -53,16 +53,33 @@ namespace Hathora.Net.Server
         public override void OnStartServer()
         {
             base.OnStartServer();
+            
+#if UNITY_EDITOR
+            // Ensure a Config file is serialized; load default if not.
+            // Since it's common to copy the config containing secret keys,
+            // collaborating may deserialize the ignored file.
+            if (hathoraServerConfig == null)
+            {
+                Debug.LogError("[NetHathoraServer]**ERR @ OnStartServer: " +
+                    "MISSING `hathoraServerConfig` - Open `Player` and serialize a `HathoraServerConfig` " +
+                    "to the Player's `NetHathoraServer` component. (!) This file contains secrets you " +
+                    "may not want to push to version control: We recommend copying it per dev/env. " +
+                    "By default, each custom copy with a similar naming schema is .gitignored, " +
+                    "by default (eg: `HathoraServerConfig-Dev`).");
+                return;
+            }
+#endif
 
-            hathoraConfig = new Configuration
+            hathoraSdkConfig = new Configuration
             {
                 // NOT to be confused with a PLAYER token from AuthV1
                 AccessToken = hathoraServerConfig.DevAuthToken,
+                // AppId // TODO?
             };
             
-            authApi = new AuthV1Api(hathoraConfig);
-            roomApi = new RoomV1Api(hathoraConfig);
-            lobbyApi = new LobbyV2Api(hathoraConfig);
+            authApi = new AuthV1Api(hathoraSdkConfig);
+            roomApi = new RoomV1Api(hathoraSdkConfig);
+            lobbyApi = new LobbyV2Api(hathoraSdkConfig);
         }
 
 
@@ -159,9 +176,9 @@ namespace Hathora.Net.Server
         
         
         #region Client Success Callbacks (From Server)
-        void onServerAuthSuccess(string authToken)
+        void onServerAuthSuccess(string playerAuthToken)
         {
-            playerSession.InitNetSession(authToken, hathoraServerConfig.DevAuthToken);
+            playerSession.InitNetSession(playerAuthToken, hathoraServerConfig.DevAuthToken);
             
             const bool isSucccess = true;
             AuthComplete?.Invoke(this, isSucccess);
