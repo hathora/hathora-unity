@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Net.Server.Models;
 using UnityEngine;
 
@@ -28,63 +29,57 @@ namespace Hathora.Net.Server
 
         #region Event Delegates
         /// <summary>=> isSuccess</summary>
-        public event EventHandler<bool> CreateAuthComplete;
+        public event EventHandler<bool> AuthComplete;
         #endregion // Event Delegates
 
         
         #region Server Auth Async Hathora SDK Calls
-        public async Task ServerCreateAuthAsync(CreateAuthRequest.VisibilityEnum authVisibility)
+        public async Task ServerAuthAsync()
         {
             if (!base.IsServer)
                 return;
 
-            AuthInitConfig authInitConfig = new();
-            CreateAuthRequest request = new CreateAuthRequest(
-                authVisibility, 
-                authInitConfig, 
-                hathoraServerConfig.Region);
-
-            Auth auth;
+            LoginAnonymous200Response anonLoginResult;
             try
             {
-                auth = await authApi.CreateAuthAsync(
-                    hathoraServerConfig.AppId,
-                    hathoraServerConfig.DevAuthToken,
-                    request);
+                anonLoginResult = await authApi.LoginAnonymousAsync(hathoraServerConfig.AppId);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraPlayer]**ERR @ ServerCreateAuthAsync (CreateAuthAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraServerAuth]**ERR @ ServerAuthAsync " +
+                    $"(LoginAnonymousAsync): {e.Message}");
+                onServerAuthFail();
                 await Task.FromException<Exception>(e);
-                onCreateAuthFail();
                 return;
             }
 
-            Debug.Log($"[NetHathoraPlayer] ServerCreateAuthAsync => roomId: {auth.RoomId}");
-
-            if (auth != null)
-                onServerCreateAuthSuccess(auth);
+            bool isAuthed = !string.IsNullOrEmpty(anonLoginResult?.Token); 
+            Debug.Log($"[NetHathoraServerAuth] isAuthed: {isAuthed}");
+            
+            if (isAuthed)
+                onServerAuthSuccess(anonLoginResult.Token);
+            else
+                onServerAuthFail();
         }
         #endregion // Server Auth Async Hathora SDK Calls
         
         
         #region Success Callbacks
-        private void onServerCreateAuthSuccess(Auth auth)
+        private void onServerAuthSuccess(string playerAuthToken)
         {
-            Debug.LogWarning("[NetHathoraServerAuth] TODO @ " +
-                "onServerCreateAuthSuccess: Cache auth @ session");
+            PlayerSession.InitNetSession(playerAuthToken, hathoraServerConfig.DevAuthToken);
             
-            // PlayerSession.Auth = auth; // TODO
-            CreateAuthComplete?.Invoke(this, auth);
+            const bool isSucccess = true;
+            AuthComplete?.Invoke(this, isSucccess);
         }
         #endregion // Success Callbacks
         
         
         #region Fail Callbacks
-        private void onCreateAuthFail()
+        private void onServerAuthFail()
         {
-            const Auth auth = null;
-            CreateAuthComplete?.Invoke(this, auth);
+            const bool isSucccess = false;
+            AuthComplete?.Invoke(this,isSucccess);
         }
         #endregion // Fail Callbacks
     }

@@ -54,7 +54,7 @@ namespace Hathora.Net.Client
             NetworkSpawnLogs();
 
             // Sub to server events
-            hathoraServer.AuthComplete += OnAuthComplete;
+            hathoraServer.ServerApis.AuthApi.AuthComplete += OnAuthComplete;
             hathoraServer.ServerApis.RoomApi.CreateRoomComplete += OnCreateRoomComplete;
             hathoraServer.ServerApis.LobbyApi.CreateLobbyComplete += OnCreateLobbyComplete;
         }
@@ -103,7 +103,7 @@ namespace Hathora.Net.Client
         private void authServerRpc()
         {
 #if UNITY_SERVER || DEBUG
-            hathoraServer.ServerAuthAsync();
+            hathoraServer.ServerApis.AuthApi.ServerAuthAsync();
 #endif
         }
 
