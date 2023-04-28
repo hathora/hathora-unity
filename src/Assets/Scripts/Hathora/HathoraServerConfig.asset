@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022a2291b89c82040a8bd048c0fdd537, type: 3}
   m_Name: HathoraServerConfig
   m_EditorClassIdentifier: 
-  appId: app-46cbe114-1f10-4d71-adb4-cd73d3a693c7
-  devAuthToken: PmFGbG6M37Qy7AAbdzmHxxkzG5w2jAcFRK9PC81DmHrEb
+  appId: 
+  devAuthToken: 
   region: 8
