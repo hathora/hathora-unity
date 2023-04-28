@@ -8,6 +8,7 @@ using FishNet.Object;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Net.Server.Models;
 using UnityEngine;
 
 namespace Hathora.Net.Server
@@ -148,10 +149,11 @@ namespace Hathora.Net.Server
         {
             if (!base.IsServer)
                 return;
-            
+
+            LobbyInitConfig lobbyInitConfig = new();
             CreateLobbyRequest request = new CreateLobbyRequest(
                 lobbyVisibility, 
-                initialConfig:null, 
+                lobbyInitConfig, 
                 hathoraServerConfig.Region);
 
             Lobby lobby;
