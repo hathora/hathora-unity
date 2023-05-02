@@ -164,23 +164,17 @@ namespace Hathora.Net.Client
         private void OnCreateRoomComplete(object sender, string roomName)
         {
             if (string.IsNullOrEmpty(roomName))
-            {
-                // TODO: Create room status txt
                 return;
-            }
             
             netPlayerUI.OnJoinedOrCreatedRoom(roomName);
         }
         
         private void OnCreateLobbyComplete(object sender, Lobby lobby)
         {
-            if (lobby == null)
-            {
-                // TODO: Create lobby status txt
+            if (string.IsNullOrEmpty(lobby?.RoomId))
                 return;
-            }
 
-            // netPlayerUI.OnCreateLobby(lobby); // TODO
+            netPlayerUI.OnJoinedOrCreatedLobby(lobby.RoomId);
         }
         #endregion // Event Callbacks
     }

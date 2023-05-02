@@ -61,10 +61,15 @@ namespace Hathora.Net.Server
                 onCreateRoomFail();
                 return;
             }
+            
+            bool createdRoom = !string.IsNullOrEmpty(roomName);
+            
+            // BUG: The room returns a quoted string, eg roomName == ""asdf-123"". Workaround:
+            if (createdRoom)
+                roomName = roomName.Replace(@"""", "");
 
             Debug.Log($"[NetHathoraServerRoom] ServerCreateRoomAsync => roomName: {roomName}");
             
-            bool createdRoom = !string.IsNullOrEmpty(roomName);
             if (createdRoom)
                 onServerCreateRoomSuccess(roomName);
             else
