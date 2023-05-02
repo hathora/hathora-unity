@@ -16,9 +16,6 @@ namespace Hathora.Net.Server.Models
         public NetHathoraServerAuth AuthApi;
         
         [SerializeField]
-        public NetHathoraServerRoom RoomApi;
-        
-        [SerializeField]
         public NetHathoraServerLobby LobbyApi;
 
         
@@ -28,7 +25,6 @@ namespace Hathora.Net.Server.Models
             NetSession _playerSession)
         {
             AuthApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
-            RoomApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
             LobbyApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
         }
     }

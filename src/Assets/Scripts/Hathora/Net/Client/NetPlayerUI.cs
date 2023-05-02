@@ -4,6 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
+using UnityEngine.Serialization;
+using Input = UnityEngine.Windows.Input;
 
 namespace Hathora.Net.Client
 {
@@ -17,22 +20,8 @@ namespace Hathora.Net.Client
         private Button authBtn;
         [SerializeField]
         private TextMeshProUGUI authTxt;
-        
-        [Header("Room")]
-        // (!) The name RoomName is deprecated for RoomId.
-        [SerializeField]
-        private Button createRoomBtn;
-        [SerializeField]
-        private Button joinRoomBtn;
-        [SerializeField]
-        private TextMeshProUGUI roomNameTxt;
-        [SerializeField]
-        private Button copyRoomNameBtn;
-        [SerializeField]
-        private TextMeshProUGUI copiedRoomNameFadeTxt;
-        
-        [Header("Lobby")]
-        // (!) The name LobbyId actually comes from Lobby.RoomId (bug?)
+
+        [Header("Lobby (Client Room)")]
         [SerializeField]
         private Button createLobbyBtn;
         [SerializeField]
@@ -40,82 +29,89 @@ namespace Hathora.Net.Client
         [SerializeField]
         private Button viewLobbiesBtn;
         [SerializeField]
-        private TextMeshProUGUI lobbyIdTxt;
+        private TextMeshProUGUI lobbyRoomIdTxt;
         [SerializeField]
-        private Button copyLobbyIdBtn;
+        private Button copyLobbyRoomIdBtn;
         [SerializeField]
-        private TextMeshProUGUI copiedLobbyIdFadeTxt;
+        private TextMeshProUGUI copiedLobbyRoomIdFadeTxt;
+        [SerializeField]
+        private TMP_InputField joinLobbyInput;
         
         private const int FADE_TXT_DISPLAY_DURATION_SECS = 3;
         private const string HATHORA_VIOLET_COLOR_HEX = "#B873FF";
+        
         
         public void SetShowAuthTxt(string authStr)
         {
             authTxt.text = authStr;
             authTxt.gameObject.SetActive(true);
         }
-        
-        public void SetShowRoomTxt(string roomName)
+
+        public void SetShowLobbyTxt(string roomId)
         {
-            roomNameTxt.text = roomName;
-            roomNameTxt.gameObject.SetActive(true);
-        }
-        
-        /// <param name="lobbyId">BUG: Currently called roomId</param>
-        public void SetShowLobbyTxt(string lobbyId)
-        {
-            lobbyIdTxt.text = lobbyId;
-            lobbyIdTxt.gameObject.SetActive(true);
+            lobbyRoomIdTxt.text = roomId;
+            lobbyRoomIdTxt.gameObject.SetActive(true);
         }
 
         public void OnLoggedIn()
         {
-            SetShowAuthTxt("Logged In");
-            createRoomBtn.gameObject.SetActive(true);
-            joinRoomBtn.gameObject.SetActive(true);
+            SetShowAuthTxt("<b>Client Logged In</b> (Anonymously)");
+            showInitLobbyUi(true);
         }
 
-        public void OnJoinedOrCreatedRoom(string roomName)
+        private void showInitLobbyUi(bool show)
         {
-            SetShowRoomTxt($"<color={HATHORA_VIOLET_COLOR_HEX}>RoomId</color>:\n{roomName}");
-            copyRoomNameBtn.gameObject.SetActive(true);
+            createLobbyBtn.gameObject.SetActive(show);
+            joinLobbyBtn.gameObject.SetActive(show);
+            lobbyRoomIdTxt.gameObject.SetActive(show); // When showing, it's behind the btns ^
             
-            createLobbyBtn.gameObject.SetActive(true);
-            joinLobbyBtn.gameObject.SetActive(true);
+            // On or off: If this is resetting, we'll hide it. 
+            // This also hides the cancel btn
+            joinLobbyInput.gameObject.SetActive(false);
+            copyLobbyRoomIdBtn.gameObject.SetActive(!show);
         }
         
-        /// <param name="lobbyId">BUG: Currently called roomId</param>
-        public void OnJoinedOrCreatedLobby(string lobbyId)
+        /// <summary>
+        /// Returns the RoomId input string.
+        /// </summary>
+        /// <returns></returns>
+        public string OnJoinLobbyBtnClickGetRoomId()
         {
-            SetShowLobbyTxt($"<color={HATHORA_VIOLET_COLOR_HEX}>LobbyId</color>:\n{lobbyId}");
-            copyLobbyIdBtn.gameObject.SetActive(true);
+            // Hide all of lobby EXCEPT the room id text
+            SetShowLobbyTxt("<color=yellow>Getting Lobby Info...</color>");
+            string lobbyInputStr = GetJoinLobbyInputStr();
+            joinLobbyInput.text = "";
+
+            showInitLobbyUi(false);
+
+            return lobbyInputStr;
+        }
+
+        public void OnJoinedOrCreatedLobby(string roomId)
+        {
+            // Hide all init lobby UI except the txt + view lobbies
+            showInitLobbyUi(false);
+            SetShowLobbyTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>RoomId</color></b>:\n{roomId}");
             
+            // We can now show the lobbies and roomId copy btn
+            copyLobbyRoomIdBtn.gameObject.SetActive(true);
             viewLobbiesBtn.gameObject.SetActive(true);
         }
 
-        public void OnCopyRoomNameBtnClick()
+        public void OnCopyLobbyRoomIdBtnClick()
         {
-            string roomNameFriendlyStr = roomNameTxt.text;
+            string lobbyRoomIdFriendlyStr = lobbyRoomIdTxt.text;
             
-            // We need just the {RoomName} from "<color=yellow>RoomId:</color>\n{RoomName}"
-            string roomName = roomNameFriendlyStr.Split('\n')[1].Trim();
-            GUIUtility.systemCopyBuffer = roomName;
+            // We need just the {RoomId} from "<color=yellow>RoomId:</color>\n{RoomId}"
+            string roomId = lobbyRoomIdFriendlyStr.Split('\n')[1].Trim();
+            GUIUtility.systemCopyBuffer = roomId;
             
             // Show + Fade
-            ShowAndFadeCopiedTextAsync(copiedRoomNameFadeTxt);
+            ShowAndFadeCopiedTextAsync(copiedLobbyRoomIdFadeTxt);
         }
-        
-        public void OnCopyLobbyIdBtnClick()
-        {
-            string lobbyIdFriendlyStr = lobbyIdTxt.text;
-            
-            // We need just the {RoomName} from "<color=yellow>LobbyId:</color>\n{LobbyId}"
-            string lobbyId = lobbyIdFriendlyStr.Split('\n')[1].Trim();
-            GUIUtility.systemCopyBuffer = lobbyId;
-            
-            // Show + Fade
-            ShowAndFadeCopiedTextAsync(copiedLobbyIdFadeTxt);
-        }
+
+        public string GetJoinLobbyInputStr() =>
+            joinLobbyInput.text;
         
         private async Task ShowAndFadeCopiedTextAsync(TextMeshProUGUI fadeTxt)
         {

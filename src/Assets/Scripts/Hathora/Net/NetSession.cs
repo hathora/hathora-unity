@@ -5,6 +5,7 @@ using FishNet.Object.Synchronizing;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Net.Server.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Net
 {
@@ -17,8 +18,12 @@ namespace Hathora.Net
         [HideInInspector, SyncVar]
         public string AuthToken;
 
+        /// <summary>
+        /// Creating a lobby is actually just the client-side way of creating a Room.
+        /// This is why a Lobby has a RoomId. 
+        /// </summary>
         [HideInInspector, SyncVar]
-        public string RoomName;
+        public string RoomId;
 
         // [HideInInspector]
         // public SyncLobby Lobby; // TODO
@@ -33,7 +38,7 @@ namespace Hathora.Net
         public bool IsAuthed => !string.IsNullOrEmpty(AuthToken);
 
         /// <summary>
-        /// Server sets - AuthToken and RoomName are SyncVar'd.
+        /// Server sets - AuthToken and RoomId are SyncVar'd.
         /// Resets the session to new auth tokens; clears other cache, such as rooms.
         /// </summary>
         /// <param name="playerAuthToken">
@@ -50,7 +55,7 @@ namespace Hathora.Net
             }
 
             this.AuthToken = playerAuthToken;
-            this.RoomName = null;
+            this.RoomId = null;
             
             #if UNITY_SERVER || DEBUG
             this.DevAuthToken = devAuthToken;

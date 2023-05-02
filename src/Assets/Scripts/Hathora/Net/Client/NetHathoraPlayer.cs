@@ -55,7 +55,6 @@ namespace Hathora.Net.Client
 
             // Sub to server events
             hathoraServer.ServerApis.AuthApi.AuthComplete += OnAuthComplete;
-            hathoraServer.ServerApis.RoomApi.CreateRoomComplete += OnCreateRoomComplete;
             hathoraServer.ServerApis.LobbyApi.CreateLobbyComplete += OnCreateLobbyComplete;
         }
 
@@ -80,28 +79,18 @@ namespace Hathora.Net.Client
             authServerRpc();
         }
 
-        public void OnCreateRoomBtnClick()
-        {
-            netPlayerUI.SetShowRoomTxt("<color=yellow>Creating Room...</color>");
-            createRoomServerRpc();
-        }
-        
-        public void OnJoinRoomBtnClick(string roomName)
-        {
-            netPlayerUI.SetShowRoomTxt("<color=yellow>Getting room info...</color>");
-            // joinRoomServerRpc(roomName); // TODO
-        }
-
         public void OnCreateLobbyBtnClick()
         {
             netPlayerUI.SetShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
             createLobbyServerRpc();
         }
         
-        /// <param name="lobbyId">BUG: Currently called roomId</param>
-        public void OnJoinLobbyBtnClick(string lobbyId)
+        /// <summary>
+        /// The player pressed ENTER || unfocused the roomId input.
+        /// </summary>
+        public void OnJoinLobbyInputEnd()
         {
-            netPlayerUI.SetShowLobbyTxt("<color=yellow>Getting Lobby Info...</color>");
+            string roomIdInputStr = netPlayerUI.OnJoinLobbyBtnClickGetRoomId();
             // joinLobbyServerRpc(); // TODO
         }
         
@@ -125,26 +114,11 @@ namespace Hathora.Net.Client
             hathoraServer.ServerApis.AuthApi.ServerAuthAsync();
 #endif
         }
-
-        /// <summary>
-        /// Server creates a room
-        /// </summary>
-        /// <returns>room name str</returns>
-        [ServerRpc]
-        private void createRoomServerRpc()
-        {
-#if UNITY_SERVER || DEBUG
-            hathoraServer.ServerApis.RoomApi.ServerCreateRoomAsync();   
-#endif
-        }
-        
         [ServerRpc]
         private void createLobbyServerRpc(CreateLobbyRequest.VisibilityEnum lobbyVisibility = 
             CreateLobbyRequest.VisibilityEnum.Public)
         {
-#if UNITY_SERVER || DEBUG
             hathoraServer.ServerApis.LobbyApi.ServerCreateLobbyAsync(lobbyVisibility);
-#endif
         }
         #endregion // Server RPCs (from Observer to Server)
         
@@ -159,14 +133,6 @@ namespace Hathora.Net.Client
             }
             
             netPlayerUI.OnLoggedIn();
-        }
-        
-        private void OnCreateRoomComplete(object sender, string roomName)
-        {
-            if (string.IsNullOrEmpty(roomName))
-                return;
-            
-            netPlayerUI.OnJoinedOrCreatedRoom(roomName);
         }
         
         private void OnCreateLobbyComplete(object sender, Lobby lobby)
