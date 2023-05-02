@@ -66,8 +66,8 @@ namespace Hathora.Net.Client
             
             return lobby;
         }
-        
-        public async Task<Lobby> ClientJoinLobbyAsync(string roomId)
+         
+        public async Task<Lobby> ClientGetJoinInfoAsync(string roomId)
         {
             if (!base.IsClient)
                 return null; // fail
@@ -81,12 +81,37 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientJoinLobbyAsync (GetLobbyInfoAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientGetJoinInfoAsync (GetLobbyInfoAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobby] ClientJoinLobbyAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientLobby] ClientGetJoinInfoAsync => roomId: {lobby.RoomId}");
+            PlayerSession.Lobby = lobby;
+            
+            return lobby;
+        }
+        
+        public async Task<Lobby> ClientGetConnectionInfo(string roomId)
+        {
+            if (!base.IsClient)
+                return null; // fail
+
+            Lobby lobby;
+            try
+            {
+                lobby = await lobbyApi.GetLobbyInfoAsync(
+                    hathoraServerConfig.AppId,
+                    roomId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientGetJoinInfoAsync (GetLobbyInfoAsync): {e.Message}");
+                await Task.FromException<Exception>(e);
+                return null; // fail
+            }
+
+            Debug.Log($"[NetHathoraClientLobby] ClientGetJoinInfoAsync => roomId: {lobby.RoomId}");
             PlayerSession.Lobby = lobby;
             
             return lobby;

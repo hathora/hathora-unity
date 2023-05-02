@@ -95,7 +95,7 @@ namespace Hathora.Net.Client
                 return;
             }
             
-            OnCreateOrJoinLobbyComplete(lobby?.RoomId);
+            OnCreateOrJoinLobbyComplete(lobby);
         }
         
         /// <summary>
@@ -109,7 +109,7 @@ namespace Hathora.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await hathoraClient.ClientApis.LobbyApi.ClientJoinLobbyAsync(roomIdInputStr);
+                lobby = await hathoraClient.ClientApis.LobbyApi.ClientGetJoinInfoAsync(roomIdInputStr);
             }
             catch (Exception e)
             {
@@ -117,7 +117,7 @@ namespace Hathora.Net.Client
                 return;
             }
 
-            OnCreateOrJoinLobbyComplete(lobby.RoomId);
+            OnCreateOrJoinLobbyComplete(lobby);
         }
         
         public async void OnViewLobbiesBtnClick()
@@ -141,15 +141,18 @@ namespace Hathora.Net.Client
             netPlayerUI.OnLoggedIn();
         }
         
-        private void OnCreateOrJoinLobbyComplete(string roomId)
+        private void OnCreateOrJoinLobbyComplete(Lobby lobby)
         {
-            if (string.IsNullOrEmpty(roomId))
+            if (string.IsNullOrEmpty(lobby?.RoomId))
             {
                 netPlayerUI.OnJoinedOrCreatedLobbyFail();
                 return;
             }
 
-            netPlayerUI.OnJoinedOrCreatedLobby(roomId);
+            netPlayerUI.OnJoinedOrCreatedLobby(lobby.RoomId);
+            
+            // Once we get the lobby, we want to join it.
+            // TODO
         }
         #endregion
     }
