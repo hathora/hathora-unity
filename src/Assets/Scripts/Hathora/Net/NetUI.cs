@@ -16,7 +16,6 @@ namespace Hathora.Net
         private TextMeshProUGUI debugMemoTxt;
         
         public static NetUI Singleton;
-        private NetPlayerUI netPlayerUI;
 
         private void Awake()
         {
@@ -32,9 +31,6 @@ namespace Hathora.Net
             Singleton = this;
         }
 
-        public void SetLocalNetPlayerUI(NetPlayerUI _netPlayerUI) =>
-            this.netPlayerUI = _netPlayerUI;
-        
         public void SetShowDebugMemoTxt(string memoStr)
         {
             debugMemoTxt.text = memoStr;

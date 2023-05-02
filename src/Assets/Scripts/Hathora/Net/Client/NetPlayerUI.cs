@@ -4,9 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEngine.Serialization;
-using Input = UnityEngine.Windows.Input;
 
 namespace Hathora.Net.Client
 {

@@ -1,6 +1,6 @@
 // Created by dylan@hathora.dev
 
-namespace Hathora.Net.Server.Models
+namespace Hathora.Net.Client.Models
 {
     public class LobbyInitConfig
     {

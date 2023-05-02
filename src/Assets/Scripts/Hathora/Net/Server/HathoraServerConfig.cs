@@ -14,7 +14,7 @@ namespace Hathora.Net.Server
         #region Serialized Fields
         
         [Header("Hathora Server Config")]
-        [SerializeField, Tooltip("Required")]
+        [SerializeField, Tooltip("Required, !Client-sensitive")]
         private string appId;
         
 #if UNITY_SERVER || DEBUG
@@ -31,7 +31,7 @@ namespace Hathora.Net.Server
         private Region region = Region.Seattle;
         #endregion // Serialized Fields
 
-        
+        /// <summary>!Client-sensitive</summary>
         public string AppId => appId;
         
 #if UNITY_SERVER || DEBUG

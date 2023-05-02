@@ -1,8 +1,10 @@
 // Created by dylan@hathora.dev
 
+using System;
+using System.Threading.Tasks;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Net.Client.Models;
 using Hathora.Net.Server;
 using UnityEngine;
 
@@ -14,32 +16,18 @@ namespace Hathora.Net.Client
     public class NetHathoraPlayer : NetworkBehaviour
     {
         #region Serialized Fields
-        [SerializeField, Tooltip("Client will have limited access to this")]
-        private NetHathoraServer hathoraServer;
+        [SerializeField, Tooltip("Auth, CreateLobby")]
+        protected NetHathoraClient hathoraClient;
 
         [SerializeField]
-        private NetSession playerSession;
+        protected NetSession playerSession;
         
         [SerializeField]
-        private NetPlayerUI netPlayerUI;
+        protected NetPlayerUI netPlayerUI;
         #endregion // Serialized Fields
+    
 
-        
-        #region Other Vars
-        private static NetUI netUi => NetUI.Singleton;
-        #endregion // Other Vars
-
-        
         #region Init
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-
-#if UNITY_SERVER || DEBUG
-            hathoraServer.InitFromPlayer(playerSession);
-#endif
-        }
-
         /// <summary>
         /// Better to use this instead of Start, in most situations.
         /// </summary>
@@ -50,12 +38,10 @@ namespace Hathora.Net.Client
             if (!base.IsOwner)
                 return;
             
-            netUi.SetLocalNetPlayerUI(netPlayerUI);
             NetworkSpawnLogs();
 
-            // Sub to server events
-            hathoraServer.ServerApis.AuthApi.AuthComplete += OnAuthComplete;
-            hathoraServer.ServerApis.LobbyApi.CreateLobbyComplete += OnCreateLobbyComplete;
+            // Sub to events from client
+            hathoraClient.Init(playerSession, netPlayerUI);
         }
 
         private void NetworkSpawnLogs()
@@ -73,58 +59,44 @@ namespace Hathora.Net.Client
 
         
         #region UI Interactions
-        public void OnAuthBtnClick()
+        public async void OnAuthBtnClick()
         {
             netPlayerUI.SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            authServerRpc();
+            AuthResult result = await hathoraClient.ClientApis.AuthApi.ClientAuthAsync();
+            OnAuthComplete(result.IsSuccess);
         }
 
-        public void OnCreateLobbyBtnClick()
+        public async void OnCreateLobbyBtnClick()
         {
             netPlayerUI.SetShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
-            createLobbyServerRpc();
+            
+            // TODO: Consider `Local` visibility.
+            const CreateLobbyRequest.VisibilityEnum visibility = CreateLobbyRequest.VisibilityEnum.Public;
+            Lobby lobby = await hathoraClient.ClientApis.LobbyApi.ClientCreateLobbyAsync(visibility);
+            
+            OnCreateLobbyComplete(lobby.RoomId);
         }
         
         /// <summary>
         /// The player pressed ENTER || unfocused the roomId input.
         /// </summary>
-        public void OnJoinLobbyInputEnd()
+        public async void OnJoinLobbyInputEnd()
         {
             string roomIdInputStr = netPlayerUI.OnJoinLobbyBtnClickGetRoomId();
-            // joinLobbyServerRpc(); // TODO
+            throw new NotImplementedException("TODO");
+            // await hathoraClient.ClientApis.LobbyApi.ClientJoinLobbyAsync(roomIdInputStr);
         }
         
-        public void OnViewLobbiesBtnClick()
+        public async void OnViewLobbiesBtnClick()
         {
             netPlayerUI.SetShowLobbyTxt("<color=yellow>Getting Lobby List...</color>");
-            // viewLobbiesServerRpc(); // TODO
+            throw new NotImplementedException("TODO");
+            // await hathoraClient.ClientApis.LobbyApi.ClientViewLobbiesAsync(roomIdInputStr);
         }
         #endregion // UI Interactions
-
-
-        #region Server RPCs (from Observer to Server)
-        /// <summary>
-        /// Auths with Hathora login server
-        /// </summary>
-        /// <returns>room name str</returns>
-        [ServerRpc]
-        private void authServerRpc()
-        {
-#if UNITY_SERVER || DEBUG
-            hathoraServer.ServerApis.AuthApi.ServerAuthAsync();
-#endif
-        }
-        [ServerRpc]
-        private void createLobbyServerRpc(CreateLobbyRequest.VisibilityEnum lobbyVisibility = 
-            CreateLobbyRequest.VisibilityEnum.Public)
-        {
-            hathoraServer.ServerApis.LobbyApi.ServerCreateLobbyAsync(lobbyVisibility);
-        }
-        #endregion // Server RPCs (from Observer to Server)
         
-
-        #region Event Callbacks
-        private void OnAuthComplete(object sender, bool isSuccess)
+        #region Callbacks
+        private void OnAuthComplete(bool isSuccess)
         {
             if (!isSuccess)
             {
@@ -135,13 +107,16 @@ namespace Hathora.Net.Client
             netPlayerUI.OnLoggedIn();
         }
         
-        private void OnCreateLobbyComplete(object sender, Lobby lobby)
+        private void OnCreateLobbyComplete(string roomId)
         {
-            if (string.IsNullOrEmpty(lobby?.RoomId))
+            if (string.IsNullOrEmpty(roomId))
+            {
+                netPlayerUI.SetShowLobbyTxt("<color=red>Create Lobby Failed</color>");
                 return;
+            }
 
-            netPlayerUI.OnJoinedOrCreatedLobby(lobby.RoomId);
+            netPlayerUI.OnJoinedOrCreatedLobby(roomId);
         }
-        #endregion // Event Callbacks
+        #endregion
     }
 }

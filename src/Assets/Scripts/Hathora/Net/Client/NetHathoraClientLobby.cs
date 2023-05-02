@@ -5,15 +5,17 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Net.Server.Models;
+using Hathora.Net.Client.Models;
+using Hathora.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Net.Server
+namespace Hathora.Net.Client
 {
     /// <summary>
-    /// Call base.Init() to pass dev tokens, etc.
+    /// * Call Init() to pass config/instances.
+    /// * Does not handle UI - Sub to the callback events.
     /// </summary>
-    public class NetHathoraServerLobby : HathoraNetServerApiBase
+    public class NetHathoraClientLobby : NetHathoraApiBase
     {
         private LobbyV2Api lobbyApi;
 
@@ -33,11 +35,16 @@ namespace Hathora.Net.Server
         #endregion // Event Delegates
 
         
-        #region Server Lobby Async Hathora SDK Calls
-        public async Task ServerCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
+        #region Client Lobby Async Hathora SDK Calls
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lobbyVisibility"></param>
+        /// <returns>Lobby on success</returns>
+        public async Task<Lobby> ClientCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
         {
             if (!base.IsServer)
-                return;
+                return null; // fail
 
             LobbyInitConfig lobbyInitConfig = new();
             CreateLobbyRequest request = new CreateLobbyRequest(
@@ -50,43 +57,24 @@ namespace Hathora.Net.Server
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
                     hathoraServerConfig.AppId,
-                    PlayerSession.AuthToken, // Player token; not dev
+                    PlayerSession.PlayerAuthToken, // Player token; not dev
                     request);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraServerLobby]**ERR @ ServerCreateLobbyAsync (CreateLobbyAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientCreateLobbyAsync (CreateLobbyAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
-                onCreateLobbyFail();
-                return;
+                return null; // fail
             }
 
-            Debug.Log($"[NetHathoraServerLobby] ServerCreateLobbyAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientLobby] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
 
-            if (lobby != null)
-                onServerCreateLobbySuccess(lobby);
-        }
-        #endregion // Server Lobby Async Hathora SDK Calls
-        
-        
-        #region Success Callbacks
-        private void onServerCreateLobbySuccess(Lobby lobby)
-        {
-            Debug.LogWarning("[NetHathoraServerLobby] TODO @ " +
+            Debug.LogWarning("[NetHathoraClientLobby] TODO @ " +
                 "onServerCreateLobbySuccess: Cache lobby @ session");
+            PlayerSession.Lobby = lobby;
             
-            // PlayerSession.Lobby = lobby; // TODO
-            CreateLobbyComplete?.Invoke(this, lobby);
+            return lobby;
         }
-        #endregion // Success Callbacks
-        
-        
-        #region Fail Callbacks
-        private void onCreateLobbyFail()
-        {
-            const Lobby lobby = null;
-            CreateLobbyComplete?.Invoke(this, lobby);
-        }
-        #endregion // Fail Callbacks
+        #endregion // Client Lobby Async Hathora SDK Calls
     }
 }

@@ -578,7 +578,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3456490004550434406
 Transform:
   m_ObjectHideFlags: 0
@@ -1219,10 +1219,10 @@ RectTransform:
   m_Father: {fileID: 3314018967792920885}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 325.72534, y: 159.71619}
-  m_SizeDelta: {x: 419.4323, y: 183.8114}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -213.00146, y: -93.00079}
+  m_SizeDelta: {x: 426.0031, y: 186.0016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6590772004949997960
 CanvasRenderer:
@@ -1725,7 +1725,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0.99998474, y: 0}
+  m_AnchoredPosition: {x: 1, y: 0}
   m_SizeDelta: {x: -1.9999, y: 2}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &7585497866877753136
@@ -2435,7 +2435,7 @@ GameObject:
   - component: {fileID: 360929489047336484}
   - component: {fileID: 6220227561429341025}
   - component: {fileID: 1253781200578746195}
-  - component: {fileID: 4152883124476731263}
+  - component: {fileID: 2089274628883743924}
   - component: {fileID: 4288799497563741077}
   - component: {fileID: 6875300181646914272}
   m_Layer: 0
@@ -2531,7 +2531,6 @@ MonoBehaviour:
   - {fileID: 181022890959971896}
   - {fileID: 360929489047336484}
   - {fileID: 1253781200578746195}
-  - {fileID: 4152883124476731263}
   - {fileID: 4288799497563741077}
   - {fileID: 6875300181646914272}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
@@ -2635,7 +2634,7 @@ MonoBehaviour:
   _componentIndexCache: 3
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
-  hathoraServer: {fileID: 4152883124476731263}
+  hathoraClient: {fileID: 2089274628883743924}
   playerSession: {fileID: 1253781200578746195}
   netPlayerUI: {fileID: 6220227561429341025}
 --- !u!114 &6220227561429341025
@@ -2674,9 +2673,9 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
-  AuthToken: 
+  PlayerAuthToken: 
   RoomId: 
---- !u!114 &4152883124476731263
+--- !u!114 &2089274628883743924
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2685,15 +2684,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5090726670223187118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c04a040633f06ff40a0bfb9721d0ccb1, type: 3}
+  m_Script: {fileID: 11500000, guid: a4f6013a6e61c214fadd13e0bb0cf12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
-  _addedNetworkObject: {fileID: 611616139817875448}
-  _networkObjectCache: {fileID: 611616139817875448}
   hathoraServerConfig: {fileID: 11400000, guid: ce186441a02d43142a39f6170f53511e,
     type: 2}
-  ServerApis:
+  ClientApis:
     AuthApi: {fileID: 4288799497563741077}
     LobbyApi: {fileID: 6875300181646914272}
 --- !u!114 &4288799497563741077
@@ -2708,7 +2704,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 807f854ad356dd449a860674efb2752d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 6
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
 --- !u!114 &6875300181646914272
@@ -2723,7 +2719,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a3292944994a754fa2c0b79f6f580b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 7
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
 --- !u!1 &5745961210311865676
