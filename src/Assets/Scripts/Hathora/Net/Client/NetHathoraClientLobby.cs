@@ -43,7 +43,7 @@ namespace Hathora.Net.Client
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
         {
-            if (!base.IsServer)
+            if (!base.IsClient)
                 return null; // fail
 
             LobbyInitConfig lobbyInitConfig = new();
@@ -68,9 +68,31 @@ namespace Hathora.Net.Client
             }
 
             Debug.Log($"[NetHathoraClientLobby] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
+            PlayerSession.Lobby = lobby;
+            
+            return lobby;
+        }
+        
+        public async Task<Lobby> ClientJoinLobbyAsync(string roomId)
+        {
+            if (!base.IsClient)
+                return null; // fail
 
-            Debug.LogWarning("[NetHathoraClientLobby] TODO @ " +
-                "onServerCreateLobbySuccess: Cache lobby @ session");
+            Lobby lobby;
+            try
+            {
+                lobby = await lobbyApi.GetLobbyInfoAsync(
+                    hathoraServerConfig.AppId,
+                    roomId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientJoinLobbyAsync (GetLobbyInfoAsync): {e.Message}");
+                await Task.FromException<Exception>(e);
+                return null; // fail
+            }
+
+            Debug.Log($"[NetHathoraClientLobby] ClientJoinLobbyAsync => roomId: {lobby.RoomId}");
             PlayerSession.Lobby = lobby;
             
             return lobby;

@@ -62,7 +62,18 @@ namespace Hathora.Net.Client
         public async void OnAuthBtnClick()
         {
             netPlayerUI.SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            AuthResult result = await hathoraClient.ClientApis.AuthApi.ClientAuthAsync();
+
+            AuthResult result = null;
+           try
+            {
+                result = await hathoraClient.ClientApis.AuthApi.ClientAuthAsync();
+            }
+            catch (Exception e)
+            {
+                OnAuthComplete(isSuccess:false);
+                return;
+            }
+           
             OnAuthComplete(result.IsSuccess);
         }
 
@@ -72,9 +83,19 @@ namespace Hathora.Net.Client
             
             // TODO: Consider `Local` visibility.
             const CreateLobbyRequest.VisibilityEnum visibility = CreateLobbyRequest.VisibilityEnum.Public;
-            Lobby lobby = await hathoraClient.ClientApis.LobbyApi.ClientCreateLobbyAsync(visibility);
+
+            Lobby lobby = null;
+            try
+            {
+                lobby = await hathoraClient.ClientApis.LobbyApi.ClientCreateLobbyAsync(visibility);
+            }
+            catch (Exception e)
+            {
+                OnCreateOrJoinLobbyComplete(null);
+                return;
+            }
             
-            OnCreateLobbyComplete(lobby.RoomId);
+            OnCreateOrJoinLobbyComplete(lobby?.RoomId);
         }
         
         /// <summary>
@@ -82,14 +103,27 @@ namespace Hathora.Net.Client
         /// </summary>
         public async void OnJoinLobbyInputEnd()
         {
+            netPlayerUI.SetShowLobbyTxt("<color=yellow>Joining Lobby...</color>");
             string roomIdInputStr = netPlayerUI.OnJoinLobbyBtnClickGetRoomId();
-            throw new NotImplementedException("TODO");
-            // await hathoraClient.ClientApis.LobbyApi.ClientJoinLobbyAsync(roomIdInputStr);
+
+            Lobby lobby = null;
+            try
+            {
+                lobby = await hathoraClient.ClientApis.LobbyApi.ClientJoinLobbyAsync(roomIdInputStr);
+            }
+            catch (Exception e)
+            {
+                OnCreateOrJoinLobbyComplete(null);
+                return;
+            }
+
+            OnCreateOrJoinLobbyComplete(lobby.RoomId);
         }
         
         public async void OnViewLobbiesBtnClick()
         {
             netPlayerUI.SetShowLobbyTxt("<color=yellow>Getting Lobby List...</color>");
+            
             throw new NotImplementedException("TODO");
             // await hathoraClient.ClientApis.LobbyApi.ClientViewLobbiesAsync(roomIdInputStr);
         }
@@ -107,7 +141,7 @@ namespace Hathora.Net.Client
             netPlayerUI.OnLoggedIn();
         }
         
-        private void OnCreateLobbyComplete(string roomId)
+        private void OnCreateOrJoinLobbyComplete(string roomId)
         {
             if (string.IsNullOrEmpty(roomId))
             {
