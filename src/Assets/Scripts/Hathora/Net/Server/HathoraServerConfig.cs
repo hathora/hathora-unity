@@ -21,7 +21,7 @@ namespace Hathora.Net.Server
         /// <summary>
         /// Doc | https://hathora.dev/docs/guides/generate-admin-token 
         /// </summary>
-        [SerializeField, Tooltip("Required (for Server calls). " +
+        [SerializeField, Tooltip("[Eventually] Required (for Server calls). " +
              "Not to be confused with the AuthV1 'Player' token. " +
              "See HathoraServerConfig.cs for doc links.")]
         private string devAuthToken;

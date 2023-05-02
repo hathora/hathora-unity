@@ -26,7 +26,6 @@ namespace Hathora.Net
         [HideInInspector]
         public Lobby Lobby; // TODO
 
-
         /// <summary>
         /// Server sets - PlayerAuthToken and RoomId are SyncVar'd.
         /// Resets the session to new auth tokens; clears other cache, such as rooms.

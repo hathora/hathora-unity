@@ -1,6 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FishNet.Object;
 using Hathora.Cloud.Sdk.Model;
@@ -120,12 +122,21 @@ namespace Hathora.Net.Client
             OnCreateOrJoinLobbyComplete(lobby);
         }
         
+        /// <summary>Public lobbies only.</summary>
+        /// <exception cref="NotImplementedException"></exception>
         public async void OnViewLobbiesBtnClick()
         {
-            netPlayerUI.SetShowLobbyTxt("<color=yellow>Getting Lobby List...</color>");
+            List<Lobby> lobbies = null;
+            try
+            {
+                lobbies = await hathoraClient.ClientApis.LobbyApi.ClientListPublicLobbiesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new NotImplementedException("TODO: Get lobbies err handling UI");
+            }
             
-            throw new NotImplementedException("TODO");
-            // await hathoraClient.ClientApis.LobbyApi.ClientViewLobbiesAsync(roomIdInputStr);
+            OnViewPublicLobbiesComplete(lobbies);
         }
         #endregion // UI Interactions
         
@@ -139,6 +150,20 @@ namespace Hathora.Net.Client
             }
             
             netPlayerUI.OnLoggedIn();
+        }
+
+        private void OnViewPublicLobbiesComplete(List<Lobby> lobbies)
+        {
+            int numLobbiesFound = lobbies?.Count ?? 0;
+            Debug.Log($"[NetHathoraPlayer] OnViewPublicLobbiesComplete: # Lobbies found: {numLobbiesFound}");
+
+            if (lobbies == null || numLobbiesFound == 0)
+            {
+                throw new NotImplementedException("TODO: !Lobbies handling");
+            }
+            
+            List<Lobby> sortedLobbies = lobbies.OrderBy(lobby => lobby.CreatedAt).ToList();
+            netPlayerUI.OnViewLobbies(sortedLobbies);
         }
         
         private void OnCreateOrJoinLobbyComplete(Lobby lobby)

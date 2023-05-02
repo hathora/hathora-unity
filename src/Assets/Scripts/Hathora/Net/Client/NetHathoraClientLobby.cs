@@ -1,12 +1,14 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Net.Client.Models;
 using Hathora.Net.Server;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Hathora.Net.Client
@@ -90,6 +92,33 @@ namespace Hathora.Net.Client
             PlayerSession.Lobby = lobby;
             
             return lobby;
+        }
+        
+        [ItemCanBeNull]
+        public async Task<List<Lobby>> ClientListPublicLobbiesAsync()
+        {
+            if (!base.IsClient)
+                return null; // fail
+
+            List<Lobby> lobbies;
+            try
+            {
+                lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
+                    hathoraServerConfig.AppId,
+                    hathoraServerConfig.Region);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientListPublicLobbiesAsync " +
+                    $"(ListActivePublicLobbiesAsync): {e.Message}");
+                await Task.FromException<Exception>(e);
+                return null; // fail
+            }
+
+            Debug.Log($"[NetHathoraClientLobby] ClientListPublicLobbiesAsync => " +
+                $"numLobbiesFound: {lobbies?.Count ?? 0}");
+            
+            return lobbies;
         }
         #endregion // Client Lobby Async Hathora SDK Calls
     }

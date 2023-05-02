@@ -1,10 +1,13 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Model;
+using UnityEngine.Serialization;
 
 namespace Hathora.Net.Client
 {
@@ -31,11 +34,13 @@ namespace Hathora.Net.Client
         [SerializeField]
         private Button copyLobbyRoomIdBtn;
         [SerializeField]
-        private TextMeshProUGUI copiedLobbyRoomIdFadeTxt;
+        private TextMeshProUGUI copiedRoomIdFadeTxt;
         [SerializeField]
         private TMP_InputField joinLobbyInput;
         [SerializeField]
         private TextMeshProUGUI createOrJoinLobbyErrTxt;
+        [SerializeField]
+        private TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
         
         private const float FADE_TXT_DISPLAY_DURATION_SECS = 0.5f;
         private const string HATHORA_VIOLET_COLOR_HEX = "#B873FF";
@@ -127,13 +132,33 @@ namespace Hathora.Net.Client
             GUIUtility.systemCopyBuffer = roomId; // Copy to clipboard
             
             // Show + Fade
-            ShowAndFadeCopiedTextAsync(copiedLobbyRoomIdFadeTxt);
+            ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt);
+        }
+
+        public void OnViewLobbiesBtnClick()
+        {
+            viewLobbiesSeeLogsFadeTxt.text = "<color=yellow>Getting Lobbies...</color>";
+            ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt);
         }
 
         public string GetJoinLobbyInputStr() =>
             joinLobbyInput.text;
         
-        private async Task ShowAndFadeCopiedTextAsync(TextMeshProUGUI fadeTxt)
+        public void OnViewLobbies(List<Lobby> lobbies)
+        {
+            viewLobbiesSeeLogsFadeTxt.text = "See Logs";
+            ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt);
+            
+            foreach (Lobby lobby in lobbies)
+            {
+                Debug.Log($"[NetPlayerUI] OnViewLobbies - lobby found: " +
+                    $"RoomId={lobby.RoomId}, CreatedAt={lobby.CreatedAt}, CreatedBy={lobby.CreatedBy}");
+            }
+            
+            // TODO: Create a UI view for these servers
+        }
+        
+        private async Task ShowFadeTxtThenFadeAsync(TextMeshProUGUI fadeTxt)
         {
             fadeTxt.gameObject.SetActive(true);
             await Task.Delay((int)(FADE_TXT_DISPLAY_DURATION_SECS * 1000));
