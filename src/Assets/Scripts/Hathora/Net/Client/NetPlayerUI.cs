@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,8 +34,10 @@ namespace Hathora.Net.Client
         private TextMeshProUGUI copiedLobbyRoomIdFadeTxt;
         [SerializeField]
         private TMP_InputField joinLobbyInput;
+        [SerializeField]
+        private TextMeshProUGUI createOrJoinLobbyErrTxt;
         
-        private const int FADE_TXT_DISPLAY_DURATION_SECS = 3;
+        private const float FADE_TXT_DISPLAY_DURATION_SECS = 0.5f;
         private const string HATHORA_VIOLET_COLOR_HEX = "#B873FF";
         
         
@@ -43,11 +46,17 @@ namespace Hathora.Net.Client
             authTxt.text = authStr;
             authTxt.gameObject.SetActive(true);
         }
-
+        
         public void SetShowLobbyTxt(string roomId)
         {
             lobbyRoomIdTxt.text = roomId;
             lobbyRoomIdTxt.gameObject.SetActive(true);
+        }
+
+        public void SetShowCreateOrJoinLobbyErrTxt(string errStr)
+        {
+            createOrJoinLobbyErrTxt.text = errStr;
+            createOrJoinLobbyErrTxt.gameObject.SetActive(true);
         }
 
         public void OnLoggedIn()
@@ -56,8 +65,15 @@ namespace Hathora.Net.Client
             showInitLobbyUi(true);
         }
 
+        /// <summary>
+        /// This also resets interactable
+        /// </summary>
+        /// <param name="show"></param>
         private void showInitLobbyUi(bool show)
         {
+            createLobbyBtn.interactable = show;
+            joinLobbyBtn.interactable = show;
+            
             createLobbyBtn.gameObject.SetActive(show);
             joinLobbyBtn.gameObject.SetActive(show);
             lobbyRoomIdTxt.gameObject.SetActive(show); // When showing, it's behind the btns ^
@@ -65,7 +81,8 @@ namespace Hathora.Net.Client
             // On or off: If this is resetting, we'll hide it. 
             // This also hides the cancel btn
             joinLobbyInput.gameObject.SetActive(false);
-            copyLobbyRoomIdBtn.gameObject.SetActive(!show);
+            copyLobbyRoomIdBtn.gameObject.SetActive(false);
+            createOrJoinLobbyErrTxt.gameObject.SetActive(false);
         }
         
         /// <summary>
@@ -84,6 +101,12 @@ namespace Hathora.Net.Client
             return lobbyInputStr;
         }
 
+        public void OnJoinedOrCreatedLobbyFail()
+        {
+            showInitLobbyUi(true);
+            SetShowCreateOrJoinLobbyErrTxt("<color=red>Failed to Get Lobby</color>");
+        }
+
         public void OnJoinedOrCreatedLobby(string roomId)
         {
             // Hide all init lobby UI except the txt + view lobbies
@@ -100,8 +123,8 @@ namespace Hathora.Net.Client
             string lobbyRoomIdFriendlyStr = lobbyRoomIdTxt.text;
             
             // We need just the {RoomId} from "<color=yellow>RoomId:</color>\n{RoomId}"
-            string roomId = lobbyRoomIdFriendlyStr.Split('\n')[1].Trim();
-            GUIUtility.systemCopyBuffer = roomId;
+            string roomId = lobbyRoomIdFriendlyStr?.Split('\n')[1].Trim();
+            GUIUtility.systemCopyBuffer = roomId; // Copy to clipboard
             
             // Show + Fade
             ShowAndFadeCopiedTextAsync(copiedLobbyRoomIdFadeTxt);

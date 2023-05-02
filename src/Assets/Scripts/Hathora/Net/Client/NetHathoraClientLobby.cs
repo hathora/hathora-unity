@@ -13,7 +13,7 @@ namespace Hathora.Net.Client
 {
     /// <summary>
     /// * Call Init() to pass config/instances.
-    /// * Does not handle UI - Sub to the callback events.
+    /// * Does not handle UI.
     /// </summary>
     public class NetHathoraClientLobby : NetHathoraApiBase
     {
@@ -29,15 +29,9 @@ namespace Hathora.Net.Client
         }
 
 
-        #region Event Delegates
-        /// <summary>=> Lobby // TODO: This doesn't sync 1:1 with Fishnet</summary>
-        public event EventHandler<Lobby> CreateLobbyComplete;
-        #endregion // Event Delegates
-
-        
         #region Client Lobby Async Hathora SDK Calls
         /// <summary>
-        /// 
+        /// Create a new Player Client Lobby.
         /// </summary>
         /// <param name="lobbyVisibility"></param>
         /// <returns>Lobby on success</returns>

@@ -145,7 +145,7 @@ namespace Hathora.Net.Client
         {
             if (string.IsNullOrEmpty(roomId))
             {
-                netPlayerUI.SetShowLobbyTxt("<color=red>Create Lobby Failed</color>");
+                netPlayerUI.OnJoinedOrCreatedLobbyFail();
                 return;
             }
 

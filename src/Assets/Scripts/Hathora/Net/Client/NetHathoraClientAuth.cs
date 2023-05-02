@@ -13,7 +13,7 @@ namespace Hathora.Net.Client
 {
     /// <summary>
     /// * Call Init() to pass config/instances.
-    /// * Does not handle UI - Sub to the callback events.
+    /// * Does not handle UI.
     /// </summary>
     public class NetHathoraClientAuth : NetHathoraApiBase
     {
