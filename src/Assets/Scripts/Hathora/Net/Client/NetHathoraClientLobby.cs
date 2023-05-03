@@ -26,6 +26,7 @@ namespace Hathora.Net.Client
             HathoraServerConfig _hathoraServerConfig, 
             NetSession _playerSession)
         {
+            Debug.Log("[NetHathoraClientLobby] Initializing API...");
             base.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
             this.lobbyApi = new LobbyV2Api(_hathoraSdkConfig);
         }

@@ -25,6 +25,7 @@ namespace Hathora.Net.Client
             HathoraServerConfig _hathoraServerConfig, 
             NetSession _playerSession)
         {
+            Debug.Log("[NetHathoraClientAuth] Initializing API...");
             base.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
             this.authApi = new AuthV1Api(_hathoraSdkConfig);
         }

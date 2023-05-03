@@ -93,13 +93,14 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
+                Debug.LogWarning(e.Message);
                 OnCreateOrJoinLobbyComplete(null);
                 return;
             }
             
             OnCreateOrJoinLobbyComplete(lobby);
         }
-        
+
         /// <summary>
         /// The player pressed ENTER || unfocused the roomId input.
         /// </summary>
@@ -115,6 +116,7 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
+                Debug.LogWarning(e.Message);
                 OnCreateOrJoinLobbyComplete(null);
                 return;
             }
@@ -133,6 +135,7 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
+                Debug.LogWarning(e.Message);
                 throw new NotImplementedException("TODO: Get lobbies err handling UI");
             }
             
