@@ -22,6 +22,9 @@ namespace Hathora.Net
         public Lobby Lobby { get; set; }
         public string RoomId => Lobby?.RoomId;
 
+        public ActiveConnectionInfo ServerInfo { get; set; }
+        public string GetServerInfoIpPort() => $"{ServerInfo?.Host}:{ServerInfo?.Port}";
+
         
         #region Init
         public void Awake()

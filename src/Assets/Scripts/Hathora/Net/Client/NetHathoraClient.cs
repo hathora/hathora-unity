@@ -155,15 +155,25 @@ namespace Hathora.Net.Client
             catch (Exception e)
             {
                 Debug.LogError($"[NetHathoraClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
-                NetUI.Singleton.OnCreatedOrJoinedLobbyFail();
+                NetUI.Singleton.OnGetServerInfoFail();
                 await Task.FromException<Exception>(e);
                 return; // fail
             }
             
             // Success
-            Debug.Log("Success @ OnCreateOrJoinLobbyCompleteAsync => activeConnectionInfo " +
-                $"// ConnectionInfo: {activeConnectionInfo.Host}:{activeConnectionInfo.Port} ({activeConnectionInfo.TransportType}) " +
-                $"// TODO post-events");
+            OnGetActiveConnectionInfoComplete(activeConnectionInfo);
+        }
+        
+        /// <summary>AKA OnGetServerInfoSuccess</summary>
+        private void OnGetActiveConnectionInfoComplete(ActiveConnectionInfo serverInfo)
+        {
+            if (string.IsNullOrEmpty(serverInfo?.Host))
+            {
+                NetUI.Singleton.OnGetServerInfoFail();
+                return;
+            }
+            
+            NetUI.Singleton.OnGetServerInfoSuccess(serverInfo);
         }
         #endregion // Interactions from UI
         

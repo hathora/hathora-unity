@@ -31,7 +31,7 @@ namespace Hathora.Net.Client.ApiWrapper
 
         #region Client Room Async Hathora SDK Calls
         /// <summary>
-        /// Gets connection info, like ip:port.
+        /// Gets connection info, like ip:port. Caches ActiveConnectionInfo in NetSession.
         /// (!) We'll poll until we have an active connection: Be sure to await!
         /// - If the GetStartingConnectionInfo() parses, the `status` is probably !Active, including only status.
         /// - If the GetActiveConnectionInfo() parses, the `status` is probably Active (and includes ip:port).
@@ -46,33 +46,44 @@ namespace Hathora.Net.Client.ApiWrapper
             float pollTimeoutSecs = 10f)
         {
             float pollTimerTickedSecs = 0;
-            ActiveConnectionInfo activeConnectionInfo = null;
             
             // Poll until we get the active connection info.
-            ConnectionInfo conInfoUnionWrapper = null;
+            ActiveConnectionInfo activeConnectionInfo = null;
+
             for (pollTimerTickedSecs = 0; pollTimerTickedSecs < pollTimeoutSecs; pollTimerTickedSecs++)
             {
+                ConnectionInfo conInfoUnionWrapper = null;
+                
                 try
                 {
-                    // Try getting an active connection -- throws if null, but we'll try again until timeout.
+                    // Try getting an active connection wrapper - should not throw until we attempt to get the Union obj later
                     conInfoUnionWrapper = await roomApi.GetConnectionInfoAsync(hathoraServerConfig.AppId, roomId);
-                    activeConnectionInfo = conInfoUnionWrapper.GetActiveConnectionInfo(); // Throws if null
-                    if (activeConnectionInfo != null)
-                        break;
-                
-                    await Task.Delay(TimeSpan.FromSeconds(initPollTimerSecs));
                 }
                 catch(Exception e)
                 {
-                    Debug.LogWarning($"[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync poll err: {e.Message}");
-                    
-                    // Let's report the status, but keep polling.
-                    StartingConnectionInfo startConInfo = conInfoUnionWrapper?.GetStartingConnectionInfo();
-                    Debug.Log("[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync: " +
-                        $"status: '{startConInfo?.Status}', iPollTimer: {pollTimerTickedSecs}/{pollTimeoutSecs}");
+                    Debug.LogError($"[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync poll err: {e.Message}");
+                    await Task.FromException<Exception>(e);
+                    return null; // fail
                 }
+
+                // Check if status is active -- since this is a Union, it'll throw err on null.
+                try
+                {
+                    activeConnectionInfo = conInfoUnionWrapper.GetActiveConnectionInfo(); // Throws if null
+                }
+                catch(Exception e)
+                {
+                    Debug.LogWarning($"[NetHathoraClientRoomApi] Throw on conInfoUnionWrapper.GetActiveConnectionInfo, " +
+                        $"but somewhat *expected*: {e.Message}");
+                }
+                
+                if (activeConnectionInfo != null)
+                    break;
+                
+                await Task.Delay(TimeSpan.FromSeconds(initPollTimerSecs));
             }
 
+            // -----------------------------------------
             // We're done polling -- sucess or timeout?
             if (activeConnectionInfo == null)
             {
@@ -83,7 +94,8 @@ namespace Hathora.Net.Client.ApiWrapper
             // Success
             Debug.Log($"[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync => " +
                 $"status: {activeConnectionInfo.Status}, duration: {pollTimerTickedSecs}s");
-            
+
+            NetSession.ServerInfo = activeConnectionInfo;
             return activeConnectionInfo;
         }
         #endregion // Client Room Async Hathora SDK Calls

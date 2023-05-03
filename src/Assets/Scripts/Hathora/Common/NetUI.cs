@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -62,6 +63,12 @@ namespace Hathora.Common
         private Button copyServerInfoBtn;
         [SerializeField]
         private TextMeshProUGUI copiedServerInfoFadeTxt;
+        [SerializeField]
+        private TextMeshProUGUI getServerInfoErrTxt;
+        
+        [Header("Transport (Fishnet): Join Lobby as Client")]
+        [SerializeField]
+        private Button joinLobbyAsClientBtn;
         #endregion // Serialized Fields
 
         public static NetUI Singleton { get; private set; }
@@ -114,7 +121,7 @@ namespace Hathora.Common
         }
 
         /// <summary>
-        /// The player pressed ENTER || unfocused the serverInfo input.
+        /// The player pressed ENTER || unfocused the ServerInfo input.
         /// </summary>
         public void OnGetLobbyInfoInputEnd()
         {
@@ -139,24 +146,20 @@ namespace Hathora.Common
         
         public void OnCopyLobbyRoomIdBtnClick()
         {
-            string lobbyRoomIdFriendlyStr = lobbyRoomIdTxt.text;
-            
-            // We need just the {RoomId} from "<color=yellow>RoomId:</color>\n{RoomId}"
-            string roomId = lobbyRoomIdFriendlyStr?.Split('\n')[1].Trim();
-            GUIUtility.systemCopyBuffer = roomId; // Copy to clipboard
+            GUIUtility.systemCopyBuffer = netSession.RoomId; // Copy to clipboard
             
             // Show + Fade
             ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt);
         }
 
         /// <summary>
-        /// We should only call this if we already have the lobby info (serverInfo).
+        /// We should only call this if we already have the lobby info (ServerInfo).
         /// </summary>
         public void OnGetServerInfoBtnClick()
         {
-            SetShowServerInfoTxt("<color=yellow>Getting server connection info...</color>");
+            SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
-            // The serverInfo should already be cached
+            // The ServerInfo should already be cached
             hathoraClient.GetActiveConnectionInfo(netSession.RoomId);
         }
         
@@ -165,14 +168,16 @@ namespace Hathora.Common
         /// </summary>
         public void OnCopyServerInfoBtnClick()
         {
-            string lobbyRoomIdFriendlyStr = getServerInfoTxt.text;
-            
-            // We need just the "{ip}:{port}" from "<color=yellow>ServerInfo:</color>\n{ip}:{port}"
-            string serverInfo = lobbyRoomIdFriendlyStr?.Split('\n')[1].Trim();
+            string serverInfo = netSession.GetServerInfoIpPort(); // "ip:port"
             GUIUtility.systemCopyBuffer = serverInfo; // Copy to clipboard
             
             // Show + Fade
-            ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt);
+            ShowFadeTxtThenFadeAsync(copiedServerInfoFadeTxt);
+        }
+
+        public void OnJoinLobbyAsClientBtnClick()
+        {
+            throw new NotImplementedException("TODO");
         }
         #endregion // UI Interactions
         
@@ -217,13 +222,19 @@ namespace Hathora.Common
             lobbyRoomIdTxt.gameObject.SetActive(true);
         }
 
-        public void SetShowCreateOrJoinLobbyErrTxt(string errStr)
+        public void SetShowCreateOrJoinLobbyErrTxt(string friendlyErrStr)
         {
-            createOrGetLobbyInfoErrTxt.text = errStr;
+            createOrGetLobbyInfoErrTxt.text = friendlyErrStr;
             createOrGetLobbyInfoErrTxt.gameObject.SetActive(true);
         }
         
-        public void SetShowServerInfoTxt(string serverInfo)
+        public void SetGetServerInfoErrTxt(string friendlyErrStr)
+        {
+            getServerInfoErrTxt.text = friendlyErrStr;
+            getServerInfoErrTxt.gameObject.SetActive(true);
+        }
+        
+        public void SetServerInfoTxt(string serverInfo)
         {
             getServerInfoTxt.text = serverInfo;
             getServerInfoTxt.gameObject.SetActive(true);
@@ -254,16 +265,53 @@ namespace Hathora.Common
         public void OnCreatedOrJoinedLobbyFail()
         {
             showInitLobbyUi(true);
-            SetShowCreateOrJoinLobbyErrTxt("<color=orange>Failed to Get Lobby info</color>");
+            SetShowCreateOrJoinLobbyErrTxt("<color=orange>Failed to Get Lobby info - see logs</color>");
         }
 
+        public void OnGetServerInfoSuccess(ActiveConnectionInfo serverInfo)
+        {
+            // ####################
+            // ServerInfo:
+            // 127.0.0.1:7777
+            // (UDP)
+            // ####################
+            SetServerInfoTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>ServerInfo</color></b>:\n" +
+                $"{serverInfo.Host}<color=yellow><b>:</b></color>{serverInfo.Port}\n(<color=yellow>{serverInfo.TransportType}</color>)");
+            
+            copyServerInfoBtn.gameObject.SetActive(true);
+            joinLobbyAsClientBtn.gameObject.SetActive(true);
+        }
+
+        [Obsolete("TODO: Delete once SDK bug is resolved")]
+        private void mockGetServerInfoSuccess()
+        {
+            Debug.Log("[NetUI]<color=yellow>**MOCKING SUCCESS**</color>");
+            // mock success // TODO: DELETE ME
+            OnGetServerInfoSuccess(new ActiveConnectionInfo(
+                0, 
+                TransportType.Udp, 
+                7777, 
+                "127.0.0.1",
+                netSession.RoomId
+            ));
+        }
+        
+        public void OnGetServerInfoFail()
+        {
+            mockGetServerInfoSuccess();
+            return;
+            
+            getServerInfoBtn.gameObject.SetActive(true);
+            SetGetServerInfoErrTxt("<color=orange>Failed to Get Server Info - see logs</color>");
+        }
+        
         public void OnCreatedOrJoinedLobby(string roomId)
         {
             // Hide all init lobby UI except the txt + view lobbies
             showInitLobbyUi(false);
             SetShowLobbyTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>RoomId</color></b>:\n{roomId}");
 
-            // We can now show the lobbies and serverInfo copy btn
+            // We can now show the lobbies and ServerInfo copy btn
             copyLobbyRoomIdBtn.gameObject.SetActive(true);
             viewLobbiesBtn.gameObject.SetActive(true);
             getServerInfoBtn.gameObject.SetActive(true);
