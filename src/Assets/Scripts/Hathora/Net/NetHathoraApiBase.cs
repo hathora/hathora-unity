@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using FishNet.Object;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Net.Server;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace Hathora.Net
     /// This allows the API to view config (eg: appId), set session and auth tokens.
     /// Both Client and Server APIs can inherit from this.
     /// </summary>
-    public abstract class NetHathoraApiBase : NetworkBehaviour
+    public abstract class NetHathoraApiBase : MonoBehaviour
     {
         protected Configuration hathoraSdkConfig { get; private set; }
         protected HathoraServerConfig hathoraServerConfig { get; private set; }
@@ -29,13 +28,6 @@ namespace Hathora.Net
             HathoraServerConfig _hathoraServerConfig,
             NetSession _playerSession)
         {
-            if (IsServer && string.IsNullOrEmpty(_hathoraServerConfig?.DevAuthToken))
-            {
-                Debug.LogWarning("[NetHathoraApiBase]*WARN @ Init: " +
-                    "Missing HathoraServerConfig.DevAuthToken - Hathora server SDK calls will fail.");
-                return;
-            }
-
             this.hathoraSdkConfig = _hathoraSdkConfig;
             this.hathoraServerConfig = _hathoraServerConfig;
             this.PlayerSession = _playerSession;

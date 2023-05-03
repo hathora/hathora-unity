@@ -6,9 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FishNet.Object;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Common;
 using Hathora.Net.Client.Models;
-using Hathora.Net.Server;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Net.Client
 {
@@ -17,18 +18,6 @@ namespace Hathora.Net.Client
     /// </summary>
     public class NetHathoraPlayer : NetworkBehaviour
     {
-        #region Serialized Fields
-        [SerializeField, Tooltip("Auth, CreateLobby")]
-        protected NetHathoraClient hathoraClient;
-
-        [SerializeField]
-        protected NetSession playerSession;
-        
-        [SerializeField]
-        protected NetPlayerUI netPlayerUI;
-        #endregion // Serialized Fields
-    
-
         #region Init
         /// <summary>
         /// Better to use this instead of Start, in most situations.
@@ -41,9 +30,6 @@ namespace Hathora.Net.Client
                 return;
             
             NetworkSpawnLogs();
-
-            // Sub to events from client
-            hathoraClient.Init(playerSession, netPlayerUI);
         }
 
         private void NetworkSpawnLogs()
@@ -58,158 +44,5 @@ namespace Hathora.Net.Client
                 Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on client");
         }
         #endregion // Init
-
-        
-        #region UI Interactions
-        public async void OnAuthBtnClick()
-        {
-            netPlayerUI.SetShowAuthTxt("<color=yellow>Logging in...</color>");
-
-            AuthResult result = null;
-           try
-            {
-                result = await hathoraClient.ClientApis.AuthApi.ClientAuthAsync();
-            }
-            catch (Exception e)
-            {
-                OnAuthComplete(isSuccess:false);
-                return;
-            }
-           
-            OnAuthComplete(result.IsSuccess);
-        }
-
-        public async void OnCreateLobbyBtnClick()
-        {
-            netPlayerUI.SetShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
-            
-            // TODO: Consider `Local` visibility.
-            const CreateLobbyRequest.VisibilityEnum visibility = CreateLobbyRequest.VisibilityEnum.Public;
-
-            Lobby lobby = null;
-            try
-            {
-                lobby = await hathoraClient.ClientApis.LobbyApi.ClientCreateLobbyAsync(visibility);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyCompleteAsync(null);
-                return;
-            }
-            
-            OnCreateOrJoinLobbyCompleteAsync(lobby);
-        }
-
-        /// <summary>
-        /// The player pressed ENTER || unfocused the roomId input.
-        /// </summary>
-        public async void OnJoinLobbyInputEnd()
-        {
-            netPlayerUI.SetShowLobbyTxt("<color=yellow>Joining Lobby...</color>");
-            string roomIdInputStr = netPlayerUI.OnJoinLobbyBtnClickGetRoomId();
-
-            Lobby lobby = null;
-            try
-            {
-                lobby = await hathoraClient.ClientApis.LobbyApi.ClientGetJoinInfoAsync(roomIdInputStr);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyCompleteAsync(null);
-                return;
-            }
-
-            OnCreateOrJoinLobbyCompleteAsync(lobby);
-        }
-        
-        /// <summary>Public lobbies only.</summary>
-        /// <exception cref="NotImplementedException"></exception>
-        public async void OnViewLobbiesBtnClick()
-        {
-            List<Lobby> lobbies = null;
-            try
-            {
-                lobbies = await hathoraClient.ClientApis.LobbyApi.ClientListPublicLobbiesAsync();
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                throw new NotImplementedException("TODO: Get lobbies err handling UI");
-            }
-            
-            OnViewPublicLobbiesComplete(lobbies);
-        }
-        #endregion // UI Interactions
-        
-        #region Callbacks
-        private void OnAuthComplete(bool isSuccess)
-        {
-            if (!isSuccess)
-            {
-                netPlayerUI.SetShowAuthTxt("<color=red>Login Failed</color>");
-                return;
-            }
-            
-            netPlayerUI.OnLoggedIn();
-        }
-
-        private void OnViewPublicLobbiesComplete(List<Lobby> lobbies)
-        {
-            int numLobbiesFound = lobbies?.Count ?? 0;
-            Debug.Log($"[NetHathoraPlayer] OnViewPublicLobbiesComplete: # Lobbies found: {numLobbiesFound}");
-
-            if (lobbies == null || numLobbiesFound == 0)
-            {
-                throw new NotImplementedException("TODO: !Lobbies handling");
-            }
-            
-            List<Lobby> sortedLobbies = lobbies.OrderBy(lobby => lobby.CreatedAt).ToList();
-            netPlayerUI.OnViewLobbies(sortedLobbies);
-        }
-        
-        /// <summary>
-        /// On success, we'll poll for ActiveConnectionInfo.
-        /// </summary>
-        /// <param name="lobby"></param>
-        private async Task OnCreateOrJoinLobbyCompleteAsync(Lobby lobby)
-        {
-            if (string.IsNullOrEmpty(lobby?.RoomId))
-            {
-                netPlayerUI.OnJoinedOrCreatedLobbyFail();
-                return;
-            }
-
-            netPlayerUI.OnJoinedOrCreatedLobby(lobby.RoomId);
-            
-            // // Poll for ActiveConnectionInfo
-            // ActiveConnectionInfo activeConnInfo = await pollForConnectionInfoAsync(lobby.RoomId);
-            // Debug.Log("Success @ OnCreateOrJoinLobbyCompleteAsync => activeConnectionInfo // TODO post-events");
-        }
-
-        /// <summary>
-        /// After you get roomId, you can poll for the ip:port info.
-        /// </summary>
-        /// <param name="roomId"></param>
-        private async Task<ActiveConnectionInfo> pollForConnectionInfoAsync(string roomId)
-        {
-            NetHathoraClientRoom roomApi = hathoraClient.ClientApis.RoomApi;
-            ActiveConnectionInfo activeConnectionInfo;
-            
-            try
-            {
-                activeConnectionInfo = await roomApi.ClientGetConnectionInfoAsync(roomId);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[NetHathoraPlayer]**ERR @ pollForConnectionInfoAsync: {e.Message}");
-                await Task.FromException<Exception>(e);
-                return null;
-            }
-
-            return activeConnectionInfo;
-        }
-        #endregion
     }
 }

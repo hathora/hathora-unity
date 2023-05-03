@@ -2,8 +2,10 @@
 
 using System;
 using Hathora.Cloud.Sdk.Client;
+using Hathora.Net.Client.ApiWrapper;
 using Hathora.Net.Server;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Net.Client
 {
@@ -17,23 +19,26 @@ namespace Hathora.Net.Client
     [Serializable]
     public struct ClientApiContainer
     {
+        [FormerlySerializedAs("AuthApi")]
         [SerializeField]
-        public NetHathoraClientAuth AuthApi;
+        public NetHathoraClientAuthApi authApiApi;
         
+        [FormerlySerializedAs("LobbyApi")]
         [SerializeField]
-        public NetHathoraClientLobby LobbyApi;
+        public NetHathoraClientLobbyApi lobbyApiApi;
 
+        [FormerlySerializedAs("RoomApi")]
         [SerializeField]
-        public NetHathoraClientRoom RoomApi;
+        public NetHathoraClientRoomApi roomApiApi;
         
         public void InitAll(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig, 
             NetSession _playerSession)
         {
-            AuthApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
-            LobbyApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
-            RoomApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            authApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            lobbyApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            roomApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
         }
     }
 }

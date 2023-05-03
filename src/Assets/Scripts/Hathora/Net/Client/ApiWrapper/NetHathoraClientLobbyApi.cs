@@ -11,13 +11,13 @@ using Hathora.Net.Server;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Hathora.Net.Client
+namespace Hathora.Net.Client.ApiWrapper
 {
     /// <summary>
     /// * Call Init() to pass config/instances.
     /// * Does not handle UI.
     /// </summary>
-    public class NetHathoraClientLobby : NetHathoraApiBase
+    public class NetHathoraClientLobbyApi : NetHathoraApiBase
     {
         private LobbyV2Api lobbyApi;
 
@@ -26,7 +26,7 @@ namespace Hathora.Net.Client
             HathoraServerConfig _hathoraServerConfig, 
             NetSession _playerSession)
         {
-            Debug.Log("[NetHathoraClientLobby] Initializing API...");
+            Debug.Log("[NetHathoraClientLobbyApi] Initializing API...");
             base.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
             this.lobbyApi = new LobbyV2Api(_hathoraSdkConfig);
         }
@@ -40,9 +40,6 @@ namespace Hathora.Net.Client
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
         {
-            if (!base.IsClient)
-                return null; // fail
-
             LobbyInitConfig lobbyInitConfig = new();
             CreateLobbyRequest request = new CreateLobbyRequest(
                 lobbyVisibility, 
@@ -59,12 +56,12 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientCreateLobbyAsync (CreateLobbyAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientCreateLobbyAsync (CreateLobbyAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobby] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientLobbyApi] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
             PlayerSession.Lobby = lobby;
             
             return lobby;
@@ -72,9 +69,6 @@ namespace Hathora.Net.Client
          
         public async Task<Lobby> ClientGetJoinInfoAsync(string roomId)
         {
-            if (!base.IsClient)
-                return null; // fail
-
             Lobby lobby;
             try
             {
@@ -84,12 +78,12 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientGetJoinInfoAsync (GetLobbyInfoAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientGetJoinInfoAsync (GetLobbyInfoAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobby] ClientGetJoinInfoAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientLobbyApi] ClientGetJoinInfoAsync => roomId: {lobby.RoomId}");
             PlayerSession.Lobby = lobby;
             
             return lobby;
@@ -98,9 +92,6 @@ namespace Hathora.Net.Client
         [ItemCanBeNull]
         public async Task<List<Lobby>> ClientListPublicLobbiesAsync()
         {
-            if (!base.IsClient)
-                return null; // fail
-
             List<Lobby> lobbies;
             try
             {
@@ -110,13 +101,13 @@ namespace Hathora.Net.Client
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraClientLobby]**ERR @ ClientListPublicLobbiesAsync " +
+                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientListPublicLobbiesAsync " +
                     $"(ListActivePublicLobbiesAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobby] ClientListPublicLobbiesAsync => " +
+            Debug.Log($"[NetHathoraClientLobbyApi] ClientListPublicLobbiesAsync => " +
                 $"numLobbiesFound: {lobbies?.Count ?? 0}");
             
             return lobbies;
