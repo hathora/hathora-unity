@@ -94,11 +94,11 @@ namespace Hathora.Net.Client
             catch (Exception e)
             {
                 Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyComplete(null);
+                OnCreateOrJoinLobbyCompleteAsync(null);
                 return;
             }
             
-            OnCreateOrJoinLobbyComplete(lobby);
+            OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
 
         /// <summary>
@@ -117,11 +117,11 @@ namespace Hathora.Net.Client
             catch (Exception e)
             {
                 Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyComplete(null);
+                OnCreateOrJoinLobbyCompleteAsync(null);
                 return;
             }
 
-            OnCreateOrJoinLobbyComplete(lobby);
+            OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
         
         /// <summary>Public lobbies only.</summary>
@@ -169,7 +169,11 @@ namespace Hathora.Net.Client
             netPlayerUI.OnViewLobbies(sortedLobbies);
         }
         
-        private void OnCreateOrJoinLobbyComplete(Lobby lobby)
+        /// <summary>
+        /// On success, we'll poll for ActiveConnectionInfo.
+        /// </summary>
+        /// <param name="lobby"></param>
+        private async Task OnCreateOrJoinLobbyCompleteAsync(Lobby lobby)
         {
             if (string.IsNullOrEmpty(lobby?.RoomId))
             {
@@ -179,8 +183,32 @@ namespace Hathora.Net.Client
 
             netPlayerUI.OnJoinedOrCreatedLobby(lobby.RoomId);
             
-            // Once we get the lobby, we want to join it.
-            // TODO
+            // // Poll for ActiveConnectionInfo
+            // ActiveConnectionInfo activeConnInfo = await pollForConnectionInfoAsync(lobby.RoomId);
+            // Debug.Log("Success @ OnCreateOrJoinLobbyCompleteAsync => activeConnectionInfo // TODO post-events");
+        }
+
+        /// <summary>
+        /// After you get roomId, you can poll for the ip:port info.
+        /// </summary>
+        /// <param name="roomId"></param>
+        private async Task<ActiveConnectionInfo> pollForConnectionInfoAsync(string roomId)
+        {
+            NetHathoraClientRoom roomApi = hathoraClient.ClientApis.RoomApi;
+            ActiveConnectionInfo activeConnectionInfo;
+            
+            try
+            {
+                activeConnectionInfo = await roomApi.ClientGetConnectionInfoAsync(roomId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[NetHathoraPlayer]**ERR @ pollForConnectionInfoAsync: {e.Message}");
+                await Task.FromException<Exception>(e);
+                return null;
+            }
+
+            return activeConnectionInfo;
         }
         #endregion
     }
