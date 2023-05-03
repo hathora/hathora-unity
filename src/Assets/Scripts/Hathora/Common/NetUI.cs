@@ -1,11 +1,9 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Net.Client;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Hathora.Net
+namespace Hathora.Common
 {
     /// <summary>
     /// Handles the non-Player UI so we can keep the logic separate.

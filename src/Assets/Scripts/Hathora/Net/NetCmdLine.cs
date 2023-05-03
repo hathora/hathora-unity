@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using FishNet;
+using Hathora.Common;
 using UnityEngine;
 
 namespace Hathora.Net
