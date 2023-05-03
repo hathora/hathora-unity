@@ -34,11 +34,11 @@ namespace Hathora.Net.Client
         public void InitAll(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig, 
-            NetSession _playerSession)
+            NetSession _netSession)
         {
-            authApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
-            lobbyApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
-            roomApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            authApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            lobbyApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            roomApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
         }
     }
 }

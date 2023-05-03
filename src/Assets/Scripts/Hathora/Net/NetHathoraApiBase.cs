@@ -14,7 +14,7 @@ namespace Hathora.Net
     {
         protected Configuration hathoraSdkConfig { get; private set; }
         protected HathoraServerConfig hathoraServerConfig { get; private set; }
-        protected NetSession PlayerSession { get; private set; }
+        protected NetSession NetSession { get; private set; }
 
 
         /// <summary>
@@ -22,15 +22,15 @@ namespace Hathora.Net
         /// </summary>
         /// <param name="_hathoraSdkConfig">[SDK] Contains DevToken to make server calls.</param>
         /// <param name="_hathoraServerConfig">[Wrapper] Contains general server info, like ApiKey.</param>
-        /// <param name="_playerSession">[Player] Session instance for updating cache.</param>
+        /// <param name="_netSession">[Player] Session instance for updating cache.</param>
         public virtual void Init(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig,
-            NetSession _playerSession)
+            NetSession _netSession)
         {
             this.hathoraSdkConfig = _hathoraSdkConfig;
             this.hathoraServerConfig = _hathoraServerConfig;
-            this.PlayerSession = _playerSession;
+            this.NetSession = _netSession;
         }
     }
 }

@@ -62,6 +62,9 @@ namespace Hathora.Net.Client
         
         
         #region Interactions from UI
+        /// <summary>
+        /// Auths anonymously => Creates new netSession.
+        /// </summary>
         public async Task AuthLoginAsync()
         {
             AuthResult result = null;
@@ -71,13 +74,17 @@ namespace Hathora.Net.Client
             }
             catch
             {
-                OnAuthComplete(isSuccess:false);
+                OnAuthLoginComplete(isSuccess:false);
                 return;
             }
            
-            OnAuthComplete(result.IsSuccess);
+            OnAuthLoginComplete(result.IsSuccess);
         }
 
+        /// <summary>
+        /// Creates lobby => caches Lobby info @ netSession
+        /// </summary>
+        /// <param name="visibility"></param>
         public async Task CreateLobbyAsync(CreateLobbyRequest.VisibilityEnum visibility = 
             CreateLobbyRequest.VisibilityEnum.Public)
         {
@@ -97,14 +104,15 @@ namespace Hathora.Net.Client
         }
 
         /// <summary>
-        /// The player pressed ENTER || unfocused the roomId input.
+        /// Gets lobby info, if you arleady know the roomId.
+        /// (!) Creating a lobby will automatically return the lobbyInfo (along with the roomId).
         /// </summary>
         public async Task GetLobbyInfoAsync(string roomId)
         {
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApiApi.ClientGetJoinInfoAsync(roomId);
+                lobby = await ClientApis.lobbyApiApi.ClientGetLobbyInfoAsync(roomId);
             }
             catch (Exception e)
             {
@@ -117,7 +125,6 @@ namespace Hathora.Net.Client
         }
         
         /// <summary>Public lobbies only.</summary>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task ViewPublicLobbies()
         {
             List<Lobby> lobbies = null;
@@ -133,18 +140,43 @@ namespace Hathora.Net.Client
             
             OnViewPublicLobbiesComplete(lobbies);
         }
+        
+        /// <summary>
+        /// Gets ip:port (+transport type) info so we can connect the Client via the selected transport (eg: Fishnet).
+        /// AKA "GetServerInfo" (from UI). Polls until status is `Active`: May take a bit!
+        /// </summary>
+        public async Task GetActiveConnectionInfo(string roomId)
+        {
+            ActiveConnectionInfo activeConnectionInfo;
+            try
+            {
+                activeConnectionInfo = await ClientApis.roomApiApi.ClientGetConnectionInfoAsync(roomId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[NetHathoraClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
+                NetUI.Singleton.OnCreatedOrJoinedLobbyFail();
+                await Task.FromException<Exception>(e);
+                return; // fail
+            }
+            
+            // Success
+            Debug.Log("Success @ OnCreateOrJoinLobbyCompleteAsync => activeConnectionInfo " +
+                $"// ConnectionInfo: {activeConnectionInfo.Host}:{activeConnectionInfo.Port} ({activeConnectionInfo.TransportType}) " +
+                $"// TODO post-events");
+        }
         #endregion // Interactions from UI
         
         
         #region Callbacks
-        private void OnAuthComplete(bool isSuccess)
+        private void OnAuthLoginComplete(bool isSuccess)
         {
             if (!isSuccess)
             {
                 NetUI.Singleton.OnAuthFailed();
                 return;
             }
-            
+
             NetUI.Singleton.OnAuthedLoggedIn();
         }
 
@@ -163,10 +195,10 @@ namespace Hathora.Net.Client
         }
         
         /// <summary>
-        /// On success, we'll poll for ActiveConnectionInfo.
+        /// On success, most users will want to call GetActiveConnectionInfo().
         /// </summary>
         /// <param name="lobby"></param>
-        private async Task OnCreateOrJoinLobbyCompleteAsync(Lobby lobby)
+        private void OnCreateOrJoinLobbyCompleteAsync(Lobby lobby)
         {
             if (string.IsNullOrEmpty(lobby?.RoomId))
             {
@@ -175,25 +207,6 @@ namespace Hathora.Net.Client
             }
 
             NetUI.Singleton.OnCreatedOrJoinedLobby(lobby.RoomId);
-            
-            // Poll for ActiveConnectionInfo
-            ActiveConnectionInfo activeConnectionInfo;
-            try
-            {
-                activeConnectionInfo = await ClientApis.roomApiApi.ClientGetConnectionInfoAsync(lobby.RoomId);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[NetHathoraClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
-                NetUI.Singleton.OnCreatedOrJoinedLobbyFail();
-                await Task.FromException<Exception>(e);
-                return; // fail
-            }
-            
-            // Success
-            Debug.Log("Success @ OnCreateOrJoinLobbyCompleteAsync => activeConnectionInfo " +
-                $"// ConnectionInfo: {activeConnectionInfo.Host}:{activeConnectionInfo.Port} ({activeConnectionInfo.TransportType}) " +
-                $"// TODO post-events");
         }
         #endregion // Callbacks
     }

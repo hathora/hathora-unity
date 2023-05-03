@@ -23,17 +23,17 @@ namespace Hathora.Net.Client.ApiWrapper
         public override void Init(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig, 
-            NetSession _playerSession)
+            NetSession _netSession)
         {
             Debug.Log("[NetHathoraClientAuthApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
             this.authApi = new AuthV1Api(_hathoraSdkConfig);
         }
 
 
         #region Client Auth Async Hathora SDK Calls
         /// <summary>
-        /// 
+        /// Calls 
         /// </summary>
         /// <returns>Returns AuthResult on success</returns>
         public async Task<AuthResult> ClientAuthAsync()
@@ -57,7 +57,7 @@ namespace Hathora.Net.Client.ApiWrapper
             if (!isAuthed)
                 return null;
             
-            PlayerSession.InitNetSession(anonLoginResult.Token);
+            NetSession.InitNetSession(anonLoginResult.Token);
             return new AuthResult(anonLoginResult.Token);
         }
         #endregion // Server Auth Async Hathora SDK Calls

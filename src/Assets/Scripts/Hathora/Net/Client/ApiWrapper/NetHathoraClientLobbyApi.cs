@@ -24,10 +24,10 @@ namespace Hathora.Net.Client.ApiWrapper
         public override void Init(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig, 
-            NetSession _playerSession)
+            NetSession _netSession)
         {
             Debug.Log("[NetHathoraClientLobbyApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
             this.lobbyApi = new LobbyV2Api(_hathoraSdkConfig);
         }
 
@@ -51,7 +51,7 @@ namespace Hathora.Net.Client.ApiWrapper
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
                     hathoraServerConfig.AppId,
-                    PlayerSession.PlayerAuthToken, // Player token; not dev
+                    NetSession.PlayerAuthToken, // Player token; not dev
                     request);
             }
             catch (Exception e)
@@ -62,12 +62,18 @@ namespace Hathora.Net.Client.ApiWrapper
             }
 
             Debug.Log($"[NetHathoraClientLobbyApi] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
-            PlayerSession.Lobby = lobby;
+            NetSession.Lobby = lobby;
             
             return lobby;
         }
          
-        public async Task<Lobby> ClientGetJoinInfoAsync(string roomId)
+        /// <summary>
+        /// Gets Lobby info, if we already know the roomId.
+        /// (!) Creating a room will also return Lobby info; you probably want to do this if interested in *joining*.
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        public async Task<Lobby> ClientGetLobbyInfoAsync(string roomId)
         {
             Lobby lobby;
             try
@@ -78,13 +84,13 @@ namespace Hathora.Net.Client.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientGetJoinInfoAsync (GetLobbyInfoAsync): {e.Message}");
+                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientGetLobbyInfoAsync (GetLobbyInfoAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientGetJoinInfoAsync => roomId: {lobby.RoomId}");
-            PlayerSession.Lobby = lobby;
+            Debug.Log($"[NetHathoraClientLobbyApi] ClientGetLobbyInfoAsync => roomId: {lobby.RoomId}");
+            NetSession.Lobby = lobby;
             
             return lobby;
         }

@@ -21,10 +21,10 @@ namespace Hathora.Net.Client.ApiWrapper
         public override void Init(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig, 
-            NetSession _playerSession)
+            NetSession _netSession)
         {
             Debug.Log("[NetHathoraClientRoomApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _playerSession);
+            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
             this.roomApi = new RoomV1Api(_hathoraSdkConfig);
         }
 

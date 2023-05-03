@@ -1,9 +1,9 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Net;
 using Hathora.Net.Client;
 using TMPro;
 using UnityEngine;
@@ -48,7 +48,7 @@ namespace Hathora.Common
         private Button copyLobbyRoomIdBtn;
         [SerializeField]
         private TextMeshProUGUI copiedRoomIdFadeTxt;
-        [FormerlySerializedAs("joinLobbyInput")]
+        [SerializeField]
         private TextMeshProUGUI createOrGetLobbyInfoErrTxt;
         [SerializeField]
         private TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
@@ -60,14 +60,18 @@ namespace Hathora.Common
         private TextMeshProUGUI getServerInfoTxt;
         [SerializeField]
         private Button copyServerInfoBtn;
+        [SerializeField]
+        private TextMeshProUGUI copiedServerInfoFadeTxt;
         #endregion // Serialized Fields
 
-        public static NetUI Singleton;
+        public static NetUI Singleton { get; private set; }
 
         private const float FADE_TXT_DISPLAY_DURATION_SECS = 0.5f;
         private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         private static NetHathoraClient hathoraClient => NetHathoraClient.Singleton;
+        private static NetSession netSession => NetSession.Singleton;
 
+        
         #region Init
         private void Awake()
         {
@@ -110,7 +114,7 @@ namespace Hathora.Common
         }
 
         /// <summary>
-        /// The player pressed ENTER || unfocused the roomId input.
+        /// The player pressed ENTER || unfocused the serverInfo input.
         /// </summary>
         public void OnGetLobbyInfoInputEnd()
         {
@@ -125,21 +129,12 @@ namespace Hathora.Common
             
             hathoraClient.GetLobbyInfoAsync(roomIdInputStr);
         }
-        
+
         public void OnViewLobbiesBtnClick()
         {
             viewLobbiesSeeLogsFadeTxt.text = "<color=yellow>Getting Lobbies...</color>";
             ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt);
             hathoraClient.ViewPublicLobbies();
-        }
-        
-        public void ShowGettingLobbyInfoUi()
-        {
-            // Hide all of lobby EXCEPT the room id text
-            SetShowLobbyTxt("<color=yellow>Getting Lobby Info...</color>");
-            getLobbyInfoInput.text = "";
-
-            showInitLobbyUi(false);
         }
         
         public void OnCopyLobbyRoomIdBtnClick()
@@ -149,6 +144,32 @@ namespace Hathora.Common
             // We need just the {RoomId} from "<color=yellow>RoomId:</color>\n{RoomId}"
             string roomId = lobbyRoomIdFriendlyStr?.Split('\n')[1].Trim();
             GUIUtility.systemCopyBuffer = roomId; // Copy to clipboard
+            
+            // Show + Fade
+            ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt);
+        }
+
+        /// <summary>
+        /// We should only call this if we already have the lobby info (serverInfo).
+        /// </summary>
+        public void OnGetServerInfoBtnClick()
+        {
+            SetShowServerInfoTxt("<color=yellow>Getting server connection info...</color>");
+            
+            // The serverInfo should already be cached
+            hathoraClient.GetActiveConnectionInfo(netSession.RoomId);
+        }
+        
+        /// <summary>
+        /// Copies as "ip:port"
+        /// </summary>
+        public void OnCopyServerInfoBtnClick()
+        {
+            string lobbyRoomIdFriendlyStr = getServerInfoTxt.text;
+            
+            // We need just the "{ip}:{port}" from "<color=yellow>ServerInfo:</color>\n{ip}:{port}"
+            string serverInfo = lobbyRoomIdFriendlyStr?.Split('\n')[1].Trim();
+            GUIUtility.systemCopyBuffer = serverInfo; // Copy to clipboard
             
             // Show + Fade
             ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt);
@@ -166,6 +187,15 @@ namespace Hathora.Common
         public void OnAuthFailed()
         {
             SetShowAuthTxt("<color=orange>Login Failed</color>");
+        }
+        
+        public void ShowGettingLobbyInfoUi()
+        {
+            // Hide all of lobby EXCEPT the room id text
+            SetShowLobbyTxt("<color=yellow>Getting Lobby Info...</color>");
+            getLobbyInfoInput.text = "";
+
+            showInitLobbyUi(false);
         }
         
         public void SetShowDebugMemoTxt(string memoStr)
@@ -191,6 +221,12 @@ namespace Hathora.Common
         {
             createOrGetLobbyInfoErrTxt.text = errStr;
             createOrGetLobbyInfoErrTxt.gameObject.SetActive(true);
+        }
+        
+        public void SetShowServerInfoTxt(string serverInfo)
+        {
+            getServerInfoTxt.text = serverInfo;
+            getServerInfoTxt.gameObject.SetActive(true);
         }
 
         /// <summary>
@@ -227,9 +263,10 @@ namespace Hathora.Common
             showInitLobbyUi(false);
             SetShowLobbyTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>RoomId</color></b>:\n{roomId}");
 
-            // We can now show the lobbies and roomId copy btn
+            // We can now show the lobbies and serverInfo copy btn
             copyLobbyRoomIdBtn.gameObject.SetActive(true);
             viewLobbiesBtn.gameObject.SetActive(true);
+            getServerInfoBtn.gameObject.SetActive(true);
         }
 
         public string GetLobbyInfoInputStr() =>

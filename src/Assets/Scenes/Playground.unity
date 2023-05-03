@@ -1439,7 +1439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &611627262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1698,7 +1698,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &692529811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2302,7 +2302,7 @@ GameObject:
   - component: {fileID: 804480890}
   - component: {fileID: 804480889}
   m_Layer: 5
-  m_Name: copiedRoomIdNameFadeTxt
+  m_Name: copiedServerInfoFadeTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2518,7 +2518,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &822940342
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3273,7 +3273,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 310, y: -334.77713}
+  m_AnchoredPosition: {x: 310, y: -147.5}
   m_SizeDelta: {x: 600, y: 272.7544}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1040257951
@@ -3336,10 +3336,12 @@ MonoBehaviour:
   viewLobbiesBtn: {fileID: 1377223075}
   copyLobbyRoomIdBtn: {fileID: 1624773490}
   copiedRoomIdFadeTxt: {fileID: 28414439}
+  createOrGetLobbyInfoErrTxt: {fileID: 835601307}
   viewLobbiesSeeLogsFadeTxt: {fileID: 1218802652}
   getServerInfoBtn: {fileID: 1202041649}
   getServerInfoTxt: {fileID: 1623577193}
   copyServerInfoBtn: {fileID: 1595741175}
+  copiedServerInfoFadeTxt: {fileID: 804480889}
 --- !u!1 &1047219236
 GameObject:
   m_ObjectHideFlags: 0
@@ -3493,7 +3495,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1202041648
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3560,9 +3562,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1202041649}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
-        m_MethodName: set_interactable
+      - m_Target: {fileID: 1202041647}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3574,7 +3576,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 1040257953}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnViewLobbiesBtnClick
+        m_MethodName: OnGetServerInfoBtnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3829,7 +3831,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 310, y: -100}
+  m_AnchoredPosition: {x: 310, y: -386.4}
   m_SizeDelta: {x: 600, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1296837044
@@ -3941,7 +3943,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1377223074
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4223,7 +4225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1408829464
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4875,7 +4877,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1040257953}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnCopyLobbyRoomIdBtnClick
+        m_MethodName: OnCopyServerInfoBtnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6552,6 +6554,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1296837042}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 2099812345}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -7837,14 +7851,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8944336656349189697}
-  m_LocalRotation: {x: 0.03141073, y: -0, z: -0, w: 0.9995066}
+  m_LocalRotation: {x: -0.09312464, y: -0.13925849, z: -0.020216962, w: 0.98566025}
   m_LocalPosition: {x: 0.5, y: 1.975, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1499772132}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -10.907, y: -16.006, z: -0.812}
 --- !u!114 &9078993846310988380
 MonoBehaviour:
   m_ObjectHideFlags: 0
