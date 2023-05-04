@@ -19,26 +19,23 @@ namespace Hathora.Net.Client
     [Serializable]
     public struct ClientApiContainer
     {
-        [FormerlySerializedAs("AuthApi")]
         [SerializeField]
-        public NetHathoraClientAuthApi authApiApi;
+        public NetHathoraClientAuthApi authApi;
         
-        [FormerlySerializedAs("LobbyApi")]
         [SerializeField]
-        public NetHathoraClientLobbyApi lobbyApiApi;
+        public NetHathoraClientLobbyApi lobbyApi;
 
-        [FormerlySerializedAs("RoomApi")]
         [SerializeField]
-        public NetHathoraClientRoomApi roomApiApi;
+        public NetHathoraClientRoomApi roomApi;
         
         public void InitAll(
             Configuration _hathoraSdkConfig, 
             HathoraServerConfig _hathoraServerConfig, 
             NetSession _netSession)
         {
-            authApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
-            lobbyApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
-            roomApiApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            authApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            lobbyApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            roomApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
         }
     }
 }

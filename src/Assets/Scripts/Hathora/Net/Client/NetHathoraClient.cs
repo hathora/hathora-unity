@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Common;
-using Hathora.Net.Client.ApiWrapper;
 using Hathora.Net.Client.Models;
 using Hathora.Net.Server;
 using UnityEngine;
@@ -25,10 +24,11 @@ namespace Hathora.Net.Client
         private HathoraServerConfig hathoraServerConfig;
         
         [SerializeField]
-        public ClientApiContainer ClientApis;
-
-        [SerializeField]
         private NetSession netSession;
+        
+        [SerializeField]
+        public ClientApiContainer ClientApis;
+     
         
         public static NetHathoraClient Singleton { get; private set; }
 
@@ -70,7 +70,7 @@ namespace Hathora.Net.Client
             AuthResult result = null;
             try
             {
-                result = await ClientApis.authApiApi.ClientAuthAsync();
+                result = await ClientApis.authApi.ClientAuthAsync();
             }
             catch
             {
@@ -91,7 +91,7 @@ namespace Hathora.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApiApi.ClientCreateLobbyAsync(visibility);
+                lobby = await ClientApis.lobbyApi.ClientCreateLobbyAsync(visibility);
             }
             catch (Exception e)
             {
@@ -112,7 +112,7 @@ namespace Hathora.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApiApi.ClientGetLobbyInfoAsync(roomId);
+                lobby = await ClientApis.lobbyApi.ClientGetLobbyInfoAsync(roomId);
             }
             catch (Exception e)
             {
@@ -130,7 +130,7 @@ namespace Hathora.Net.Client
             List<Lobby> lobbies = null;
             try
             {
-                lobbies = await ClientApis.lobbyApiApi.ClientListPublicLobbiesAsync();
+                lobbies = await ClientApis.lobbyApi.ClientListPublicLobbiesAsync();
             }
             catch (Exception e)
             {
@@ -150,7 +150,7 @@ namespace Hathora.Net.Client
             ActiveConnectionInfo activeConnectionInfo;
             try
             {
-                activeConnectionInfo = await ClientApis.roomApiApi.ClientGetConnectionInfoAsync(roomId);
+                activeConnectionInfo = await ClientApis.roomApi.ClientGetConnectionInfoAsync(roomId);
             }
             catch (Exception e)
             {

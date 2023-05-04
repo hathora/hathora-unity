@@ -34,7 +34,6 @@ namespace Hathora.Common
         [Header("Lobby (Before Exists)")]
         [SerializeField]
         private Button createLobbyBtn;
-        [FormerlySerializedAs("joinLobbyBtn")]
         [SerializeField]
         private Button getLobbyInfoBtn;
         [SerializeField]
