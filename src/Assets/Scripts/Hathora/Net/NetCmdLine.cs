@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using FishNet;
+using Hathora.Common;
 using UnityEngine;
 
 namespace Hathora.Net
@@ -31,7 +32,7 @@ namespace Hathora.Net
             switch (mode)
             {
                 case "server":
-                    Debug.Log("[NetCmdLine] @ initMode - Starting...");
+                    Debug.Log("[NetCmdLine] @ initMode - Starting server ...");
                     InstanceFinder.ServerManager.StartConnection();
                     break;
                 

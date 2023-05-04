@@ -23,7 +23,7 @@ namespace Hathora.Net
         public void TestPingToServer()
         {
             string msg = $"Ping #{_numTimesRpcdToServer++}!";
-            Debug.Log($"[PingTestRpc] Sending test ping server == '{msg}'");
+            Debug.Log($"[NetPingTestRpc] Sending test ping server == '{msg}'");
             SendMsgServerRpc(msg);   
         }
         
@@ -34,7 +34,7 @@ namespace Hathora.Net
         [ServerRpc]
         public void SendMsgServerRpc(string msg)
         {
-            Debug.Log($"[NetServerMgr] SendMsgServerRpc: Received msg on server (from observed client) == '{msg}'");
+            Debug.Log($"[NetPingTestRpc] SendMsgServerRpc: Received msg on server (from observed client) == '{msg}'");
             SendMsgObserversRpc(msg); // Ask server to send the msg back to all observers.
         }
         
@@ -45,6 +45,6 @@ namespace Hathora.Net
         // [ServerRpc(RequireOwnership = true)]
         [ObserversRpc]
         public void SendMsgObserversRpc(string msg) =>
-            Debug.Log($"[NetServerMgr] SendMsgObserversRpc: Received on observer (from server) == '{msg}'");
+            Debug.Log($"[NetPingTestRpc] SendMsgObserversRpc: Received on observer (from server) == '{msg}'");
     }
 }
