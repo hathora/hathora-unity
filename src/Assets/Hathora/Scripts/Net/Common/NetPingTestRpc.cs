@@ -4,7 +4,7 @@
 using FishNet.Object;
 using UnityEngine;
 
-namespace Hathora.Net
+namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
     /// As soon as we connect to the server, we send a ping to the server.

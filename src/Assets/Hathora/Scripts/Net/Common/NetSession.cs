@@ -3,7 +3,7 @@
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
-namespace Hathora.Net
+namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
     /// Cached net session. Eg: Auth token, last room/lobby joined.

@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Net.Client.Models;
-using Hathora.Net.Server;
+using Hathora.Scripts.Net.Client.Models;
+using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Net.Client.ApiWrapper
+namespace Hathora.Scripts.Net.Client.ApiWrapper
 {
     /// <summary>
     /// * Call Init() to pass config/instances.

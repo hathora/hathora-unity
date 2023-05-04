@@ -6,12 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Common;
-using Hathora.Net.Client.Models;
-using Hathora.Net.Server;
+using Hathora.Scripts.Net.Client.Models;
+using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Utils;
 using UnityEngine;
 
-namespace Hathora.Net.Client
+namespace Hathora.Scripts.Net.Client
 {
     /// <summary>
     /// This spawns BEFORE the player, or even connected to the network.

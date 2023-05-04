@@ -3,10 +3,10 @@
 
 using System.Collections.Generic;
 using FishNet;
-using Hathora.Common;
+using Hathora.Scripts.Utils;
 using UnityEngine;
 
-namespace Hathora.Net
+namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
     /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`

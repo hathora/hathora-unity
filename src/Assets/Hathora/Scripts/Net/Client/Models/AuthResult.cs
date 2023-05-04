@@ -1,6 +1,6 @@
 // Created by dylan@hathora.dev
 
-namespace Hathora.Net.Client.Models
+namespace Hathora.Scripts.Net.Client.Models
 {
     public class AuthResult
     {

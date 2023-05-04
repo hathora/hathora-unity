@@ -1,17 +1,9 @@
 // Created by dylan@hathora.dev
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FishNet.Object;
-using Hathora.Cloud.Sdk.Model;
-using Hathora.Common;
-using Hathora.Net.Client.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Hathora.Net.Client
+namespace Hathora.Scripts.Net.Client
 {
     /// <summary>
     /// Helpers for the NetworkPlayer. Since NetworkPlayer spawns dynamically.

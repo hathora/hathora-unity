@@ -1,10 +1,10 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Cloud.Sdk.Client;
-using Hathora.Net.Server;
+using Hathora.Scripts.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Net
+namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
     /// This allows the API to view config (eg: appId), set session and auth tokens.

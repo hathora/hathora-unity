@@ -2,12 +2,12 @@
 
 using System;
 using Hathora.Cloud.Sdk.Client;
-using Hathora.Net.Client.ApiWrapper;
-using Hathora.Net.Server;
+using Hathora.Scripts.Net.Client.ApiWrapper;
+using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.Net.Server;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Hathora.Net.Client
+namespace Hathora.Scripts.Net.Client
 {
     /// <summary>
     /// API wrapper container to serialize in HathoraPlayer.

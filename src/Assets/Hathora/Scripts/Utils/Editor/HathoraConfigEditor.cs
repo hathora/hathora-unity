@@ -1,8 +1,8 @@
-using Hathora.Net.Server;
+using Hathora.Scripts.Net.Server;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Net
+namespace Hathora.Scripts.Utils.Editor
 {
     [CustomEditor(typeof(HathoraServerConfig))]
     public class HathoraConfigObjectEditor : UnityEditor.Editor

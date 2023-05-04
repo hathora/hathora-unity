@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Hathora.Common
+namespace Hathora.Scripts.Utils
 {
     /// <summary>
     /// Only add this to ROOT objects that you want to persist across scenes.
