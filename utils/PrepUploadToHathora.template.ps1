@@ -6,7 +6,7 @@
 # Unity Build config
 $sourceDir = "../src/"
 $serverBuildDir = "$sourceDir/Build-Server/"
-$serverExecutable = "Build-Server.x86_64"
+$serverExecutable = "Hathora-Unity-LinuxServer.x86_64""
 $dockerfilePath = "$sourceDir/Dockerfile"
 $archiveName = "Build-Server.tar"
 $compressedArchiveName = "Build-Server.tar.gz"
@@ -18,7 +18,7 @@ $appId = "TODO"
 $roomsPerProcess = 1
 $planName = "tiny"
 $transportType = "udp"
-$containerPort = 7770
+$containerPort = 7777
 $envJsonArr = "[]"
 $hathoraConsoleAppBaseUrl = "https://console.hathora.dev/application/"
 
