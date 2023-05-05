@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
-    /// This allows the API to view config (eg: appId), set session and auth tokens.
+    /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.
     /// Both Client and Server APIs can inherit from this.
     /// </summary>
     public abstract class NetHathoraApiBase : MonoBehaviour

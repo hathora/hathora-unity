@@ -1,13 +1,12 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Collections.Generic;
-using FishNet.Managing.Scened;
+using System.IO;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.SceneManagement;
+using Application = UnityEngine.Application;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace Hathora.Scripts.Net.Server
@@ -16,7 +15,7 @@ namespace Hathora.Scripts.Net.Server
     /// Sensitive info will not be included in Client builds.
     /// For meta objects (like the banner and btns), see HathoraConfigEditor.
     /// </summary>
-    [CreateAssetMenu(fileName = nameof(HathoraServerConfig), menuName = "Hathora/Server Config")]
+    [CreateAssetMenu(fileName = nameof(HathoraServerConfig), menuName = "Hathora/Server UserConfig")]
     public class HathoraServerConfig : ScriptableObject
     {
         public enum HathoraPlanSize
@@ -27,95 +26,60 @@ namespace Hathora.Scripts.Net.Server
             Large,
         }
 
-        
-        #region Serialized Fields
+
+        #region Serialized Fields (+public accessors)
         // ----------------------------------------
-        [Header("Hathora Core Settings")]
-        [SerializeField, Tooltip("Required")]
-        private string appId;
-        
-#if UNITY_SERVER || DEBUG
-        /// <summary>
-        /// Doc | https://hathora.dev/docs/guides/generate-admin-token 
-        /// </summary>
-        [SerializeField, Tooltip("[Eventually] Required (for Server calls). " +
-             "Not to be confused with the AuthV1 'Player' token. " +
-             "See HathoraServerConfig.cs for doc links.")]
-        private string devAuthToken;
-#endif
-
-        [SerializeField, Tooltip("Required (for Rooms/Lobbies)")]
-        private Region region = Region.Seattle;
-        
-        // ----------------------------------------
-        [Header("Auto-Build Settings"), Tooltip("This will auto-fill with the active scene on !focus, if you leave blank.")]
         [SerializeField]
-        private string buildSceneName;
-        
+        private HathoraUtils.ConfigCoreOpts hathoraCoreOpts;
+        public HathoraUtils.ConfigCoreOpts HathoraCoreOpts => hathoraCoreOpts;
+
+        [FormerlySerializedAs("linuxAutoBuildSettings")]
         [SerializeField]
-        private string serverBuildDirName = "Build-Server";
-        
-        [SerializeField]
-        private string serverBuildName = "Hathora-Unity-LinuxServer.x86_64";
+        private HathoraUtils.AutoBuildOpts linuxAutoBuildOpts;
+        public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts => linuxAutoBuildOpts;
 
-        // ----------------------------------------
-        [Header("Hathora Deploy Settings")]
-        [SerializeField, Tooltip("Default: 1. How many rooms do you want to support per server?")]
-        private int roomsPerProcess = 1;
+        [FormerlySerializedAs("hathoraDeploySettings")]
+        [SerializeField] 
+        private HathoraUtils.HathoraDeployOpts hathoraDeployOpts;
+        private HathoraUtils.HathoraDeployOpts HathoraDeployOpts => hathoraDeployOpts;
+        #endregion // Serialized Fields (+public accessors)
 
-        [FormerlySerializedAs("planSize")]
-        [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
-        private HathoraPlanSize planSizeSize = HathoraPlanSize.Tiny;
 
-        [SerializeField, Tooltip("Default: UDP. UDP is recommended for realtime games: Faster, but less reliable.")]
-        private TransportType transportType = TransportType.Udp;
-
-        [SerializeField, Tooltip("Default: 7777")]
-        private int portNumber = 7777;
-
-        // [SerializeField, Tooltip("(!) Like an `.env` file, these are all strings. ")]
-        // private List<HathoraEnvVars> EnvVars;
-        #endregion // Serialized Fields
-        
-        
-        #region Public props
-        public string AppId => appId;
-        
-#if UNITY_SERVER || DEBUG
-        public string DevAuthToken => devAuthToken;
-#endif
-        
-        public Region Region => region;
-        public string ServerBuildDirName => serverBuildDirName;
-        public string ServerBuildName => serverBuildName;
-        public int RoomsPerProcess => roomsPerProcess;
-        public HathoraPlanSize PlanSizeSize => planSizeSize;
-        public TransportType TransportType => transportType;
-        public int PortNumber => portNumber;
-        #endregion // Public props
+        #region Public Shortcuts
+        public string AppId => hathoraCoreOpts.AppId;
+        public Region Region => hathoraCoreOpts.region;
+        #endregion // Public Shortcuts
 
 
         /// <summary>(!) Don't use OnEnable for ScriptableObjects</summary>
         private void OnValidate()
         {
-            if (string.IsNullOrEmpty(buildSceneName))
+            if (string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName))
             {
                 string activeSceneName = SceneManager.GetActiveScene().name;
-                buildSceneName = activeSceneName;
+                linuxAutoBuildOpts.BuildSceneName = activeSceneName;
             }
         }
 
+        public bool MeetsBuildBtnReqs() =>
+            !string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName) &&
+            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName);
+                                                          
+        public bool MeetsDeployBtnReqs() =>
+            !string.IsNullOrEmpty(AppId) &&
+            !string.IsNullOrEmpty(hathoraCoreOpts.DevAuthToken) &&
+            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName) &&
+            hathoraDeployOpts.PortNumber > 1024;
+        
+        public List<HathoraEnvVars> EnvVars => hathoraDeployOpts.EnvVars;
 
-        #region Buttons from HathoraConfigEditor
-        public void OnLoginBtnClick()
-        {
-            throw new NotImplementedException("TODO");
-        }
+        public string GetPathToBuildExe() => Path.Combine(
+            HathoraUtils.GetNormalizedPathToProjRoot(), 
+            linuxAutoBuildOpts.ServerBuildDirName, 
+            linuxAutoBuildOpts.ServerBuildExeName);
+        
 
-        public void OnDeployToHathoraBtnClick()
-        {
-            throw new NotImplementedException("TODO");
-        }
-        #endregion // Buttons from HathoraConfigEditor
     }
 }

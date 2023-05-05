@@ -11,34 +11,17 @@ namespace Hathora.Scripts.Utils.Editor
     /// Contains build + deploy methods for Hathora Server.
     /// Trigger these from HathoraServerConfig ScriptableObject buttons. 
     /// </summary>
-    public class HathoraServerBuild
+    public static class HathoraServerBuild
     {
-        /// <summary>
-        /// Deploys with HathoraServerConfig opts.
-        /// </summary>
-        /// <param name="config">Find via menu `Hathora/Find Config(s)`</param>
-        public static void DeployToHathora(HathoraServerConfig config)
-        {
-            if (config == null)
-            {
-                Debug.LogError("[HathoraServerBuild] Cannot find HathoraServerConfig ScriptableObject");
-                return;
-            }
-
-            string devToken = config.DevAuthToken;
-            // TODO: Deploy to Hathora via hathora-cloud cli
-            
-        }
-
         /// <summary>
         /// Builds with HathoraServerConfig opts.
         /// </summary>
-        /// <param name="config">Find via menu `Hathora/Find Config(s)`</param>
+        /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
         public static void BuildHathoraLinuxServer(HathoraServerConfig config)
         {
             // Set your build options
-            string serverBuildPath = Path.Combine(Application.dataPath, "../", config.ServerBuildDirName);
-            string serverBuildName = config.ServerBuildName;
+            string serverBuildPath = Path.Combine(Application.dataPath, "../", config.LinuxAutoBuildOpts.ServerBuildDirName);
+            string serverBuildName = config.LinuxAutoBuildOpts.ServerBuildExeName;
             string serverBuildFullPath = Path.Combine(serverBuildPath, serverBuildName);
 
             // Create the build directory if it does not exist
@@ -58,6 +41,11 @@ namespace Hathora.Scripts.Utils.Editor
 
             // Build the server
             BuildPipeline.BuildPlayer(buildPlayerOptions);
+        }
+
+        public static void DevAuthLogin(HathoraServerConfig hathoraServerConfig)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

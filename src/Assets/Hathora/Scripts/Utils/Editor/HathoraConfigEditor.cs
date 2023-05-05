@@ -52,26 +52,61 @@ namespace Hathora.Scripts.Utils.Editor
         #region Core Buttons
         private void insertButtons()
         {
+            HathoraServerConfig selectedConfig = GetSelectedInstance();
+            
             initButtonStyle();
             GUILayout.Space(5);
 
-            EditorGUILayout.HelpBox("TODO: Launch OAuth2 window and auto-set the dev token", MessageType.Info);
-            if (GUILayout.Button("Login (Set Dev Token)", buttonStyle))
-            {
-                GetSelectedInstance().OnLoginBtnClick();
-            }
-            
+            insertBuildBtn(selectedConfig);
             GUILayout.Space(10);
 
-            EditorGUILayout.HelpBox("1. Build a dedicated Linux server to `/Build-Server/Build-Server.x86_64`\n" +
-                "2. Deploy below.", MessageType.Info);
-            if (GUILayout.Button("Deploy to Hathora", buttonStyle))
+            insertDevAuthLoginBtn(selectedConfig);
+            GUILayout.Space(10);
+
+            insertHathoraDeployBtn(selectedConfig);
+            GUILayout.Space(10);
+        }
+
+        private void insertHathoraDeployBtn(HathoraServerConfig selectedConfig)
+        {
+            GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
+            if (GUI.enabled)
             {
-                GetSelectedInstance().OnDeployToHathoraBtnClick();
-                GUILayout.Space(20);
+                EditorGUILayout.HelpBox("1. Build a dedicated Linux server to " +
+                    "`/Build-Server/Build-Server.x86_64`\n" +
+                    "2. Deploy below.", MessageType.Info);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("Ensure the core+deploy settings a" +
+                    "bove are filled.", MessageType.Error);
             }
             
-            GUILayout.Space(10);
+            if (GUILayout.Button("Deploy to Hathora", buttonStyle))
+            {
+                HathoraServerDeploy.InitDeployToHathora(selectedConfig);
+                GUILayout.Space(20);
+            }
+        }
+
+        private void insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
+        {
+            GUI.enabled = false; // TODO
+            EditorGUILayout.HelpBox("TODO: Launch OAuth2 window and auto-set the dev token", MessageType.Warning);
+            if (GUILayout.Button("Developer Login", buttonStyle))
+            {
+                HathoraServerBuild.DevAuthLogin(selectedConfig);
+            }
+        }
+
+        private void insertBuildBtn(HathoraServerConfig selectedConfig)
+        {
+            GUI.enabled = selectedConfig.MeetsBuildBtnReqs();;
+            EditorGUILayout.HelpBox("Build your dedicated Linux server in 1 click, using the Aut-Build settings above.", MessageType.Info);
+            if (GUILayout.Button("Build Linux Server", buttonStyle))
+            {
+                HathoraServerBuild.BuildHathoraLinuxServer(selectedConfig);
+            }
         }
 
         private void insertBanner()
@@ -83,11 +118,5 @@ namespace Hathora.Scripts.Utils.Editor
             }
         }
         #endregion // Core Buttons
-
-        
-        #region Utils
-        
-        #endregion // Utils
-
     }
 }

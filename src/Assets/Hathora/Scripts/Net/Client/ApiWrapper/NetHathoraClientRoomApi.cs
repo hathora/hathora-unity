@@ -12,7 +12,7 @@ using UnityEngine;
 namespace Hathora.Scripts.Net.Client.ApiWrapper
 {
     /// <summary>
-    /// * Call Init() to pass config/instances.
+    /// * Call Init() to pass UserConfig/instances.
     /// * Does not handle UI.
     /// </summary>
     public class NetHathoraClientRoomApi : NetHathoraApiBase
