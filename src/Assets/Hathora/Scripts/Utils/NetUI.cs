@@ -97,10 +97,10 @@ namespace Hathora.Scripts.Utils
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape) && getLobbyInfoInput.isActiveAndEnabled)
-            {
-                getLobbyInfoInput.text = "";
-            }
+            // if (Input.GetKeyDown(KeyCode.Escape) && getLobbyInfoInput.isActiveAndEnabled)
+            // {
+            //     getLobbyInfoInput.text = "";
+            // }
         }
         #endregion // Init
         
@@ -125,7 +125,8 @@ namespace Hathora.Scripts.Utils
         {
             ShowGettingLobbyInfoUi();
             string roomIdInputStr = GetLobbyInfoInputStr();
-            
+            getLobbyInfoInput.text = "";
+
             if (string.IsNullOrEmpty(roomIdInputStr))
             {
                 OnAuthedLoggedIn();
@@ -192,12 +193,13 @@ namespace Hathora.Scripts.Utils
             SetShowAuthTxt("<color=orange>Login Failed</color>");
         }
         
+        /// <summary>
+        /// (!) Don't reset roomIdInputStr.text here
+        /// </summary>
         public void ShowGettingLobbyInfoUi()
         {
             // Hide all of lobby EXCEPT the room id text
             SetShowLobbyTxt("<color=yellow>Getting Lobby Info...</color>");
-            getLobbyInfoInput.text = "";
-
             showInitLobbyUi(false);
         }
         
