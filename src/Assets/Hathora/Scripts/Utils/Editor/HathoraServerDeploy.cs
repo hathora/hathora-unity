@@ -1,18 +1,13 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Scripts.Net.Server;
-using UnityEngine;
-using UnityEditor;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using NUnit.Framework;
-using Unity.Plastic.Newtonsoft.Json;
-using UnityEditor;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Scripts.Utils.Editor
@@ -23,7 +18,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// Deploys with HathoraServerConfig opts.
         /// </summary>
         /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static void InitDeployToHathora(HathoraServerConfig config)
+        public static async void InitDeployToHathora(HathoraServerConfig config)
         {
             if (config == null)
             {
@@ -38,7 +33,7 @@ namespace Hathora.Scripts.Utils.Editor
 
             // Create a NEW temp dir; just to start clean. If exists, delete it and remake.
             if (Directory.Exists(deployPaths.TempDirPath))
-                Directory.Delete(deployPaths.TempDirPath);
+                Directory.Delete(deployPaths.TempDirPath, recursive:true);
             
             Directory.CreateDirectory(deployPaths.TempDirPath);
             
@@ -60,7 +55,7 @@ namespace Hathora.Scripts.Utils.Editor
                 $"[HathoraServerDeploy] Generated Dockerfile not found @ '{dockerfilePath}'");
 
             // Compress the build using tar and gzip
-            gzipBuild(deployPaths);
+            await gzipBuild(deployPaths);
 
             // Implement the upload process
             Debug.Log("[HathoraServerDeploy] Preparing to deploy to Hathora...");
@@ -68,20 +63,54 @@ namespace Hathora.Scripts.Utils.Editor
                 "Implement the actual upload process");
         }
 
-        private static void gzipBuild(HathoraUtils.HathoraDeployPaths deployPaths)
+        private static async Task gzipBuild(HathoraUtils.HathoraDeployPaths deployPaths)
         {
+            bool verboseLogs = deployPaths.UserConfig.HathoraDeployOpts.AdvancedBuildOpts.VerboseLogs;
+
+            // Determine the appropriate 7z command based on the current platform
+            string sevenZipCmd;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                sevenZipCmd = Path.Combine(deployPaths.UnityProjRootPath, "7zip", "x64", "7za.exe");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                sevenZipCmd = Path.Combine(deployPaths.UnityProjRootPath, "7zip", "7zz-linux");
+            }
+            else // Assume macOS
+            {
+                sevenZipCmd = Path.Combine(deployPaths.UnityProjRootPath, "7zip", "7zz-mac");
+            }
+
+            if (verboseLogs)
+                Debug.Log($"[HathoraServerDeploy] <color=yellow>(VERBOSE_LOGS) sevenZipCmd</color>: {sevenZipCmd}");
+            
+            // Create the tar archive with the Dockerfile
             string tarFilePath = Path.Combine(deployPaths.TempDirPath, deployPaths.ArchiveName);
             string gzipFilePath = Path.Combine(deployPaths.TempDirPath, deployPaths.CompressedArchiveName);
-
-            // TODO: Create verbose logs options in UserConfig
-            string createDockerFileOutputLogs = ExecuteCrossPlatformShellCmd("tar", $"-cvf {tarFilePath} -C " +
-                $"{deployPaths.UnityProjRootPath} {deployPaths.UserConfig.LinuxAutoBuildOpts.ServerBuildDirName} Dockerfile");
             
-            string gzippedBuildOutputLogs = ExecuteCrossPlatformShellCmd("gzip", $"-f {tarFilePath}");
+            string createDockerFileOutputLogs = await ExecuteCrossPlatformShellCmdAsync(sevenZipCmd, $"a \"{tarFilePath}\" " +
+                $"-w\"{deployPaths.UnityProjRootPath}\" \"{deployPaths.UserConfig.LinuxAutoBuildOpts.ServerBuildDirName}\" " +
+                $"\"{Path.Combine(deployPaths.UnityProjRootPath, "Dockerfile")}\"");
 
-            //// TODO: Make this async. The Assert below wil fail.
-            // Assert.IsTrue(Directory.Exists(gzipFilePath),
-            //     $"[HathoraServerDeploy] !found gzipFilePath (perhaps failed to archive?): {gzipFilePath}");
+            if (verboseLogs)
+            {
+                Debug.Log($"[HathoraServerDeploy] (VERBOSE_LOGS) " +
+                    $"gzipBuild.ExecuteCrossPlatformShellCmdAsync.createDockerFileOutputLogs: {createDockerFileOutputLogs}");
+            }
+
+            // Compress the tar archive with gzip
+            string gzippedBuildOutputLogs = await ExecuteCrossPlatformShellCmdAsync(sevenZipCmd, 
+                $"a -tgzip \"{gzipFilePath}\" \"{tarFilePath}\"");
+
+            if (verboseLogs)
+            {
+                Debug.Log($"[HathoraServerDeploy] (VERBOSE_LOGS) " +
+                    $"gzipBuild.ExecuteCrossPlatformShellCmdAsync.gzippedBuildOutputLogs: {gzippedBuildOutputLogs}");
+            }
+
+            Assert.IsTrue(File.Exists(gzipFilePath),
+                $"[HathoraServerDeploy] !found gzipFilePath (perhaps failed to archive?): {gzipFilePath}");
         }
 
         /// <summary>
@@ -153,6 +182,41 @@ CMD ./{tempDir}/{exeName} -mode server -batchmode -nographics
             process.WaitForExit();
 
             return output;
+        }
+        
+        public static async Task<string> ExecuteCrossPlatformShellCmdAsync(string cmd, string args)
+        {
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            string shell = isWindows ? "cmd.exe" : "/bin/bash";
+            string escapedArgs = isWindows ? $"/c {args}" : $"-c \"{args}\"";
+            Process process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = shell,
+                    Arguments = escapedArgs,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                },
+            };
+
+            process.Start();
+
+            // Read the output and error asynchronously
+            Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> errorTask = process.StandardError.ReadToEndAsync();
+
+            // Wait for the process to finish and read the output and error
+            await process.WaitForExitAsync();
+
+            // Combine output and error
+            var output = await outputTask;
+            var error = await errorTask;
+            string result = output + error;
+
+            return result;
         }
     }
 }

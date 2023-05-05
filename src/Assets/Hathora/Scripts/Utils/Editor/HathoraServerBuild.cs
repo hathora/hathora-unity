@@ -20,23 +20,22 @@ namespace Hathora.Scripts.Utils.Editor
         public static void BuildHathoraLinuxServer(HathoraServerConfig config)
         {
             // Set your build options
-            string serverBuildPath = Path.Combine(Application.dataPath, "../", config.LinuxAutoBuildOpts.ServerBuildDirName);
+            string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
+            string serverBuildPath = Path.Combine(projRoot, config.LinuxAutoBuildOpts.ServerBuildDirName);
             string serverBuildName = config.LinuxAutoBuildOpts.ServerBuildExeName;
             string serverBuildFullPath = Path.Combine(serverBuildPath, serverBuildName);
 
             // Create the build directory if it does not exist
             if (!Directory.Exists(serverBuildPath))
-            {
                 Directory.CreateDirectory(serverBuildPath);
-            }
 
             // Set the build options
             BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
             {
-                scenes = new[] { "Assets/Scenes/YourScene.unity" },
+                scenes = new[] { $"Assets/Scenes/{config.LinuxAutoBuildOpts.BuildSceneName}.unity" },
                 locationPathName = serverBuildFullPath,
-                target = BuildTarget.StandaloneLinux64,
-                options = BuildOptions.EnableHeadlessMode | BuildOptions.Development
+                target = BuildTarget.StandaloneLinux64, // Adding `-batchmode -nographics` for headless mode
+                options =  BuildOptions.EnableHeadlessMode | BuildOptions.Development,
             };
 
             // Build the server

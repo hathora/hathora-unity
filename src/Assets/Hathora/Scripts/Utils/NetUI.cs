@@ -94,14 +94,6 @@ namespace Hathora.Scripts.Utils
 
             Singleton = this;
         }
-
-        private void Update()
-        {
-            // if (Input.GetKeyDown(KeyCode.Escape) && getLobbyInfoInput.isActiveAndEnabled)
-            // {
-            //     getLobbyInfoInput.text = "";
-            // }
-        }
         #endregion // Init
         
         

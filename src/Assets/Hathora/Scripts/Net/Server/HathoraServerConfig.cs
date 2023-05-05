@@ -27,27 +27,31 @@ namespace Hathora.Scripts.Net.Server
         }
 
 
-        #region Serialized Fields (+public accessors)
+        #region Private Serialized Fields
         // ----------------------------------------
         [SerializeField]
         private HathoraUtils.ConfigCoreOpts hathoraCoreOpts;
-        public HathoraUtils.ConfigCoreOpts HathoraCoreOpts => hathoraCoreOpts;
 
         [FormerlySerializedAs("linuxAutoBuildSettings")]
         [SerializeField]
         private HathoraUtils.AutoBuildOpts linuxAutoBuildOpts;
-        public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts => linuxAutoBuildOpts;
 
         [FormerlySerializedAs("hathoraDeploySettings")]
         [SerializeField] 
         private HathoraUtils.HathoraDeployOpts hathoraDeployOpts;
-        private HathoraUtils.HathoraDeployOpts HathoraDeployOpts => hathoraDeployOpts;
-        #endregion // Serialized Fields (+public accessors)
+        #endregion // Private Serialized Fields
+        
 
+        #region Public Accessors
+        public HathoraUtils.ConfigCoreOpts HathoraCoreOpts => hathoraCoreOpts;
+        public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts => linuxAutoBuildOpts;
+        public HathoraUtils.HathoraDeployOpts HathoraDeployOpts => hathoraDeployOpts;
+        #endregion // Public Accessors
 
+        
         #region Public Shortcuts
         public string AppId => hathoraCoreOpts.AppId;
-        public Region Region => hathoraCoreOpts.region;
+        public Region Region => hathoraCoreOpts.Region;
         #endregion // Public Shortcuts
 
 
@@ -57,7 +61,7 @@ namespace Hathora.Scripts.Net.Server
             if (string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName))
             {
                 string activeSceneName = SceneManager.GetActiveScene().name;
-                linuxAutoBuildOpts.BuildSceneName = activeSceneName;
+                linuxAutoBuildOpts.SetBuildSceneName(activeSceneName);
             }
         }
 
