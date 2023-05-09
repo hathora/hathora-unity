@@ -31,7 +31,7 @@ namespace Hathora.Scripts.Utils.Editor
             // Prepare paths and file names that we didn't get from UserConfig
             HathoraUtils.HathoraDeployPaths deployPaths = new(config);
 
-            // Create a NEW temp dir; just to start clean. If exists, delete it and remake.
+            // Create a NEW temp dir; just to start clean. If exists, delete it and remake
             if (Directory.Exists(deployPaths.TempDirPath))
                 Directory.Delete(deployPaths.TempDirPath, recursive:true);
             
@@ -46,7 +46,7 @@ namespace Hathora.Scripts.Utils.Editor
                 $"[HathoraServerDeploy] Cannot find TempDirPath: {deployPaths.TempDirPath}");
             
             // ----------------------------------------------
-            // Create temp dir and generate Dockerfile within
+            // Generate Dockerfile within the temp dir
             string dockerfilePath = generateDockerFileForLinuxBuild(
                 deployPaths.TempDirPath, 
                 config.LinuxAutoBuildOpts.ServerBuildExeName);
@@ -54,63 +54,10 @@ namespace Hathora.Scripts.Utils.Editor
             Assert.IsTrue(File.Exists(dockerfilePath), 
                 $"[HathoraServerDeploy] Generated Dockerfile not found @ '{dockerfilePath}'");
 
-            // Compress the build using tar and gzip
-            await gzipBuild(deployPaths);
-
             // Implement the upload process
             Debug.Log("[HathoraServerDeploy] Preparing to deploy to Hathora...");
             Debug.Log("[HathoraServerDeploy] <color=yellow>(!) TODO:</color> " +
                 "Implement the actual upload process");
-        }
-
-        private static async Task gzipBuild(HathoraUtils.HathoraDeployPaths deployPaths)
-        {
-            bool verboseLogs = deployPaths.UserConfig.HathoraDeployOpts.AdvancedBuildOpts.VerboseLogs;
-
-            // Determine the appropriate 7z command based on the current platform
-            string sevenZipCmd;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                sevenZipCmd = Path.Combine(deployPaths.UnityProjRootPath, "7zip", "x64", "7za.exe");
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                sevenZipCmd = Path.Combine(deployPaths.UnityProjRootPath, "7zip", "7zz-linux");
-            }
-            else // Assume macOS
-            {
-                sevenZipCmd = Path.Combine(deployPaths.UnityProjRootPath, "7zip", "7zz-mac");
-            }
-
-            if (verboseLogs)
-                Debug.Log($"[HathoraServerDeploy] <color=yellow>(VERBOSE_LOGS) sevenZipCmd</color>: {sevenZipCmd}");
-            
-            // Create the tar archive with the Dockerfile
-            string tarFilePath = Path.Combine(deployPaths.TempDirPath, deployPaths.ArchiveName);
-            string gzipFilePath = Path.Combine(deployPaths.TempDirPath, deployPaths.CompressedArchiveName);
-            
-            string createDockerFileOutputLogs = await ExecuteCrossPlatformShellCmdAsync(sevenZipCmd, $"a \"{tarFilePath}\" " +
-                $"-w\"{deployPaths.UnityProjRootPath}\" \"{deployPaths.UserConfig.LinuxAutoBuildOpts.ServerBuildDirName}\" " +
-                $"\"{Path.Combine(deployPaths.UnityProjRootPath, "Dockerfile")}\"");
-
-            if (verboseLogs)
-            {
-                Debug.Log($"[HathoraServerDeploy] (VERBOSE_LOGS) " +
-                    $"gzipBuild.ExecuteCrossPlatformShellCmdAsync.createDockerFileOutputLogs: {createDockerFileOutputLogs}");
-            }
-
-            // Compress the tar archive with gzip
-            string gzippedBuildOutputLogs = await ExecuteCrossPlatformShellCmdAsync(sevenZipCmd, 
-                $"a -tgzip \"{gzipFilePath}\" \"{tarFilePath}\"");
-
-            if (verboseLogs)
-            {
-                Debug.Log($"[HathoraServerDeploy] (VERBOSE_LOGS) " +
-                    $"gzipBuild.ExecuteCrossPlatformShellCmdAsync.gzippedBuildOutputLogs: {gzippedBuildOutputLogs}");
-            }
-
-            Assert.IsTrue(File.Exists(gzipFilePath),
-                $"[HathoraServerDeploy] !found gzipFilePath (perhaps failed to archive?): {gzipFilePath}");
         }
 
         /// <summary>
@@ -138,53 +85,12 @@ CMD ./{tempDir}/{exeName} -mode server -batchmode -nographics
         }
         
         /// <summary>
-        /// Executes a shell command and returns its output.
-        /// This func is cross-platform and works on Windows, macOS, and Linux.
+        /// Possibly deprecated
         /// </summary>
-        /// <param name="command">The command to execute.</param>
-        /// <param name="args">The arguments to pass to the command.</param>
-        /// <returns>The output produced by the command.</returns>
-        private static string ExecuteCrossPlatformShellCmd(string command, string args)
-        {
-            string escapedArgs = string.Concat(args.Select(c => 
-                c == '"' ? "\\\"" : c.ToString()));
-
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            bool isMacLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || 
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-            
-            if (isWindows)
-            {
-                startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = $"/C {command} {escapedArgs}";
-            }
-            else if (isMacLinux)
-            {
-                startInfo.FileName = Path.Combine("/bin", "/bash");
-                startInfo.Arguments = $"-c \"{command} {escapedArgs}\"";
-            }
-            else
-            {
-                throw new NotSupportedException("[HathoraServerDeploy] Unsupported OS");
-            }
-
-            startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute = false;
-            startInfo.CreateNoWindow = true;
-
-            Process process = new Process();
-            process.StartInfo = startInfo;
-            process.Start();
-
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-
-            return output;
-        }
-        
-        public static async Task<string> ExecuteCrossPlatformShellCmdAsync(string cmd, string args)
+        /// <param name="cmd"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private static async Task<string> executeCrossPlatformShellCmdAsync(string cmd, string args)
         {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string shell = isWindows ? "cmd.exe" : "/bin/bash";
