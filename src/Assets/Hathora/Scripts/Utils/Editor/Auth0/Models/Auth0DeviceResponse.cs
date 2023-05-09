@@ -5,12 +5,18 @@ using Newtonsoft.Json;
 
 namespace Hathora.Scripts.Utils.Editor.Auth0.Models
 {
+    /// <summary>
+    /// Take the UserCode and send it to the Auth0 API to get a token.
+    /// </summary>
     [Serializable]
     public class Auth0DeviceResponse
     {
         [JsonProperty("device_code")]
         public string DeviceCode { get; set; }
 
+        /// <summary>
+        /// (!) Not to be confused with a token. We exchange this code for a token.
+        /// </summary>
         [JsonProperty("user_code")]
         public string UserCode { get; set; }
 

@@ -8,14 +8,19 @@ using Hathora.Scripts.Utils.Editor.Auth0.Models;
 using Hathora.Scripts.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
+using UnityEngine.Assertions;
 
 namespace Hathora.Scripts.Utils.Editor.Auth0
 {
+    /// <summary>
+    /// 1. Get device auth code from 
+    /// </summary>
     public class Auth0Login
     {
-        private const string ClientId = "tWjDhuzPmuIWrI8R9s3yV3BQVw2tW0yq";
-        private const string Auth0Issuer = "https://auth.hathora.com";
-        private const string Audience = "https://cloud.hathora.com";
+        private const string clientId = "tWjDhuzPmuIWrI8R9s3yV3BQVw2tW0yq";
+        private const string issuerUri = "https://auth.hathora.com";
+        private const string audienceUri = "https://cloud.hathora.com";
 
 
         public async Task<string> GetTokenAsync(HathoraServerConfig hathoraServerConfig)
@@ -30,12 +35,17 @@ namespace Hathora.Scripts.Utils.Editor.Auth0
 
             if (File.Exists(tokenPath))
             {
-                if (hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.forc)
-                // TODO: Add a force refresh option (deletes the file)
-                Debug.Log($"A token file already present at {tokenPath}. We'll use this " +
-                    "token, instead. If you'd like to get a new one, please remove this file.");
+                if (!hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.ForceNewToken)
+                {
+                    // TODO: Add a force refresh option (deletes the file)
+                    Debug.Log($"A token file already present at {tokenPath}. We'll use this " +
+                        "token, instead. If you'd like to get a new one, please remove this file.");
                 
-                return await File.ReadAllTextAsync(tokenPath);
+                    return await File.ReadAllTextAsync(tokenPath);
+                }                
+                
+                // Delete this so we can make a new one
+                File.Delete(tokenPath);
             }
 
             Auth0DeviceResponse deviceAuthorizationResponse = await requestDeviceAuthorizationAsync();
@@ -43,17 +53,23 @@ namespace Hathora.Scripts.Utils.Editor.Auth0
             if (deviceAuthorizationResponse == null)
             {
                 Debug.Log("Error: Failed to get device authorization.");
-
                 return null;
             }
 
-            Debug.Log("Open browser for login? You should see the " +
-                $"following code: {deviceAuthorizationResponse.UserCode}.");
+            return await openBrowserAwaitAuth(deviceAuthorizationResponse, tokenPath);
+        }
+
+        private async Task<string> openBrowserAwaitAuth(
+            Auth0DeviceResponse deviceAuthorizationResponse, 
+            string tokenPath)
+        {
+            Debug.Log("Openening browser for login; ensure you see the " +
+                $"following code: '<color=yellow>{deviceAuthorizationResponse.UserCode}</color>'.");
 
             // Open browser with the provided verification URI.
             Application.OpenURL(deviceAuthorizationResponse.VerificationUriComplete);
 
-            string refreshToken = await PollForTokenAsync(deviceAuthorizationResponse.DeviceCode);
+            string refreshToken = await pollForTokenAsync(deviceAuthorizationResponse.DeviceCode);
 
             if (refreshToken == null)
             {
@@ -63,22 +79,36 @@ namespace Hathora.Scripts.Utils.Editor.Auth0
             }
 
             File.WriteAllText(tokenPath, refreshToken);
+            Assert.AreEqual(refreshToken, File.ReadAllText(tokenPath)); // Sanity check
             Debug.Log($"Successfully logged in! Saved credentials to {tokenPath}");
 
             return refreshToken;
         }
 
+        /// <summary>
+        /// This simply POSTs for the request token code.
+        /// After this, we pass the code to a uri for the end-user to login.
+        /// </summary>
+        /// <returns></returns>
         private async Task<Auth0DeviceResponse> requestDeviceAuthorizationAsync()
         {
-            string url = $"{Auth0Issuer}/oauth/device/code";
+            string url = $"{issuerUri}/oauth/device/code";
             UnityWebRequest request = new(url, "POST");
-            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(
-                $"client_id={ClientId}&scope=openid%20email%20offline_access&audience={Audience}"
-            );
+
+            Auth0DeviceRequest requestBody = new()
+            {
+                ClientId = clientId,
+                Scope = "openid email offline_access",
+                Audience = audienceUri,
+            };
+
+            // Convert the Auth0DeviceRequest object to JSON string using Newtonsoft.Json
+            string bodyJson = JsonConvert.SerializeObject(requestBody);
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(bodyJson);
 
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.SetRequestHeader("Content-Type", "application/json");
 
             await request.SendWebRequest().AsTask();
 
@@ -89,12 +119,15 @@ namespace Hathora.Scripts.Utils.Editor.Auth0
                 return null;
             }
 
-            return JsonUtility.FromJson<Auth0DeviceResponse>(request.downloadHandler.text);
+            // Deserialize the response using Newtonsoft.Json
+            return JsonConvert.DeserializeObject<Auth0DeviceResponse>(
+                request.downloadHandler.text);
         }
 
-        private async Task<string> PollForTokenAsync(string deviceCode)
+
+        private async Task<string> pollForTokenAsync(string deviceCode)
         {
-            string url = $"{Auth0Issuer}/oauth/token";
+            string url = $"{issuerUri}/oauth/token";
             string refreshToken = null;
 
             while (refreshToken == null)
@@ -106,7 +139,7 @@ namespace Hathora.Scripts.Utils.Editor.Auth0
                 const string colon = "%3A";
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(
                     $"grant_type=urn{colon}ietf{colon}params{colon}oauth{colon}grant-type{colon}device_code" +
-                    $"&device_code={deviceCode}&client_id={ClientId}"
+                    $"&device_code={deviceCode}&client_id={clientId}"
                 );
 
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
@@ -117,7 +150,9 @@ namespace Hathora.Scripts.Utils.Editor.Auth0
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    Auth0TokenResponse tokenResponse = JsonUtility.FromJson<Auth0TokenResponse>(request.downloadHandler.text);
+                    Auth0TokenResponse tokenResponse = JsonConvert.DeserializeObject<Auth0TokenResponse>(
+                        request.downloadHandler.text);
+                    
                     refreshToken = tokenResponse.RefreshToken;
                 }
                 else if (request.responseCode != 400 || !request.downloadHandler.text.Contains("authorization_pending"))

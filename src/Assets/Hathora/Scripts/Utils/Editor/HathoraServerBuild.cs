@@ -47,7 +47,7 @@ namespace Hathora.Scripts.Utils.Editor
         public static async Task DevAuthLogin(HathoraServerConfig hathoraServerConfig)
         {
             Auth0Login auth = new();
-            string refreshToken = await auth.GetTokenAsync(); // Refresh token lasts longer
+            string refreshToken = await auth.GetTokenAsync(hathoraServerConfig); // Refresh token lasts longer
 
             if (string.IsNullOrEmpty(refreshToken))
             {
