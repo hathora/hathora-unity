@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor
 {
+    /// <summary>
+    /// The main editor for HathoraServerConfig, including all the button clicks and extra UI.
+    /// </summary>
     [CustomEditor(typeof(HathoraServerConfig))]
     public class HathoraConfigObjectEditor : UnityEditor.Editor
     {
@@ -91,10 +94,10 @@ namespace Hathora.Scripts.Utils.Editor
 
         private void insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
         {
-            GUI.enabled = false; // TODO
             EditorGUILayout.HelpBox("TODO: Launch OAuth2 window and auto-set the dev token", MessageType.Warning);
             if (GUILayout.Button("Developer Login", buttonStyle))
             {
+                GUI.FocusControl(null); // Unfocus so we can see the update instantly later (Unity bug)
                 HathoraServerBuild.DevAuthLogin(selectedConfig);
             }
         }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Utils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Application = UnityEngine.Application;
@@ -53,16 +54,43 @@ namespace Hathora.Scripts.Net.Server
         public string AppId => hathoraCoreOpts.AppId;
         public Region Region => hathoraCoreOpts.Region;
         #endregion // Public Shortcuts
+        
+        
+        #region Public Setters
+        /// <summary>
+        /// "Refresh" token is best, due to lasting the longest
+        /// </summary>
+        /// <param name="_val"></param>
+        public void SetDevToken(string _val)
+        {
+            GUI.FocusControl(null); // Unfocus the field before set so we can see the update
+            this.hathoraCoreOpts.DevAuthOpts.SetDevAuthToken(_val);
+            refreshUi();
+        }
+        #endregion // Public Setters
 
+
+        /// <summary>
+        /// ScriptableObjects won't update if set within code unless
+        /// you unfocus them, without this. This won't even show in ver ctrl until refresh.
+        /// </summary>
+        private void refreshUi()
+        {
+            GUI.FocusControl(null);
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssets();
+        }
 
         /// <summary>(!) Don't use OnEnable for ScriptableObjects</summary>
         private void OnValidate()
         {
-            if (string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName))
-            {
-                string activeSceneName = SceneManager.GetActiveScene().name;
-                linuxAutoBuildOpts.SetBuildSceneName(activeSceneName);
-            }
+            // Only auto-set if !existing val
+            if (!string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName))
+                return;
+            
+            string activeSceneName = SceneManager.GetActiveScene().name;
+            linuxAutoBuildOpts.SetBuildSceneName(activeSceneName);
+            refreshUi();
         }
 
         public bool MeetsBuildBtnReqs() =>
@@ -72,11 +100,11 @@ namespace Hathora.Scripts.Net.Server
                                                           
         public bool MeetsDeployBtnReqs() =>
             !string.IsNullOrEmpty(AppId) &&
-            !string.IsNullOrEmpty(hathoraCoreOpts.DevAuthToken) &&
+            hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName) &&
             hathoraDeployOpts.PortNumber > 1024;
-        
+
         public List<HathoraEnvVars> EnvVars => hathoraDeployOpts.EnvVars;
 
         public string GetPathToBuildExe() => Path.Combine(

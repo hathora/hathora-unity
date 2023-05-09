@@ -16,6 +16,26 @@ namespace Hathora.Scripts.Utils
     {
         #region UserConfig Serializable Containers
         [Serializable]
+        public class DevAuthTokenOpts
+        {
+            // Private serialized
+            [SerializeField]
+            private string _devAuthToken;
+            
+            [SerializeField, Tooltip("Deletes an existing refresh_token, if exists")]
+            private bool _forceNewToken = false;
+
+            // Public getters
+            public string DevAuthToken => _devAuthToken;
+            public bool ForceNewToken => _forceNewToken;
+            public bool HasAuthToken => !string.IsNullOrEmpty(_devAuthToken);
+            
+            // Public setters
+            public void SetDevAuthToken(string newToken) => 
+                _devAuthToken = newToken;
+        }
+        
+        [Serializable]
         public class ConfigCoreOpts
         {
             // Serialized
@@ -24,20 +44,22 @@ namespace Hathora.Scripts.Utils
 
             [SerializeField, Tooltip("Required (for Rooms/Lobbies)")]
             private Region _region = Region.Seattle;
-            public Region Region => _region;
             
+            #if UNITY_SERVER || DEBUG
             /// <summary>
-            /// Doc | https://hathora.dev/docs/guides/generate-admin-token 
+            /// Doc | https://hathora.dev/docs/guides/generate-admin-token
             /// </summary>
             [SerializeField, Tooltip("Get from npm pkg `@hathora/cli` via `hathora-cloud login` cmd. " +
                  "Required for server calls, such as auto-deploying to Hathora from the UserConfig file.")]
-            private string _devAuthToken;
+            private DevAuthTokenOpts _devAuthOpts;
+            #endif // UNITY_SERVER || DEBUG
 
             // Public Getters
             public string AppId => _appId;
+            public Region Region => _region;
 
 #if UNITY_SERVER || DEBUG
-            public string DevAuthToken => _devAuthToken;
+            public DevAuthTokenOpts DevAuthOpts => _devAuthOpts;
 #endif
         }
 
