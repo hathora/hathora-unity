@@ -1,11 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System.IO;
-using System.Threading.Tasks;
 using Hathora.Scripts.Net.Server;
-using Hathora.Scripts.Utils.Editor.Auth0;
 using UnityEditor;
-using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor
 {
@@ -42,23 +39,6 @@ namespace Hathora.Scripts.Utils.Editor
 
             // Build the server
             BuildPipeline.BuildPlayer(buildPlayerOptions);
-        }
-
-        public static async Task DevAuthLogin(HathoraServerConfig hathoraServerConfig)
-        {
-            Auth0Login auth = new();
-            string refreshToken = await auth.GetTokenAsync(hathoraServerConfig); // Refresh token lasts longer
-
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                Debug.LogError("[HathoraServerBuild] Dev Auth0 login failed: " +
-                    "Refresh token is null or empty");
-                return;
-            }
-            
-            hathoraServerConfig.SetDevToken(refreshToken);
-            Debug.Log("[HathoraServerBuild] Dev Auth0 login successful: " +
-                "Token set @ HathoraServerConfig");
         }
     }
 }

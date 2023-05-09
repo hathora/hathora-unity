@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System.Threading.Tasks;
 using Hathora.Scripts.Net.Server;
 using UnityEditor;
 using UnityEngine;
@@ -12,6 +13,9 @@ namespace Hathora.Scripts.Utils.Editor
     [CustomEditor(typeof(HathoraServerConfig))]
     public class HathoraConfigObjectEditor : UnityEditor.Editor
     {
+        private static bool devAuthLoginButtonInteractable = true;
+
+        
         public HathoraServerConfig GetSelectedInstance() =>
             (HathoraServerConfig)target;
         
@@ -92,19 +96,31 @@ namespace Hathora.Scripts.Utils.Editor
             }
         }
 
-        private void insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
+        private async Task insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
         {
             EditorGUILayout.HelpBox("TODO: Launch OAuth2 window and auto-set the dev token", MessageType.Warning);
+
+            GUI.enabled = devAuthLoginButtonInteractable;
+
+            if (!GUI.enabled)
+                EditorGUI.BeginDisabledGroup(!devAuthLoginButtonInteractable);    
+            
             if (GUILayout.Button("Developer Login", buttonStyle))
             {
-                GUI.FocusControl(null); // Unfocus so we can see the update instantly later (Unity bug)
-                HathoraServerBuild.DevAuthLogin(selectedConfig);
+                GUI.FocusControl(null); // Unfocus to refresh UI // TODO: Is Repaint() better?
+                devAuthLoginButtonInteractable = false;
+                
+                await HathoraServerAuth.DevAuthLogin(selectedConfig);
+                
+                devAuthLoginButtonInteractable = true;
+                Repaint();
             }
+            EditorGUI.EndDisabledGroup();
         }
 
         private void insertBuildBtn(HathoraServerConfig selectedConfig)
         {
-            GUI.enabled = selectedConfig.MeetsBuildBtnReqs();;
+            GUI.enabled = selectedConfig.MeetsBuildBtnReqs();
             EditorGUILayout.HelpBox("Build your dedicated Linux server in 1 click, using the Aut-Build settings above.", MessageType.Info);
             if (GUILayout.Button("Build Linux Server", buttonStyle))
             {
