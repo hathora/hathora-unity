@@ -105,7 +105,11 @@ namespace Hathora.Scripts.Utils.Editor
             if (!GUI.enabled)
                 EditorGUI.BeginDisabledGroup(!devAuthLoginButtonInteractable);    
             
-            if (GUILayout.Button("Developer Login", buttonStyle))
+            string btnStr = devAuthLoginButtonInteractable 
+                ? "Developer Login" 
+                : "<color=yellow>Awaiting Browser Auth...</color>";
+            
+            if (GUILayout.Button(btnStr, buttonStyle))
             {
                 GUI.FocusControl(null); // Unfocus to refresh UI // TODO: Is Repaint() better?
                 devAuthLoginButtonInteractable = false;
@@ -114,8 +118,8 @@ namespace Hathora.Scripts.Utils.Editor
                 
                 devAuthLoginButtonInteractable = true;
                 Repaint();
+                EditorGUI.EndDisabledGroup();
             }
-            EditorGUI.EndDisabledGroup();
         }
 
         private void insertBuildBtn(HathoraServerConfig selectedConfig)
