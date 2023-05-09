@@ -14,7 +14,7 @@ namespace Hathora.Scripts.Utils.Editor
     public class HathoraConfigObjectEditor : UnityEditor.Editor
     {
         private static bool devAuthLoginButtonInteractable = true;
-
+        private const string HATHORA_GREEN_HEX = "#76FDBA";
         
         public HathoraServerConfig GetSelectedInstance() =>
             (HathoraServerConfig)target;
@@ -85,8 +85,11 @@ namespace Hathora.Scripts.Utils.Editor
             }
             else
             {
-                EditorGUILayout.HelpBox("Ensure the core+deploy settings a" +
-                    "bove are filled.", MessageType.Error);
+                EditorGUILayout.HelpBox("" +
+                    "* Ensure the core+deploy settings above are set.\n" +
+                    "* Ensure you have a linux server built.\n" +
+                    "* Auth above, if dev token is not set.", 
+                    MessageType.Error);
             }
             
             if (GUILayout.Button("Deploy to Hathora", buttonStyle))
@@ -98,17 +101,31 @@ namespace Hathora.Scripts.Utils.Editor
 
         private async Task insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
         {
-            EditorGUILayout.HelpBox("TODO: Launch OAuth2 window and auto-set the dev token", MessageType.Warning);
+            bool hasAuthToken = !string.IsNullOrEmpty(selectedConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
+            bool pendingGuiEnable = devAuthLoginButtonInteractable && !hasAuthToken;
 
-            GUI.enabled = devAuthLoginButtonInteractable;
+            string btnStr = "Developer Login";
+            if (!pendingGuiEnable)
+            {
+                if (hasAuthToken)
+                {
+                    EditorGUILayout.HelpBox("Unset `dev auth token` to relogin", MessageType.Info);
+                    btnStr = $"<color={HATHORA_GREEN_HEX}>Dev Auth Token Set!</color>";
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("Your default browser should have popped up.", MessageType.Info);
+                    btnStr = "<color=yellow>Awaiting Auth...</color>";
+                }
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("Launch a browser window to login and set your " +
+                    "`dev auth token` above.", MessageType.Info);
+            }
 
-            if (!GUI.enabled)
-                EditorGUI.BeginDisabledGroup(!devAuthLoginButtonInteractable);    
-            
-            string btnStr = devAuthLoginButtonInteractable 
-                ? "Developer Login" 
-                : "<color=yellow>Awaiting Browser Auth...</color>";
-            
+            GUI.enabled = pendingGuiEnable;
+            EditorGUI.BeginDisabledGroup(!devAuthLoginButtonInteractable);
             if (GUILayout.Button(btnStr, buttonStyle))
             {
                 GUI.FocusControl(null); // Unfocus to refresh UI // TODO: Is Repaint() better?
@@ -125,7 +142,9 @@ namespace Hathora.Scripts.Utils.Editor
         private void insertBuildBtn(HathoraServerConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsBuildBtnReqs();
-            EditorGUILayout.HelpBox("Build your dedicated Linux server in 1 click, using the Aut-Build settings above.", MessageType.Info);
+            EditorGUILayout.HelpBox("Build your dedicated Linux server in 1 click, " +
+                "using the Auto-Build settings above.", MessageType.Info);
+            
             if (GUILayout.Button("Build Linux Server", buttonStyle))
             {
                 HathoraServerBuild.BuildHathoraLinuxServer(selectedConfig);

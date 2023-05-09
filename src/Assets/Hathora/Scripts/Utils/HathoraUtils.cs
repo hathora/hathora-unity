@@ -22,7 +22,7 @@ namespace Hathora.Scripts.Utils
             [SerializeField]
             private string _devAuthToken;
             
-            [SerializeField, Tooltip("Deletes an existing refresh_token, if exists")]
+            [SerializeField, Tooltip("Deletes an existing refresh_token, if exists from cached file")]
             private bool _forceNewToken = false;
 
             // Public getters
