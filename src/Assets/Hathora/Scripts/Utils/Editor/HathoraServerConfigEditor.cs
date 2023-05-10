@@ -45,7 +45,7 @@ namespace Hathora.Scripts.Utils.Editor
             if (!isDefaultName)
                 return;
             
-            EditorGUILayout.HelpBox("You are editing a template! Best practice is to duplicate" +
+            EditorGUILayout.HelpBox("You are editing a template! Best practice is to duplicate " +
                 "this file and rename it >> then .gitignore it; treat the dupe like an `.env` file.", 
                 MessageType.Warning);
             
