@@ -11,7 +11,7 @@ namespace Hathora.Scripts.Utils.Editor
     /// The main editor for HathoraServerConfig, including all the button clicks and extra UI.
     /// </summary>
     [CustomEditor(typeof(HathoraServerConfig))]
-    public class HathoraConfigObjectEditor : UnityEditor.Editor
+    public class HathoraServerConfigEditor : UnityEditor.Editor
     {
         private static bool devAuthLoginButtonInteractable = true;
         private const string HATHORA_GREEN_HEX = "#76FDBA";
