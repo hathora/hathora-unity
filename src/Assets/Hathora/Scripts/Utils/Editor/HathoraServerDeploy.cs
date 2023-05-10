@@ -16,9 +16,10 @@ namespace Hathora.Scripts.Utils.Editor
     {
         /// <summary>
         /// Deploys with HathoraServerConfig opts.
+        /// TODO: Support cancel token.
         /// </summary>
         /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static async void InitDeployToHathora(HathoraServerConfig config)
+        public static async Task DeployToHathoraAsync(HathoraServerConfig config)
         {
             if (config == null)
             {
@@ -30,34 +31,60 @@ namespace Hathora.Scripts.Utils.Editor
             // ----------------------------------------------
             // Prepare paths and file names that we didn't get from UserConfig
             HathoraUtils.HathoraDeployPaths deployPaths = new(config);
+            bool isNewlyCreatedTempDir = await initHathoraDirIfEmpty(deployPaths);
 
-            // Create a NEW temp dir; just to start clean. If exists, delete it and remake
+            // Upload via the server SDK.
+            Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
+                "to Hathora via Hathora SDK...</color>");
+            Hathora.Cloud.Sdk.Client
+        }
+
+        private static async Task<string> writeDockerFileAsync(string tempDir, string dockerfileContent)
+        {
+            string pathToDockerFile = Path.Combine(tempDir, "Dockerfile");
+            await File.WriteAllTextAsync(pathToDockerFile, dockerfileContent);
+
+            return pathToDockerFile;
+        }
+
+        /// <summary>
+        /// If empty (and not forcing a clean temp dir),
+        /// init `.hathora` dir >> generate Dockerfile
+        /// </summary>
+        /// <param name="deployPaths"></param>
+        /// <returns>isNewlyCreatedTempDir</returns>
+        private static async Task<bool> initHathoraDirIfEmpty(
+            HathoraUtils.HathoraDeployPaths deployPaths)
+        {
+            // Create a .hathora dir if !exists.
+            // Don't clean it, if exists: Possible custom Dockerfile.
             if (Directory.Exists(deployPaths.TempDirPath))
-                Directory.Delete(deployPaths.TempDirPath, recursive:true);
-            
+            {
+                // Keep temp dir? Perhaps they have a custom Dockerfile?
+                if (deployPaths.UserConfig.HathoraDeployOpts.AdvancedDeployOpts.KeepTempDir)
+                    return false; // !isNewlyCreatedTempDir
+                
+                // Delete the old temp dir so we may regenerate it cleanly
+                Directory.Delete(deployPaths.TempDirPath, recursive: true);
+            }
+              
             Directory.CreateDirectory(deployPaths.TempDirPath);
-            
-            // ----------------------------------------------
-            // Sanity checks
-            Assert.IsTrue(File.Exists(deployPaths.PathToBuildExe), 
-                $"[HathoraServerDeploy] Cannot find PathToBuildExe: {deployPaths.PathToCompressedArchive}");
-            
             Assert.IsTrue(Directory.Exists(deployPaths.TempDirPath), 
                 $"[HathoraServerDeploy] Cannot find TempDirPath: {deployPaths.TempDirPath}");
-            
-            // ----------------------------------------------
-            // Generate Dockerfile within the temp dir
-            string dockerfilePath = generateDockerFileForLinuxBuild(
-                deployPaths.TempDirPath, 
-                config.LinuxAutoBuildOpts.ServerBuildExeName);
 
+            // Generate dockerfile
+            string dockerFileContent = generateDockerFileStr(
+                deployPaths.TempDirPath, 
+                deployPaths.UserConfig.LinuxAutoBuildOpts.ServerBuildExeName);
+            
+            string dockerfilePath = await writeDockerFileAsync(
+                deployPaths.TempDirPath, 
+                dockerFileContent);
+            
             Assert.IsTrue(File.Exists(dockerfilePath), 
                 $"[HathoraServerDeploy] Generated Dockerfile not found @ '{dockerfilePath}'");
 
-            // Implement the upload process
-            Debug.Log("[HathoraServerDeploy] Preparing to deploy to Hathora...");
-            Debug.Log("[HathoraServerDeploy] <color=yellow>(!) TODO:</color> " +
-                "Implement the actual upload process");
+            return true; // isNewlyCreatedTempDir
         }
 
         /// <summary>
@@ -66,22 +93,17 @@ namespace Hathora.Scripts.Utils.Editor
         /// <param name="tempDir"></param>
         /// <param name="exeName"></param>
         /// <returns>"path/to/DockerFile"</returns>
-        private static string generateDockerFileForLinuxBuild(
+        private static string generateDockerFileStr(
             string tempDir, 
             string exeName)
         {
-            string dockerfileContent = $@"
+            return $@"
 FROM ubuntu
 
 COPY ./Build-Server .
 
 CMD ./{tempDir}/{exeName} -mode server -batchmode -nographics
 ";
-
-            string pathToDockerFile = Path.Combine(tempDir, "Dockerfile");
-            File.WriteAllText(pathToDockerFile, dockerfileContent);
-
-            return pathToDockerFile;
         }
         
         /// <summary>

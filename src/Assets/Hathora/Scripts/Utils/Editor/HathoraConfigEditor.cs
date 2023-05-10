@@ -94,7 +94,7 @@ namespace Hathora.Scripts.Utils.Editor
             
             if (GUILayout.Button("Deploy to Hathora", buttonStyle))
             {
-                HathoraServerDeploy.InitDeployToHathora(selectedConfig);
+                HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
                 GUILayout.Space(20);
             }
         }

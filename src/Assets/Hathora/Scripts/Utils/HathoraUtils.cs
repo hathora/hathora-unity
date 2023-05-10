@@ -85,21 +85,17 @@ namespace Hathora.Scripts.Utils
             public string ServerBuildDirName => _serverBuildDirName; 
             public string ServerBuildExeName => _serverBuildExeName;
             public bool IsDevBuild => _isDevBuild;
-            public bool CleanBuildDir => _cleanBuildDir
-            ;
+            public bool CleanBuildDir => _cleanBuildDir;
         }
 
         [Serializable]
         public struct ConfigAdvancedDeployOpts
         {
             // Private Serialized
-            [SerializeField, Tooltip("Perhaps you are curious *what* we're uploading, " +
-                 "kept at Unity project root .uploadToHathora")]
+            [SerializeField, Tooltip("Perhaps you are curious *what* we're uploading " +
+                 "via the `.hathora` temp dir; or want to edit the Dockerfile?")]
             private bool _keepTempDir;
             
-            [SerializeField, Tooltip("Include CLI logs, which may get bloaty")]
-            private bool _verboseLogs;
-
             [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
                  "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
             public ExtraTransportInfo _extraTransportInfo1;
@@ -109,11 +105,7 @@ namespace Hathora.Scripts.Utils
             public ExtraTransportInfo _extraTransportInfo2;
             
             // Public Getters
-            /// <summary>TODO: Deprecated?</summary>
             public bool KeepTempDir => _keepTempDir;
-            
-            /// <summary>TODO: Deprecated?</summary>
-            public bool VerboseLogs => _verboseLogs;
 
             public ExtraTransportInfo ExtraTransportInfo1 => _extraTransportInfo1;
             public ExtraTransportInfo ExtraTransportInfo2 => _extraTransportInfo2;
@@ -160,9 +152,6 @@ namespace Hathora.Scripts.Utils
             public readonly HathoraServerConfig UserConfig;
             public readonly string UnityProjRootPath;
             public readonly string TempDirPath;
-            public readonly string ArchiveName;
-            public readonly string CompressedArchiveName;
-            public readonly string PathToCompressedArchive;
             public readonly string PathToBuildExe;
             public readonly string StringifiedEnvKeyValues;
 
@@ -172,10 +161,7 @@ namespace Hathora.Scripts.Utils
             {
                 this.UserConfig = userConfig;
                 this.UnityProjRootPath = GetNormalizedPathToProjRoot(); // Path slashes normalized
-                this.TempDirPath = Path.Combine(UnityProjRootPath, ".uploadToHathora");
-                this.ArchiveName = $"{UserConfig.LinuxAutoBuildOpts.ServerBuildExeName}.tar";
-                this.CompressedArchiveName = $"{ArchiveName}.gz";
-                this.PathToCompressedArchive = Path.Combine(TempDirPath, CompressedArchiveName);
+                this.TempDirPath = Path.Combine(UnityProjRootPath, ".hathora");
                 this.PathToBuildExe = UserConfig.GetPathToBuildExe();
                 this.StringifiedEnvKeyValues = JsonConvert.SerializeObject(UserConfig.EnvVars);
             }
