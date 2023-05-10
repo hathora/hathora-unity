@@ -33,9 +33,6 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
 
 
         #region Client Auth Async Hathora SDK Calls
-        /// <summary>
-        /// Calls 
-        /// </summary>
         /// <returns>Returns AuthResult on success</returns>
         public async Task<AuthResult> ClientAuthAsync()
         {
