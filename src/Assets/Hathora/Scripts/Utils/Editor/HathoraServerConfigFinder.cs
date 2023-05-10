@@ -12,7 +12,7 @@ namespace Hathora.Scripts.Utils.Editor
     public class HathoraServerConfigFinder : EditorWindow
     {
         private const string ShowOnStartupKey = "HathoraServerConfigFinder.ShowOnStartup";
-        private List<HathoraServerConfig> serverConfigs;
+        private static List<HathoraServerConfig> serverConfigs;
         private Vector2 scrollPos;
 
         static HathoraServerConfigFinder()
@@ -44,6 +44,9 @@ namespace Hathora.Scripts.Utils.Editor
             var window = GetWindow<HathoraServerConfigFinder>("Hathora Server UserConfig Finder");
             window.minSize = new Vector2(300, 200);
             window.maxSize = window.minSize;
+            
+            // Select the 1st one found
+            selectHathoraServerConfig(serverConfigs[0]);
         }
 
         [MenuItem("Hathora/Config Finder On Startup/Enable", true)]
@@ -61,10 +64,6 @@ namespace Hathora.Scripts.Utils.Editor
         private void OnEnable()
         {
             findAllHathoraServerConfigs();
-            if (serverConfigs.Count == 1)
-            {
-                selectHathoraServerConfig(serverConfigs[0]);
-            }
         }
 
         private void OnGUI()
@@ -74,15 +73,13 @@ namespace Hathora.Scripts.Utils.Editor
             EditorGUILayout.Space(10);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-            foreach (var config in serverConfigs)
+            foreach (HathoraServerConfig config in serverConfigs)
             {
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Label(config.name, GUILayout.ExpandWidth(true));
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
-                {
                     selectHathoraServerConfig(config);
-                }
 
                 EditorGUILayout.EndHorizontal();
             }
@@ -90,9 +87,7 @@ namespace Hathora.Scripts.Utils.Editor
             EditorGUILayout.EndScrollView();
 
             if (serverConfigs.Count == 1)
-            {
                 Close();
-            }
         }
 
         private void findAllHathoraServerConfigs()
@@ -102,7 +97,7 @@ namespace Hathora.Scripts.Utils.Editor
                 AssetDatabase.GUIDToAssetPath(guid))).ToList();
         }
 
-        private void selectHathoraServerConfig(HathoraServerConfig config)
+        private static void selectHathoraServerConfig(HathoraServerConfig config)
         {
             EditorGUIUtility.PingObject(config);
             Selection.activeObject = config;
