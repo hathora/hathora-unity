@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.IO;
+using System.Linq;
 using Hathora.Scripts.Net.Server;
 using UnityEditor;
 
@@ -23,6 +24,10 @@ namespace Hathora.Scripts.Utils.Editor
             string serverBuildPath = Path.Combine(projRoot, config.LinuxAutoBuildOpts.ServerBuildDirName);
             string serverBuildName = config.LinuxAutoBuildOpts.ServerBuildExeName;
             string serverBuildFullPath = Path.Combine(serverBuildPath, serverBuildName);
+            
+            EditorBuildSettingsScene[] scenesInBuildSettings = EditorBuildSettings.scenes; // From build settings
+            string[] scenePaths = scenesInBuildSettings.Select(scene => scene.path).ToArray();
+
 
             // Create the build directory if it does not exist
             if (!Directory.Exists(serverBuildPath))
@@ -31,10 +36,12 @@ namespace Hathora.Scripts.Utils.Editor
             // Set the build options
             BuildPlayerOptions buildPlayerOptions = new()
             {
-                scenes = new[] { $"Assets/Scenes/{config.LinuxAutoBuildOpts.BuildSceneName}.unity" },
+                // For demo purposes, we're only assuming one scene
+                scenes = scenePaths,
                 locationPathName = serverBuildFullPath,
-                target = BuildTarget.StandaloneLinux64, // Adding `-batchmode -nographics` for headless mode
-                options =  BuildOptions.EnableHeadlessMode | BuildOptions.Development,
+                target = BuildTarget.StandaloneLinux64,
+                options = BuildOptions.EnableHeadlessMode | // Adds `-batchmode -nographics` 
+                    (config.LinuxAutoBuildOpts.IsDevBuild ? BuildOptions.Development : 0),
             };
 
             // Build the server

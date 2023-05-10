@@ -93,17 +93,9 @@ namespace Hathora.Scripts.Net.Server
         /// <summary>(!) Don't use OnEnable for ScriptableObjects</summary>
         private void OnValidate()
         {
-            // Only auto-set if !existing val
-            if (!string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName))
-                return;
-            
-            string activeSceneName = SceneManager.GetActiveScene().name;
-            linuxAutoBuildOpts.SetBuildSceneName(activeSceneName);
-            refreshUi();
         }
 
         public bool MeetsBuildBtnReqs() =>
-            !string.IsNullOrEmpty(linuxAutoBuildOpts.BuildSceneName) &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName);
                                                           

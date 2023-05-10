@@ -67,10 +67,6 @@ namespace Hathora.Scripts.Utils
         public class AutoBuildOpts
         {
             // Private Serialized
-            [SerializeField, Tooltip("Default: HathoraDemoScene. This will auto-fill " +
-                 "with the active scene on !focus, if you leave blank.")]
-            private string _buildSceneName;
-
             [SerializeField, Tooltip("Default: Build-Server")]
             private string _serverBuildDirName = "Build-Server";
 
@@ -81,14 +77,9 @@ namespace Hathora.Scripts.Utils
             private bool _isDevBuild = true;
             
             // Public Getters
-            public string BuildSceneName => _buildSceneName;
             public string ServerBuildDirName => _serverBuildDirName; 
             public string ServerBuildExeName => _serverBuildExeName;
             public bool IsDevBuild => _isDevBuild;
-
-            // Public Setters
-            public string SetBuildSceneName(string _val) =>
-                this._buildSceneName = _val;
         }
 
         [Serializable]
