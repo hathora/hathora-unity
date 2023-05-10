@@ -60,17 +60,29 @@ namespace Hathora.Scripts.Utils.Editor
         private void insertButtons()
         {
             HathoraServerConfig selectedConfig = GetSelectedInstance();
-            
+    
             initButtonStyle();
             GUILayout.Space(5);
 
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label("Build", EditorStyles.boldLabel);
             insertBuildBtn(selectedConfig);
+            EditorGUILayout.EndVertical();
+
             GUILayout.Space(10);
 
-            insertDevAuthLoginBtn(selectedConfig);
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label("Auth", EditorStyles.boldLabel);
+            insertDevAuthLoginBtn(selectedConfig).Wait(); // Note: Using Wait() here is not ideal, consider refactoring to avoid blocking the main thread
+            EditorGUILayout.EndVertical();
+
             GUILayout.Space(10);
 
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label("Deploy", EditorStyles.boldLabel);
             insertHathoraDeployBtn(selectedConfig);
+            EditorGUILayout.EndVertical();
+
             GUILayout.Space(10);
         }
 
@@ -97,6 +109,8 @@ namespace Hathora.Scripts.Utils.Editor
                 HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
                 GUILayout.Space(20);
             }
+            
+            GUI.enabled = true;
         }
 
         private async Task insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
@@ -137,6 +151,8 @@ namespace Hathora.Scripts.Utils.Editor
                 Repaint();
                 EditorGUI.EndDisabledGroup();
             }
+
+            GUI.enabled = true;
         }
 
         private void insertBuildBtn(HathoraServerConfig selectedConfig)
@@ -149,6 +165,8 @@ namespace Hathora.Scripts.Utils.Editor
             {
                 HathoraServerBuild.BuildHathoraLinuxServer(selectedConfig);
             }
+            
+            GUI.enabled = true;
         }
         #endregion // Core Buttons
     }
