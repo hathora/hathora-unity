@@ -278,14 +278,17 @@ namespace Hathora.Scripts.Utils
         private void mockGetServerInfoSuccess()
         {
             Debug.Log("[NetUI]<color=yellow>**MOCKING SUCCESS**</color>");
-            // mock success // TODO: DELETE ME
-            OnGetServerInfoSuccess(new ActiveConnectionInfo(
-                0, 
-                TransportType.Udp, 
-                7777, 
+            
+            ActiveConnectionInfo serverInfo = new(
+                0,
+                TransportType.Udp,
+                7777,
                 "127.0.0.1",
                 netSession.RoomId
-            ));
+            );
+
+            netSession.ServerInfo = serverInfo; // We still need to set session for copy btn
+            OnGetServerInfoSuccess(serverInfo);
         }
         
         public void OnGetServerInfoFail()
