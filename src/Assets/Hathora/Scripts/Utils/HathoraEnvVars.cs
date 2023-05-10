@@ -8,7 +8,7 @@ namespace Hathora.Scripts.Utils
     [Serializable]
     public struct HathoraEnvVars
     {
-        [JsonProperty("key")]
+        [JsonProperty("name")]
         public string Key;
         
         [JsonProperty("value")]
