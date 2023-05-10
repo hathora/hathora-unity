@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Server;
 using UnityEditor;
@@ -35,6 +36,14 @@ namespace Hathora.Scripts.Utils.Editor
             base.OnInspectorGUI();
             insertButtons(); // Place btns @ bottom
         }
+        
+        private void drawHorizontalLine(float thickness, Color color)
+        {
+            Rect lineRect = EditorGUILayout.GetControlRect(hasLabel: false, thickness);
+            lineRect.height = thickness;
+            EditorGUI.DrawRect(lineRect, color);
+        }
+
 
         /// <summary>
         /// Only insert memo if using the template file
@@ -72,10 +81,13 @@ namespace Hathora.Scripts.Utils.Editor
         #region Core Buttons
         private void insertButtons()
         {
+            GUILayout.Space(5);
+            drawHorizontalLine(1, Color.gray);
+
             initBtnsFoldout();
             buildFoldout = EditorGUILayout.Foldout(
                 buildFoldout,
-                "<color=yellow>Actions: Build/Auth/Deploy</color>",
+                "Actions: Build/Auth/Deploy",
                 toggleOnLabelClick: true,
                 btnsFoldoutStyle);
             
