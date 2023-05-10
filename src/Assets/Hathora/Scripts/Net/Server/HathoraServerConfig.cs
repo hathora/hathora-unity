@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Hathora.Cloud.Sdk.Model;
@@ -77,8 +78,16 @@ namespace Hathora.Scripts.Net.Server
         private void refreshUi()
         {
             GUI.FocusControl(null);
-            EditorUtility.SetDirty(this);
-            AssetDatabase.SaveAssets();
+
+            // try
+            // {
+            //     EditorUtility.SetDirty(this);
+            //     AssetDatabase.SaveAssets();
+            // }
+            // catch (Exception e)
+            // {
+            //     Debug.LogWarning(e);
+            // }
         }
 
         /// <summary>(!) Don't use OnEnable for ScriptableObjects</summary>
