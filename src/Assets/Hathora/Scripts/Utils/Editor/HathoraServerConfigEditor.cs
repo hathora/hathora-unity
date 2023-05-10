@@ -15,6 +15,11 @@ namespace Hathora.Scripts.Utils.Editor
     {
         private static bool devAuthLoginButtonInteractable = true;
         private const string HATHORA_GREEN_HEX = "#76FDBA";
+        private static bool buildFoldout = false;
+        private static bool authFoldout = false;
+        private static bool deployFoldout = false;
+        private static GUIStyle btnsFoldoutStyle;
+
         
         public HathoraServerConfig GetSelectedInstance() =>
             (HathoraServerConfig)target;
@@ -55,13 +60,32 @@ namespace Hathora.Scripts.Utils.Editor
             buttonStyle.fontSize = 13;
         }
         
+        private void initBtnsFoldout()
+        {
+            btnsFoldoutStyle = new GUIStyle(EditorStyles.foldoutHeader)
+            {
+                richText = true,
+            };
+        }
+        
         
         #region Core Buttons
         private void insertButtons()
         {
+            initBtnsFoldout();
+            buildFoldout = EditorGUILayout.Foldout(
+                buildFoldout,
+                "<color=yellow>Actions: Build/Auth/Deploy</color>",
+                toggleOnLabelClick: true,
+                btnsFoldoutStyle);
+            
+            if (!buildFoldout)
+                return;
+            
+            // ----------------------
             HathoraServerConfig selectedConfig = GetSelectedInstance();
-    
             initButtonStyle();
+            
             GUILayout.Space(5);
 
             EditorGUILayout.BeginVertical(GUI.skin.box);
