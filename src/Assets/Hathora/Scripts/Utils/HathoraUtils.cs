@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Net.Common.Models;
 using Hathora.Scripts.Net.Server;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -83,7 +85,7 @@ namespace Hathora.Scripts.Utils
         }
 
         [Serializable]
-        public struct ConfigAdvancedBuildOpts
+        public struct ConfigAdvancedDeployOpts
         {
             // Private Serialized
             [SerializeField, Tooltip("Perhaps you are curious *what* we're uploading, " +
@@ -92,16 +94,30 @@ namespace Hathora.Scripts.Utils
             
             [SerializeField, Tooltip("Include CLI logs, which may get bloaty")]
             private bool _verboseLogs;
+
+            [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
+                 "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
+            public ExtraTransportInfo _extraTransportInfo1;
+        
+            [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
+                 "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
+            public ExtraTransportInfo _extraTransportInfo2;
             
             // Public Getters
+            /// <summary>TODO: Deprecated?</summary>
             public bool KeepTempDir => _keepTempDir;
+            
+            /// <summary>TODO: Deprecated?</summary>
             public bool VerboseLogs => _verboseLogs;
+
+            public ExtraTransportInfo ExtraTransportInfo1 => _extraTransportInfo1;
+            public ExtraTransportInfo ExtraTransportInfo2 => _extraTransportInfo2;
         }
 
         [Serializable]
         public class HathoraDeployOpts
         {
-            // Priovate Serialized
+            // Private Serialized
             [SerializeField, Tooltip("Default: 1. How many rooms do you want to support per server?")]
             private int _roomsPerProcess = 1;
 
@@ -109,25 +125,22 @@ namespace Hathora.Scripts.Utils
             private HathoraServerConfig.HathoraPlanSize _planSizeSize =
                 HathoraServerConfig.HathoraPlanSize.Tiny;
 
-            [SerializeField, Tooltip("Default: UDP. UDP is recommended for realtime games: Faster, but less reliable.")]
-            private TransportType _transportType = TransportType.Udp;
-
-            [SerializeField, Tooltip("Default: 7777; minimum 1024")]
-            private int _portNumber = 7777;
+            [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
+            private TransportInfo _transportInfo;
 
             [SerializeField, Tooltip("(!) Like an `.env` file, these are all strings. ")]
             private List<HathoraEnvVars> _envVars;
 
+            [FormerlySerializedAs("_advancedBuildOpts")]
             [SerializeField, Tooltip("You probably don't need to touch these, unless debugging")]
-            private ConfigAdvancedBuildOpts _advancedBuildOpts;
+            private ConfigAdvancedDeployOpts advancedDeployOpts;
 
             // Public Getters
             public int RoomsPerProcess => _roomsPerProcess;
             public HathoraServerConfig.HathoraPlanSize PlanSizeSize => _planSizeSize;
-            public TransportType TransportType => _transportType;
-            public int PortNumber => _portNumber;
+            public TransportInfo TransportInfo => _transportInfo;
             public List<HathoraEnvVars> EnvVars => _envVars;
-            public ConfigAdvancedBuildOpts AdvancedBuildOpts => _advancedBuildOpts;
+            public ConfigAdvancedDeployOpts AdvancedDeployOpts => advancedDeployOpts;
         }
         #endregion // UserConfig Serializable Containers
 

@@ -104,7 +104,7 @@ namespace Hathora.Scripts.Net.Server
             hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName) &&
-            hathoraDeployOpts.PortNumber > 1024;
+            hathoraDeployOpts.TransportInfo.PortNumber > 1024;
 
         public List<HathoraEnvVars> EnvVars => hathoraDeployOpts.EnvVars;
 
