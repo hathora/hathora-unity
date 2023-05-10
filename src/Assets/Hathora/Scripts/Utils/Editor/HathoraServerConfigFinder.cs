@@ -8,10 +8,35 @@ using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor
 {
+    [InitializeOnLoad]
     public class HathoraServerConfigFinder : EditorWindow
     {
+        private const string ShowOnStartupKey = "HathoraServerConfigFinder.ShowOnStartup";
         private List<HathoraServerConfig> serverConfigs;
         private Vector2 scrollPos;
+
+        static HathoraServerConfigFinder()
+        {
+            EditorApplication.delayCall += ShowWindowOnStartup;
+        }
+
+        private static void ShowWindowOnStartup()
+        {
+            if (EditorPrefs.GetBool(ShowOnStartupKey, true))
+                ShowWindow();
+        }
+
+        [MenuItem("Hathora/Config Finder On Startup/Enable", false, -1001)]
+        public static void EnableConfigFinderOnStartup()
+        {
+            EditorPrefs.SetBool(ShowOnStartupKey, true);
+        }
+
+        [MenuItem("Hathora/Config Finder On Startup/Disable", false, -1000)]
+        public static void DisableConfigFinderOnStartup()
+        {
+            EditorPrefs.SetBool(ShowOnStartupKey, false);
+        }
 
         [MenuItem("Hathora/Find Configs", priority = -1000)]
         public static void ShowWindow()
@@ -21,10 +46,22 @@ namespace Hathora.Scripts.Utils.Editor
             window.maxSize = window.minSize;
         }
 
+        [MenuItem("Hathora/Config Finder On Startup/Enable", true)]
+        public static bool ValidateEnableConfigFinderOnStartup()
+        {
+            return !EditorPrefs.GetBool(ShowOnStartupKey, true);
+        }
+
+        [MenuItem("Hathora/Config Finder On Startup/Disable", true)]
+        public static bool ValidateDisableConfigFinderOnStartup()
+        {
+            return EditorPrefs.GetBool(ShowOnStartupKey, true);
+        }
+
         private void OnEnable()
         {
             findAllHathoraServerConfigs();
-            if (serverConfigs.Count == 1) 
+            if (serverConfigs.Count == 1)
             {
                 selectHathoraServerConfig(serverConfigs[0]);
             }
