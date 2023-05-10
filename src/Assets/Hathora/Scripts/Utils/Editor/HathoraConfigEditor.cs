@@ -25,7 +25,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// <summary>Hathora banner</summary>
         public override void OnInspectorGUI()
         {
-            insertBanner(); // Place banner @ top
+            HathoraEditorUtils.InsertBanner(); // Place banner @ top
             insertEditingTemplateWarningMemo();
             base.OnInspectorGUI();
             insertButtons(); // Place btns @ bottom
@@ -149,33 +149,6 @@ namespace Hathora.Scripts.Utils.Editor
             {
                 HathoraServerBuild.BuildHathoraLinuxServer(selectedConfig);
             }
-        }
-
-        /// <summary>
-        /// Aligns right. Shrinks to fit.
-        /// </summary>
-        private void insertBanner()
-        {
-            Texture2D bannerTexture = Resources.Load<Texture2D>("HathoraConfigBanner");
-            if (bannerTexture == null)
-                return;
-            
-            float windowWidth = EditorGUIUtility.currentViewWidth;
-            float bannerWidth = bannerTexture.width;
-            float bannerHeight = bannerTexture.height;
-
-            float maxBannerWidth = windowWidth * 0.9f; // Adjust this value as needed
-            if (bannerWidth > maxBannerWidth)
-            {
-                float scale = maxBannerWidth / bannerWidth;
-                bannerWidth = maxBannerWidth;
-                bannerHeight *= scale;
-            }
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace(); // Aligns right
-            GUILayout.Label(bannerTexture, GUILayout.Width(bannerWidth), GUILayout.Height(bannerHeight));
-            EditorGUILayout.EndHorizontal();
         }
         #endregion // Core Buttons
     }

@@ -29,7 +29,7 @@ namespace Hathora.Scripts.Utils.Editor
                 Directory.CreateDirectory(serverBuildPath);
 
             // Set the build options
-            BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
+            BuildPlayerOptions buildPlayerOptions = new()
             {
                 scenes = new[] { $"Assets/Scenes/{config.LinuxAutoBuildOpts.BuildSceneName}.unity" },
                 locationPathName = serverBuildFullPath,

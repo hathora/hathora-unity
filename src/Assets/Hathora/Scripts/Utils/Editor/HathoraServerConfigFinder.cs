@@ -32,6 +32,8 @@ namespace Hathora.Scripts.Utils.Editor
 
         private void OnGUI()
         {
+            HathoraEditorUtils.InsertBanner();
+
             EditorGUILayout.Space(10);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
