@@ -78,10 +78,15 @@ namespace Hathora.Scripts.Utils
             [SerializeField, Tooltip("The same as checking 'Developer Build' in build opts")]
             private bool _isDevBuild = true;
             
+            [SerializeField, Tooltip("If an old build exists, first delete this dir?")]
+            private bool _cleanBuildDir = true;
+            
             // Public Getters
             public string ServerBuildDirName => _serverBuildDirName; 
             public string ServerBuildExeName => _serverBuildExeName;
             public bool IsDevBuild => _isDevBuild;
+            public bool CleanBuildDir => _cleanBuildDir
+            ;
         }
 
         [Serializable]
