@@ -4577,6 +4577,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f6013a6e61c214fadd13e0bb0cf12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   hathoraServerConfig: {fileID: 11400000, guid: ce186441a02d43142a39f6170f53511e,
     type: 2}
   netSession: {fileID: 6730436420827614694}
@@ -4632,6 +4635,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f4810bc86e39604183c5e7cf550d4b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &6730436420827614718
 MonoBehaviour:
   m_ObjectHideFlags: 0
