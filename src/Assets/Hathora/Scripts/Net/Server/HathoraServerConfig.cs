@@ -20,15 +20,6 @@ namespace Hathora.Scripts.Net.Server
     [CreateAssetMenu(fileName = nameof(HathoraServerConfig), menuName = "Hathora/Server UserConfig")]
     public class HathoraServerConfig : ScriptableObject
     {
-        public enum HathoraPlanSize
-        {
-            Tiny,
-            Small,
-            Medium,
-            Large,
-        }
-
-
         #region Private Serialized Fields
         // ----------------------------------------
         [SerializeField]
@@ -105,8 +96,6 @@ namespace Hathora.Scripts.Net.Server
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName) &&
             hathoraDeployOpts.TransportInfo.PortNumber > 1024;
-
-        public List<HathoraEnvVars> EnvVars => hathoraDeployOpts.EnvVars;
 
         public string GetPathToBuildExe() => Path.Combine(
             HathoraUtils.GetNormalizedPathToProjRoot(), 

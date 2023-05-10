@@ -119,8 +119,7 @@ namespace Hathora.Scripts.Utils
             private int _roomsPerProcess = 1;
 
             [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
-            private HathoraServerConfig.HathoraPlanSize _planSizeSize =
-                HathoraServerConfig.HathoraPlanSize.Tiny;
+            private PlanName _planName = PlanName.Tiny;
 
             [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
             private TransportInfo _transportInfo;
@@ -134,7 +133,7 @@ namespace Hathora.Scripts.Utils
 
             // Public Getters
             public int RoomsPerProcess => _roomsPerProcess;
-            public HathoraServerConfig.HathoraPlanSize PlanSizeSize => _planSizeSize;
+            public PlanName PlanName => _planName;
             public TransportInfo TransportInfo => _transportInfo;
             public List<HathoraEnvVars> EnvVars => _envVars;
             public ConfigAdvancedDeployOpts AdvancedDeployOpts => advancedDeployOpts;
@@ -153,7 +152,6 @@ namespace Hathora.Scripts.Utils
             public readonly string UnityProjRootPath;
             public readonly string TempDirPath;
             public readonly string PathToBuildExe;
-            public readonly string StringifiedEnvKeyValues;
 
             private HathoraDeployPaths() { }
 
@@ -163,7 +161,7 @@ namespace Hathora.Scripts.Utils
                 this.UnityProjRootPath = GetNormalizedPathToProjRoot(); // Path slashes normalized
                 this.TempDirPath = Path.Combine(UnityProjRootPath, ".hathora");
                 this.PathToBuildExe = UserConfig.GetPathToBuildExe();
-                this.StringifiedEnvKeyValues = JsonConvert.SerializeObject(UserConfig.EnvVars);
+                // this.StringifiedEnvKeyValues = JsonConvert.SerializeObject(UserConfig.HathoraDeployOpts.EnvVars);
             }
         }
 

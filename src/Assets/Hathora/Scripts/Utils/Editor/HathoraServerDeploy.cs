@@ -36,7 +36,7 @@ namespace Hathora.Scripts.Utils.Editor
             // Upload via the server SDK.
             Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
                 "to Hathora via Hathora SDK...</color>");
-            Hathora.Cloud.Sdk.Client
+            // TODO
         }
 
         private static async Task<string> writeDockerFileAsync(string tempDir, string dockerfileContent)
