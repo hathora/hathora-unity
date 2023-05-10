@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Hathora.Scripts.Net.Server;
 using UnityEditor;
+using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor
 {
@@ -21,31 +22,57 @@ namespace Hathora.Scripts.Utils.Editor
         {
             // Set your build options
             string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
-            string serverBuildPath = Path.Combine(projRoot, config.LinuxAutoBuildOpts.ServerBuildDirName);
-            string serverBuildName = config.LinuxAutoBuildOpts.ServerBuildExeName;
-            string serverBuildFullPath = Path.Combine(serverBuildPath, serverBuildName);
-            
-            EditorBuildSettingsScene[] scenesInBuildSettings = EditorBuildSettings.scenes; // From build settings
-            string[] scenePaths = scenesInBuildSettings.Select(scene => scene.path).ToArray();
-
+            string serverBuildDirPath = Path.Combine(projRoot, config.LinuxAutoBuildOpts.ServerBuildDirName);
+            string serverBuildExeName = config.LinuxAutoBuildOpts.ServerBuildExeName;
+            string serverBuildExeFullPath = Path.Combine(serverBuildDirPath, serverBuildExeName);
 
             // Create the build directory if it does not exist
-            if (!Directory.Exists(serverBuildPath))
-                Directory.CreateDirectory(serverBuildPath);
+            cleanCreateBuildDir(config, serverBuildDirPath);
 
-            // Set the build options
-            BuildPlayerOptions buildPlayerOptions = new()
-            {
-                // For demo purposes, we're only assuming one scene
-                scenes = scenePaths,
-                locationPathName = serverBuildFullPath,
-                target = BuildTarget.StandaloneLinux64,
-                options = BuildOptions.EnableHeadlessMode | // Adds `-batchmode -nographics` 
-                    (config.LinuxAutoBuildOpts.IsDevBuild ? BuildOptions.Development : 0),
-            };
+            BuildPlayerOptions buildPlayerOptions = generateBuildPlayerOptions(
+                config,
+                serverBuildExeFullPath);
 
             // Build the server
             BuildPipeline.BuildPlayer(buildPlayerOptions);
+            
+            // Open the build directory
+            EditorUtility.RevealInFinder(serverBuildExeFullPath);
+        }
+
+        private static BuildPlayerOptions generateBuildPlayerOptions(
+            HathoraServerConfig _config, 
+            string _serverBuildExeFullPath)
+        {
+            EditorBuildSettingsScene[] scenesInBuildSettings = EditorBuildSettings.scenes; // From build settings
+            string[] scenePaths = scenesInBuildSettings.Select(scene => scene.path).ToArray();
+            
+            return new BuildPlayerOptions
+            {
+                // For demo purposes, we're only assuming one scene
+                scenes = scenePaths,
+                locationPathName = _serverBuildExeFullPath,
+                target = BuildTarget.StandaloneLinux64,
+                options = BuildOptions.EnableHeadlessMode | // Adds `-batchmode -nographics` 
+                    (_config.LinuxAutoBuildOpts.IsDevBuild ? BuildOptions.Development : 0),
+            };
+        }
+
+        private static void cleanCreateBuildDir(
+            HathoraServerConfig _config,
+            string _serverBuildDirPath)
+        {
+            bool targetBuildDirExists = Directory.Exists(_serverBuildDirPath);
+
+            if (_config.LinuxAutoBuildOpts.CleanBuildDir && targetBuildDirExists)
+            {
+                Debug.Log("[HathoraServerBuild] Found old build dir && " +
+                    "config.LinuxAutoBuildOpts.CleanBuildDir: Deleting...");
+                Directory.Delete(_serverBuildDirPath, recursive: true);
+            }
+                
+            if (!targetBuildDirExists)
+                Directory.CreateDirectory(_serverBuildDirPath);
         }
     }
 }
