@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
@@ -26,32 +27,34 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         
         #region Server Build Async Hathora SDK Calls
         /// <summary>
-        /// Wrapper for `CreateBuildAsync` to upload and deploy a cloud build to Hathora.
+        /// Wrapper for `CreateBuildAsync` to upload the tarball.
         /// </summary>
-        /// <returns>Returns AuthResult on success</returns>
-        public async Task<Build> DeployBuildToHathora()
+        /// <param name="_buildId"></param>
+        /// <param name="tarball"></param>
+        /// <returns>Returns byte[] on success</returns>
+        public async Task<byte[]> RunCloudBuild(double _buildId, Stream tarball)
         {
-            Build cloudBuildResult;
+            byte[] cloudRunBuildResultByteArr;
+            
             try
             {
-                cloudBuildResult = await buildApi.CreateBuildAsync(hathoraServerConfig.AppId);
+                cloudRunBuildResultByteArr = await buildApi.RunBuildAsync(
+                    hathoraServerConfig.AppId,
+                    _buildId,
+                    tarball);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerBuildApi]**ERR @ DeployBuildToHathora " +
-                    $"(CreateBuildAsync): {e.Message}");
+                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuild]" +
+                    $"**ERR (RunBuildAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null;
             }
-            
-            Debug.Log($"[HathoraServerBuildApi] " +
-                $"Status: '{cloudBuildResult?.Status}', " +
-                $"BuildId: '{cloudBuildResult?.BuildId}'");
 
-            // if (!isAuthed)
-            //     return null;
+            Debug.Log($"[HathoraServerBuildApi] result == " +
+                $"isSuccess? '{cloudRunBuildResultByteArr is { Length: > 0 }}");
 
-            return cloudBuildResult;
+            return cloudRunBuildResultByteArr;
         }
         #endregion // Server Build Async Hathora SDK Calls
     }
