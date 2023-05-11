@@ -122,7 +122,7 @@ namespace Hathora.Scripts.Utils.Editor
             GUILayout.Space(10);
         }
 
-        private void insertHathoraDeployBtn(HathoraServerConfig selectedConfig)
+        private async Task insertHathoraDeployBtn(HathoraServerConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
             if (GUI.enabled)
@@ -142,7 +142,7 @@ namespace Hathora.Scripts.Utils.Editor
             
             if (GUILayout.Button("Deploy to Hathora", buttonStyle))
             {
-                HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
+                await HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
                 GUILayout.Space(20);
             }
             

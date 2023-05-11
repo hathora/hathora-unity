@@ -96,7 +96,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// </summary>
         /// <param name="deployPaths">Path info</param>
         /// <param name="filesToCompress"></param>
-        public static async Task TarballFilesVia7z(
+        public static async Task TarballFilesVia7zAsync(
             HathoraUtils.HathoraDeployPaths deployPaths,
             List<string> filesToCompress)
         {
@@ -111,7 +111,7 @@ namespace Hathora.Scripts.Utils.Editor
 
             // Assert the tarball exists
             Assert.IsTrue(File.Exists(pathToOutputTarGz),
-                $"[HathoraEditorUtils.TarballFilesVia7z] Expected {pathToOutputTarGz} to exist");
+                $"[HathoraEditorUtils.TarballFilesVia7zAsync] Expected {pathToOutputTarGz} to exist");
         }
 
         /// <summary>
@@ -153,8 +153,7 @@ namespace Hathora.Scripts.Utils.Editor
             HathoraUtils.HathoraDeployPaths deployPaths, 
             List<string> filesToCompress)
         {
-            string buildExeName = deployPaths.UserConfig.LinuxAutoBuildOpts.ServerBuildExeName;
-            string pathToOutputTar = $"{deployPaths.TempDirPath}/{buildExeName}.tar";
+            string pathToOutputTar = $"{deployPaths.TempDirPath}/{deployPaths.ExeBuildName}.tar";
             string joinedFilesToCompress = string.Join("' '", filesToCompress);
             string tarArgs = $@"a -ttar ""{pathToOutputTar}"" ""{joinedFilesToCompress}""";
             
