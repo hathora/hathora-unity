@@ -1,12 +1,11 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Utils.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Utils.Editor
+namespace Hathora.Scripts.Net.Server.Editor
 {
     /// <summary>
     /// The main editor for HathoraServerConfig, including all the button clicks and extra UI.

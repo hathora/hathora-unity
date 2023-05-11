@@ -3,11 +3,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server;
-using Hathora.Scripts.Utils.Editor.Auth0;
+using Hathora.Scripts.Net.Server.Editor.Auth0;
 using UnityEngine;
 
-namespace Hathora.Scripts.Utils.Editor
+namespace Hathora.Scripts.Net.Server.Editor
 {
     /// <summary>
     /// Dev auth to get a dev token. Browser will launch to OAuth (via Auth0) and we'll

@@ -1,10 +1,9 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Scripts.Utils.Editor
+namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
 {
     /// <summary>
     /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.

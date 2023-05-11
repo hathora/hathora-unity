@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Scripts.Utils.Editor.ApiWrapper
+namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
 {
     public class HathoraServerBuildApi : HathoraServerApiBase
     {

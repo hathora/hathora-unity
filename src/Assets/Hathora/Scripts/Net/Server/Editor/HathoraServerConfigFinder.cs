@@ -2,11 +2,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Utils.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Utils.Editor
+namespace Hathora.Scripts.Net.Server.Editor
 {
     [InitializeOnLoad]
     public class HathoraServerConfigFinder : EditorWindow

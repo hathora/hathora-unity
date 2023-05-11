@@ -1,17 +1,14 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Scripts.Net.Server;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Hathora.Scripts.Utils;
+using Hathora.Scripts.Utils.Editor;
 using Debug = UnityEngine.Debug;
 
-namespace Hathora.Scripts.Utils.Editor
+namespace Hathora.Scripts.Net.Server.Editor
 {
     public static class HathoraServerDeploy
     {

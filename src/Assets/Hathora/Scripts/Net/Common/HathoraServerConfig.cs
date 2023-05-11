@@ -1,15 +1,10 @@
 // Created by dylan@hathora.dev
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Utils;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Application = UnityEngine.Application;
-using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace Hathora.Scripts.Net.Server
 {

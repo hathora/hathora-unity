@@ -2,8 +2,9 @@
 
 using System;
 using System.Threading.Tasks;
+using Hathora.Scripts.Net.Server.Editor.Auth0.Models;
 
-namespace Hathora.Scripts.Utils.Editor.Auth0.Models
+namespace Hathora.Scripts.Net.Server.Editor.Auth0
 {
     public class Auth0Client
     {
