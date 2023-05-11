@@ -2,6 +2,7 @@
 
 using Hathora.Scripts.Net.Server;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,22 +29,28 @@ namespace Hathora.Scripts.Utils.Editor
                 return;
             }
 
-            // ----------------------------------------------
             // Prepare paths and file names that we didn't get from UserConfig
             HathoraUtils.HathoraDeployPaths deployPaths = new(config);
-            
-            // ----------------------------------------------
-            // TODO: Compress {deployPaths.PathToBuildExe} and {deployPaths.PathToDockerfile}
-            // into {config.LinuxAutoBuildOpts.ServerBuildExeName}.tar.gz (gzipped tarball).
-            // using PathTo7z* deployPaths
-            
+
+            // Compress build into .tar.gz (gzipped tarball)
+            List<string> filesToCompress = new()
+            {
+                deployPaths.PathToBuildExe, 
+                deployPaths.PathToDockerfile,
+            };
+
+            await HathoraEditorUtils.TarballFilesVia7z(
+                deployPaths, 
+                filesToCompress);
 
             // ----------------------------------------------
             // // Upload via the server SDK.
             // Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
             //     "to Hathora via Hathora SDK...</color>");
         }
-
+        
+        
+        #region TODO
         /// <summary>
         /// We currently premake the Dockerfile, so we don't use this yet.
         /// TODO: Use this to customize the Dockerfile without editing directly.
@@ -80,46 +87,6 @@ COPY ./Build-Server .
 CMD ./{tempDir}/{exeName} -mode server -batchmode -nographics
 ";
         }
-        
-        /// <summary>
-        /// Useful for 7z compression handling.
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        private static async Task<string> executeCrossPlatformShellCmdAsync(string cmd, string args)
-        {
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            string shell = isWindows ? "cmd.exe" : "/bin/bash";
-            string escapedArgs = isWindows ? $"/c {args}" : $"-c \"{args}\"";
-            Process process = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = shell,
-                    Arguments = escapedArgs,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                },
-            };
-
-            process.Start();
-
-            // Read the output and error asynchronously
-            Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
-            Task<string> errorTask = process.StandardError.ReadToEndAsync();
-
-            // Wait for the process to finish and read the output and error
-            await process.WaitForExitAsync();
-
-            // Combine output and error
-            var output = await outputTask;
-            var error = await errorTask;
-            string result = output + error;
-
-            return result;
-        }
+        #endregion // TODO
     }
 }

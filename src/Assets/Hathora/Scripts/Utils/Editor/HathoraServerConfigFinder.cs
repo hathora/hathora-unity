@@ -41,7 +41,9 @@ namespace Hathora.Scripts.Utils.Editor
         [MenuItem("Hathora/Find Configs", priority = -1000)]
         public static void ShowWindow()
         {
-            var window = GetWindow<HathoraServerConfigFinder>("Hathora Server UserConfig Finder");
+            HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
+                "Hathora Server UserConfig Finder");
+            
             window.minSize = new Vector2(300, 200);
             window.maxSize = window.minSize;
             

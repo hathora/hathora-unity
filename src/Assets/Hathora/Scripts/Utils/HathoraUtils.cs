@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
@@ -152,12 +153,14 @@ namespace Hathora.Scripts.Utils
             public readonly string UnityProjRootPath;
             public readonly string TempDirPath;
             public readonly string PathToBuildExe;
+            public readonly string PathTo7zCliExe;
 
-            public string PathToDockerfile => $"{TempDirPath}/Dockerfile";
-            public string PathTo7z64bitDir => $"{TempDirPath}/7zip/x64";
-            public string PathTo7zForWindows => $"{PathTo7z64bitDir}/7za.exe";
-            public string PathTo7zForMac => $"{PathTo7z64bitDir}/7zz-mac";
-            public string PathTo7zForLinux => $"{PathTo7z64bitDir}/7zz-linux";
+            public string PathToDockerfile => NormalizePath($"{TempDirPath}/Dockerfile");
+            
+            private string pathTo7z64bitDir => NormalizePath($"{TempDirPath}/7zip/x64");
+            private string pathTo7zForWindows => NormalizePath($"{pathTo7z64bitDir}/7za.exe");
+            private string pathTo7zForMac => NormalizePath($"{pathTo7z64bitDir}/7zz-mac");
+            private string pathTo7zForLinux => NormalizePath($"{pathTo7z64bitDir}/7zz-linux");
 
             private HathoraDeployPaths() { }
 
@@ -165,11 +168,21 @@ namespace Hathora.Scripts.Utils
             {
                 this.UserConfig = userConfig;
                 this.UnityProjRootPath = GetNormalizedPathToProjRoot(); // Path slashes normalized
-                this.TempDirPath = Path.Combine(UnityProjRootPath, ".hathora");
-                this.PathToBuildExe = UserConfig.GetPathToBuildExe();
-                // this.StringifiedEnvKeyValues = JsonConvert.SerializeObject(UserConfig.HathoraDeployOpts.EnvVars);
+                this.TempDirPath = NormalizePath(Path.Combine(UnityProjRootPath, ".hathora"));
+                this.PathToBuildExe = UserConfig.GetNormalizedPathToBuildExe();
+                
+                // Determine the correct 7z executable to use based on the platform
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    this.PathTo7zCliExe = pathTo7zForWindows;
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    this.PathTo7zCliExe = pathTo7zForMac;
+                else
+                    this.PathTo7zCliExe = pathTo7zForLinux;
             }
         }
+        
+        public static string NormalizePath(string _path) =>
+            Path.GetFullPath(_path);
 
         /// <summary>
         /// Gets path to Unity proj root, then normalizes the/path/slashes.
@@ -177,10 +190,10 @@ namespace Hathora.Scripts.Utils
         /// <returns></returns>
         public static string GetNormalizedPathToProjRoot()
         {
-            var dirtyPathToUnityProjRoot = Directory.GetParent(Application.dataPath)?.ToString();
+            string dirtyPathToUnityProjRoot = Directory.GetParent(Application.dataPath)?.ToString();
             return dirtyPathToUnityProjRoot == null 
                 ? null 
-                : Path.GetFullPath(dirtyPathToUnityProjRoot);
+                : NormalizePath(dirtyPathToUnityProjRoot);
         }
 
     }

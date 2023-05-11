@@ -98,10 +98,14 @@ namespace Hathora.Scripts.Net.Server
             !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName) &&
             hathoraDeployOpts.TransportInfo.PortNumber > 1024;
 
-        public string GetPathToBuildExe() => Path.Combine(
+        /// <summary>
+        /// Combines path, then normalizes
+        /// </summary>
+        /// <returns></returns>
+        public string GetNormalizedPathToBuildExe() => Path.GetFullPath(Path.Combine(
             HathoraUtils.GetNormalizedPathToProjRoot(), 
             linuxAutoBuildOpts.ServerBuildDirName, 
-            linuxAutoBuildOpts.ServerBuildExeName);
+            linuxAutoBuildOpts.ServerBuildExeName));
         
 
     }
