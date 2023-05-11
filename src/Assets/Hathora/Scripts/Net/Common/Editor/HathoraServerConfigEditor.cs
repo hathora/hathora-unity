@@ -20,6 +20,7 @@ namespace Hathora.Scripts.Net.Common.Editor
         private static bool buildFoldout = false;
         private static bool authFoldout = false;
         private static bool deployFoldout = false;
+        private static bool splitBtns = true; // TODO: Throw this in a settings file
         private static GUIStyle btnsFoldoutStyle;
 
         
@@ -78,13 +79,32 @@ namespace Hathora.Scripts.Net.Common.Editor
             };
         }
         
-        
-        #region Core Buttons
         private void insertButtons()
         {
             GUILayout.Space(5);
             drawHorizontalLine(1, Color.gray);
 
+            if (splitBtns)
+                insertSplitButtons();
+            else
+                insertSingleBuildAuthDeployButton();
+
+            GUILayout.Space(10);
+        }
+        
+        #region Core Buttons
+        private void insertSingleBuildAuthDeployButton()
+        {
+            NetHathoraConfig selectedConfig = GetSelectedInstance();
+            initButtonStyle();
+            GUILayout.Space(5);
+
+            GUILayout.Label("Build > Auth > Deploy", EditorStyles.boldLabel);
+            insertHathoraDeployBtn(selectedConfig);
+        }
+
+        private void insertSplitButtons()
+        {
             initBtnsFoldout();
             buildFoldout = EditorGUILayout.Foldout(
                 buildFoldout,
@@ -119,8 +139,6 @@ namespace Hathora.Scripts.Net.Common.Editor
             GUILayout.Label("Deploy", EditorStyles.boldLabel);
             insertHathoraDeployBtn(selectedConfig);
             EditorGUILayout.EndVertical();
-
-            GUILayout.Space(10);
         }
 
         private async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
@@ -128,17 +146,25 @@ namespace Hathora.Scripts.Net.Common.Editor
             GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
             if (GUI.enabled)
             {
-                EditorGUILayout.HelpBox("1. Build a dedicated Linux server to " +
-                    "`/Build-Server/Build-Server.x86_64`\n" +
-                    "2. Deploy below.", MessageType.Info);
+                string step1 = "1. Build a headless Linux server to " +
+                    $"`/{selectedConfig.LinuxAutoBuildOpts.ServerBuildDirName}" +
+                    $"/{selectedConfig.LinuxAutoBuildOpts.ServerBuildExeName}`\n";
+                const string step2 = "2. Authenticates to set a secret dev token.\n";
+                const string step3 = "3. Deploy Unity build to Hathora cloud.";
+                
+                EditorGUILayout.HelpBox(step1 + step2 + step3, MessageType.Info);
             }
             else
             {
-                EditorGUILayout.HelpBox("" +
-                    "* Ensure the core+deploy settings above are set.\n" +
-                    "* Ensure you have a linux server built.\n" +
-                    "* Auth above, if dev token is not set.", 
-                    MessageType.Error);
+                if (splitBtns)
+                {
+                    EditorGUILayout.HelpBox("" +
+                        "* Ensure the core+deploy settings above are set.\n" +
+                        "* Ensure you have a linux server built.\n" +
+                        "* Auth above, if dev token is not set.", 
+                        MessageType.Error);
+                }
+
             }
             
             if (GUILayout.Button("Deploy to Hathora", buttonStyle))
