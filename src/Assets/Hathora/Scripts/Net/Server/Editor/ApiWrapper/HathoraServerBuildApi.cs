@@ -27,7 +27,34 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         
         #region Server Build Async Hathora SDK Calls
         /// <summary>
-        /// Wrapper for `CreateBuildAsync` to upload the tarball.
+        /// Wrapper for `CreateBuildAsync` to request an cloud build (tarball upload).
+        /// </summary>
+        /// <returns>Returns Build on success >> Pass this info to RunCloudBuild()</returns>
+        public async Task<Build> RunCloudBuild()
+        {
+            Build createCloudBuildResult;
+            
+            try
+            {
+                createCloudBuildResult = await buildApi.CreateBuildAsync(
+                    hathoraServerConfig.AppId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuild]" +
+                    $"**ERR (CreateBuildAsync): {e.Message}");
+                await Task.FromException<Exception>(e);
+                return null;
+            }
+
+            Debug.Log($"[HathoraServerBuildApi.RunCloudBuild] result == " +
+                $"BuildId: '{createCloudBuildResult.BuildId}, Status: {createCloudBuildResult.Status}");
+
+            return createCloudBuildResult;
+        }
+        
+        /// <summary>
+        /// Wrapper for `RunBuildAsync` to upload the tarball.
         /// </summary>
         /// <param name="_buildId"></param>
         /// <param name="tarball"></param>
@@ -51,7 +78,7 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerBuildApi] result == " +
+            Debug.Log($"[HathoraServerBuildApi.RunCloudBuild] result == " +
                 $"isSuccess? '{cloudRunBuildResultByteArr is { Length: > 0 }}");
 
             return cloudRunBuildResultByteArr;
