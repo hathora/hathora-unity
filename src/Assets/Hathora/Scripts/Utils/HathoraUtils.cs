@@ -153,6 +153,12 @@ namespace Hathora.Scripts.Utils
             public readonly string TempDirPath;
             public readonly string PathToBuildExe;
 
+            public string PathToDockerfile => $"{TempDirPath}/Dockerfile";
+            public string PathTo7z64bitDir => $"{TempDirPath}/7zip/x64";
+            public string PathTo7zForWindows => $"{PathTo7z64bitDir}/7za.exe";
+            public string PathTo7zForMac => $"{PathTo7z64bitDir}/7zz-mac";
+            public string PathTo7zForLinux => $"{PathTo7z64bitDir}/7zz-linux";
+
             private HathoraDeployPaths() { }
 
             public HathoraDeployPaths(HathoraServerConfig userConfig)

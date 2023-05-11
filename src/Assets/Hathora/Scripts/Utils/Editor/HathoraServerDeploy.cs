@@ -31,15 +31,29 @@ namespace Hathora.Scripts.Utils.Editor
             // ----------------------------------------------
             // Prepare paths and file names that we didn't get from UserConfig
             HathoraUtils.HathoraDeployPaths deployPaths = new(config);
-            bool isNewlyCreatedTempDir = await initHathoraDirIfEmpty(deployPaths);
+            
+            // ----------------------------------------------
+            // TODO: Compress {deployPaths.PathToBuildExe} and {deployPaths.PathToDockerfile}
+            // into {config.LinuxAutoBuildOpts.ServerBuildExeName}.tar.gz (gzipped tarball).
+            // using PathTo7z* deployPaths
+            
 
-            // Upload via the server SDK.
-            Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
-                "to Hathora via Hathora SDK...</color>");
-            // TODO
+            // ----------------------------------------------
+            // // Upload via the server SDK.
+            // Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
+            //     "to Hathora via Hathora SDK...</color>");
         }
 
-        private static async Task<string> writeDockerFileAsync(string tempDir, string dockerfileContent)
+        /// <summary>
+        /// We currently premake the Dockerfile, so we don't use this yet.
+        /// TODO: Use this to customize the Dockerfile without editing directly.
+        /// </summary>
+        /// <param name="tempDir"></param>
+        /// <param name="dockerfileContent"></param>
+        /// <returns></returns>
+        private static async Task<string> writeDockerFileAsync(
+            string tempDir, 
+            string dockerfileContent)
         {
             string pathToDockerFile = Path.Combine(tempDir, "Dockerfile");
             await File.WriteAllTextAsync(pathToDockerFile, dockerfileContent);
@@ -48,50 +62,11 @@ namespace Hathora.Scripts.Utils.Editor
         }
 
         /// <summary>
-        /// If empty (and not forcing a clean temp dir),
-        /// init `.hathora` dir >> generate Dockerfile
+        /// /// We currently premake the Dockerfile, so we don't use this yet.
+        /// TODO: Use this to customize the Dockerfile without editing directly.
         /// </summary>
-        /// <param name="deployPaths"></param>
-        /// <returns>isNewlyCreatedTempDir</returns>
-        private static async Task<bool> initHathoraDirIfEmpty(
-            HathoraUtils.HathoraDeployPaths deployPaths)
-        {
-            // Create a .hathora dir if !exists.
-            // Don't clean it, if exists: Possible custom Dockerfile.
-            if (Directory.Exists(deployPaths.TempDirPath))
-            {
-                // Keep temp dir? Perhaps they have a custom Dockerfile?
-                if (deployPaths.UserConfig.HathoraDeployOpts.AdvancedDeployOpts.KeepTempDir)
-                    return false; // !isNewlyCreatedTempDir
-                
-                // Delete the old temp dir so we may regenerate it cleanly
-                Directory.Delete(deployPaths.TempDirPath, recursive: true);
-            }
-              
-            Directory.CreateDirectory(deployPaths.TempDirPath);
-            Assert.IsTrue(Directory.Exists(deployPaths.TempDirPath), 
-                $"[HathoraServerDeploy] Cannot find TempDirPath: {deployPaths.TempDirPath}");
-
-            // Generate dockerfile
-            string dockerFileContent = generateDockerFileStr(
-                deployPaths.TempDirPath, 
-                deployPaths.UserConfig.LinuxAutoBuildOpts.ServerBuildExeName);
-            
-            string dockerfilePath = await writeDockerFileAsync(
-                deployPaths.TempDirPath, 
-                dockerFileContent);
-            
-            Assert.IsTrue(File.Exists(dockerfilePath), 
-                $"[HathoraServerDeploy] Generated Dockerfile not found @ '{dockerfilePath}'");
-
-            return true; // isNewlyCreatedTempDir
-        }
-
-        /// <summary>
-        /// Temp dir is probably @ project root `/.uploadToHathora`
-        /// </summary>
-        /// <param name="tempDir"></param>
-        /// <param name="exeName"></param>
+        /// <param name="tempDir">Project root /.hathora</param>
+        /// <param name="exeName">Default: "Hathora-Unity-LinuxServer.x86_64"</param>
         /// <returns>"path/to/DockerFile"</returns>
         private static string generateDockerFileStr(
             string tempDir, 
@@ -107,7 +82,7 @@ CMD ./{tempDir}/{exeName} -mode server -batchmode -nographics
         }
         
         /// <summary>
-        /// Possibly deprecated
+        /// Useful for 7z compression handling.
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="args"></param>
@@ -117,7 +92,7 @@ CMD ./{tempDir}/{exeName} -mode server -batchmode -nographics
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string shell = isWindows ? "cmd.exe" : "/bin/bash";
             string escapedArgs = isWindows ? $"/c {args}" : $"-c \"{args}\"";
-            Process process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
