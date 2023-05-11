@@ -80,4 +80,4 @@ src/Dockerfile - Copy
 
 # Ignore custom configs beyond the template
 HathoraServerConfig*.asset
-**/.hathora/*.tar.gz
+**/.hathora/*.tar*
