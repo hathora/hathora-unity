@@ -1,31 +1,31 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Server;
-using UnityEngine;
+using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
 
 namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 {
     /// <summary>
     /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.
     /// Both Client and Server APIs can inherit from this.
+    /// Unlike Client API wrappers (since !Mono), we init via Constructor instead of Init().
     /// </summary>
-    public abstract class HathoraServerApiBase : MonoBehaviour
+    public abstract class HathoraServerApiBase
     {
-        protected Configuration hathoraSdkConfig { get; private set; }
+        protected Configuration HathoraSdkConfig { get; private set; }
         protected NetHathoraConfig NetHathoraConfig { get; private set; }
 
 
         /// <summary>
-        /// Init anytime. Server calls use Dev token.
+        /// Server calls use Dev token.
         /// </summary>
         /// <param name="_hathoraSdkConfig">SDK config that we pass to Hathora API calls</param>
         /// <param name="_netHathoraConfig">Find via Unity editor top menu: Hathora >> Find Configs</param>
-        public virtual void Init(
+        protected HathoraServerApiBase(
             Configuration _hathoraSdkConfig, 
             NetHathoraConfig _netHathoraConfig)
         {
-            this.hathoraSdkConfig = _hathoraSdkConfig;
+            this.HathoraSdkConfig = _hathoraSdkConfig;
             this.NetHathoraConfig = _netHathoraConfig;
         }
     }

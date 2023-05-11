@@ -13,14 +13,14 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 {
     public class HathoraServerBuildApi : HathoraServerApiBase
     {
-        private BuildV1Api buildApi;
+        private readonly BuildV1Api buildApi;
         
-        public override void Init(
+        public HathoraServerBuildApi(
             Configuration _hathoraSdkConfig, 
-            NetHathoraConfig _netHathoraConfig)
+            NetHathoraConfig _netHathoraConfig) 
+            : base(_hathoraSdkConfig, _netHathoraConfig)
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _netHathoraConfig);
             this.buildApi = new BuildV1Api(_hathoraSdkConfig);
         }
         

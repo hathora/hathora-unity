@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.Utils;
 using Hathora.Scripts.Utils.Editor;
 using Debug = UnityEngine.Debug;
+using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
 
 namespace Hathora.Scripts.SdkWrapper.Editor
 {
@@ -17,10 +19,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// Deploys with NetHathoraConfig opts.
         /// TODO: Support cancel token.
         /// </summary>
-        /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static async Task DeployToHathoraAsync(NetHathoraConfig config)
+        /// <param name="netConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
+        public static async Task DeployToHathoraAsync(NetHathoraConfig netConfig)
         {
-            if (config == null)
+            if (netConfig == null)
             {
                 Debug.LogError("[HathoraServerBuild.DeployToHathoraAsync] " +
                     "Cannot find NetHathoraConfig ScriptableObject");
@@ -31,7 +33,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 "<color=yellow>Starting...</color>");            
             
             // Prepare paths and file names that we didn't get from UserConfig
-            HathoraUtils.HathoraDeployPaths deployPaths = new(config);
+            HathoraUtils.HathoraDeployPaths deployPaths = new(netConfig);
             
             // Generate the Dockerfile: Paths will be different for each collaborator\
             string dockerFileContent = generateDockerFileStr(deployPaths);
@@ -51,9 +53,11 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 filesToCompress);
 
             // ----------------------------------------------
-            // // Upload via the server SDK.
-            // Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
-            //     "to Hathora via Hathora SDK...</color>");
+            // Get a BuildId from Hathora
+            Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
+                "to Hathora via Hathora SDK...</color>");
+            Configuration sdkConfig = new();
+            HathoraServerBuildApi buildApi = new HathoraServerBuildApi(sdkConfig, netConfig);
         }
         
         

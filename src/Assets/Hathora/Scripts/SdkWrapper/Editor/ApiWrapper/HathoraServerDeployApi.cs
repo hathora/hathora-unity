@@ -15,17 +15,16 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 {
     public class HathoraServerDeployApi : HathoraServerApiBase
     {
-        private DeploymentV1Api deployApi;
+        private readonly DeploymentV1Api deployApi;
         
-        public override void Init(
+        public HathoraServerDeployApi(
             Configuration _hathoraSdkConfig, 
             NetHathoraConfig _netHathoraConfig)
+            : base(_hathoraSdkConfig, _netHathoraConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _netHathoraConfig);
             this.deployApi = new DeploymentV1Api(_hathoraSdkConfig);
         }
-        
         
         
         #region Server Deploy Async Hathora SDK Calls
