@@ -43,7 +43,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraServerBuildApi.RunCloudBuildAsync]" +
-                    $"**ERR (CreateBuildAsync): {e.Message}");
+                    $"**ERR => CreateBuildAsync: {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null;
             }
@@ -75,7 +75,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraServerBuildApi.RunCloudBuildAsync]" +
-                    $"**ERR (RunBuildAsync): {e.Message}");
+                    $"**ERR => RunBuildAsync: {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null;
             }

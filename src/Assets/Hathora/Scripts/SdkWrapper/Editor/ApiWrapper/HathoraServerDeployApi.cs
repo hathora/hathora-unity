@@ -29,10 +29,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         
         #region Server Deploy Async Hathora SDK Calls
         /// <summary>
-        /// Wrapper for `CreateDeployAsync` to upload and deploy a cloud deploy to Hathora.
+        /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
         /// <returns>Returns Deployment on success</returns>
-        public async Task<Deployment> DeployDeployToHathora(double buildId)
+        public async Task<Deployment> CreateDeploymentAsync(double buildId)
         {
             HathoraUtils.HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts; 
             DeploymentConfig deployConfig = new()
@@ -55,8 +55,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerDeployApi]**ERR @ DeployDeployToHathora " +
-                    $"(CreateDeployAsync): {e.Message}");
+                Debug.LogError($"[HathoraServerDeployApi.CreateDeploymentAsync]" +
+                    $"**ERR @ DeployDeployToHathora (CreateDeployAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null;
             }

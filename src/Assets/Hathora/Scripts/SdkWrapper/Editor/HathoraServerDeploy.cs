@@ -4,10 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.Utils;
 using Hathora.Scripts.Utils.Editor;
+using NUnit.Framework;
+using Unity.VisualScripting;
+using UnityEngine.Rendering.Universal;
 using Debug = UnityEngine.Debug;
 using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
 
@@ -19,21 +23,17 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// Deploys with NetHathoraConfig opts.
         /// TODO: Support cancel token.
         /// </summary>
-        /// <param name="netConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static async Task DeployToHathoraAsync(NetHathoraConfig netConfig)
+        /// <param name="_netConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
+        public static async Task DeployToHathoraAsync(NetHathoraConfig _netConfig)
         {
-            if (netConfig == null)
-            {
-                Debug.LogError("[HathoraServerBuild.DeployToHathoraAsync] " +
-                    "Cannot find NetHathoraConfig ScriptableObject");
-                return;
-            }
-
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
-                "<color=yellow>Starting...</color>");            
+                "<color=yellow>Starting...</color>");
+            
+            Assert.IsNotNull(_netConfig, "[HathoraServerBuild.DeployToHathoraAsync] " +
+                "Cannot find NetHathoraConfig ScriptableObject");
             
             // Prepare paths and file names that we didn't get from UserConfig
-            HathoraUtils.HathoraDeployPaths deployPaths = new(netConfig);
+            HathoraUtils.HathoraDeployPaths deployPaths = new(_netConfig);
             
             // Generate the Dockerfile: Paths will be different for each collaborator\
             string dockerFileContent = generateDockerFileStr(deployPaths);
@@ -42,7 +42,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 dockerFileContent);
 
             // Compress build into .tar.gz (gzipped tarball)
-            List<string> filesToCompress = new()
+            List<string> filePathsToCompress = new()
             {
                 deployPaths.PathToBuildExe, 
                 deployPaths.PathToDockerfile,
@@ -50,17 +50,95 @@ namespace Hathora.Scripts.SdkWrapper.Editor
 
             await HathoraEditorUtils.TarballFilesVia7zAsync(
                 deployPaths, 
-                filesToCompress);
+                filePathsToCompress);
 
             // ----------------------------------------------
-            // Get a BuildId from Hathora
-            Debug.Log("[HathoraServerDeploy] <color=yellow>Preparing to deploy " +
-                "to Hathora via Hathora SDK...</color>");
-            Configuration sdkConfig = new();
-            HathoraServerBuildApi buildApi = new HathoraServerBuildApi(sdkConfig, netConfig);
+            // Get a buildId from Hathora
+            Configuration sdkConfig = new()
+            {
+                AccessToken = _netConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+            };
+            Assert.IsNotNull(sdkConfig.AccessToken);
+            
+            HathoraServerBuildApi buildApi = new(sdkConfig, _netConfig);
+            
+            Build buildInfo = await getBuildInfoAsync(buildApi);
+            Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
+
+            // ----------------------------------------------
+            // Upload the build to Hathora
+            byte[] buildBytes = await uploadBuildAsync(
+                buildApi, 
+                buildInfo.BuildId, 
+                deployPaths);
+            Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
+            
+            // ----------------------------------------------
+            // Deploy the build
+            HathoraServerDeployApi deployApi = new(sdkConfig, _netConfig);
+            Deployment deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+            Assert.IsNotNull(deployment, "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
         }
-        
-        
+
+        private static async Task<Deployment> deployBuildAsync(
+            HathoraServerDeployApi _deployApi, 
+            double _buildInfoBuildId)
+        {
+            Debug.Log("[HathoraServerDeploy.deployBuildAsync] " +
+                "Deploying the uploaded build...");
+            
+            Deployment createDeploymentResult = null;
+            try
+            {
+                createDeploymentResult = await _deployApi.CreateDeploymentAsync(_buildInfoBuildId);
+            }
+            catch (Exception e)
+            {
+                await Task.FromException(e);
+                return null;
+            }
+
+            return createDeploymentResult;
+        }
+
+        private static async Task<byte[]> uploadBuildAsync(
+            HathoraServerBuildApi _buildApi,
+            double buildId,
+            HathoraUtils.HathoraDeployPaths _deployPaths)
+        {
+            // Pass BuildId and tarball (File stream) to Hathora
+            string normalizedPathToTarball = Path.GetFullPath($"{_deployPaths.TempDirPath}.tar.gz");
+            byte[] runBuildResult;
+
+            await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
+            {
+                runBuildResult = await _buildApi.RunCloudBuildAsync(buildId, fileStream);
+            }
+
+            Debug.Log($"runBuildResult=={runBuildResult}");
+            return runBuildResult;
+        }
+
+        private static async Task<Build> getBuildInfoAsync(HathoraServerBuildApi _buildApi)
+        {
+            Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] " +
+                "Getting build info (notably for buildId)...");
+            
+            Build createBuildResult = null;
+            try
+            {
+                createBuildResult = await _buildApi.CreateBuildAsync();
+            }
+            catch (Exception e)
+            {
+                await Task.FromException(e);
+                return null;
+            }
+
+            return createBuildResult;
+        }
+
+
         #region Dockerfile
         /// <summary>
         /// Deletes an old one, if exists, to ensure updated paths.
@@ -91,7 +169,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                     $"Failed to write Dockerfile to {pathToDockerfile}:\n{e}");
                 
                 await Task.FromException(e);
-                return;
             }
         }
 
