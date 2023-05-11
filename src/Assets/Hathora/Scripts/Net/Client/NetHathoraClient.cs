@@ -11,6 +11,7 @@ using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Client
 {
@@ -21,8 +22,9 @@ namespace Hathora.Scripts.Net.Client
     /// </summary>
     public class NetHathoraClient : MonoBehaviour
     {
+        [FormerlySerializedAs("hathoraServerConfig")]
         [SerializeField]
-        private HathoraServerConfig hathoraServerConfig;
+        private NetHathoraConfig netHathoraConfig;
         
         [SerializeField]
         private NetSession netSession;
@@ -57,7 +59,7 @@ namespace Hathora.Scripts.Net.Client
         private void Start()
         {
             this.hathoraSdkConfig = new Configuration();
-            ClientApis.InitAll(hathoraSdkConfig, hathoraServerConfig, netSession);
+            ClientApis.InitAll(hathoraSdkConfig, netHathoraConfig, netSession);
         }
         #endregion // Init
         

@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace Hathora.Scripts.Net.Server.Editor.Auth0.Models
+namespace Hathora.Scripts.SdkWrapper.Editor.Auth0.Models
 {
     public class Auth0DeviceRequest
     {

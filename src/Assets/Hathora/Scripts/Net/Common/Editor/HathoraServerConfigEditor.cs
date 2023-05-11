@@ -1,16 +1,18 @@
 // Created by dylan@hathora.dev
 
 using System.Threading.Tasks;
+using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.Utils.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Net.Server.Editor
+namespace Hathora.Scripts.Net.Common.Editor
 {
     /// <summary>
-    /// The main editor for HathoraServerConfig, including all the button clicks and extra UI.
+    /// The main editor for NetHathoraConfig, including all the button clicks and extra UI.
     /// </summary>
-    [CustomEditor(typeof(HathoraServerConfig))]
+    [CustomEditor(typeof(NetHathoraConfig))]
     public class HathoraServerConfigEditor : UnityEditor.Editor
     {
         private static bool devAuthLoginButtonInteractable = true;
@@ -21,8 +23,8 @@ namespace Hathora.Scripts.Net.Server.Editor
         private static GUIStyle btnsFoldoutStyle;
 
         
-        public HathoraServerConfig GetSelectedInstance() =>
-            (HathoraServerConfig)target;
+        public NetHathoraConfig GetSelectedInstance() =>
+            (NetHathoraConfig)target;
         
         // Create a new GUIStyle for the buttons with custom padding
         private GUIStyle buttonStyle;
@@ -49,7 +51,7 @@ namespace Hathora.Scripts.Net.Server.Editor
         /// </summary>
         private void insertEditingTemplateWarningMemo()
         {
-            bool isDefaultName = GetSelectedInstance().name == nameof(HathoraServerConfig);
+            bool isDefaultName = GetSelectedInstance().name == nameof(NetHathoraConfig);
             if (!isDefaultName)
                 return;
             
@@ -94,7 +96,7 @@ namespace Hathora.Scripts.Net.Server.Editor
                 return;
             
             // ----------------------
-            HathoraServerConfig selectedConfig = GetSelectedInstance();
+            NetHathoraConfig selectedConfig = GetSelectedInstance();
             initButtonStyle();
             
             GUILayout.Space(5);
@@ -121,7 +123,7 @@ namespace Hathora.Scripts.Net.Server.Editor
             GUILayout.Space(10);
         }
 
-        private async Task insertHathoraDeployBtn(HathoraServerConfig selectedConfig)
+        private async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
             if (GUI.enabled)
@@ -148,7 +150,7 @@ namespace Hathora.Scripts.Net.Server.Editor
             GUI.enabled = true;
         }
 
-        private async Task insertDevAuthLoginBtn(HathoraServerConfig selectedConfig)
+        private async Task insertDevAuthLoginBtn(NetHathoraConfig selectedConfig)
         {
             bool hasAuthToken = !string.IsNullOrEmpty(selectedConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
             bool pendingGuiEnable = devAuthLoginButtonInteractable && !hasAuthToken;
@@ -190,7 +192,7 @@ namespace Hathora.Scripts.Net.Server.Editor
             GUI.enabled = true;
         }
 
-        private void insertBuildBtn(HathoraServerConfig selectedConfig)
+        private void insertBuildBtn(NetHathoraConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsBuildBtnReqs();
             EditorGUILayout.HelpBox("Build your dedicated Linux server in 1 click, " +

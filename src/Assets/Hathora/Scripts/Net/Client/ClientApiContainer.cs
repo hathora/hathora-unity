@@ -30,12 +30,12 @@ namespace Hathora.Scripts.Net.Client
         
         public void InitAll(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig, 
+            NetHathoraConfig _netHathoraConfig, 
             NetSession _netSession)
         {
-            authApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
-            lobbyApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
-            roomApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            authApi.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
+            lobbyApi.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
+            roomApi.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
         }
     }
 }

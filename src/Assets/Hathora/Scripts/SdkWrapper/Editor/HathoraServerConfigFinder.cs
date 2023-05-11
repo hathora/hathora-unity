@@ -2,17 +2,18 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Net.Server.Editor
+namespace Hathora.Scripts.SdkWrapper.Editor
 {
     [InitializeOnLoad]
     public class HathoraServerConfigFinder : EditorWindow
     {
         private const string ShowOnStartupKey = "HathoraServerConfigFinder.ShowOnStartup";
-        private static List<HathoraServerConfig> serverConfigs;
+        private static List<NetHathoraConfig> serverConfigs;
         private Vector2 scrollPos;
 
         static HathoraServerConfigFinder()
@@ -75,7 +76,7 @@ namespace Hathora.Scripts.Net.Server.Editor
             EditorGUILayout.Space(10);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-            foreach (HathoraServerConfig config in serverConfigs)
+            foreach (NetHathoraConfig config in serverConfigs)
             {
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Label(config.name, GUILayout.ExpandWidth(true));
@@ -94,12 +95,12 @@ namespace Hathora.Scripts.Net.Server.Editor
 
         private void findAllHathoraServerConfigs()
         {
-            string[] guids = AssetDatabase.FindAssets("t:Hathora.Scripts.Net.Server.HathoraServerConfig");
-            serverConfigs = guids.Select(guid => AssetDatabase.LoadAssetAtPath<HathoraServerConfig>(
+            string[] guids = AssetDatabase.FindAssets("t:Hathora.Scripts.Net.Server.NetHathoraConfig");
+            serverConfigs = guids.Select(guid => AssetDatabase.LoadAssetAtPath<NetHathoraConfig>(
                 AssetDatabase.GUIDToAssetPath(guid))).ToList();
         }
 
-        private static void selectHathoraServerConfig(HathoraServerConfig config)
+        private static void selectHathoraServerConfig(NetHathoraConfig config)
         {
             EditorGUIUtility.PingObject(config);
             Selection.activeObject = config;

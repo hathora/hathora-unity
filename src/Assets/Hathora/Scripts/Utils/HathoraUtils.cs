@@ -149,7 +149,7 @@ namespace Hathora.Scripts.Utils
         {
             public const string hathoraConsoleAppBaseUrl = "https://console.hathora.dev/application/";
 
-            public readonly HathoraServerConfig UserConfig;
+            public readonly NetHathoraConfig UserConfig;
             public readonly string UnityProjRootPath;
             public readonly string TempDirPath;
             public readonly string PathToBuildExe;
@@ -165,7 +165,7 @@ namespace Hathora.Scripts.Utils
 
             private HathoraDeployPaths() { }
 
-            public HathoraDeployPaths(HathoraServerConfig userConfig)
+            public HathoraDeployPaths(NetHathoraConfig userConfig)
             {
                 this.UserConfig = userConfig;
                 this.UnityProjRootPath = GetNormalizedPathToProjRoot(); // Path slashes normalized

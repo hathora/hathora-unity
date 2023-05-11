@@ -24,11 +24,11 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
 
         public override void Init(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig, 
+            NetHathoraConfig _netHathoraConfig, 
             NetSession _netSession)
         {
             Debug.Log("[NetHathoraClientLobbyApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            base.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
             this.lobbyApi = new LobbyV2Api(_hathoraSdkConfig);
         }
 
@@ -45,13 +45,13 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             CreateLobbyRequest request = new CreateLobbyRequest(
                 lobbyVisibility, 
                 lobbyInitConfig, 
-                hathoraServerConfig.Region);
+                NetHathoraConfig.Region);
 
             Lobby lobby;
             try
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
-                    hathoraServerConfig.AppId,
+                    NetHathoraConfig.AppId,
                     NetSession.PlayerAuthToken, // Player token; not dev
                     request);
             }
@@ -80,7 +80,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             try
             {
                 lobby = await lobbyApi.GetLobbyInfoAsync(
-                    hathoraServerConfig.AppId,
+                    NetHathoraConfig.AppId,
                     roomId);
             }
             catch (Exception e)
@@ -103,8 +103,8 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             try
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
-                    hathoraServerConfig.AppId,
-                    hathoraServerConfig.Region);
+                    NetHathoraConfig.AppId,
+                    NetHathoraConfig.Region);
             }
             catch (Exception e)
             {

@@ -21,11 +21,11 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
 
         public override void Init(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig, 
+            NetHathoraConfig _netHathoraConfig, 
             NetSession _netSession)
         {
             Debug.Log("[NetHathoraClientRoomApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            base.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
             this.roomApi = new RoomV1Api(_hathoraSdkConfig);
         }
 
@@ -58,7 +58,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                 try
                 {
                     // Try getting an active connection wrapper - should not throw until we attempt to get the Union obj later
-                    conInfoUnionWrapper = await roomApi.GetConnectionInfoAsync(hathoraServerConfig.AppId, roomId);
+                    conInfoUnionWrapper = await roomApi.GetConnectionInfoAsync(NetHathoraConfig.AppId, roomId);
                 }
                 catch(Exception e)
                 {

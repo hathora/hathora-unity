@@ -14,7 +14,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
     public abstract class NetHathoraApiBase : MonoBehaviour
     {
         protected Configuration hathoraSdkConfig { get; private set; }
-        protected HathoraServerConfig hathoraServerConfig { get; private set; }
+        protected NetHathoraConfig NetHathoraConfig { get; private set; }
         protected NetSession NetSession { get; private set; }
 
 
@@ -22,15 +22,15 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         /// Init anytime. Client calls use V1 auth token.
         /// </summary>
         /// <param name="_hathoraSdkConfig">SDK config that we pass to Hathora API calls</param>
-        /// <param name="_hathoraServerConfig">Find via Unity editor top menu: Hathora >> Find Configs</param>
+        /// <param name="_netHathoraConfig">Find via Unity editor top menu: Hathora >> Find Configs</param>
         /// <param name="_netSession">Client (not player) session instance for updating cache.</param>
         public virtual void Init(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig,
+            NetHathoraConfig _netHathoraConfig,
             NetSession _netSession)
         {
             this.hathoraSdkConfig = _hathoraSdkConfig;
-            this.hathoraServerConfig = _hathoraServerConfig;
+            this.NetHathoraConfig = _netHathoraConfig;
             this.NetSession = _netSession;
         }
     }

@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils;
 using UnityEngine;
 
-namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
+namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 {
     public class HathoraServerDeployApi : HathoraServerApiBase
     {
@@ -18,10 +19,10 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         
         public override void Init(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig)
+            NetHathoraConfig _netHathoraConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig);
+            base.Init(_hathoraSdkConfig, _netHathoraConfig);
             this.deployApi = new DeploymentV1Api(_hathoraSdkConfig);
         }
         
@@ -34,7 +35,7 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> DeployDeployToHathora(double buildId)
         {
-            HathoraUtils.HathoraDeployOpts deployOpts = hathoraServerConfig.HathoraDeployOpts; 
+            HathoraUtils.HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts; 
             DeploymentConfig deployConfig = new()
             {
                 PlanName = deployOpts.PlanName,
@@ -49,7 +50,7 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
             try
             {
                 cloudDeployResult = await deployApi.CreateDeploymentAsync(
-                    hathoraServerConfig.AppId,
+                    NetHathoraConfig.AppId,
                     buildId,
                     deployConfig);
             }
@@ -76,7 +77,7 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         /// <returns></returns>
         private List<DeploymentConfigEnvInner> parseEnvFromConfig()
         {
-            return hathoraServerConfig.HathoraDeployOpts.EnvVars.Select(env => 
+            return NetHathoraConfig.HathoraDeployOpts.EnvVars.Select(env => 
                 new DeploymentConfigEnvInner(env.Key, env.StrVal)).ToList();
         }
     }

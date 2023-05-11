@@ -3,10 +3,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server.Editor.Auth0;
+using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.SdkWrapper.Editor.Auth0;
 using UnityEngine;
 
-namespace Hathora.Scripts.Net.Server.Editor
+namespace Hathora.Scripts.SdkWrapper.Editor
 {
     /// <summary>
     /// Dev auth to get a dev token. Browser will launch to OAuth (via Auth0) and we'll
@@ -18,7 +19,7 @@ namespace Hathora.Scripts.Net.Server.Editor
     {
         private static CancellationTokenSource ActiveCts;
         
-        public static async Task DevAuthLogin(HathoraServerConfig hathoraServerConfig)
+        public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig)
         {
             // Cancel an old op 1st
             if (ActiveCts?.Token is { CanBeCanceled: true })
@@ -28,7 +29,7 @@ namespace Hathora.Scripts.Net.Server.Editor
             ActiveCts.CancelAfter(TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
 
             Auth0Login auth = new();
-            string refreshToken = await auth.GetTokenAsync(hathoraServerConfig, ActiveCts.Token); // Refresh token lasts longer
+            string refreshToken = await auth.GetTokenAsync(_netHathoraConfig, ActiveCts.Token); // Refresh token lasts longer
 
             if (string.IsNullOrEmpty(refreshToken))
             {
@@ -37,9 +38,9 @@ namespace Hathora.Scripts.Net.Server.Editor
                 return;
             }
             
-            hathoraServerConfig.SetDevToken(refreshToken);
+            _netHathoraConfig.SetDevToken(refreshToken);
             Debug.Log("[HathoraServerBuild] Dev Auth0 login successful: " +
-                "Token set @ HathoraServerConfig");
+                "Token set @ NetHathoraConfig");
         }
     }
 }

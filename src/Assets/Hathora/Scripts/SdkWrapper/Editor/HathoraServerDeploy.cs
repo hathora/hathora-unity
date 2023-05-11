@@ -4,25 +4,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils;
 using Hathora.Scripts.Utils.Editor;
 using Debug = UnityEngine.Debug;
 
-namespace Hathora.Scripts.Net.Server.Editor
+namespace Hathora.Scripts.SdkWrapper.Editor
 {
     public static class HathoraServerDeploy
     {
         /// <summary>
-        /// Deploys with HathoraServerConfig opts.
+        /// Deploys with NetHathoraConfig opts.
         /// TODO: Support cancel token.
         /// </summary>
         /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static async Task DeployToHathoraAsync(HathoraServerConfig config)
+        public static async Task DeployToHathoraAsync(NetHathoraConfig config)
         {
             if (config == null)
             {
                 Debug.LogError("[HathoraServerBuild.DeployToHathoraAsync] " +
-                    "Cannot find HathoraServerConfig ScriptableObject");
+                    "Cannot find NetHathoraConfig ScriptableObject");
                 return;
             }
 

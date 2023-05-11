@@ -3,7 +3,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Hathora.Scripts.Net.Server.Editor.Auth0.Models
+namespace Hathora.Scripts.SdkWrapper.Editor.Auth0.Models
 {
     /// <summary>
     /// Take the UserCode and send it to the Auth0 API to get a token.

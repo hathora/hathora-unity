@@ -4,13 +4,14 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server.Editor.Auth0.Models;
+using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.SdkWrapper.Editor.Auth0.Models;
 using Hathora.Scripts.Utils.Extensions;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Hathora.Scripts.Net.Server.Editor.Auth0
+namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
 {
     /// <summary>
     /// 1. Get device auth code from 
@@ -23,7 +24,7 @@ namespace Hathora.Scripts.Net.Server.Editor.Auth0
         private const string audienceUri = "https://cloud.hathora.com";
 
         public async Task<string> GetTokenAsync(
-            HathoraServerConfig hathoraServerConfig,
+            NetHathoraConfig _netHathoraConfig,
             CancellationToken cancelToken)
         {
             // Share the same path as the CLI
@@ -36,7 +37,7 @@ namespace Hathora.Scripts.Net.Server.Editor.Auth0
 
             if (File.Exists(refreshTokenPath))
             {
-                if (!hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.ForceNewToken)
+                if (!_netHathoraConfig.HathoraCoreOpts.DevAuthOpts.ForceNewToken)
                 {
                     // TODO: Add a force refresh option (deletes the file)
                     Debug.Log($"A token file already present at {refreshTokenPath}. We'll use this " +

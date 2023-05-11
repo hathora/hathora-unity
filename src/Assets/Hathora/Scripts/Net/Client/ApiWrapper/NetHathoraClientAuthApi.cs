@@ -23,11 +23,11 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         
         public override void Init(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig, 
+            NetHathoraConfig _netHathoraConfig, 
             NetSession _netSession)
         {
             Debug.Log("[NetHathoraClientAuthApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            base.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
             this.authApi = new AuthV1Api(_hathoraSdkConfig);
         }
 
@@ -39,7 +39,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             LoginAnonymous200Response anonLoginResult;
             try
             {
-                anonLoginResult = await authApi.LoginAnonymousAsync(hathoraServerConfig.AppId);
+                anonLoginResult = await authApi.LoginAnonymousAsync(NetHathoraConfig.AppId);
             }
             catch (Exception e)
             {

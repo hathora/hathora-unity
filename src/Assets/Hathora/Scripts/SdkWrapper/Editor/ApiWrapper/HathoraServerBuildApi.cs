@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Net.Server;
 using UnityEngine;
 
-namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
+namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 {
     public class HathoraServerBuildApi : HathoraServerApiBase
     {
@@ -16,10 +17,10 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         
         public override void Init(
             Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig)
+            NetHathoraConfig _netHathoraConfig)
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _hathoraServerConfig);
+            base.Init(_hathoraSdkConfig, _netHathoraConfig);
             this.buildApi = new BuildV1Api(_hathoraSdkConfig);
         }
         
@@ -29,56 +30,57 @@ namespace Hathora.Scripts.Net.Server.Editor.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateBuildAsync` to request an cloud build (tarball upload).
         /// </summary>
-        /// <returns>Returns Build on success >> Pass this info to RunCloudBuild()</returns>
-        public async Task<Build> RunCloudBuild()
+        /// <returns>Returns Build on success >> Pass this info to RunCloudBuildAsync()</returns>
+        public async Task<Build> CreateBuildAsync()
         {
             Build createCloudBuildResult;
             
             try
             {
                 createCloudBuildResult = await buildApi.CreateBuildAsync(
-                    hathoraServerConfig.AppId);
+                    NetHathoraConfig.AppId);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuild]" +
+                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuildAsync]" +
                     $"**ERR (CreateBuildAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null;
             }
 
-            Debug.Log($"[HathoraServerBuildApi.RunCloudBuild] result == " +
-                $"BuildId: '{createCloudBuildResult.BuildId}, Status: {createCloudBuildResult.Status}");
+            Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] result == " +
+                $"BuildId: '{createCloudBuildResult.BuildId}, " +
+                $"Status: {createCloudBuildResult.Status}");
 
             return createCloudBuildResult;
         }
         
         /// <summary>
-        /// Wrapper for `RunBuildAsync` to upload the tarball.
+        /// Wrapper for `RunBuildAsync` to upload the tarball after calling 
         /// </summary>
         /// <param name="_buildId"></param>
         /// <param name="tarball"></param>
         /// <returns>Returns byte[] on success</returns>
-        public async Task<byte[]> RunCloudBuild(double _buildId, Stream tarball)
+        public async Task<byte[]> RunCloudBuildAsync(double _buildId, Stream tarball)
         {
             byte[] cloudRunBuildResultByteArr;
             
             try
             {
                 cloudRunBuildResultByteArr = await buildApi.RunBuildAsync(
-                    hathoraServerConfig.AppId,
+                    NetHathoraConfig.AppId,
                     _buildId,
                     tarball);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuild]" +
+                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuildAsync]" +
                     $"**ERR (RunBuildAsync): {e.Message}");
                 await Task.FromException<Exception>(e);
                 return null;
             }
 
-            Debug.Log($"[HathoraServerBuildApi.RunCloudBuild] result == " +
+            Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] result == " +
                 $"isSuccess? '{cloudRunBuildResultByteArr is { Length: > 0 }}");
 
             return cloudRunBuildResultByteArr;

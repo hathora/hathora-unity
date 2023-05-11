@@ -2,23 +2,24 @@
 
 using System.IO;
 using System.Linq;
+using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Net.Server.Editor
+namespace Hathora.Scripts.SdkWrapper.Editor
 {
     /// <summary>
     /// Contains build + deploy methods for Hathora Server.
-    /// Trigger these from HathoraServerConfig ScriptableObject buttons. 
+    /// Trigger these from NetHathoraConfig ScriptableObject buttons. 
     /// </summary>
     public static class HathoraServerBuild
     {
         /// <summary>
-        /// Builds with HathoraServerConfig opts.
+        /// Builds with NetHathoraConfig opts.
         /// </summary>
         /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static void BuildHathoraLinuxServer(HathoraServerConfig config)
+        public static void BuildHathoraLinuxServer(NetHathoraConfig config)
         {
             // Set your build options
             string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
@@ -41,7 +42,7 @@ namespace Hathora.Scripts.Net.Server.Editor
         }
 
         private static BuildPlayerOptions generateBuildPlayerOptions(
-            HathoraServerConfig _config, 
+            NetHathoraConfig _config, 
             string _serverBuildExeFullPath)
         {
             EditorBuildSettingsScene[] scenesInBuildSettings = EditorBuildSettings.scenes; // From build settings
@@ -59,7 +60,7 @@ namespace Hathora.Scripts.Net.Server.Editor
         }
 
         private static void cleanCreateBuildDir(
-            HathoraServerConfig _config,
+            NetHathoraConfig _config,
             string _serverBuildDirPath)
         {
             bool targetBuildDirExists = Directory.Exists(_serverBuildDirPath);
