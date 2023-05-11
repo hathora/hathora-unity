@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -154,7 +155,7 @@ namespace Hathora.Scripts.Utils.Editor
             List<string> filesToCompress)
         {
             string pathToOutputTar = $"{deployPaths.TempDirPath}/{deployPaths.ExeBuildName}.tar";
-            string joinedFilesToCompress = string.Join("' '", filesToCompress);
+            string joinedFilesToCompress = string.Join(@""" """, filesToCompress);
             string tarArgs = $@"a -ttar ""{pathToOutputTar}"" ""{joinedFilesToCompress}""";
             
             string tarResultLogs = await ExecuteCrossPlatformShellCmdAsync(
