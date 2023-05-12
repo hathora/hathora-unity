@@ -12,7 +12,7 @@ namespace Hathora.Scripts.Net.Server
     /// Sensitive info will not be included in Client builds.
     /// For meta objects (like the banner and btns), see HathoraConfigEditor.
     /// </summary>
-    [CreateAssetMenu(fileName = nameof(NetHathoraConfig), menuName = "Hathora/Server UserConfig")]
+    [CreateAssetMenu(fileName = nameof(NetHathoraConfig), menuName = "Hathora/Config File")]
     public class NetHathoraConfig : ScriptableObject
     {
         #region Private Serialized Fields

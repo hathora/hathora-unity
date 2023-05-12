@@ -79,5 +79,6 @@ utils/PrepUploadToHathora.ps1
 src/Dockerfile - Copy
 
 # Ignore custom configs beyond the template
-HathoraServerConfig*.asset
+NetHathoraConfig*.asset*
+!NetHathoraConfig*.template.asset
 **/.hathora/*.tar*

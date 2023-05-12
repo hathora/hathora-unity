@@ -52,25 +52,32 @@ namespace Hathora.Scripts.Net.Common.Editor
         /// </summary>
         private void insertEditingTemplateWarningMemo()
         {
-            bool isDefaultName = GetSelectedInstance().name == nameof(NetHathoraConfig);
+            string configTemplateName = $"{nameof(NetHathoraConfig)}.template";
+            bool isDefaultName = GetSelectedInstance().name == configTemplateName;
             if (!isDefaultName)
                 return;
             
-            EditorGUILayout.HelpBox("You are editing a template! Best practice is to duplicate " +
-                "this file and rename it >> then .gitignore it; treat the dupe like an `.env` file.", 
+            EditorGUILayout.HelpBox("You are editing a template!\n" +
+                "1. Duplicate this (CTRL+D)\n" +
+                "2. Add dupe to .gitignore >> treat as an .env file", 
                 MessageType.Warning);
             
             GUILayout.Space(10);
         }
 
+        /// <summary>
+        /// Adds padding, rich text, and sets font size to 13.
+        /// </summary>
         void initButtonStyle()
         {
-            buttonStyle = new(GUI.skin.button);
-            buttonStyle.padding = new RectOffset(10, 10, 10, 10);
-            buttonStyle.richText = true;
-            buttonStyle.fontSize = 13;
+            buttonStyle = new GUIStyle(GUI.skin.button)
+            {
+                padding = new RectOffset(10, 10, 10, 10),
+                richText = true,
+                fontSize = 13,
+            };
         }
-        
+ 
         private void initBtnsFoldout()
         {
             btnsFoldoutStyle = new GUIStyle(EditorStyles.foldoutHeader)
@@ -151,8 +158,9 @@ namespace Hathora.Scripts.Net.Common.Editor
                     $"/{selectedConfig.LinuxAutoBuildOpts.ServerBuildExeName}`\n";
                 const string step2 = "2. Authenticates to set a secret dev token.\n";
                 const string step3 = "3. Deploy Unity build to Hathora cloud.";
+                string helpboxContent = step1 + step2 + step3;
                 
-                EditorGUILayout.HelpBox(step1 + step2 + step3, MessageType.Info);
+                EditorGUILayout.HelpBox(helpboxContent, MessageType.Info);
             }
             else
             {
