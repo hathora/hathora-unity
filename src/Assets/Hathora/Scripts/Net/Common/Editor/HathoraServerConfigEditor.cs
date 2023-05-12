@@ -33,8 +33,10 @@ namespace Hathora.Scripts.Net.Common.Editor
         /// <summary>Hathora banner</summary>
         public override void OnInspectorGUI()
         {
-            HathoraEditorUtils.InsertBanner(); // Place banner @ top
+            HathoraEditorUtils.InsertBanner(_includeVerticalGroup: true); // Place banner @ top
+            
             insertEditingTemplateWarningMemo();
+            
             base.OnInspectorGUI();
             insertButtons(); // Place btns @ bottom
         }

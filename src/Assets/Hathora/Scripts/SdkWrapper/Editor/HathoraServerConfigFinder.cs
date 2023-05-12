@@ -15,7 +15,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         private const string ShowOnStartupKey = "HathoraServerConfigFinder.ShowOnStartup";
         private static List<NetHathoraConfig> serverConfigs;
         private static Vector2 scrollPos;
-        private static GUIStyle richTxtLabelStyle;
+        private static GUIStyle richCenterTxtLabelStyle;
 
         
         #region Init
@@ -35,7 +35,11 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         
         private static void InitStyles()
         {
-            richTxtLabelStyle ??= new GUIStyle(EditorStyles.label) { richText = true };
+            richCenterTxtLabelStyle ??= new GUIStyle(EditorStyles.label)
+            {
+                richText = true,
+                alignment = TextAnchor.MiddleCenter,
+            };
         }
 
         private static void ShowWindowOnStartup()
@@ -64,8 +68,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
                 "Hathora Server UserConfig Finder");
             
-            window.minSize = new Vector2(300, 200);
-            window.maxSize = window.minSize;
+            window.minSize = new Vector2(300, 230);
+            // window.maxSize = window.minSize;
             
             // Select the 1st one found
             selectHathoraServerConfig(serverConfigs[0]);
@@ -86,11 +90,13 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         private void OnGUI()
         {
             InitStyles();
-            HathoraEditorUtils.InsertBanner();
-            EditorGUILayout.Space(10);
-
+            HathoraEditorUtils.InsertBanner(
+                _wrapperExtension: 30f, 
+                _labelPadding: 20f,
+                _includeVerticalGroup: false);
             insertDescrLbl();
             EditorGUILayout.Space(10);
+            GUILayout.EndVertical();
             
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
     
@@ -108,10 +114,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         {
             string headerColor = HathoraEditorUtils.HATHORA_GREEN_HEX;
             string lblContent = serverConfigs?.Count > 0
-                ? $"<b><color={headerColor}>Choose a Hathora Config:</color></b>"
+                ? $"<b><color={headerColor}>Choose a Hathora Config</color></b>"
                 : $"<color={headerColor}>Create a new Hathora config to get started!</color>";
             
-            GUILayout.Label(lblContent, richTxtLabelStyle);
+            GUILayout.Label(lblContent, richCenterTxtLabelStyle);
         }
 
         private void insertNewConfigBtn()

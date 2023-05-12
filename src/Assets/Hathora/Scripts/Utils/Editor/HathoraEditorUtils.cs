@@ -21,12 +21,22 @@ namespace Hathora.Scripts.Utils.Editor
         public const string HATHORA_GREEN_HEX = "#76FDBA";
 
         /// <summary>
+        /// Add 
+        /// --
         /// Wrapped in a Rect. Aligns center. Black bg on transparent img,
         /// showing an illusion of dynamic size. Shrinks to fit.
         /// </summary>
-        /// <param name="_imgPaddingTop">Change this to add text within the black banner</param>
-        /// <param name="_imgPaddingBottom">Change this to add text within the black banner</param>
-        public static void InsertBanner(float _imgPaddingTop = 5f, float _imgPaddingBottom = 7f)
+        /// <param name="_wrapperExtension">Extend the black banner down</param>
+        /// <param name="_labelPadding">Push the content below down further</param>
+        /// <param name="_includeVerticalGroup">
+        /// (!) If not, include `GUILayout.EndVertical()` shortly after this call.
+        /// You would set it to `false` if you wanted to include middleware in
+        /// between to add labels/buttons INSIDE the banner.
+        /// </param>
+        public static void InsertBanner(
+            float _wrapperExtension = 3, 
+            float _labelPadding = 10f,
+            bool _includeVerticalGroup = true)
         {
             Texture2D bannerTexture = Resources.Load<Texture2D>("HathoraConfigBanner");
             if (bannerTexture == null)
@@ -46,15 +56,18 @@ namespace Hathora.Scripts.Utils.Editor
             }
 
             // Calculate the banner's position and size
+            const float _imgPaddingTop = 5f;
+            const float _imgPaddingBottom = 7f;
+
             float bannerX = (windowWidth - bannerWidth) * 0.5f; // center
             float bannerY = _imgPaddingTop;
 
-            // Create the padded rect
+            // Create the padded rect with extended wrapper
             Rect paddedRect = new(
                 x: 0,
                 y: 0,
                 width: windowWidth,
-                height: bannerHeight + _imgPaddingTop + _imgPaddingBottom);
+                height: bannerHeight + _imgPaddingTop + _imgPaddingBottom + _wrapperExtension);
 
             // Draw a black background for the entire horizontal area with padding
             EditorGUI.DrawRect(paddedRect, Color.black);
@@ -63,7 +76,11 @@ namespace Hathora.Scripts.Utils.Editor
             Rect bannerRect = new Rect(bannerX, bannerY, bannerWidth, bannerHeight);
             GUI.DrawTexture(bannerRect, bannerTexture);
 
-            GUILayout.Space(paddedRect.height);
+            GUILayout.BeginVertical(GUILayout.Height(paddedRect.height));
+            GUILayout.Space(bannerHeight + _labelPadding);
+            
+            if (_includeVerticalGroup)
+                GUILayout.EndVertical();
         }
 
         /// <summary>
