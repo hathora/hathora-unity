@@ -39,7 +39,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             EditorPrefs.SetBool(ShowOnStartupKey, false);
         }
 
-        [MenuItem("Hathora/Find Configs", priority = -1000)]
+        [MenuItem("Hathora/Find Configs _%#h", priority = -1000)] // Ctrl + Shift + H
         public static void ShowWindow()
         {
             HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
