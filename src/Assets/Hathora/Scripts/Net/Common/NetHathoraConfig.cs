@@ -17,7 +17,6 @@ namespace Hathora.Scripts.Net.Server
     {
         #region Private Serialized Fields
         // ----------------------------------------
-        [Header("Options: Core/Build/Deploy")]
         [SerializeField]
         private HathoraUtils.ConfigCoreOpts hathoraCoreOpts;
 

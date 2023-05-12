@@ -17,12 +17,12 @@ namespace Hathora.Scripts.Net.Common.Editor
     {
         private static bool devAuthLoginButtonInteractable = true;
         private const string HATHORA_GREEN_HEX = "#76FDBA";
-        private static bool buildFoldout = false;
-        private static bool authFoldout = false;
-        private static bool deployFoldout = false;
-        private static bool splitBtns = true; // TODO: Throw this in a settings file
+        private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         private static GUIStyle btnsFoldoutStyle;
-
+        private static GUIStyle leftAlignLabelStyle;
+        private static GUIStyle centerAlignLabelStyle;
+        private static GUIStyle rightAlignLabelStyle;
+        private string previousDevAuthToken;
         
         public NetHathoraConfig GetSelectedInstance() =>
             (NetHathoraConfig)target;
@@ -33,14 +33,53 @@ namespace Hathora.Scripts.Net.Common.Editor
         /// <summary>Hathora banner</summary>
         public override void OnInspectorGUI()
         {
+            initStyles();
+            initButtonStyle();
             HathoraEditorUtils.InsertBanner(_includeVerticalGroup: true); // Place banner @ top
             
-            insertEditingTemplateWarningMemo();
+            NetHathoraConfig selectedConfig = GetSelectedInstance();
+            insertEditingTemplateWarningMemo(selectedConfig);
             
-            base.OnInspectorGUI();
-            insertButtons(); // Place btns @ bottom
+            bool isAuthed = selectedConfig.HathoraCoreOpts.DevAuthOpts.HasAuthToken; 
+            if (isAuthed)
+                base.OnInspectorGUI(); // Hide entire config
+
+            insertButtons(selectedConfig, isAuthed); // Show only auth button, if !authed
+            
+            // The real config is hidden, so we add fields to pass to config later
+            if (!isAuthed)
+                insertUnauthedUi(selectedConfig);
         }
-        
+
+        private void initStyles()
+        {
+            initButtonStyle();
+            initBtnFoldoutsStyle();
+            initLabelsStyle();
+        }
+
+        private void initLabelsStyle()
+        {
+            leftAlignLabelStyle = new GUIStyle(EditorStyles.label)
+            {
+                richText = true,
+                alignment = TextAnchor.MiddleLeft,
+            };
+            
+            centerAlignLabelStyle = new GUIStyle(EditorStyles.label)
+            {
+                richText = true,
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true,
+            };
+            
+            rightAlignLabelStyle = new GUIStyle(EditorStyles.label)
+            {
+                richText = true,
+                alignment = TextAnchor.MiddleRight,
+            };
+        }
+
         private void drawHorizontalLine(float thickness, Color color)
         {
             Rect lineRect = EditorGUILayout.GetControlRect(hasLabel: false, thickness);
@@ -52,10 +91,10 @@ namespace Hathora.Scripts.Net.Common.Editor
         /// <summary>
         /// Only insert memo if using the template file
         /// </summary>
-        private void insertEditingTemplateWarningMemo()
+        private void insertEditingTemplateWarningMemo(NetHathoraConfig _selectedConfig)
         {
             string configTemplateName = $"{nameof(NetHathoraConfig)}.template";
-            bool isDefaultName = GetSelectedInstance().name == configTemplateName;
+            bool isDefaultName = _selectedConfig.name == configTemplateName;
             if (!isDefaultName)
                 return;
             
@@ -80,7 +119,7 @@ namespace Hathora.Scripts.Net.Common.Editor
             };
         }
  
-        private void initBtnsFoldout()
+        private void initBtnFoldoutsStyle()
         {
             btnsFoldoutStyle = new GUIStyle(EditorStyles.foldoutHeader)
             {
@@ -88,95 +127,79 @@ namespace Hathora.Scripts.Net.Common.Editor
             };
         }
         
-        private void insertButtons()
+        private void insertButtons(NetHathoraConfig _config, bool _isAuthed)
         {
             GUILayout.Space(5);
-            drawHorizontalLine(1, Color.gray);
 
-            if (splitBtns)
-                insertSplitButtons();
-            else
-                insertSingleBuildAuthDeployButton();
+            insertSplitButtons(_config, _isAuthed);
 
             GUILayout.Space(10);
         }
         
         #region Core Buttons
-        private void insertSingleBuildAuthDeployButton()
+        private void insertSplitButtons(NetHathoraConfig _config, bool _isAuthed)
         {
-            NetHathoraConfig selectedConfig = GetSelectedInstance();
-            initButtonStyle();
             GUILayout.Space(5);
 
-            GUILayout.Label("Build > Auth > Deploy", EditorStyles.boldLabel);
-            insertHathoraDeployBtn(selectedConfig);
+            if (!_isAuthed)
+            {
+                EditorGUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+                    "<b>Welcome!</b> Get started below</color>", centerAlignLabelStyle);
+                insertDevAuthLoginBtn(_config);
+                EditorGUILayout.EndVertical();
+                return;
+            }
+
+            // drawHorizontalLine(1, Color.gray);
+            GUILayout.Space(10);
+
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+                "Customize via `Linux Auto Build Opts`</color>", centerAlignLabelStyle);
+            insertBuildBtn(_config);
+            EditorGUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+                "Customize via `Hathora Deploy Opts`</color>", centerAlignLabelStyle);
+            insertHathoraDeployBtn(_config);
+            EditorGUILayout.EndVertical();
         }
 
-        private void insertSplitButtons()
+        /// <summary>
+        /// We already added an auth button, leading up to this point.
+        /// We always want the AppId and DevAuthToken fields to be visible.
+        /// Since this is just a styler, the "real" fields are in the actual Config (invisible).
+        /// </summary>
+        private void insertUnauthedUi(NetHathoraConfig _config)
         {
-            initBtnsFoldout();
-            buildFoldout = EditorGUILayout.Foldout(
-                buildFoldout,
-                "Actions: Build/Auth/Deploy",
-                toggleOnLabelClick: true,
-                btnsFoldoutStyle);
+            insertDevTokenPasswordField(_config);
+            // TODO: What else?
+        }
+
+        private void insertDevTokenPasswordField(NetHathoraConfig _config)
+        {
+            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+                "Or paste an existing token:</color>", rightAlignLabelStyle);
             
-            if (!buildFoldout)
-                return;
-            
-            // ----------------------
-            NetHathoraConfig selectedConfig = GetSelectedInstance();
-            initButtonStyle();
-            
-            GUILayout.Space(5);
+            const string previousPassword = "";
+            string currentDevAuthToken = EditorGUILayout.PasswordField(
+                "Dev Auth Token", previousPassword);
 
-            EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Build", EditorStyles.boldLabel);
-            insertBuildBtn(selectedConfig);
-            EditorGUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Auth", EditorStyles.boldLabel);
-            insertDevAuthLoginBtn(selectedConfig).Wait(); // Note: Using Wait() here is not ideal, consider refactoring to avoid blocking the main thread
-            EditorGUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Deploy", EditorStyles.boldLabel);
-            insertHathoraDeployBtn(selectedConfig);
-            EditorGUILayout.EndVertical();
+            if (currentDevAuthToken != previousDevAuthToken)
+            {
+                _config.SetDevToken(currentDevAuthToken);
+                previousDevAuthToken = currentDevAuthToken;
+            }
         }
 
         private async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
-            if (GUI.enabled)
-            {
-                string step1 = "1. Build a headless Linux server to " +
-                    $"`/{selectedConfig.LinuxAutoBuildOpts.ServerBuildDirName}" +
-                    $"/{selectedConfig.LinuxAutoBuildOpts.ServerBuildExeName}`\n";
-                const string step2 = "2. Authenticates to set a secret dev token.\n";
-                const string step3 = "3. Deploy Unity build to Hathora cloud.";
-                string helpboxContent = step1 + step2 + step3;
-                
-                EditorGUILayout.HelpBox(helpboxContent, MessageType.Info);
-            }
-            else
-            {
-                if (splitBtns)
-                {
-                    EditorGUILayout.HelpBox("" +
-                        "* Ensure the core+deploy settings above are set.\n" +
-                        "* Ensure you have a linux server built.\n" +
-                        "* Auth above, if dev token is not set.", 
-                        MessageType.Error);
-                }
 
-            }
-            
             if (GUILayout.Button("Deploy to Hathora", buttonStyle))
             {
                 await HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
@@ -191,24 +214,16 @@ namespace Hathora.Scripts.Net.Common.Editor
             bool hasAuthToken = !string.IsNullOrEmpty(selectedConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
             bool pendingGuiEnable = devAuthLoginButtonInteractable && !hasAuthToken;
 
-            string btnStr = "Developer Login";
+            string btnStr = "Hathora Login";
             if (!pendingGuiEnable)
             {
                 if (hasAuthToken)
-                {
-                    EditorGUILayout.HelpBox("Unset `dev auth token` to relogin", MessageType.Info);
                     btnStr = $"<color={HATHORA_GREEN_HEX}>Dev Auth Token Set!</color>";
-                }
                 else
                 {
                     EditorGUILayout.HelpBox("Your default browser should have popped up.", MessageType.Info);
                     btnStr = "<color=yellow>Awaiting Auth...</color>";
                 }
-            }
-            else
-            {
-                EditorGUILayout.HelpBox("Launch a browser window to login and set your " +
-                    "`dev auth token` above.", MessageType.Info);
             }
 
             GUI.enabled = pendingGuiEnable;
@@ -231,8 +246,6 @@ namespace Hathora.Scripts.Net.Common.Editor
         private void insertBuildBtn(NetHathoraConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsBuildBtnReqs();
-            EditorGUILayout.HelpBox("Build your dedicated Linux server in 1 click, " +
-                "using the Auto-Build settings above.", MessageType.Info);
             
             if (GUILayout.Button("Build Linux Server", buttonStyle))
             {

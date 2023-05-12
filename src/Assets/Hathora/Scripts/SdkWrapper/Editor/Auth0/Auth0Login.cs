@@ -43,7 +43,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
                     Debug.Log($"A token file already present at {refreshTokenPath}. We'll use this " +
                         "token, instead. If you'd like to get a new one, please remove this file");
                 
-                    return await File.ReadAllTextAsync(refreshTokenPath);
+                    return File.ReadAllText(refreshTokenPath); // (!) The Async variant is bugged, freezing Unity
                 }                
                 
                 // Delete this so we can make a new one
