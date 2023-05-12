@@ -75,6 +75,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
 
             EditorGUILayout.Space(10);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+            
+            // Check if any serverConfigs are null with LINQ: If they are, findAllHathoraServerConfigs() to refresh cache.
+            if (serverConfigs != null && serverConfigs.Any(config => config == null))
+                findAllHathoraServerConfigs();
 
             foreach (NetHathoraConfig config in serverConfigs)
             {
