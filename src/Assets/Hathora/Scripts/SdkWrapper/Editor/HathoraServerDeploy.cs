@@ -61,22 +61,50 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             Assert.IsNotNull(sdkConfig.AccessToken);
             
             HathoraServerBuildApi buildApi = new(sdkConfig, _netConfig);
-            
-            Build buildInfo = await getBuildInfoAsync(buildApi);
+
+            Build buildInfo = null;
+            try
+            {
+                buildInfo = await getBuildInfoAsync(buildApi);
+            }
+            catch (Exception e)
+            {
+                await Task.FromException<Exception>(e);
+                return;
+            }
             Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
 
             // ----------------------------------------------
             // Upload the build to Hathora
-            byte[] buildBytes = await uploadBuildAsync(
-                buildApi, 
-                buildInfo.BuildId, 
-                deployPaths);
+            byte[] buildBytes = null;
+            try
+            {
+                buildBytes = await uploadBuildAsync(
+                    buildApi, 
+                    buildInfo.BuildId, 
+                    deployPaths);
+            }
+            catch (Exception e)
+            {
+                await Task.FromException<Exception>(e);
+                return;
+            }
             Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
             
             // ----------------------------------------------
             // Deploy the build
             HathoraServerDeployApi deployApi = new(sdkConfig, _netConfig);
-            Deployment deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+
+            Deployment deployment = null;
+            try
+            {
+                deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+            }
+            catch (Exception e)
+            {
+                await Task.FromException<Exception>(e);
+                return;
+            }
             Assert.IsNotNull(deployment, "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
         }
 
@@ -107,9 +135,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             HathoraUtils.HathoraDeployPaths _deployPaths)
         {
             // Pass BuildId and tarball (File stream) to Hathora
-            string normalizedPathToTarball = Path.GetFullPath($"{_deployPaths.TempDirPath}.tar.gz");
+            string normalizedPathToTarball = Path.GetFullPath(
+                $"{_deployPaths.TempDirPath}/{_deployPaths.ExeBuildName}.tar.gz");
+            
             byte[] runBuildResult;
-
             await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
             {
                 runBuildResult = await _buildApi.RunCloudBuildAsync(buildId, fileStream);
