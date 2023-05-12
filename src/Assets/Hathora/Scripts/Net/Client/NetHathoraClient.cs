@@ -22,7 +22,6 @@ namespace Hathora.Scripts.Net.Client
     /// </summary>
     public class NetHathoraClient : MonoBehaviour
     {
-        [FormerlySerializedAs("hathoraServerConfig")]
         [SerializeField]
         private NetHathoraConfig netHathoraConfig;
         

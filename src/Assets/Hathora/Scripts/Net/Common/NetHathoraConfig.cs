@@ -21,11 +21,9 @@ namespace Hathora.Scripts.Net.Server
         [SerializeField]
         private HathoraUtils.ConfigCoreOpts hathoraCoreOpts;
 
-        [FormerlySerializedAs("linuxAutoBuildSettings")]
         [SerializeField]
         private HathoraUtils.AutoBuildOpts linuxAutoBuildOpts;
 
-        [FormerlySerializedAs("hathoraDeploySettings")]
         [SerializeField] 
         private HathoraUtils.HathoraDeployOpts hathoraDeployOpts;
         #endregion // Private Serialized Fields

@@ -128,7 +128,6 @@ namespace Hathora.Scripts.Utils
             [SerializeField, Tooltip("(!) Like an `.env` file, these are all strings. ")]
             private List<HathoraEnvVars> _envVars;
 
-            [FormerlySerializedAs("_advancedBuildOpts")]
             [SerializeField, Tooltip("You probably don't need to touch these, unless debugging")]
             private ConfigAdvancedDeployOpts advancedDeployOpts;
 
