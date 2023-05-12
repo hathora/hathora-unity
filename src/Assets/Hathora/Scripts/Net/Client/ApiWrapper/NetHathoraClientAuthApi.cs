@@ -36,7 +36,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         /// <returns>Returns AuthResult on success</returns>
         public async Task<AuthResult> ClientAuthAsync()
         {
-            LoginAnonymous200Response anonLoginResult;
+            LoginResponse anonLoginResult;
             try
             {
                 anonLoginResult = await authApi.LoginAnonymousAsync(NetHathoraConfig.AppId);

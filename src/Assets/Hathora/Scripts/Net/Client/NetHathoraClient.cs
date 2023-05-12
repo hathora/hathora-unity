@@ -150,10 +150,10 @@ namespace Hathora.Scripts.Net.Client
         /// </summary>
         public async Task GetActiveConnectionInfo(string roomId)
         {
-            ActiveConnectionInfo activeConnectionInfo;
+            ConnectionInfoV2 connectionInfo;
             try
             {
-                activeConnectionInfo = await ClientApis.roomApi.ClientGetConnectionInfoAsync(roomId);
+                connectionInfo = await ClientApis.roomApi.ClientGetConnectionInfoAsync(roomId);
             }
             catch (Exception e)
             {
@@ -164,19 +164,19 @@ namespace Hathora.Scripts.Net.Client
             }
             
             // Success
-            OnGetActiveConnectionInfoComplete(activeConnectionInfo);
+            OnGetActiveConnectionInfoComplete(connectionInfo);
         }
         
         /// <summary>AKA OnGetServerInfoSuccess</summary>
-        private void OnGetActiveConnectionInfoComplete(ActiveConnectionInfo serverInfo)
+        private void OnGetActiveConnectionInfoComplete(ConnectionInfoV2 connectionInfo)
         {
-            if (string.IsNullOrEmpty(serverInfo?.Host))
+            if (string.IsNullOrEmpty(connectionInfo?.ExposedPort?.Host))
             {
                 NetUI.Singleton.OnGetServerInfoFail();
                 return;
             }
             
-            NetUI.Singleton.OnGetServerInfoSuccess(serverInfo);
+            NetUI.Singleton.OnGetServerInfoSuccess(connectionInfo);
         }
         #endregion // Interactions from UI
         
