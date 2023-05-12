@@ -18,20 +18,26 @@ namespace Hathora.Scripts.Utils.Editor
     /// </summary>
     public static class HathoraEditorUtils
     {
+        public const string HATHORA_GREEN_HEX = "#76FDBA";
+
         /// <summary>
-        /// Aligns right. Shrinks to fit.
+        /// Wrapped in a Rect. Aligns center. Black bg on transparent img,
+        /// showing an illusion of dynamic size. Shrinks to fit.
         /// </summary>
-        public static void InsertBanner()
+        /// <param name="_imgPaddingTop">Change this to add text within the black banner</param>
+        /// <param name="_imgPaddingBottom">Change this to add text within the black banner</param>
+        public static void InsertBanner(float _imgPaddingTop = 5f, float _imgPaddingBottom = 7f)
         {
             Texture2D bannerTexture = Resources.Load<Texture2D>("HathoraConfigBanner");
             if (bannerTexture == null)
                 return;
-        
+
             float windowWidth = EditorGUIUtility.currentViewWidth;
             float bannerWidth = bannerTexture.width;
             float bannerHeight = bannerTexture.height;
 
-            float maxBannerWidth = windowWidth * 0.9f;
+            const float minBannerWidth = 200f; // Set the minimum banner width
+            float maxBannerWidth = Mathf.Max(windowWidth * 0.5f, minBannerWidth);
             if (bannerWidth > maxBannerWidth)
             {
                 float scale = maxBannerWidth / bannerWidth;
@@ -39,12 +45,27 @@ namespace Hathora.Scripts.Utils.Editor
                 bannerHeight *= scale;
             }
 
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.Label(bannerTexture, GUILayout.Width(bannerWidth), GUILayout.Height(bannerHeight));
-            EditorGUILayout.EndHorizontal();
+            // Calculate the banner's position and size
+            float bannerX = (windowWidth - bannerWidth) * 0.5f; // center
+            float bannerY = _imgPaddingTop;
+
+            // Create the padded rect
+            Rect paddedRect = new(
+                x: 0,
+                y: 0,
+                width: windowWidth,
+                height: bannerHeight + _imgPaddingTop + _imgPaddingBottom);
+
+            // Draw a black background for the entire horizontal area with padding
+            EditorGUI.DrawRect(paddedRect, Color.black);
+
+            // Draw the banner texture centered within the padded rect
+            Rect bannerRect = new Rect(bannerX, bannerY, bannerWidth, bannerHeight);
+            GUI.DrawTexture(bannerRect, bannerTexture);
+
+            GUILayout.Space(paddedRect.height);
         }
-        
+
         /// <summary>
         /// Useful for 7z compression handling.
         /// </summary>
