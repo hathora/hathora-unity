@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,12 +17,98 @@ namespace Hathora.Scripts.Utils.Editor
     /// </summary>
     public static class HathoraEditorUtils
     {
+        #region Links
+        public const string HATHORA_DOCS_URL = "https://docs.hathora.dev";
+        #endregion // Links
+        
+        #region Style/Color
         public const string HATHORA_GREEN_HEX = "#76FDBA";
+        public const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
+        public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#20124D";
+        
+        public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
+        public static readonly RectOffset DefaultPadding = new(left: 10, right: 10, top: 10, bottom: 10);
+        public static readonly RectOffset NoPadding = new(left: 0, right: 0, top: 0, bottom: 0);
+        public static readonly RectOffset DefaultEmptyMargin = new(left: 0, right: 0, top: 0, bottom: 0);
+        
+        public static GUIStyle GetRichButtonStyle(
+            int _fontSize = 13, 
+            bool _wordWrap = true) => new(GUI.skin.button)
+        {
+            richText = true,
+            fontSize = _fontSize,
+            wordWrap = _wordWrap,
+            margin = DefaultEmptyMargin,
+            padding = DefaultPadding,
+        };
+        
+        public static GUIStyle GetRichLabelStyle(
+            TextAnchor _align, 
+            bool _wordWrap = true,
+            int _fontSize = 13) => new(EditorStyles.label)
+        {
+            richText = true,
+            alignment = _align,
+            wordWrap = _wordWrap,
+            fontSize = _fontSize,
+            margin = DefaultEmptyMargin,
+            padding = DefaultPadding,
+        };
+
+        /// <summary>
+        /// No padding on right
+        /// </summary>
+        /// <returns></returns>
+        public static GUIStyle GetPreLinkLabelStyle()
+        {
+            GUIStyle style = new(EditorStyles.label)
+            {
+                margin = DefaultEmptyMargin,
+                padding = DefaultEmptyMargin,
+            };
+            
+            style.padding.right = 0;
+
+            return style;
+        }
+
+        /// <summary>
+        /// There's no native label links, so we fake it.
+        /// </summary>
+        /// <returns></returns>
+        public static GUIStyle GetRichLinkStyle(TextAnchor _align) => new(GUI.skin.label)
+        {
+            normal =
+            {
+                textColor = HexToColor(HATHORA_VIOLET_COLOR_HEX),
+            },
+            fontStyle = FontStyle.Bold,
+            alignment = _align,
+            richText = true,
+            margin = DefaultEmptyMargin,
+            padding = DefaultPadding,
+        };
+        
+        public static Color HexToColor(string hex)
+        {
+            hex = hex.Replace("#", "");
+            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            byte a = 255;
+
+            if (hex.Length == 8)
+                a = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+
+            return new Color32(r, g, b, a);
+        }
+        #endregion // Style/Color
+        
 
         /// <summary>
         /// Add 
         /// --
-        /// Wrapped in a Rect. Aligns center. Black bg on transparent img,
+        /// Wrapped in a Rect. Aligns center. Dark bg on transparent img,
         /// showing an illusion of dynamic size. Shrinks to fit.
         /// </summary>
         /// <param name="_wrapperExtension">Extend the black banner down</param>
@@ -69,11 +154,12 @@ namespace Hathora.Scripts.Utils.Editor
                 width: windowWidth,
                 height: bannerHeight + _imgPaddingTop + _imgPaddingBottom + _wrapperExtension);
 
-            // Draw a black background for the entire horizontal area with padding
-            EditorGUI.DrawRect(paddedRect, Color.black);
+            // Draw a dark background for the entire horizontal area with padding
+            Color indigoColor = HexToColor(HATHORA_DARK_INDIGO_COLOR_HEX);
+            EditorGUI.DrawRect(paddedRect, indigoColor);
 
             // Draw the banner texture centered within the padded rect
-            Rect bannerRect = new Rect(bannerX, bannerY, bannerWidth, bannerHeight);
+            Rect bannerRect = new(bannerX, bannerY, bannerWidth, bannerHeight);
             GUI.DrawTexture(bannerRect, bannerTexture);
 
             GUILayout.BeginVertical(GUILayout.Height(paddedRect.height));
@@ -93,7 +179,9 @@ namespace Hathora.Scripts.Utils.Editor
         {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string shell = isWindows ? "cmd.exe" : "/bin/bash";
-            string escapedArgs = isWindows ? $"/c {cmd} {args}" : $"-c \"{cmd} {args}\"";
+            string escapedArgs = isWindows 
+                ? $"/c {cmd} {args}" 
+                : $"-c \"{cmd} {args}\"";
             
             Debug.Log($"[HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync] " +
                 $"shell: {shell}, cmd args: <color=yellow>`{cmd} {args}`</color>");
@@ -131,26 +219,28 @@ namespace Hathora.Scripts.Utils.Editor
         
         #region 7z Utils
         /// <summary>
-        /// Uses the included utils @ project root `/.hathora/7zip/`
+        /// - Uses the included utils @ project root `/.hathora/7zip/`
+        /// - Adds /.hathora/Dockerfile
+        /// - Adds /{buildDir}
         /// </summary>
         /// <param name="deployPaths">Path info</param>
         /// <param name="filesToCompress"></param>
-        public static async Task TarballFilesVia7zAsync(
+        public static async Task TarballDeployFilesVia7zAsync(
             HathoraUtils.HathoraDeployPaths deployPaths,
             List<string> filesToCompress)
         {
-            // file >> file.tar
-            string pathToOutputTar = await compressWithTarVia7z(deployPaths, filesToCompress);
-
+            // file [ Dockerfile, {buildDir} ] >> file.tar
+            string pathToOutputTar = await compressWithTarVia7zAsync(deployPaths, filesToCompress);
+            
             // file.tar >> file.tar.gz ("Tarball")
-            string pathToOutputTarGz = await compressTarAsGzVia7z(
+            string pathToOutputTarGz = await compressTarAsGzVia7zAsync(
                 deployPaths, 
                 pathToOutputTar,
                 _deleteOldTar: true);
 
             // Assert the tarball exists
             Assert.IsTrue(File.Exists(pathToOutputTarGz),
-                $"[HathoraEditorUtils.TarballFilesVia7zAsync] Expected {pathToOutputTarGz} to exist");
+                $"[HathoraEditorUtils.TarballDeployFilesVia7zAsync] Expected {pathToOutputTarGz} to exist");
         }
 
         /// <summary>
@@ -160,7 +250,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// <param name="_pathToOutputTar"></param>
         /// <param name="_deleteOldTar"></param>
         /// <returns></returns>
-        private static async Task<string> compressTarAsGzVia7z(
+        private static async Task<string> compressTarAsGzVia7zAsync(
             HathoraUtils.HathoraDeployPaths _deployPaths,
             string _pathToOutputTar, 
             bool _deleteOldTar)
@@ -173,7 +263,7 @@ namespace Hathora.Scripts.Utils.Editor
                 gzipArgs);
             
             // TODO: if (verboseLogs)
-            Debug.Log($"[HathoraEditorUtils.compressTarAsGzVia7z] " +
+            Debug.Log($"[HathoraEditorUtils.compressTarAsGzVia7zAsync] " +
                 $"tarResultLogs:\n<color=yellow>{gzipResultLogs}</color>");
 
             if (_deleteOldTar)
@@ -183,17 +273,21 @@ namespace Hathora.Scripts.Utils.Editor
         }
 
         /// <summary>
-        /// You generally want to .gz, after, to create a tarball.
+        /// - Uses the included utils @ project root `/.hathora/7zip/`
+        /// - Adds /.hathora/Dockerfile
+        /// - Adds /{buildDir}
+        /// - You generally want to .gz, after, to create a tarball.
         /// </summary>
         /// <param name="deployPaths"></param>
         /// <param name="filesToCompress"></param>
         /// <returns>"path/to/output.tar"</returns>
-        private static async Task<string> compressWithTarVia7z(
+        private static async Task<string> compressWithTarVia7zAsync(
             HathoraUtils.HathoraDeployPaths deployPaths, 
             List<string> filesToCompress)
         {
             string pathToOutputTar = $"{deployPaths.TempDirPath}/{deployPaths.ExeBuildName}.tar";
             string joinedFilesToCompress = string.Join(@""" """, filesToCompress);
+            // const string excludePattern = @"-x !*\*DoNotShip\*";
             string tarArgs = $@"a -ttar ""{pathToOutputTar}"" ""{joinedFilesToCompress}""";
             
             string tarResultLogs = await ExecuteCrossPlatformShellCmdAsync(
@@ -201,10 +295,10 @@ namespace Hathora.Scripts.Utils.Editor
                 tarArgs);
             
             // TODO: if (verboseLogs)
-            Debug.Log($"[HathoraEditorUtils.compressWithTarVia7z] " +
+            Debug.Log($"[HathoraEditorUtils.compressWithTarVia7zAsync] " +
                 $"tarResultLogs:\n<color=yellow>{tarResultLogs}</color>");
 
-            Assert.IsNotNull(tarResultLogs, "[HathoraEditorUtils.compressWithTarVia7z] " +
+            Assert.IsNotNull(tarResultLogs, "[HathoraEditorUtils.compressWithTarVia7zAsync] " +
                 $"Error while creating tar archive: {tarResultLogs}");
             
             return pathToOutputTar;

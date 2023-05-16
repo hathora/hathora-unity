@@ -156,6 +156,7 @@ namespace Hathora.Scripts.Utils
 
             public string PathToDockerfile => NormalizePath($"{TempDirPath}/Dockerfile");
             public string ExeBuildName => UserConfig.LinuxAutoBuildOpts.ServerBuildExeName;
+            public string ExeBuildDir => UserConfig.LinuxAutoBuildOpts.ServerBuildDirName;
             
             private string pathTo7z64bitDir => NormalizePath($"{TempDirPath}/7zip/x64");
             private string pathTo7zForWindows => NormalizePath($"{pathTo7z64bitDir}/7za.exe");

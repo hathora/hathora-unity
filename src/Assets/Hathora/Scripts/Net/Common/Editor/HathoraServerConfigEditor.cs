@@ -16,68 +16,98 @@ namespace Hathora.Scripts.Net.Common.Editor
     public class HathoraServerConfigEditor : UnityEditor.Editor
     {
         private static bool devAuthLoginButtonInteractable = true;
-        private const string HATHORA_GREEN_HEX = "#76FDBA";
-        private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
-        private static GUIStyle btnsFoldoutStyle;
-        private static GUIStyle leftAlignLabelStyle;
+        
         private static GUIStyle centerAlignLabelStyle;
+        private static GUIStyle centerAlignLargerTxtLabelNoWrapStyle;
+        private static GUIStyle leftAlignLabelStyle;
+        private static GUIStyle centerLinkLabelStyle;
         private static GUIStyle rightAlignLabelStyle;
+        private static GUIStyle preLinkLabelStyle;
+        private static GUIStyle generalButtonStyle;
+        private static GUIStyle btnsFoldoutStyle;
+                
         private string previousDevAuthToken;
         
         public NetHathoraConfig GetSelectedInstance() =>
             (NetHathoraConfig)target;
         
-        // Create a new GUIStyle for the buttons with custom padding
-        private GUIStyle buttonStyle;
         
         /// <summary>Hathora banner</summary>
         public override void OnInspectorGUI()
         {
+            // Create style
+            serializedObject.Update();
             initStyles();
-            initButtonStyle();
-            HathoraEditorUtils.InsertBanner(_includeVerticalGroup: true); // Place banner @ top
-            
+            initButtonStyles();
             NetHathoraConfig selectedConfig = GetSelectedInstance();
-            insertEditingTemplateWarningMemo(selectedConfig);
+
+            // Insert style
+            insertTopHeader(selectedConfig);
+            insertMiddleBody(selectedConfig);
+            insertBottomFooter(selectedConfig);
+        }
+
+        private void insertBottomFooter(NetHathoraConfig _config)
+        {
+            GUILayout.Space(10f);
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
             
-            bool isAuthed = selectedConfig.HathoraCoreOpts.DevAuthOpts.HasAuthToken; 
+            GUILayout.Label("To learn more about Hathora Cloud, check out our ", preLinkLabelStyle);
+            insertLinkLabel("documentation", HathoraEditorUtils.HATHORA_DOCS_URL);
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+
+        private void insertLinkLabel(string _label, string _url)
+        {
+            if (EditorGUILayout.LinkButton(
+                    _label,
+                    GUILayout.ExpandWidth(false)))
+            {
+                Application.OpenURL(_url);
+            }
+        }
+
+        private void insertMiddleBody(NetHathoraConfig _config)
+        {
+            insertEditingTemplateWarningMemo(_config);
+            
+            bool isAuthed = _config.HathoraCoreOpts.DevAuthOpts.HasAuthToken; 
             if (isAuthed)
                 base.OnInspectorGUI(); // Hide entire config
 
-            insertButtons(selectedConfig, isAuthed); // Show only auth button, if !authed
-            
-            // The real config is hidden, so we add fields to pass to config later
-            if (!isAuthed)
-                insertUnauthedUi(selectedConfig);
+            insertButtons(_config, isAuthed); // Show only auth button, if !authed
+        }
+
+        private void insertTopHeader(NetHathoraConfig _config)
+        {
+            HathoraEditorUtils.InsertBanner(
+                _includeVerticalGroup: false,
+                _wrapperExtension: 30f); // Place banner @ top
+            GUILayout.Label("Multiplayer Server Hosting", centerAlignLargerTxtLabelNoWrapStyle);
+            GUILayout.EndVertical();
         }
 
         private void initStyles()
         {
-            initButtonStyle();
-            initBtnFoldoutsStyle();
-            initLabelsStyle();
+            initButtonStyles();
+            initBtnFoldoutStyles();
+            initLabelStyles();
         }
 
-        private void initLabelsStyle()
+        private static void initLabelStyles()
         {
-            leftAlignLabelStyle = new GUIStyle(EditorStyles.label)
-            {
-                richText = true,
-                alignment = TextAnchor.MiddleLeft,
-            };
-            
-            centerAlignLabelStyle = new GUIStyle(EditorStyles.label)
-            {
-                richText = true,
-                alignment = TextAnchor.MiddleCenter,
-                wordWrap = true,
-            };
-            
-            rightAlignLabelStyle = new GUIStyle(EditorStyles.label)
-            {
-                richText = true,
-                alignment = TextAnchor.MiddleRight,
-            };
+            leftAlignLabelStyle = HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleLeft);
+            centerAlignLabelStyle = HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleCenter);
+            rightAlignLabelStyle = HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleRight);
+            centerLinkLabelStyle = HathoraEditorUtils.GetRichLinkStyle(TextAnchor.MiddleCenter);
+            preLinkLabelStyle = HathoraEditorUtils.GetPreLinkLabelStyle();
+            centerAlignLargerTxtLabelNoWrapStyle = HathoraEditorUtils.GetRichLabelStyle(
+                TextAnchor.MiddleCenter,
+                _wordWrap: false,
+                _fontSize: 15);
         }
 
         private void drawHorizontalLine(float thickness, Color color)
@@ -86,7 +116,6 @@ namespace Hathora.Scripts.Net.Common.Editor
             lineRect.height = thickness;
             EditorGUI.DrawRect(lineRect, color);
         }
-
 
         /// <summary>
         /// Only insert memo if using the template file
@@ -109,30 +138,20 @@ namespace Hathora.Scripts.Net.Common.Editor
         /// <summary>
         /// Adds padding, rich text, and sets font size to 13.
         /// </summary>
-        void initButtonStyle()
+        static void initButtonStyles()
         {
-            buttonStyle = new GUIStyle(GUI.skin.button)
-            {
-                padding = new RectOffset(10, 10, 10, 10),
-                richText = true,
-                fontSize = 13,
-            };
+            generalButtonStyle = HathoraEditorUtils.GetRichButtonStyle();
         }
  
-        private void initBtnFoldoutsStyle()
+        private static void initBtnFoldoutStyles()
         {
-            btnsFoldoutStyle = new GUIStyle(EditorStyles.foldoutHeader)
-            {
-                richText = true,
-            };
+            btnsFoldoutStyle = HathoraEditorUtils.GetRichFoldoutHeaderStyle();
         }
         
         private void insertButtons(NetHathoraConfig _config, bool _isAuthed)
         {
             GUILayout.Space(5);
-
             insertSplitButtons(_config, _isAuthed);
-
             GUILayout.Space(10);
         }
         
@@ -145,7 +164,10 @@ namespace Hathora.Scripts.Net.Common.Editor
             {
                 EditorGUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
-                    "<b>Welcome!</b> Get started below</color>", centerAlignLabelStyle);
+                    "Create an account or log in to Hathora Cloud's Console to get started</color>", 
+                    centerAlignLabelStyle);
+                GUILayout.Space(10f);
+
                 insertDevAuthLoginBtn(_config);
                 EditorGUILayout.EndVertical();
                 return;
@@ -196,11 +218,11 @@ namespace Hathora.Scripts.Net.Common.Editor
             }
         }
 
-        private async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
+        private static async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
 
-            if (GUILayout.Button("Deploy to Hathora", buttonStyle))
+            if (GUILayout.Button("Deploy to Hathora", generalButtonStyle))
             {
                 await HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
                 GUILayout.Space(20);
@@ -214,21 +236,20 @@ namespace Hathora.Scripts.Net.Common.Editor
             bool hasAuthToken = !string.IsNullOrEmpty(selectedConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
             bool pendingGuiEnable = devAuthLoginButtonInteractable && !hasAuthToken;
 
-            string btnStr = "Hathora Login";
+            string btnStr = "Register or log in to Hathora Console";
             if (!pendingGuiEnable)
             {
                 if (hasAuthToken)
-                    btnStr = $"<color={HATHORA_GREEN_HEX}>Dev Auth Token Set!</color>";
+                    btnStr = $"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>Dev Auth Token Set!</color>";
                 else
                 {
-                    EditorGUILayout.HelpBox("Your default browser should have popped up.", MessageType.Info);
-                    btnStr = "<color=yellow>Awaiting Auth...</color>";
+                    btnStr = "<color=yellow>Awaiting browser login...</color>";
                 }
             }
 
             GUI.enabled = pendingGuiEnable;
             EditorGUI.BeginDisabledGroup(!devAuthLoginButtonInteractable);
-            if (GUILayout.Button(btnStr, buttonStyle))
+            if (GUILayout.Button(btnStr, generalButtonStyle))
             {
                 GUI.FocusControl(null); // Unfocus to refresh UI // TODO: Is Repaint() better?
                 devAuthLoginButtonInteractable = false;
@@ -243,11 +264,11 @@ namespace Hathora.Scripts.Net.Common.Editor
             GUI.enabled = true;
         }
 
-        private void insertBuildBtn(NetHathoraConfig selectedConfig)
+        private static void insertBuildBtn(NetHathoraConfig selectedConfig)
         {
             GUI.enabled = selectedConfig.MeetsBuildBtnReqs();
             
-            if (GUILayout.Button("Build Linux Server", buttonStyle))
+            if (GUILayout.Button("Build Linux Server", generalButtonStyle))
             {
                 HathoraServerBuild.BuildHathoraLinuxServer(selectedConfig);
             }

@@ -34,25 +34,28 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             
             // Prepare paths and file names that we didn't get from UserConfig
             HathoraUtils.HathoraDeployPaths deployPaths = new(_netConfig);
+
             
-            // Generate the Dockerfile: Paths will be different for each collaborator\
-            string dockerFileContent = generateDockerFileStr(deployPaths);
-            await writeDockerFileAsync(
-                deployPaths.PathToDockerfile,
-                dockerFileContent);
+            #region Dockerfile >> Compress to .tar.gz
+            // // Generate the Dockerfile: Paths will be different for each collaborator\
+            // string dockerFileContent = generateDockerFileStr(deployPaths);
+            // await writeDockerFileAsync(
+            //     deployPaths.PathToDockerfile,
+            //     dockerFileContent);
+            //
+            // // Compress build into .tar.gz (gzipped tarball)
+            // List<string> filePathsToCompress = new()
+            // {
+            //     deployPaths.ExeBuildDir, 
+            //     deployPaths.PathToDockerfile,
+            // };
+            //
+            // await HathoraEditorUtils.TarballDeployFilesVia7zAsync(
+            //     deployPaths, 
+            //     filePathsToCompress);
+            #endregion // Dockerfile >> Compress to .tar.gz
 
-            // Compress build into .tar.gz (gzipped tarball)
-            List<string> filePathsToCompress = new()
-            {
-                deployPaths.PathToBuildExe, 
-                deployPaths.PathToDockerfile,
-            };
 
-            await HathoraEditorUtils.TarballFilesVia7zAsync(
-                deployPaths, 
-                filePathsToCompress);
-
-            // ----------------------------------------------
             // Get a buildId from Hathora
             Configuration sdkConfig = new()
             {
