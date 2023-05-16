@@ -2,9 +2,11 @@
 
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Editor
@@ -19,7 +21,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// Builds with NetHathoraConfig opts.
         /// </summary>
         /// <param name="config">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static void BuildHathoraLinuxServer(NetHathoraConfig config)
+        /// <returns>isSuccess</returns>
+        public static BuildReport BuildHathoraLinuxServer(NetHathoraConfig config)
         {
             // Set your build options
             string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
@@ -35,10 +38,13 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 serverBuildExeFullPath);
 
             // Build the server
-            BuildPipeline.BuildPlayer(buildPlayerOptions);
+            BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
             
             // Open the build directory
-            EditorUtility.RevealInFinder(serverBuildExeFullPath);
+            if (buildReport.summary.result == BuildResult.Succeeded)
+                EditorUtility.RevealInFinder(serverBuildExeFullPath);
+
+            return buildReport;
         }
 
         private static BuildPlayerOptions generateBuildPlayerOptions(

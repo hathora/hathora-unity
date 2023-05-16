@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.SdkWrapper.Editor.Auth0;
+using UnityEditor;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Editor
@@ -17,20 +18,32 @@ namespace Hathora.Scripts.SdkWrapper.Editor
     /// </summary>
     public static class HathoraServerAuth
     {
-        private static CancellationTokenSource ActiveCts;
+        public static CancellationTokenSource ActiveCts { get; set; }
+
+        public static bool HasCancellableToken =>
+            ActiveCts?.Token is { CanBeCanceled: true };
         
-        public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_activeCts">Optionally bring your own Task cancel token</param>
+        public static async Task DevAuthLogin(
+            NetHathoraConfig _netHathoraConfig, 
+            CancellationTokenSource _activeCts = null)
         {
             // Cancel an old op 1st
             if (ActiveCts?.Token is { CanBeCanceled: true })
                 ActiveCts.Cancel();
             
-            ActiveCts = new CancellationTokenSource();
+            if (_activeCts == null)
+                ActiveCts = new CancellationTokenSource();
+            
             ActiveCts.CancelAfter(TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
 
-            Auth0Login auth = new();
+            Auth0Login auth = new(); 
             string refreshToken = await auth.GetTokenAsync(_netHathoraConfig, ActiveCts.Token); // Refresh token lasts longer
-
+            
             if (string.IsNullOrEmpty(refreshToken))
             {
                 // Debug.LogError("[HathoraServerBuild] Dev Auth0 login failed: " +

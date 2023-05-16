@@ -16,6 +16,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         private static List<NetHathoraConfig> serverConfigs;
         private static Vector2 scrollPos;
         private static GUIStyle richCenterTxtLabelStyle;
+        private static GUIStyle richSmLeftTxtLabelStyle;
 
         
         #region Init
@@ -39,6 +40,15 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             {
                 richText = true,
                 alignment = TextAnchor.MiddleCenter,
+                wordWrap = true,
+            };
+            
+            richSmLeftTxtLabelStyle ??= new GUIStyle(EditorStyles.label)
+            {
+                richText = true,
+                alignment = TextAnchor.MiddleLeft,
+                wordWrap = true,
+                fontSize = 11,
             };
         }
 
@@ -68,8 +78,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
                 "Hathora Server UserConfig Finder");
             
-            window.minSize = new Vector2(300, 230);
-            // window.maxSize = window.minSize;
+            window.minSize = new Vector2(x: 350, y: 230);
+            window.maxSize = new Vector2(x: 600, y: 500);
             
             // Select the 1st one found
             selectHathoraServerConfig(serverConfigs[0]);
@@ -90,21 +100,25 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         private void OnGUI()
         {
             InitStyles();
-            HathoraEditorUtils.InsertBanner(
-                _wrapperExtension: 30f, 
-                _labelPadding: 20f,
-                _includeVerticalGroup: false);
-            insertDescrLbl();
-            EditorGUILayout.Space(10);
-            GUILayout.EndVertical();
             
+            HathoraEditorUtils.InsertBanner(
+                _includeVerticalGroup: false,
+                _wrapperExtension: 20f); // Place banner @ top
+            HathoraEditorUtils.InsertHathoraSloganLbl();
+            EditorGUILayout.EndVertical();
+            
+            insertDescrLbl();
+            EditorGUILayout.Space(20f);
+
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
     
             // Check if any serverConfigs are null with LINQ: If they are, findAllHathoraServerConfigs() to refresh cache.
             if (serverConfigs != null && serverConfigs.Any(config => config == null))
                 findAllHathoraServerConfigs();
 
-            insertBtnForEachConfigFound();
+            insertRowForEachConfigFound();
+
+            EditorGUILayout.Space(10f);
             insertNewConfigBtn();
             
             EditorGUILayout.Space(5);
@@ -112,22 +126,26 @@ namespace Hathora.Scripts.SdkWrapper.Editor
 
         private void insertDescrLbl()
         {
-            string headerColor = HathoraEditorUtils.HATHORA_GREEN_HEX;
-            string lblContent = serverConfigs?.Count > 0
-                ? $"<b><color={headerColor}>Choose a Hathora Config</color></b>"
-                : $"<color={headerColor}>Create a new Hathora config to get started!</color>";
+            string lblContent = "Your Hathora Configuration Files make integration " +
+                "with Hathora Cloud seamless. They store your developer token and appId, " +
+                "and will make it easy to configure, build and deploy your game server.";
             
-            GUILayout.Label(lblContent, richCenterTxtLabelStyle);
+            GUILayout.Label(lblContent, richSmLeftTxtLabelStyle);
         }
 
         private void insertNewConfigBtn()
         {
             // Add the "New Config" button
-            if (GUILayout.Button("New Config", GUILayout.Height(30)))
+            if (GUILayout.Button("New Config", 
+                    GUILayout.Height(20), 
+                    GUILayout.MinWidth(215),
+                    GUILayout.ExpandWidth(false)))
+            {
                 createAndSelectNewConfig();
+            }
         }
 
-        private void insertBtnForEachConfigFound()
+        private void insertRowForEachConfigFound()
         {
             foreach (NetHathoraConfig config in serverConfigs)
             {
@@ -138,6 +156,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                     selectHathoraServerConfig(config);
 
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.Space(5);
             }
 
             EditorGUILayout.EndScrollView();

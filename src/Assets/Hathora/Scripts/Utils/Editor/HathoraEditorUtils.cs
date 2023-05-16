@@ -18,7 +18,11 @@ namespace Hathora.Scripts.Utils.Editor
     public static class HathoraEditorUtils
     {
         #region Links
+        public const string HATHORA_HOME_URL = "https://hathora.dev";
         public const string HATHORA_DOCS_URL = "https://docs.hathora.dev";
+        public const string HATHORA_DOCS_GETTING_STARTED_URL = "https://hathora.dev/docs/get-started";
+        public const string HATHORA_DOCS_UNITY_TUTORIAL_URL = "https://github.com/hathora/hathora-unity";
+        public const string HATHORA_DISCORD_URL = "https://discord.gg/hathora";
         #endregion // Links
         
         #region Style/Color
@@ -27,9 +31,10 @@ namespace Hathora.Scripts.Utils.Editor
         public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#20124D";
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
-        public static readonly RectOffset DefaultPadding = new(left: 10, right: 10, top: 10, bottom: 10);
+        public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);
         public static readonly RectOffset NoPadding = new(left: 0, right: 0, top: 0, bottom: 0);
-        public static readonly RectOffset DefaultEmptyMargin = new(left: 0, right: 0, top: 0, bottom: 0);
+        public static readonly RectOffset DefaultMargin = new(left: 3, right: 3, top: 2, bottom: 2);
+        public static readonly RectOffset NoMargin = new(left: 0, right: 0, top: 0, bottom: 0);
         
         public static GUIStyle GetRichButtonStyle(
             int _fontSize = 13, 
@@ -38,8 +43,19 @@ namespace Hathora.Scripts.Utils.Editor
             richText = true,
             fontSize = _fontSize,
             wordWrap = _wordWrap,
-            margin = DefaultEmptyMargin,
-            padding = DefaultPadding,
+            // margin = DefaultMargin,
+            // padding = DefaultPadding,
+        };        
+        public static GUIStyle GetBigButtonStyle(
+            int _fontSize = 13, 
+            bool _wordWrap = true) => new(GUI.skin.button)
+        {
+            richText = true,
+            fontSize = _fontSize,
+            wordWrap = _wordWrap,
+            // margin = DefaultMargin,
+            // padding = DefaultPadding,
+            fixedHeight = 50,
         };
         
         public static GUIStyle GetRichLabelStyle(
@@ -51,7 +67,7 @@ namespace Hathora.Scripts.Utils.Editor
             alignment = _align,
             wordWrap = _wordWrap,
             fontSize = _fontSize,
-            margin = DefaultEmptyMargin,
+            // margin = DefaultMargin,
             padding = DefaultPadding,
         };
 
@@ -63,8 +79,8 @@ namespace Hathora.Scripts.Utils.Editor
         {
             GUIStyle style = new(EditorStyles.label)
             {
-                margin = DefaultEmptyMargin,
-                padding = DefaultEmptyMargin,
+                margin = DefaultMargin,
+                padding = DefaultMargin,
             };
             
             style.padding.right = 0;
@@ -85,7 +101,7 @@ namespace Hathora.Scripts.Utils.Editor
             fontStyle = FontStyle.Bold,
             alignment = _align,
             richText = true,
-            margin = DefaultEmptyMargin,
+            margin = DefaultMargin,
             padding = DefaultPadding,
         };
         
@@ -141,18 +157,19 @@ namespace Hathora.Scripts.Utils.Editor
             }
 
             // Calculate the banner's position and size
-            const float _imgPaddingTop = 5f;
-            const float _imgPaddingBottom = 7f;
+            const float bannerBgPaddingTop = 5f;
+            const float bannerBgPaddingBottom = 7f;
 
             float bannerX = (windowWidth - bannerWidth) * 0.5f; // center
-            float bannerY = _imgPaddingTop;
+            float bannerY = bannerBgPaddingTop;
 
             // Create the padded rect with extended wrapper
+            float adjustedBannerHeight = bannerHeight + bannerBgPaddingTop + bannerBgPaddingBottom + _wrapperExtension;
             Rect paddedRect = new(
                 x: 0,
                 y: 0,
                 width: windowWidth,
-                height: bannerHeight + _imgPaddingTop + _imgPaddingBottom + _wrapperExtension);
+                height: adjustedBannerHeight);
 
             // Draw a dark background for the entire horizontal area with padding
             Color indigoColor = HexToColor(HATHORA_DARK_INDIGO_COLOR_HEX);
@@ -167,6 +184,12 @@ namespace Hathora.Scripts.Utils.Editor
             
             if (_includeVerticalGroup)
                 GUILayout.EndVertical();
+        }
+        
+        public static void InsertHathoraSloganLbl()
+        {
+            GUILayout.Label("Multiplayer Server Hosting", 
+                GetRichLabelStyle(_align: TextAnchor.MiddleCenter));
         }
 
         /// <summary>
