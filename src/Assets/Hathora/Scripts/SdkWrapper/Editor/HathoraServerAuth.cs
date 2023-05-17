@@ -18,7 +18,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
     /// </summary>
     public static class HathoraServerAuth
     {
-        public static CancellationTokenSource ActiveCts { get; set; }
+        public static CancellationTokenSource ActiveCts { get; private set; }
 
         public static bool HasCancellableToken =>
             ActiveCts?.Token is { CanBeCanceled: true };
@@ -27,7 +27,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// 
         /// </summary>
         /// <param name="_netHathoraConfig"></param>
-        /// <param name="_activeCts">Optionally bring your own Task cancel token</param>
         public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig) 
         {
             // Cancel an old op 1st
