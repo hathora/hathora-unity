@@ -18,7 +18,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
     /// </summary>
     public class Auth0Login
     {
-        public const int PollTimeoutMins = 5; // This should be long; the user may need to register
+        public const int PollTimeoutMins = 3; // This should be long; the user may need to register
         private const string clientId = "tWjDhuzPmuIWrI8R9s3yV3BQVw2tW0yq";
         private const string issuerUri = "https://auth.hathora.com";
         private const string audienceUri = "https://cloud.hathora.com";

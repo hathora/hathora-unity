@@ -28,26 +28,25 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// </summary>
         /// <param name="_netHathoraConfig"></param>
         /// <param name="_activeCts">Optionally bring your own Task cancel token</param>
-        public static async Task DevAuthLogin(
-            NetHathoraConfig _netHathoraConfig, 
-            CancellationTokenSource _activeCts = null)
+        public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig) 
         {
             // Cancel an old op 1st
-            if (ActiveCts?.Token is { CanBeCanceled: true })
+            if (ActiveCts != null && ActiveCts.Token.CanBeCanceled)
                 ActiveCts.Cancel();
-            
-            if (_activeCts == null)
-                ActiveCts = new CancellationTokenSource();
-            
-            ActiveCts.CancelAfter(TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
+ 
+            ActiveCts = new CancellationTokenSource(
+                TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
 
             Auth0Login auth = new(); 
-            string refreshToken = await auth.GetTokenAsync(_netHathoraConfig, ActiveCts.Token); // Refresh token lasts longer
-            
+            string refreshToken = await auth.GetTokenAsync(
+                _netHathoraConfig, 
+                ActiveCts.Token);
+             
             if (string.IsNullOrEmpty(refreshToken))
             {
-                // Debug.LogError("[HathoraServerBuild] Dev Auth0 login failed: " +
-                //     "Refresh token is null or empty");
+                if (ActiveCts != null && HasCancellableToken)
+                    ActiveCts?.Cancel();
+                
                 return;
             }
             

@@ -71,7 +71,7 @@ namespace Hathora.Scripts.Net.Common.Editor
             insertLinkLabel("Documentation", HathoraEditorUtils.HATHORA_DOCS_URL);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-
+ 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             insertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL);
@@ -329,12 +329,12 @@ namespace Hathora.Scripts.Net.Common.Editor
             {
                 devAuthLoginButtonInteractable = false;
                 await HathoraServerAuth.DevAuthLogin(selectedConfig);
-                devAuthLoginButtonInteractable = true;
+                devAuthLoginButtonInteractable = true; 
             }
             
-            EditorGUI.EndDisabledGroup();
+            EditorGUI.EndDisabledGroup(); 
 
-            if (HathoraServerAuth.HasCancellableToken)
+            if (HathoraServerAuth.HasCancellableToken && !devAuthLoginButtonInteractable)
             {
                 insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
             }
@@ -345,7 +345,6 @@ namespace Hathora.Scripts.Net.Common.Editor
             if (GUILayout.Button("Cancel", generalButtonStyle))
             {
                 _cts?.Cancel();
-                _cts?.Dispose();
                 devAuthLoginButtonInteractable = true;
             }
             Repaint();
