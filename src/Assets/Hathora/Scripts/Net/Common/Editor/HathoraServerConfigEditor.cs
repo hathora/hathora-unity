@@ -60,13 +60,21 @@ namespace Hathora.Scripts.Net.Common.Editor
                 return;
             }
             
-            EditorGUILayout.Space(10f);
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            
-            GUILayout.Label("To learn more about Hathora Cloud, check out our ", preLinkLabelStyle);
-            insertLinkLabel("documentation", HathoraEditorUtils.HATHORA_DOCS_URL);
+            GUILayout.Label("Learn more about Hathora Cloud", preLinkLabelStyle);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            insertLinkLabel("Documentation", HathoraEditorUtils.HATHORA_DOCS_URL);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            insertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
         }
