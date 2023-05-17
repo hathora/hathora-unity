@@ -3,7 +3,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.Utils;
 using UnityEditor;
 using UnityEditor.Build.Reporting;

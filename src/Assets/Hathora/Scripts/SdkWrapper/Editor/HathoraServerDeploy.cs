@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.Utils;
 using Hathora.Scripts.Utils.Editor;

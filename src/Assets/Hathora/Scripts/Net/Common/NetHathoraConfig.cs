@@ -4,9 +4,8 @@ using System.IO;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Hathora.Scripts.Net.Server
+namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
     /// Sensitive info will not be included in Client builds.

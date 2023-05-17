@@ -2,16 +2,17 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Hathora.Scripts.Net.Server;
-using Hathora.Scripts.Utils.Editor;
+using Hathora.Scripts.Net.Common;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.SdkWrapper.Editor
+namespace Hathora.Scripts.Utils.Editor
 {
     [InitializeOnLoad]
     public class HathoraServerConfigFinder : EditorWindow
     {
+        public static HathoraServerConfigFinder Instance { get; private set; }
+
         private const string ShowOnStartupKey = "HathoraServerConfigFinder.ShowOnStartup";
         private static List<NetHathoraConfig> serverConfigs;
         private static Vector2 scrollPos;
@@ -32,8 +33,25 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         private void OnEnable()
         {
             findAllHathoraServerConfigs();
+            AssetDatabase.importPackageCompleted += OnImportPackageCompleted;
         }
         
+        private void OnDisable()
+        {
+            AssetDatabase.importPackageCompleted -= OnImportPackageCompleted;
+        }
+
+        /// <summary>
+        /// We're looking for new config files while the window is open
+        /// As soon as we close the window, we unsubscribe from the event.
+        /// </summary>
+        /// <param name="_packagename"></param>
+        private void OnImportPackageCompleted(string _packagename)
+        {
+            findAllHathoraServerConfigs();
+            Repaint();
+        }
+
         private static void InitStyles()
         {
             richCenterTxtLabelStyle ??= new GUIStyle(EditorStyles.label)
@@ -71,6 +89,16 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         }
         #endregion // Init
         
+        
+        public static void RefreshConfigsAndRepaint()
+        {
+            if (Instance == null)
+                return;
+            
+            Instance.findAllHathoraServerConfigs();
+            Instance.Repaint();
+        }
+        
 
         [MenuItem("Hathora/Find Configs _%#h", priority = -1000)] // Ctrl + Shift + H
         public static void ShowWindow()
@@ -78,8 +106,11 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
                 "Hathora Server UserConfig Finder");
             
-            window.minSize = new Vector2(x: 350, y: 230);
+            window.minSize = new Vector2(x: 350, y: 255);
             window.maxSize = new Vector2(x: 600, y: 500);
+            
+            // Set the Instance property
+            Instance = window;
             
             // Select the 1st one found
             selectHathoraServerConfig(serverConfigs[0]);

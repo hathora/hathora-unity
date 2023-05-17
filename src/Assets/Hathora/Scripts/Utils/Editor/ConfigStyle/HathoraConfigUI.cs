@@ -1,0 +1,158 @@
+// Created by dylan@hathora.dev
+
+using System.Threading;
+using System.Threading.Tasks;
+using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.SdkWrapper.Editor;
+using UnityEditor;
+using UnityEditor.Build.Reporting;
+using UnityEngine;
+
+namespace Hathora.Scripts.Utils.Editor.ConfigStyle
+{
+    /// <summary>
+    /// The main editor for NetHathoraConfig, including all the button clicks and extra UI.
+    /// </summary>
+    [CustomEditor(typeof(NetHathoraConfig))]
+    public class HathoraConfigUI : UnityEditor.Editor
+    {
+        #region Vars
+        private HathoraConfigHeaderUI headerUI;
+        private HathoraConfigPreAuthBodyUI preAuthBodyUI;
+        private HathoraConfigPostAuthBodyUI postAuthAuthPostAuthBodyUI;
+        private HathoraConfigFooterUI footerUI;
+                
+        private NetHathoraConfig selectedConfig;
+        private string previousDevAuthToken;
+
+        private bool IsAuthed => 
+            selectedConfig.HathoraCoreOpts.DevAuthOpts.HasAuthToken;
+
+        private NetHathoraConfig getSelectedInstance() =>
+            (NetHathoraConfig)target;
+        #endregion // Vars
+
+        
+        #region Main
+        /// <summary>
+        /// Essentially the editor version of Update().
+        /// We'll mask over the entire Config with a styled UI.
+        /// </summary>
+        public override void OnInspectorGUI()
+        {
+            checkForDirtyRefs();
+            drawHeaderBodyFooter();
+            applyChanges();
+        }
+
+        private void applyChanges()
+        {
+            // Apply the modified properties to the target object
+            serializedObject.ApplyModifiedProperties();
+            
+            // Call this when values have been changed in the custom editor
+            if (GUI.changed)
+                EditorUtility.SetDirty(selectedConfig);
+        }
+
+        private void drawHeaderBodyFooter()
+        {
+            headerUI.Draw();
+            
+            if (IsAuthed)
+                postAuthAuthPostAuthBodyUI.Draw();
+            else
+                preAuthBodyUI.Draw();
+            
+            footerUI.Draw();
+        }
+
+        private void checkForDirtyRefs()
+        {
+            bool lostRefs = headerUI == null || preAuthBodyUI == null || postAuthAuthPostAuthBodyUI == null ||
+                footerUI == null || !ReferenceEquals(selectedConfig, getSelectedInstance());
+            if (lostRefs)
+                initDrawUtils();
+
+            // Call this when values have been changed in the custom editor
+            if (GUI.changed)
+                EditorUtility.SetDirty(selectedConfig);
+            
+            serializedObject.Update();
+        }
+
+        private void initDrawUtils()
+        {
+            selectedConfig = getSelectedInstance();
+
+            // New instances of util draw classes
+            headerUI = new HathoraConfigHeaderUI(selectedConfig);
+            preAuthBodyUI = new HathoraConfigPreAuthBodyUI(selectedConfig);
+            postAuthAuthPostAuthBodyUI = new HathoraConfigPostAuthBodyUI(selectedConfig);
+            footerUI = new HathoraConfigFooterUI(selectedConfig);
+            
+            // Subscribe to repainting events
+            headerUI.RequestRepaint += Repaint;
+            preAuthBodyUI.RequestRepaint += Repaint;
+            postAuthAuthPostAuthBodyUI.RequestRepaint += Repaint;
+            footerUI.RequestRepaint += Repaint;
+        }
+        #endregion // Main
+
+
+        #region Core Buttons
+        // private void insertSplitButtons(NetHathoraConfig _config, bool _isAuthed)
+        // {
+        //     EditorGUILayout.Space(5);
+        //
+        //     if (!_isAuthed)
+        //     {
+        //
+        //         return;
+        //     }
+        //
+        //     // DrawHorizontalLine(1, Color.gray);
+        //     EditorGUILayout.Space(10);
+        //
+        //     EditorGUILayout.BeginVertical(GUI.skin.box);
+        //     GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+        //         "Customize via `Linux Auto Build Opts`</color>", CenterAlignLabelStyle);
+        //     insertBuildBtn(_config);
+        //     EditorGUILayout.EndVertical();
+        //
+        //     EditorGUILayout.Space(10);
+        //
+        //     EditorGUILayout.BeginVertical(GUI.skin.box);
+        //     GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+        //         "Customize via `Hathora Deploy Opts`</color>", CenterAlignLabelStyle);
+        //     insertHathoraDeployBtn(_config);
+        //     EditorGUILayout.EndVertical();
+        // }
+
+        // private static async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
+        // {
+        //     GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
+        //
+        //     if (GUILayout.Button("Deploy to Hathora", GeneralButtonStyle))
+        //     {
+        //         await HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
+        //         EditorGUILayout.Space(20);
+        //     }
+        //     
+        //     GUI.enabled = true;
+        // }
+        
+        // private static void insertBuildBtn(NetHathoraConfig selectedConfig)
+        // {
+        //     GUI.enabled = selectedConfig.MeetsBuildBtnReqs();
+        //     
+        //     if (GUILayout.Button("Build Linux Server", GeneralButtonStyle))
+        //     {
+        //         HathoraServerBuild.BuildHathoraLinuxServer(selectedConfig);
+        //     }
+        //     
+        //     GUI.enabled = true;
+        // }
+        #endregion // Core Buttons
+    }
+}

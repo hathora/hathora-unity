@@ -3,9 +3,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor.Auth0;
-using UnityEditor;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Editor

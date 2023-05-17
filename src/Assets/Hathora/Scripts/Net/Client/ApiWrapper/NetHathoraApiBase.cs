@@ -2,7 +2,6 @@
 
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.Net.Server;
 using UnityEngine;
 
 namespace Hathora.Scripts.Net.Client.ApiWrapper

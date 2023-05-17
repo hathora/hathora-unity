@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor.Auth0.Models;
 using Hathora.Scripts.Utils.Extensions;
 using Newtonsoft.Json;

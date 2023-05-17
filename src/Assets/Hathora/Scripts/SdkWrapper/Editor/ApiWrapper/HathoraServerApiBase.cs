@@ -1,6 +1,6 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Scripts.Net.Server;
+using Hathora.Scripts.Net.Common;
 using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
 
 namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
