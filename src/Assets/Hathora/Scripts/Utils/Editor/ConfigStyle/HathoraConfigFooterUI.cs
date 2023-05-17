@@ -11,8 +11,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
     public class HathoraConfigFooterUI : HathoraConfigUIBase
     {
-        public HathoraConfigFooterUI(NetHathoraConfig _config) 
-            : base(_config)
+        public HathoraConfigFooterUI(
+            NetHathoraConfig _config, 
+            SerializedObject _serializedConfig) 
+            : base(_config, _serializedConfig)
         {
         }
 

@@ -8,8 +8,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
     public class HathoraConfigHeaderUI : HathoraConfigUIBase
     {
-        public HathoraConfigHeaderUI(NetHathoraConfig _config) 
-            : base(_config)
+        public HathoraConfigHeaderUI(
+            NetHathoraConfig _config, 
+            SerializedObject _serializedConfig) 
+            : base(_config, _serializedConfig)
         {
         }
 

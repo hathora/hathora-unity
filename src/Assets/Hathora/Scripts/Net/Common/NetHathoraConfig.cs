@@ -28,7 +28,12 @@ namespace Hathora.Scripts.Net.Common
         
 
         #region Public Accessors
-        public HathoraUtils.ConfigCoreOpts HathoraCoreOpts => hathoraCoreOpts;
+        public HathoraUtils.ConfigCoreOpts HathoraCoreOpts
+        {
+            get => hathoraCoreOpts;
+            set => hathoraCoreOpts = value;
+        }
+
         public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts => linuxAutoBuildOpts;
         public HathoraUtils.HathoraDeployOpts HathoraDeployOpts => hathoraDeployOpts;
         #endregion // Public Accessors

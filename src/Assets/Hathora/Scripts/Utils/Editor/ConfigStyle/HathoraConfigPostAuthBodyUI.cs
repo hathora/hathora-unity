@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Scripts.Net.Common;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,10 +9,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
     public class HathoraConfigPostAuthBodyUI : HathoraConfigUIBase
     {
-        public HathoraConfigPostAuthBodyUI(NetHathoraConfig _config) 
-            : base(_config)
+        private readonly SerializedProperty devAuthTokenProp;
+
+        
+        #region Init
+        public HathoraConfigPostAuthBodyUI(
+            NetHathoraConfig _config, 
+            SerializedObject _serializedConfig)
+            : base(_config, _serializedConfig)
         {
+            // devAuthTokenProp = FindNestedProperty(SerializedConfig, getDevAuthTokenPath()); 
+            // Assert.IsNotNull(devAuthTokenProp, "Could not find SerializedProperty for DevAuthToken");
         }
+
+        /// <returns>HathoraCoreOpts,DevAuthOpts,DevAuthToken</returns>
+        private static string[] getDevAuthTokenPath() => new[]
+        {
+            nameof(NetHathoraConfig.HathoraCoreOpts),
+            nameof(HathoraUtils.ConfigCoreOpts.DevAuthOpts),
+            nameof(HathoraUtils.DevAuthTokenOpts.DevAuthToken),
+        };
+        #endregion // Init
         
         
         #region Main
@@ -27,7 +45,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertBodyHeader()
         {
-            insertDevTokenPasswordField();
+            // insertDevTokenPasswordField();
         }
         
         private void insertServerBuildSettingsDropdown()
@@ -45,21 +63,19 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void insertDevTokenPasswordField()
         {
             GUILayout.BeginHorizontal();
+
             GUILayout.Label($"Developer Token", LeftAlignLabelStyle);
-            
-            // Get the new value from the PasswordField
-            string newDevAuthToken = EditorGUILayout.PasswordField(Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
+            string newPassword = EditorGUILayout.PasswordField(
+                devAuthTokenProp.stringValue,
+                options: null);
+
+            if (newPassword != devAuthTokenProp.stringValue)
+            {
+                devAuthTokenProp.stringValue = newPassword;
+                SerializedConfig.ApplyModifiedProperties();
+            }
+
             GUILayout.EndHorizontal();
-            
-            // // Check if the value has changed
-            // if (newDevAuthToken != Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken)
-            // {
-            //     // Update the DevAuthToken in the Config
-            //     Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken = newDevAuthToken;
-            //
-            //     // Mark the Config as dirty to ensure the changes are saved
-            //     EditorUtility.SetDirty(Config);
-            // }
         }
     }
 }

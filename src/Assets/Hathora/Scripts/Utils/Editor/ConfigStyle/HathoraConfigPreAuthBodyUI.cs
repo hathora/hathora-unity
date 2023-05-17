@@ -16,8 +16,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private static bool devAuthLoginButtonInteractable = true;
         
         
-        public HathoraConfigPreAuthBodyUI(NetHathoraConfig _config) 
-            : base(_config)
+        public HathoraConfigPreAuthBodyUI(
+            NetHathoraConfig _config, 
+            SerializedObject _serializedConfig) 
+            : base(_config, _serializedConfig)
         {
         }
         

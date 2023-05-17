@@ -2,6 +2,7 @@
 
 using System;
 using Hathora.Scripts.Net.Common;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,30 +12,38 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
     {
         #region Vars
         /// <summary>The selected Config instance</summary>
-        protected NetHathoraConfig Config { get; private set; }
+        protected NetHathoraConfig Config { get; }
+        protected SerializedObject SerializedConfig { get; }
         
         /// <summary>Do we have an Auth token?</summary>
         protected bool IsAuthed => 
             Config.HathoraCoreOpts.DevAuthOpts.HasAuthToken;
         
-        protected GUIStyle CenterAlignLabelStyle;
-        protected GUIStyle CenterAlignLargerTxtLabelNoWrapStyle;
-        protected GUIStyle LeftAlignLabelStyle;
-        protected GUIStyle CenterLinkLabelStyle;
-        protected GUIStyle RightAlignLabelStyle;
-        protected GUIStyle PreLinkLabelStyle;
-        protected GUIStyle GeneralButtonStyle;
-        protected GUIStyle BigButtonStyle;
-        protected GUIStyle BtnsFoldoutStyle;
-        
+        protected GUIStyle CenterAlignLabelStyle { get; private set; }
+        protected GUIStyle CenterAlignLargerTxtLabelNoWrapStyle { get; private set; }
+        protected GUIStyle LeftAlignLabelStyle { get; private set; }
+        protected GUIStyle CenterLinkLabelStyle { get; private set; }
+        protected GUIStyle RightAlignLabelStyle { get; private set; }
+        protected GUIStyle PreLinkLabelStyle { get; private set; }
+        protected GUIStyle GeneralButtonStyle { get; private set; }
+        protected GUIStyle BigButtonStyle { get; private set; }
+        protected GUIStyle BtnsFoldoutStyle { get; private set; }
+
         public event Action RequestRepaint;
         #endregion // Vars
 
         
         #region Init
-        protected HathoraConfigUIBase(NetHathoraConfig _config)
+        protected HathoraConfigUIBase(
+            NetHathoraConfig _config, 
+            SerializedObject _serializedConfig)
         {
+            Assert.That(_config, Is.Not.Null, "Config cannot be null");
+            Assert.That(_serializedConfig, Is.Not.Null, "SerializedConfig cannot be null");
+            
             this.Config = _config;
+            this.SerializedConfig = _serializedConfig;
+            
             initStyles();
         }
 
@@ -96,5 +105,47 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 Application.OpenURL(_url);
             }
         }
+        
+        protected static SerializedProperty FindNestedProperty(
+            SerializedObject serializedObject, 
+            params string[] propertyNames)
+        {
+            if (serializedObject == null || propertyNames == null || propertyNames.Length == 0)
+            {
+                Debug.LogError("SerializedObject or propertyNames is null or empty.");
+                return null;
+            }
+
+            SerializedProperty currentProperty = serializedObject.FindProperty(propertyNames[0]);
+
+            if (currentProperty == null)
+            {
+                Debug.LogError($"Could not find property '{propertyNames[0]}' in SerializedObject.");
+                return null;
+            }
+
+            for (int i = 1; i < propertyNames.Length; i++)
+            {
+                if (currentProperty.isArray && i < propertyNames.Length - 1)
+                {
+                    int arrayIndex = int.Parse(propertyNames[i]);
+                    currentProperty = currentProperty.GetArrayElementAtIndex(arrayIndex);
+                    i++;
+                }
+                else
+                {
+                    currentProperty = currentProperty.FindPropertyRelative(propertyNames[i]);
+                }
+
+                if (currentProperty == null)
+                {
+                    Debug.LogError($"Could not find nested property '{propertyNames[i]}' in SerializedObject.");
+                    return null;
+                }
+            }
+
+            return currentProperty;
+        }
+
     }
 }

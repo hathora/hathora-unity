@@ -1,12 +1,10 @@
 // Created by dylan@hathora.dev
 
-using System.Threading;
-using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.SdkWrapper.Editor;
+using NUnit.Framework;
 using UnityEditor;
-using UnityEditor.Build.Reporting;
 using UnityEngine;
+using Assert = UnityEngine.Assertions.Assert;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
@@ -22,9 +20,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private HathoraConfigPostAuthBodyUI postAuthAuthPostAuthBodyUI;
         private HathoraConfigFooterUI footerUI;
                 
-        private NetHathoraConfig selectedConfig;
         private string previousDevAuthToken;
-
+        private NetHathoraConfig selectedConfig;
+        private SerializedObject serializedConfig;
+        
         private bool IsAuthed => 
             selectedConfig.HathoraCoreOpts.DevAuthOpts.HasAuthToken;
 
@@ -47,12 +46,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void applyChanges()
         {
-            // Apply the modified properties to the target object
-            serializedObject.ApplyModifiedProperties();
-            
             // Call this when values have been changed in the custom editor
             if (GUI.changed)
                 EditorUtility.SetDirty(selectedConfig);
+            
+            // Apply the modified properties to the target object
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void drawHeaderBodyFooter()
@@ -69,27 +68,36 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void checkForDirtyRefs()
         {
-            bool lostRefs = headerUI == null || preAuthBodyUI == null || postAuthAuthPostAuthBodyUI == null ||
-                footerUI == null || !ReferenceEquals(selectedConfig, getSelectedInstance());
+            bool lostRefs = headerUI == null 
+                || preAuthBodyUI == null 
+                || postAuthAuthPostAuthBodyUI == null
+                || footerUI == null 
+                || !ReferenceEquals(selectedConfig, getSelectedInstance());
+            
             if (lostRefs)
                 initDrawUtils();
+            
+            serializedConfig.Update();
 
             // Call this when values have been changed in the custom editor
             if (GUI.changed)
                 EditorUtility.SetDirty(selectedConfig);
-            
-            serializedObject.Update();
         }
 
         private void initDrawUtils()
         {
             selectedConfig = getSelectedInstance();
+            serializedConfig = new SerializedObject(selectedConfig);
 
             // New instances of util draw classes
-            headerUI = new HathoraConfigHeaderUI(selectedConfig);
-            preAuthBodyUI = new HathoraConfigPreAuthBodyUI(selectedConfig);
-            postAuthAuthPostAuthBodyUI = new HathoraConfigPostAuthBodyUI(selectedConfig);
-            footerUI = new HathoraConfigFooterUI(selectedConfig);
+            headerUI = new HathoraConfigHeaderUI(selectedConfig, serializedConfig);
+            preAuthBodyUI = new HathoraConfigPreAuthBodyUI(selectedConfig, serializedConfig);
+            
+            postAuthAuthPostAuthBodyUI = new HathoraConfigPostAuthBodyUI(
+                selectedConfig, 
+                serializedConfig);
+            
+            footerUI = new HathoraConfigFooterUI(selectedConfig, serializedConfig);
             
             // Subscribe to repainting events
             headerUI.RequestRepaint += Repaint;
