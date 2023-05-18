@@ -41,7 +41,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 RoomsPerProcess = deployOpts.RoomsPerProcess,
                 ContainerPort = deployOpts.TransportInfo.PortNumber,
                 TransportType = deployOpts.TransportInfo.TransportType,
-                Env = parseEnvFromConfig(),
+                Env = parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
                 // AdditionalProperties = // TODO
             };
 
