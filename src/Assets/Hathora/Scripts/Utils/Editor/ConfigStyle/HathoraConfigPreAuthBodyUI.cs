@@ -21,6 +21,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SerializedObject _serializedConfig) 
             : base(_config, _serializedConfig)
         {
+            if (!HathoraConfigUI.ENABLE_BODY_STYLE)
+                return;
         }
         
         public void Draw()
@@ -61,6 +63,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 devAuthLoginButtonInteractable = false;
                 await HathoraServerAuth.DevAuthLogin(selectedConfig);
                 devAuthLoginButtonInteractable = true; 
+                InvokeRequestRepaint();
             }
             
             EditorGUI.EndDisabledGroup(); 

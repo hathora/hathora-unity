@@ -1,10 +1,8 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Scripts.Net.Common;
-using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
-using Assert = UnityEngine.Assertions.Assert;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
@@ -14,6 +12,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
     [CustomEditor(typeof(NetHathoraConfig))]
     public class HathoraConfigUI : UnityEditor.Editor
     {
+        /// <summary>Set false to view the "raw" ScriptableObject</summary>
+        public const bool ENABLE_BODY_STYLE = true;
+        
         #region Vars
         private HathoraConfigHeaderUI headerUI;
         private HathoraConfigPreAuthBodyUI preAuthBodyUI;
@@ -58,7 +59,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             headerUI.Draw();
             
-            if (IsAuthed)
+            if (!ENABLE_BODY_STYLE)
+                base.OnInspectorGUI(); // Show the raw config, auto-gen'd by ScriptableObj
+            else if (IsAuthed)
                 postAuthAuthPostAuthBodyUI.Draw();
             else
                 preAuthBodyUI.Draw();

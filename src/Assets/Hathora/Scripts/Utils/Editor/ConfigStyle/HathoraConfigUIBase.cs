@@ -82,12 +82,26 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         }
         #endregion // Init
 
-        
+
         /// <summary>
         /// Add to this event to request a repaint from the main editor UI.
+        /// Calling this will also unfocus any fields.
         /// </summary>
-        protected void InvokeRequestRepaint() =>
+        protected void InvokeRequestRepaint()
+        {
             RequestRepaint?.Invoke();
+            unfocusFields();
+        }
+
+        /// <summary>
+        /// Creates an invisible dummy ctrl - somewhat hacky.
+        /// </summary>
+        private void unfocusFields()
+        {
+            GUI.SetNextControlName("Dummy");
+            GUI.TextField(new Rect(0, 0, 0, 0), "");
+            GUI.FocusControl("Dummy");
+        }
         
         protected void DrawHorizontalLine(float thickness, Color color)
         {

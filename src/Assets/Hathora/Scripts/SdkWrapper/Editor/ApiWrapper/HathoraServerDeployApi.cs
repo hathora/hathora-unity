@@ -8,6 +8,7 @@ using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.SdkWrapper.Models;
 using Hathora.Scripts.Utils;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(double buildId)
         {
-            HathoraUtils.HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts; 
+            HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts; 
             DeploymentConfig deployConfig = new()
             {
                 PlanName = deployOpts.PlanName,

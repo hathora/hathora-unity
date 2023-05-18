@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.SdkWrapper.Models;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +19,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SerializedObject _serializedConfig)
             : base(_config, _serializedConfig)
         {
+            if (!HathoraConfigUI.ENABLE_BODY_STYLE)
+                return;
+            
             devAuthTokenProp = FindNestedProperty(SerializedConfig, getDevAuthTokenPath()); 
             Assert.IsNotNull(devAuthTokenProp, "Could not find SerializedProperty for DevAuthToken");
         }
@@ -26,8 +30,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private static string[] getDevAuthTokenPath() => new[]
         {
             NetHathoraConfig.SerializedFieldNames.HathoraCoreOpts,
-            HathoraUtils.ConfigCoreOpts.SerializedFieldNames.DevAuthOpts,
-            HathoraUtils.DevAuthTokenOpts.SerializedFieldNames.DevAuthToken,
+            HathoraCoreOpts.SerializedFieldNames.DevAuthOpts,
+            HathoraDevAuthTokenOpts.SerializedFieldNames.DevAuthToken,
         };
         #endregion // Init
         
@@ -45,7 +49,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertBodyHeader()
         {
-            // insertDevTokenPasswordField();
+            GUILayout.Space(10f);
+            insertDevTokenPasswordField();
+            GUILayout.Space(10f);
         }
         
         private void insertServerBuildSettingsDropdown()

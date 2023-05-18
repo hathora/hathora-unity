@@ -1,11 +1,13 @@
 // Created by dylan@hathora.dev
 
-using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
+using Hathora.Scripts.SdkWrapper.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEditor.VersionControl;
 using UnityEngine;
+using Task = System.Threading.Tasks.Task;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
@@ -47,10 +49,21 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private async Task insertBuildUploadDeployComboBtn()
         {
-            GUI.enabled = Config.MeetsDeployBtnReqs();;
+            GUILayout.Space(15);
+            
+            bool meetsDeployBtnReqs = Config.MeetsDeployBtnReqs();
+            MessageType helpMsgType = meetsDeployBtnReqs ? MessageType.Info : MessageType.Error;
+            string helpMsg = meetsDeployBtnReqs
+                ? "This action will create a new server build, upload to Hathora, " +
+                  "and create a new development version of your application."
+                : $"Requires set: {nameof(HathoraCoreOpts.AppId)}, " +
+                  $"{nameof(HathoraAutoBuildOpts.ServerBuildExeName)}, " +
+                  $"{nameof(HathoraAutoBuildOpts.ServerBuildDirName)}, ";
 
-            EditorGUILayout.HelpBox("This action will create a new server build, upload to Hathora, " +
-                "and create a new development version of your application.", MessageType.Info);
+            // Post the help box *before* we disable the button so it's easier to see
+            EditorGUILayout.HelpBox(helpMsg, helpMsgType);
+            GUI.enabled = meetsDeployBtnReqs;
+                
             if (GUILayout.Button("Build, Upload & Deploy New Version", GeneralButtonStyle))
             {
                 BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);

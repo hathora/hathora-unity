@@ -26,8 +26,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         {
             // Set your build options
             string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
-            string serverBuildDirPath = Path.Combine(projRoot, config.LinuxAutoBuildOpts.ServerBuildDirName);
-            string serverBuildExeName = config.LinuxAutoBuildOpts.ServerBuildExeName;
+            string serverBuildDirPath = Path.Combine(projRoot, config.LinuxHathoraAutoBuildOpts.ServerBuildDirName);
+            string serverBuildExeName = config.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
             string serverBuildExeFullPath = Path.Combine(serverBuildDirPath, serverBuildExeName);
 
             // Create the build directory if it does not exist
@@ -61,7 +61,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 locationPathName = _serverBuildExeFullPath,
                 target = BuildTarget.StandaloneLinux64,
                 options = BuildOptions.EnableHeadlessMode | // Adds `-batchmode -nographics` 
-                    (_config.LinuxAutoBuildOpts.IsDevBuild ? BuildOptions.Development : 0),
+                    (_config.LinuxHathoraAutoBuildOpts.IsDevBuild ? BuildOptions.Development : 0),
             };
         }
 
@@ -71,10 +71,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         {
             bool targetBuildDirExists = Directory.Exists(_serverBuildDirPath);
 
-            if (_config.LinuxAutoBuildOpts.CleanBuildDir && targetBuildDirExists)
+            if (_config.LinuxHathoraAutoBuildOpts.CleanBuildDir && targetBuildDirExists)
             {
                 Debug.Log("[HathoraServerBuild] Found old build dir && " +
-                    "config.LinuxAutoBuildOpts.CleanBuildDir: Deleting...");
+                    "config.LinuxHathoraAutoBuildOpts.CleanBuildDir: Deleting...");
                 Directory.Delete(_serverBuildDirPath, recursive: true);
             }
                 

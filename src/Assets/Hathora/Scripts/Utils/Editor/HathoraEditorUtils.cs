@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Hathora.Scripts.SdkWrapper.Models;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -251,7 +252,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// <param name="deployPaths">Path info</param>
         /// <param name="filesToCompress"></param>
         public static async Task TarballDeployFilesVia7zAsync(
-            HathoraUtils.HathoraDeployPaths deployPaths,
+            HathoraDeployPaths deployPaths,
             List<string> filesToCompress)
         {
             // file [ Dockerfile, {buildDir} ] >> file.tar
@@ -276,7 +277,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// <param name="_deleteOldTar"></param>
         /// <returns></returns>
         private static async Task<string> compressTarAsGzVia7zAsync(
-            HathoraUtils.HathoraDeployPaths _deployPaths,
+            HathoraDeployPaths _deployPaths,
             string _pathToOutputTar, 
             bool _deleteOldTar)
         {
@@ -307,7 +308,7 @@ namespace Hathora.Scripts.Utils.Editor
         /// <param name="filesToCompress"></param>
         /// <returns>"path/to/output.tar"</returns>
         private static async Task<string> compressWithTarVia7zAsync(
-            HathoraUtils.HathoraDeployPaths deployPaths, 
+            HathoraDeployPaths deployPaths, 
             List<string> filesToCompress)
         {
             string pathToOutputTar = $"{deployPaths.TempDirPath}/{deployPaths.ExeBuildName}.tar";

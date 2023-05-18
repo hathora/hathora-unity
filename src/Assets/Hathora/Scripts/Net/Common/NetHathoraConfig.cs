@@ -1,10 +1,9 @@
 // Created by dylan@hathora.dev
 
 using System.IO;
-using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.SdkWrapper.Models;
 using Hathora.Scripts.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common
 {
@@ -18,32 +17,32 @@ namespace Hathora.Scripts.Net.Common
         #region Vars
         // ----------------------------------------
         [SerializeField]
-        private HathoraUtils.ConfigCoreOpts _hathoraCoreOpts;
-        public HathoraUtils.ConfigCoreOpts HathoraCoreOpts
+        private HathoraCoreOpts _hathoraCoreOpts;
+        public HathoraCoreOpts HathoraCoreOpts
         {
             get => _hathoraCoreOpts;
             set => _hathoraCoreOpts = value;
         }
 
         [SerializeField]
-        private HathoraUtils.AutoBuildOpts _linuxAutoBuildOpts;
-        public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts
+        private HathoraAutoBuildOpts linuxHathoraAutoBuildOpts;
+        public HathoraAutoBuildOpts LinuxHathoraAutoBuildOpts
         {
-            get => _linuxAutoBuildOpts;
-            set => _linuxAutoBuildOpts = value;
+            get => linuxHathoraAutoBuildOpts;
+            set => linuxHathoraAutoBuildOpts = value;
         }
 
         [SerializeField] 
-        private HathoraUtils.HathoraDeployOpts _hathoraDeployOpts;
-        public HathoraUtils.HathoraDeployOpts HathoraDeployOpts
+        private HathoraDeployOpts _hathoraDeployOpts;
+        public HathoraDeployOpts HathoraDeployOpts
         {
             get => _hathoraDeployOpts;
             set => _hathoraDeployOpts = value;
         }
         
         [SerializeField]
-        private HathoraUtils.HathoraLobbyRoomOpts _hathoraLobbyRoomOpts;
-        public HathoraUtils.HathoraLobbyRoomOpts HathoraLobbyRoomOpts
+        private HathoraLobbyRoomOpts _hathoraLobbyRoomOpts;
+        public HathoraLobbyRoomOpts HathoraLobbyRoomOpts
         {
             get => _hathoraLobbyRoomOpts;
             set => _hathoraLobbyRoomOpts = value;
@@ -55,7 +54,7 @@ namespace Hathora.Scripts.Net.Common
         public struct SerializedFieldNames
         {
             public static string HathoraCoreOpts => nameof(_hathoraCoreOpts);
-            public static string LinuxAutoBuildOpts => nameof(_linuxAutoBuildOpts);
+            public static string LinuxAutoBuildOpts => nameof(linuxHathoraAutoBuildOpts);
             public static string HathoraDeployOpts => nameof(_hathoraDeployOpts);
             public static string HathoraLobbyRoomOpts => nameof(_hathoraLobbyRoomOpts);
         }
@@ -68,14 +67,14 @@ namespace Hathora.Scripts.Net.Common
         }
 
         public bool MeetsBuildBtnReqs() =>
-            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildExeName);
+            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildExeName);
                                                           
         public bool MeetsDeployBtnReqs() =>
             !string.IsNullOrEmpty(_hathoraCoreOpts.AppId) &&
             _hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
-            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildExeName) &&
+            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
             _hathoraDeployOpts.TransportInfo.PortNumber > 1024;
 
         /// <summary>
@@ -84,8 +83,8 @@ namespace Hathora.Scripts.Net.Common
         /// <returns></returns>
         public string GetNormalizedPathToBuildExe() => Path.GetFullPath(Path.Combine(
             HathoraUtils.GetNormalizedPathToProjRoot(), 
-            _linuxAutoBuildOpts.ServerBuildDirName, 
-            _linuxAutoBuildOpts.ServerBuildExeName));
+            linuxHathoraAutoBuildOpts.ServerBuildDirName, 
+            linuxHathoraAutoBuildOpts.ServerBuildExeName));
         
 
     }

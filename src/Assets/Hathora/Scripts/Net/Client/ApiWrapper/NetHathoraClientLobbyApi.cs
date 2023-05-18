@@ -8,6 +8,7 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Client.Models;
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.SdkWrapper.Models;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -41,10 +42,10 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         public async Task<Lobby> ClientCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
         {
             LobbyInitConfig lobbyInitConfig = new();
-            CreateLobbyRequest request = new CreateLobbyRequest(
+            CreateLobbyRequest request = new(
                 lobbyVisibility, 
                 lobbyInitConfig, 
-                NetHathoraConfig.HathoraCoreOpts);
+                NetHathoraConfig.HathoraLobbyRoomOpts.HathoraRegion);
 
             Lobby lobby;
             try
@@ -103,7 +104,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
                     NetHathoraConfig.HathoraCoreOpts.AppId,
-                    NetHathoraConfig.HathoraCoreOpts.HathoraRegion);
+                    NetHathoraConfig.HathoraLobbyRoomOpts.HathoraRegion);
             }
             catch (Exception e)
             {
