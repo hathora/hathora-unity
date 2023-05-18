@@ -73,7 +73,7 @@ namespace Hathora.Scripts.Utils.Editor
         private static void ShowWindowOnStartup()
         {
             if (EditorPrefs.GetBool(ShowOnStartupKey, true))
-                ShowWindow();
+                ShowWindowSelect1stFound();
         }
 
         [MenuItem("Hathora/Config Finder On Startup/Enable", false, -1001)]
@@ -101,7 +101,18 @@ namespace Hathora.Scripts.Utils.Editor
         
 
         [MenuItem("Hathora/Find Configs _%#h", priority = -1000)] // Ctrl + Shift + H
-        public static void ShowWindow()
+        public static void ShowWindowSelect1stFound()
+        {
+            ShowWindowOnly();
+            
+            // Select the 1st one found
+            selectHathoraServerConfig(serverConfigs[0]);
+        }
+        
+        /// <summary>
+        /// Does not select 1st found, unlike ShowWindowSelect1stFound().
+        /// </summary>
+        public static void ShowWindowOnly()
         {
             HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
                 "Hathora Server UserConfig Finder");

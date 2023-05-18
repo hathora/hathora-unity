@@ -1,6 +1,9 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
@@ -65,6 +68,35 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
             insertAppIdField();
+            // insertExistingAppsDropdown();
+        }
+
+        private void insertExistingAppsDropdown()
+        {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                "(enter or select)</color>", CenterAlignLabelStyle);
+
+            List<string> existingAppsList = new()
+            {
+                "Test",
+            };
+
+            // if (EditorGUILayout.Popup("<existing applications>"))
+            // {
+            //     throw new NotImplementedException("TODO");
+            //     InvokeRequestRepaint();
+            // }
+            
+            EditorGUI.EndDisabledGroup(); 
+
+            if (HathoraServerAuth.HasCancellableToken && !devReAuthLoginButtonInteractable)
+            {
+                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
+            }
+            
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(10);
         }
 
         private async Task insertLoginToHathoraConsoleBtn()

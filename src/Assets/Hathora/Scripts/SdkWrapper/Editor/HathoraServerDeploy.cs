@@ -7,6 +7,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.SdkWrapper.Models;
+using Hathora.Scripts.Utils.Editor;
 using NUnit.Framework;
 using Debug = UnityEngine.Debug;
 using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
@@ -72,6 +73,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 return;
             }
             Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
+            
+            // Building seems to unselect Hathora config on success
+            HathoraServerConfigFinder.ShowWindowOnly();
 
             // ----------------------------------------------
             // Upload the build to Hathora
@@ -133,6 +137,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             double buildId,
             HathoraDeployPaths _deployPaths)
         {
+            Debug.Log("[HathoraServerDeploy.uploadBuildAsync] " +
+                "Uploading the local build to Hathora...");
+            
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
                 $"{_deployPaths.TempDirPath}/{_deployPaths.ExeBuildName}.tar.gz");
