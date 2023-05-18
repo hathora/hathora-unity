@@ -27,6 +27,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.EndVertical();
             
             insertEditingTemplateWarningMemo();
+            EditorGUILayout.Space(10f);
         }
         
         private void insertHeaderBtns()
@@ -48,7 +49,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             EditorGUILayout.Space(5);
 
-            if (GUILayout.Button("Unity Tutorial", GeneralButtonStyle, buttonOptions))
+            if (GUILayout.Button("Tutorial", GeneralButtonStyle, buttonOptions))
             {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_UNITY_TUTORIAL_URL);
             }

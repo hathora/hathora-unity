@@ -20,6 +20,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             Config.HathoraCoreOpts.DevAuthOpts.HasAuthToken;
         
         protected GUIStyle CenterAlignLabelStyle { get; private set; }
+        protected GUIStyle CenterAlignSmLabelStyle { get; private set; }
         protected GUIStyle CenterAlignLargerTxtLabelNoWrapStyle { get; private set; }
         protected GUIStyle LeftAlignLabelStyle { get; private set; }
         protected GUIStyle CenterLinkLabelStyle { get; private set; }
@@ -75,6 +76,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             this.RightAlignLabelStyle ??= HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleRight);
             this.CenterLinkLabelStyle ??= HathoraEditorUtils.GetRichLinkStyle(TextAnchor.MiddleCenter);
             this.PreLinkLabelStyle ??= HathoraEditorUtils.GetPreLinkLabelStyle();
+            
+            this.CenterAlignSmLabelStyle ??= HathoraEditorUtils.GetRichLabelStyle(
+                TextAnchor.MiddleCenter,
+                _fontSize: 9);
+            
             this.CenterAlignLargerTxtLabelNoWrapStyle ??= HathoraEditorUtils.GetRichLabelStyle(
                 TextAnchor.MiddleCenter,
                 _wordWrap: false,
@@ -161,5 +167,29 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             return currentProperty;
         }
 
+        protected void InsertTooltipIcon(string _tooltipStr)
+        {
+            // Load and display the tooltip icon
+            Texture2D infoIcon = Resources.Load<Texture2D>("Icons/infoIcon");
+            GUIContent iconContent = new(infoIcon, _tooltipStr);
+            GUILayout.Label(iconContent, GUILayout.ExpandWidth(false));
+        }
+
+        /// <summary>
+        /// Add tooltip str to include a tooltip icon + hover text
+        /// </summary>
+        /// <param name="labelStr"></param>
+        /// <param name="tooltip"></param>
+        protected void InsertLeftLabel(string labelStr, string tooltip = null)
+        {
+            GUIContent labelContent = new(labelStr);
+            GUILayout.Label(
+                labelContent, 
+                LeftAlignLabelStyle, 
+                GUILayout.ExpandWidth(false));
+
+            if (!string.IsNullOrEmpty(tooltip))
+                InsertTooltipIcon(tooltip);
+        }
     }
 }

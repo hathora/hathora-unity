@@ -37,14 +37,12 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
 
             if (File.Exists(refreshTokenPath))
             {
-                if (!_netHathoraConfig.HathoraCoreOpts.DevAuthOpts.ForceNewToken)
-                {
-                    // TODO: Add a force refresh option (deletes the file)
-                    Debug.Log($"A token file already present at {refreshTokenPath}. We'll use this " +
-                        "token, instead. If you'd like to get a new one, please remove this file");
-                
-                    return await File.ReadAllTextAsync(refreshTokenPath, cancelToken); // (!) The Async variant is bugged, freezing Unity
-                }                
+                // if (!_netHathoraConfig.HathoraCoreOpts.DevAuthOpts.ForceNewToken)
+                // TODO: Add a force refresh option (deletes the file)
+                Debug.Log($"A token file already present at {refreshTokenPath}. We'll use this " +
+                    "token, instead. If you'd like to get a new one, please remove this file");
+            
+                return File.ReadAllText(refreshTokenPath); // (!) The Async variant is bugged, freezing Unity
                 
                 // Delete this so we can make a new one
                 File.Delete(refreshTokenPath);

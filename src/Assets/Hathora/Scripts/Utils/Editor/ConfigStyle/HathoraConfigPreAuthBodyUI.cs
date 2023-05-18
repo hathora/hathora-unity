@@ -37,7 +37,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void insertAuthBtns()
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_HEX}>" +
+            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
                 "Create an account or log in to Hathora Cloud's Console to get started</color>", 
                 CenterAlignLabelStyle);
             EditorGUILayout.Space(10f);

@@ -1,18 +1,13 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.SdkWrapper.Models;
-using Hathora.Scripts.Utils;
-using Hathora.Scripts.Utils.Editor;
 using NUnit.Framework;
-using Unity.VisualScripting;
-using UnityEngine.Rendering.Universal;
 using Debug = UnityEngine.Debug;
 using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
 
