@@ -18,16 +18,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SerializedObject _serializedConfig)
             : base(_config, _serializedConfig)
         {
-            // devAuthTokenProp = FindNestedProperty(SerializedConfig, getDevAuthTokenPath()); 
-            // Assert.IsNotNull(devAuthTokenProp, "Could not find SerializedProperty for DevAuthToken");
+            devAuthTokenProp = FindNestedProperty(SerializedConfig, getDevAuthTokenPath()); 
+            Assert.IsNotNull(devAuthTokenProp, "Could not find SerializedProperty for DevAuthToken");
         }
 
         /// <returns>HathoraCoreOpts,DevAuthOpts,DevAuthToken</returns>
         private static string[] getDevAuthTokenPath() => new[]
         {
-            nameof(NetHathoraConfig.HathoraCoreOpts),
-            nameof(HathoraUtils.ConfigCoreOpts.DevAuthOpts),
-            nameof(HathoraUtils.DevAuthTokenOpts.DevAuthToken),
+            NetHathoraConfig.SerializedFieldNames.HathoraCoreOpts,
+            HathoraUtils.ConfigCoreOpts.SerializedFieldNames.DevAuthOpts,
+            HathoraUtils.DevAuthTokenOpts.SerializedFieldNames.DevAuthToken,
         };
         #endregion // Init
         

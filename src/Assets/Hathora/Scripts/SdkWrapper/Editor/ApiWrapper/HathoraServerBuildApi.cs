@@ -38,7 +38,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             try
             {
                 createCloudBuildResult = await buildApi.CreateBuildAsync(
-                    NetHathoraConfig.AppId);
+                    NetHathoraConfig.HathoraCoreOpts.AppId);
             }
             catch (Exception e)
             {
@@ -68,7 +68,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             try
             {
                 cloudRunBuildResultByteArr = await buildApi.RunBuildAsync(
-                    NetHathoraConfig.AppId,
+                    NetHathoraConfig.HathoraCoreOpts.AppId,
                     _buildId,
                     tarball);
             }

@@ -38,7 +38,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             LoginResponse anonLoginResult;
             try
             {
-                anonLoginResult = await authApi.LoginAnonymousAsync(NetHathoraConfig.AppId);
+                anonLoginResult = await authApi.LoginAnonymousAsync(NetHathoraConfig.HathoraCoreOpts.AppId);
             }
             catch (Exception e)
             {

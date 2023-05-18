@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.Net.Common.Models;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Application = UnityEngine.Application;
@@ -21,74 +19,122 @@ namespace Hathora.Scripts.Utils
         [Serializable]
         public class DevAuthTokenOpts
         {
-            // Private serialized
             [SerializeField]
             private string _devAuthToken;
+            public string DevAuthToken
+            {
+                get => _devAuthToken;
+                set => _devAuthToken = value;
+            }
             
             [SerializeField, Tooltip("Deletes an existing refresh_token, if exists from cached file")]
             private bool _forceNewToken = false;
-
-            // Public getters
-            public string DevAuthToken => _devAuthToken;
-            public bool ForceNewToken => _forceNewToken;
+            public bool ForceNewToken
+            {
+                get => _forceNewToken;
+                set => _forceNewToken = value;
+            }
+            
+            // Public utils
             public bool HasAuthToken => !string.IsNullOrEmpty(_devAuthToken);
             
-            // Public setters
-            public void SetDevAuthToken(string newToken) => 
-                _devAuthToken = newToken;
+            /// <summary>
+            /// Explicit typings for FindNestedProperty() calls
+            /// </summary>
+            public struct SerializedFieldNames
+            {
+                public static string DevAuthToken => nameof(_devAuthToken);
+                public static string ForceNewToken => nameof(_forceNewToken);
+            }
         }
+        
         
         [Serializable]
         public class ConfigCoreOpts
         {
-            // Serialized
             [SerializeField, Tooltip("Get from your Hathora dashboard")]
             private string _appId;
-
-            [SerializeField, Tooltip("Required (for Rooms/Lobbies)")]
-            private Region _region = Region.Seattle;
-            
+            public string AppId
+            {
+                get => _appId;
+                set => _appId = value;
+            }
+       
             #if UNITY_SERVER || DEBUG
             /// <summary>
             /// Doc | https://hathora.dev/docs/guides/generate-admin-token
             /// </summary>
-            [SerializeField, Tooltip("Get from npm pkg `@hathora/cli` via `hathora-cloud login` cmd. " +
-                 "Required for server calls, such as auto-deploying to Hathora from the UserConfig file.")]
+            [SerializeField, Tooltip("Set earlier from log in button")]
             private DevAuthTokenOpts _devAuthOpts;
             #endif // UNITY_SERVER || DEBUG
-
-            // Public Getters
-            public string AppId => _appId;
-            public Region Region => _region;
+            
 
 #if UNITY_SERVER || DEBUG
             public DevAuthTokenOpts DevAuthOpts => _devAuthOpts;
 #endif
+            
+            /// <summary>
+            /// Explicit typings for FindNestedProperty() calls
+            /// </summary>
+            public struct SerializedFieldNames
+            {
+                public static string AppId => nameof(_appId);
+                public static string DevAuthOpts => nameof(_devAuthOpts);
+            }
         }
 
+        
         [Serializable]
         public class AutoBuildOpts
         {
             // Private Serialized
             [SerializeField, Tooltip("Default: Build-Server")]
             private string _serverBuildDirName = "Build-Server";
+            public string ServerBuildDirName
+            {
+                get => _serverBuildDirName;
+                set => _serverBuildDirName = value;
+            }
 
             [SerializeField, Tooltip("Default: Hathora-Unity-LinuxServer.x86_64")]
             private string _serverBuildExeName = "Hathora-Unity-LinuxServer.x86_64";
+            public string ServerBuildExeName
+            {
+                get => _serverBuildExeName;
+                set => _serverBuildExeName = value;
+            }
 
             [SerializeField, Tooltip("The same as checking 'Developer Build' in build opts")]
             private bool _isDevBuild = true;
+            public bool IsDevBuild
+            {
+                get => _isDevBuild;
+                set => _isDevBuild = value;
+            }
             
             [SerializeField, Tooltip("If an old build exists, first delete this dir?")]
             private bool _cleanBuildDir = true;
-            
-            // Public Getters
-            public string ServerBuildDirName => _serverBuildDirName; 
-            public string ServerBuildExeName => _serverBuildExeName;
-            public bool IsDevBuild => _isDevBuild;
-            public bool CleanBuildDir => _cleanBuildDir;
+            public bool CleanBuildDir
+            {
+                get => _cleanBuildDir;
+                set => _cleanBuildDir = value;
+            }
+
+
+            // Public utils
+            /// <summary>
+            /// Explicit typings for FindNestedProperty() calls
+            /// </summary>
+            public struct SerializedFieldNames
+            {
+                public static string ServerBuildDirName => nameof(_serverBuildDirName);
+                public static string ServerBuildExeName => nameof(_serverBuildExeName);
+                public static string IsDevBuild => nameof(_isDevBuild);
+                public static string CleanBuildDir => nameof(_cleanBuildDir);
+            }
         }
 
+        
         [Serializable]
         public struct ConfigAdvancedDeployOpts
         {
@@ -96,47 +142,124 @@ namespace Hathora.Scripts.Utils
             [SerializeField, Tooltip("Perhaps you are curious *what* we're uploading " +
                  "via the `.hathora` temp dir; or want to edit the Dockerfile?")]
             private bool _keepTempDir;
+            public bool KeepTempDir
+            {
+                get => _keepTempDir;
+                set => _keepTempDir = value;
+            }
             
             [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
                  "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
             public ExtraTransportInfo _extraTransportInfo1;
+            public ExtraTransportInfo ExtraTransportInfo1
+            {
+                get => _extraTransportInfo1;
+                set => _extraTransportInfo1 = value;
+            }
         
             [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
                  "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
             public ExtraTransportInfo _extraTransportInfo2;
+            public ExtraTransportInfo ExtraTransportInfo2
+            {
+                get => _extraTransportInfo2;
+                set => _extraTransportInfo2 = value;
+            }
             
-            // Public Getters
-            public bool KeepTempDir => _keepTempDir;
-
-            public ExtraTransportInfo ExtraTransportInfo1 => _extraTransportInfo1;
-            public ExtraTransportInfo ExtraTransportInfo2 => _extraTransportInfo2;
+            
+            // Public utils
+            
+            /// <summary>
+            /// Explicit typings for FindNestedProperty() calls
+            /// </summary>
+            public struct SerializedFieldNames
+            {
+                public static string KeepTempDir => nameof(_keepTempDir);
+                public static string ExtraTransportInfo1 => nameof(_extraTransportInfo1);
+                public static string ExtraTransportInfo2 => nameof(_extraTransportInfo2);
+            }
         }
+        
 
         [Serializable]
         public class HathoraDeployOpts
         {
-            // Private Serialized
             [SerializeField, Tooltip("Default: 1. How many rooms do you want to support per server?")]
             private int _roomsPerProcess = 1;
+            public int RoomsPerProcess
+            {
+                get => _roomsPerProcess;
+                set => _roomsPerProcess = value;
+            }
 
             [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
             private PlanName _planName = PlanName.Tiny;
+            public PlanName PlanName
+            {
+                get => _planName;
+                set => _planName = value;
+            }
 
             [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
             private TransportInfo _transportInfo;
+            public TransportInfo TransportInfo
+            {
+                get => _transportInfo;
+                set => _transportInfo = value;
+            }
 
             [SerializeField, Tooltip("(!) Like an `.env` file, these are all strings. ")]
             private List<HathoraEnvVars> _envVars;
+            public List<HathoraEnvVars> EnvVars
+            {
+                get => _envVars;
+                set => _envVars = value;
+            }
 
+            [FormerlySerializedAs("advancedDeployOpts")]
             [SerializeField, Tooltip("You probably don't need to touch these, unless debugging")]
-            private ConfigAdvancedDeployOpts advancedDeployOpts;
+            private ConfigAdvancedDeployOpts _advancedDeployOpts;
+            public ConfigAdvancedDeployOpts AdvancedDeployOpts
+            {
+                get => _advancedDeployOpts;
+                set => _advancedDeployOpts = value;
+            }
 
-            // Public Getters
-            public int RoomsPerProcess => _roomsPerProcess;
-            public PlanName PlanName => _planName;
-            public TransportInfo TransportInfo => _transportInfo;
-            public List<HathoraEnvVars> EnvVars => _envVars;
-            public ConfigAdvancedDeployOpts AdvancedDeployOpts => advancedDeployOpts;
+            // Public utils
+            
+            /// <summary>
+            /// Explicit typings for FindNestedProperty() calls
+            /// </summary>
+            public struct SerializedFieldNames
+            {
+                public static string RoomsPerProcess => nameof(_roomsPerProcess);
+                public static string PlanName => nameof(_planName);
+                public static string TransportInfo => nameof(_transportInfo);
+                public static string EnvVars => nameof(_envVars);
+                public static string AdvancedDeployOpts => nameof(_advancedDeployOpts);
+            }
+        }
+
+        
+        [Serializable]
+        public class HathoraLobbyRoomOpts
+        {
+            private Region _hathoraRegion = Region.Seattle;
+            public Region HathoraRegion
+            {
+                get => _hathoraRegion;
+                set => _hathoraRegion = value;
+            }
+            
+            // Public utils
+            
+            /// <summary>
+            /// Explicit typings for FindNestedProperty() calls
+            /// </summary>
+            public struct SerializedFieldNames
+            {
+                public static string HathoraRegion => nameof(_hathoraRegion);
+            }
         }
         #endregion // UserConfig Serializable Containers
 

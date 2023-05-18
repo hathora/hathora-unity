@@ -12,23 +12,28 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class TransportInfo
     {
-        // Private Serialized
         [SerializeField, Tooltip("Default: UDP. UDP is recommended for realtime games: Faster, but less reliable.")]
         private TransportType _transportType = TransportType.Udp;
+        public TransportType TransportType
+        {
+            get => _transportType;
+            set => _transportType = value;
+        }    
 
         [SerializeField, Range(1024, 65535), Tooltip("Default: 7777; or use 1024~65535")]
         private int _portNumber = 7777;
+        public int PortNumber
+        {
+            get => _portNumber;
+            set => _portNumber = value;
+        }
 
+        // Public utils
         
         /// <summary>
         /// Override this if you want the name to be custom
         /// </summary>
         /// <returns></returns>
         public virtual string GetTransportNickname() => "default";
-        
-        
-        // Public Getters
-        public TransportType TransportType => _transportType;
-        public int PortNumber => _portNumber;
     }
 }

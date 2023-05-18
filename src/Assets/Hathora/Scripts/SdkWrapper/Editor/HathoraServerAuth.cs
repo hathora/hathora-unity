@@ -48,7 +48,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 return;
             }
             
-            _netHathoraConfig.SetDevToken(refreshToken);
+            _netHathoraConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken = refreshToken;
             Debug.Log("[HathoraServerBuild] Dev Auth0 login successful: " +
                 "Token set @ NetHathoraConfig");
         }

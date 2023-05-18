@@ -4,6 +4,7 @@ using System.IO;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common
 {
@@ -14,69 +15,52 @@ namespace Hathora.Scripts.Net.Common
     [CreateAssetMenu(fileName = nameof(NetHathoraConfig), menuName = "Hathora/Config File")]
     public class NetHathoraConfig : ScriptableObject
     {
-        #region Private Serialized Fields
+        #region Vars
         // ----------------------------------------
         [SerializeField]
-        private HathoraUtils.ConfigCoreOpts hathoraCoreOpts;
-
-        [SerializeField]
-        private HathoraUtils.AutoBuildOpts linuxAutoBuildOpts;
-
-        [SerializeField] 
-        private HathoraUtils.HathoraDeployOpts hathoraDeployOpts;
-        #endregion // Private Serialized Fields
-        
-
-        #region Public Accessors
+        private HathoraUtils.ConfigCoreOpts _hathoraCoreOpts;
         public HathoraUtils.ConfigCoreOpts HathoraCoreOpts
         {
-            get => hathoraCoreOpts;
-            set => hathoraCoreOpts = value;
+            get => _hathoraCoreOpts;
+            set => _hathoraCoreOpts = value;
         }
 
-        public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts => linuxAutoBuildOpts;
-        public HathoraUtils.HathoraDeployOpts HathoraDeployOpts => hathoraDeployOpts;
-        #endregion // Public Accessors
-
-        
-        #region Public Shortcuts
-        public string AppId => hathoraCoreOpts.AppId;
-        public Region Region => hathoraCoreOpts.Region;
-        #endregion // Public Shortcuts
-        
-        
-        #region Public Setters
-        /// <summary>
-        /// "Refresh" token is best, due to lasting the longest
-        /// </summary>
-        /// <param name="_val"></param>
-        public void SetDevToken(string _val)
+        [SerializeField]
+        private HathoraUtils.AutoBuildOpts _linuxAutoBuildOpts;
+        public HathoraUtils.AutoBuildOpts LinuxAutoBuildOpts
         {
-            GUI.FocusControl(null); // Unfocus the field before set so we can see the update
-            this.hathoraCoreOpts.DevAuthOpts.SetDevAuthToken(_val);
-            refreshUi();
+            get => _linuxAutoBuildOpts;
+            set => _linuxAutoBuildOpts = value;
         }
-        #endregion // Public Setters
 
+        [SerializeField] 
+        private HathoraUtils.HathoraDeployOpts _hathoraDeployOpts;
+        public HathoraUtils.HathoraDeployOpts HathoraDeployOpts
+        {
+            get => _hathoraDeployOpts;
+            set => _hathoraDeployOpts = value;
+        }
+        
+        [SerializeField]
+        private HathoraUtils.HathoraLobbyRoomOpts _hathoraLobbyRoomOpts;
+        public HathoraUtils.HathoraLobbyRoomOpts HathoraLobbyRoomOpts
+        {
+            get => _hathoraLobbyRoomOpts;
+            set => _hathoraLobbyRoomOpts = value;
+        }
 
         /// <summary>
-        /// ScriptableObjects won't update if set within code unless
-        /// you unfocus them, without this. This won't even show in ver ctrl until refresh.
+        /// Explicit typings for FindNestedProperty() calls
         /// </summary>
-        private void refreshUi()
+        public struct SerializedFieldNames
         {
-            GUI.FocusControl(null);
-
-            // try
-            // {
-            //     EditorUtility.SetDirty(this);
-            //     AssetDatabase.SaveAssets();
-            // }
-            // catch (Exception e)
-            // {
-            //     Debug.LogWarning(e);
-            // }
+            public static string HathoraCoreOpts => nameof(_hathoraCoreOpts);
+            public static string LinuxAutoBuildOpts => nameof(_linuxAutoBuildOpts);
+            public static string HathoraDeployOpts => nameof(_hathoraDeployOpts);
+            public static string HathoraLobbyRoomOpts => nameof(_hathoraLobbyRoomOpts);
         }
+        #endregion // Vars
+
 
         /// <summary>(!) Don't use OnEnable for ScriptableObjects</summary>
         private void OnValidate()
@@ -84,15 +68,15 @@ namespace Hathora.Scripts.Net.Common
         }
 
         public bool MeetsBuildBtnReqs() =>
-            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName);
+            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildExeName);
                                                           
         public bool MeetsDeployBtnReqs() =>
-            !string.IsNullOrEmpty(AppId) &&
-            hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
-            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(linuxAutoBuildOpts.ServerBuildExeName) &&
-            hathoraDeployOpts.TransportInfo.PortNumber > 1024;
+            !string.IsNullOrEmpty(_hathoraCoreOpts.AppId) &&
+            _hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
+            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(_linuxAutoBuildOpts.ServerBuildExeName) &&
+            _hathoraDeployOpts.TransportInfo.PortNumber > 1024;
 
         /// <summary>
         /// Combines path, then normalizes
@@ -100,8 +84,8 @@ namespace Hathora.Scripts.Net.Common
         /// <returns></returns>
         public string GetNormalizedPathToBuildExe() => Path.GetFullPath(Path.Combine(
             HathoraUtils.GetNormalizedPathToProjRoot(), 
-            linuxAutoBuildOpts.ServerBuildDirName, 
-            linuxAutoBuildOpts.ServerBuildExeName));
+            _linuxAutoBuildOpts.ServerBuildDirName, 
+            _linuxAutoBuildOpts.ServerBuildExeName));
         
 
     }

@@ -52,7 +52,9 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             {
                 try
                 {
-                    connectionInfoResponse = await roomApi.GetConnectionInfoAsync(NetHathoraConfig.AppId, roomId);
+                    connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
+                        NetHathoraConfig.HathoraCoreOpts.AppId, 
+                        roomId);
                 }
                 catch(Exception e)
                 {

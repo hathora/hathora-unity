@@ -44,13 +44,13 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             CreateLobbyRequest request = new CreateLobbyRequest(
                 lobbyVisibility, 
                 lobbyInitConfig, 
-                NetHathoraConfig.Region);
+                NetHathoraConfig.HathoraCoreOpts);
 
             Lobby lobby;
             try
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
-                    NetHathoraConfig.AppId,
+                    NetHathoraConfig.HathoraCoreOpts.AppId,
                     NetSession.PlayerAuthToken, // Player token; not dev
                     request);
             }
@@ -79,7 +79,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             try
             {
                 lobby = await lobbyApi.GetLobbyInfoAsync(
-                    NetHathoraConfig.AppId,
+                    NetHathoraConfig.HathoraCoreOpts.AppId,
                     roomId);
             }
             catch (Exception e)
@@ -102,8 +102,8 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             try
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
-                    NetHathoraConfig.AppId,
-                    NetHathoraConfig.Region);
+                    NetHathoraConfig.HathoraCoreOpts.AppId,
+                    NetHathoraConfig.HathoraCoreOpts.HathoraRegion);
             }
             catch (Exception e)
             {

@@ -1,10 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System;
-using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common.Models
 {
@@ -19,6 +17,11 @@ namespace Hathora.Scripts.Net.Common.Models
         [SerializeField, Tooltip("Choose an arbitrary name to identify this transpport easier. " +
              "`Default` is reserved. Leave this empty and we'll ignore this class.")]
         private string _transportNickname;
+        public string TransportNickname
+        {
+            get => GetTransportNickname();
+            set => _transportNickname = value;
+        }
 
         /// <summary>
         /// Override this if you want the name to be custom

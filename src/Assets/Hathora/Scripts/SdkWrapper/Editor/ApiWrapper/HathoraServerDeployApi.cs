@@ -49,7 +49,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             try
             {
                 cloudDeployResult = await deployApi.CreateDeploymentAsync(
-                    NetHathoraConfig.AppId,
+                    NetHathoraConfig.HathoraCoreOpts.AppId,
                     buildId,
                     deployConfig);
             }
