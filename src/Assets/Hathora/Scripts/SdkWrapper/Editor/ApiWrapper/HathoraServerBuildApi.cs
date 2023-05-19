@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
@@ -40,11 +39,12 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 createCloudBuildResult = await buildApi.CreateBuildAsync(
                     NetHathoraConfig.HathoraCoreOpts.AppId);
             }
-            catch (Exception e)
+            catch (ApiException apiException)
             {
-                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuildAsync]" +
-                    $"**ERR => CreateBuildAsync: {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleServerApiException(
+                    nameof(HathoraServerBuildApi),
+                    nameof(CreateBuildAsync), 
+                    apiException);
                 return null;
             }
 
@@ -72,11 +72,12 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                     _buildId,
                     tarball);
             }
-            catch (Exception e)
+            catch (ApiException apiException)
             {
-                Debug.LogError($"[HathoraServerBuildApi.RunCloudBuildAsync]" +
-                    $"**ERR => RunBuildAsync: {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleServerApiException(
+                    nameof(HathoraServerBuildApi),
+                    nameof(RunCloudBuildAsync), 
+                    apiException);
                 return null;
             }
 

@@ -56,10 +56,12 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                         NetHathoraConfig.HathoraCoreOpts.AppId, 
                         roomId);
                 }
-                catch(Exception e)
+                catch(ApiException apiException)
                 {
-                    Debug.LogError($"[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync poll err: {e.Message}");
-                    await Task.FromException<Exception>(e);
+                    HandleClientApiException(
+                        nameof(NetHathoraClientRoomApi),
+                        nameof(ClientGetConnectionInfoAsync), 
+                        apiException);
                     return null; // fail
                 }
 

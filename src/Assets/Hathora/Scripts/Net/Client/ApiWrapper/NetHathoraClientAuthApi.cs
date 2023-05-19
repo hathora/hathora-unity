@@ -40,11 +40,12 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             {
                 anonLoginResult = await authApi.LoginAnonymousAsync(NetHathoraConfig.HathoraCoreOpts.AppId);
             }
-            catch (Exception e)
+            catch (ApiException apiException)
             {
-                Debug.LogError($"[NetHathoraClientAuthApi]**ERR @ ServerAuthAsync " +
-                    $"(LoginAnonymousAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleClientApiException(
+                    nameof(NetHathoraClientAuthApi),
+                    nameof(ClientAuthAsync), 
+                    apiException);
                 return null;
             }
 

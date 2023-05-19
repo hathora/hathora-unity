@@ -55,10 +55,12 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                     NetSession.PlayerAuthToken, // Player token; not dev
                     request);
             }
-            catch (Exception e)
+            catch (ApiException apiException)
             {
-                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientCreateLobbyAsync (CreateLobbyAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleClientApiException(
+                    nameof(NetHathoraClientLobbyApi),
+                    nameof(ClientCreateLobbyAsync), 
+                    apiException);
                 return null; // fail
             }
 
@@ -83,10 +85,12 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                     NetHathoraConfig.HathoraCoreOpts.AppId,
                     roomId);
             }
-            catch (Exception e)
+            catch (ApiException apiException)
             {
-                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientGetLobbyInfoAsync (GetLobbyInfoAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleClientApiException(
+                    nameof(NetHathoraClientLobbyApi),
+                    nameof(ClientGetLobbyInfoAsync), 
+                    apiException);
                 return null; // fail
             }
 
@@ -106,11 +110,12 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                     NetHathoraConfig.HathoraCoreOpts.AppId,
                     NetHathoraConfig.HathoraLobbyRoomOpts.HathoraRegion);
             }
-            catch (Exception e)
+            catch (ApiException apiException)
             {
-                Debug.LogError($"[NetHathoraClientLobbyApi]**ERR @ ClientListPublicLobbiesAsync " +
-                    $"(ListActivePublicLobbiesAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleClientApiException(
+                    nameof(NetHathoraClientLobbyApi),
+                    nameof(ClientListPublicLobbiesAsync), 
+                    apiException);
                 return null; // fail
             }
 

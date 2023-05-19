@@ -36,15 +36,26 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         public async Task<Deployment> CreateDeploymentAsync(double buildId)
         {
             HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts;
+            List<ContainerPort> extraContainerPorts = deployOpts.AdvancedDeployOpts.GetExtraContainerPorts();
             
-            // TODO
-            DeploymentConfig deployConfig = new(
-                // parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
-                // deployOpts.RoomsPerProcess, 
-                // deployOpts.PlanName, 
-                // deployOpts.AdvancedDeployOpts, 
-                // deployOpts.ContainerPortWrapper.PortNumber, 
-            );
+            // (!) Throws on constructor Exception
+            DeploymentConfig deployConfig = null;
+            try
+            {
+                deployConfig = new DeploymentConfig(
+                    parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
+                    deployOpts.RoomsPerProcess, 
+                    deployOpts.PlanName, 
+                    extraContainerPorts,
+                    deployOpts.ContainerPortWrapper.TransportType,
+                    deployOpts.ContainerPortWrapper.PortNumber
+                );
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
 
             Deployment cloudDeployResult;
             try
@@ -54,11 +65,12 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                     buildId,
                     deployConfig);
             }
-            catch (Exception e)
+            catch (ApiException apiErr)
             {
-                Debug.LogError($"[HathoraServerDeployApi.CreateDeploymentAsync]" +
-                    $"**ERR @ DeployDeployToHathora (CreateDeployAsync): {e.Message}");
-                await Task.FromException<Exception>(e);
+                HandleServerApiException(
+                    nameof(HathoraServerBuildApi),
+                    nameof(CreateDeploymentAsync), 
+                    apiErr);
                 return null;
             }
 
@@ -74,9 +86,17 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <summary>
         /// Convert List of HathoraEnvVars to List of DeploymentConfigEnvInner.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// Returns empty list (NOT null) on empty, since Env is required for DeploymentConfig.
+        /// </returns>
         private List<DeploymentConfigEnvInner> parseEnvFromConfig()
         {
+            // Validate
+            List<HathoraEnvVars> envVars = NetHathoraConfig.HathoraDeployOpts.EnvVars;
+            if (envVars == null || envVars.Count == 0) 
+                return new List<DeploymentConfigEnvInner>();
+            
+            // Parse
             return NetHathoraConfig.HathoraDeployOpts.EnvVars.Select(env => 
                 new DeploymentConfigEnvInner(env.Key, env.StrVal)).ToList();
         }

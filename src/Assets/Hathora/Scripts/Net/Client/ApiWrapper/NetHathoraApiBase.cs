@@ -1,5 +1,7 @@
 // Created by dylan@hathora.dev
 
+using System;
+using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Common;
 using UnityEngine;
@@ -31,6 +33,17 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             this.hathoraSdkConfig = _hathoraSdkConfig;
             this.NetHathoraConfig = _netHathoraConfig;
             this.NetSession = _netSession;
+        }
+        
+        protected static void HandleClientApiException(
+            string _className,
+            string _funcName,
+            ApiException _apiException)
+        {
+            Debug.LogError($"[{_className}.{_funcName}] API Error: " +
+                $"{_apiException.ErrorCode} | {_apiException.ErrorContent} | {_apiException.Message}");
+            
+            throw _apiException;
         }
     }
 }
