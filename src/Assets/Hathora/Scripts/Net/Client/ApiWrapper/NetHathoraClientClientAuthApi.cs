@@ -15,19 +15,26 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
     /// * Call Init() to pass UserConfig/instances.
     /// * Does not handle UI.
     /// </summary>
-    public class NetHathoraClientAuthApi : NetHathoraApiBase
+    public class NetHathoraClientClientAuthApi : NetHathoraClientApiBase
     {
         private AuthV1Api authApi;
 
         
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_netSession"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
         public override void Init(
-            Configuration _hathoraSdkConfig, 
             NetHathoraConfig _netHathoraConfig, 
-            NetSession _netSession)
+            NetSession _netSession,
+            Configuration _hathoraSdkConfig = null)
         {
-            Debug.Log("[NetHathoraClientAuthApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
-            this.authApi = new AuthV1Api(_hathoraSdkConfig);
+            Debug.Log("[NetHathoraClientClientAuthApi] Initializing API...");
+            base.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
+            this.authApi = new AuthV1Api(base.HathoraSdkConfig);
         }
 
 
@@ -43,14 +50,14 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientAuthApi),
+                    nameof(NetHathoraClientClientAuthApi),
                     nameof(ClientAuthAsync), 
                     apiException);
                 return null;
             }
 
             bool isAuthed = !string.IsNullOrEmpty(anonLoginResult?.Token); 
-            Debug.Log($"[NetHathoraClientAuthApi] isAuthed: {isAuthed}");
+            Debug.Log($"[NetHathoraClientClientAuthApi] isAuthed: {isAuthed}");
 
             if (!isAuthed)
                 return null;

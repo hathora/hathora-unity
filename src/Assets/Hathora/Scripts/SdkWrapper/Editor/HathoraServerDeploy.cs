@@ -54,13 +54,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
 
 
             // Get a buildId from Hathora
-            Configuration sdkConfig = new()
-            {
-                AccessToken = _netConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-            };
-            Assert.IsNotNull(sdkConfig.AccessToken);
-            
-            HathoraServerBuildApi buildApi = new(sdkConfig, _netConfig);
+            HathoraServerBuildApi buildApi = new(_netConfig);
 
             Build buildInfo = null;
             try
@@ -94,7 +88,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             
             // ----------------------------------------------
             // Deploy the build
-            HathoraServerDeployApi deployApi = new(sdkConfig, _netConfig);
+            HathoraServerDeployApi deployApi = new(_netConfig);
 
             Deployment deployment = null;
             try
@@ -220,6 +214,7 @@ CMD ./{deployPaths.ExeBuildName}.tar.gz -mode server -batchmode -nographics
 ";
         }
         #endregion // Dockerfile
-        
+
+
     }
 }

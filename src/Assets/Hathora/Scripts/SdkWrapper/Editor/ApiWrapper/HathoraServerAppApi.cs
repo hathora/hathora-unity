@@ -1,16 +1,12 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.SdkWrapper.Models;
-using Hathora.Scripts.Utils;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 {
@@ -19,13 +15,19 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         private readonly AppV1Api appApi;
 
         
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
         public HathoraServerAppApi(
-            Configuration _hathoraSdkConfig, 
-            NetHathoraConfig _netHathoraConfig)
-            : base(_hathoraSdkConfig, _netHathoraConfig)
+            NetHathoraConfig _netHathoraConfig,
+            Configuration _hathoraSdkConfig = null)
+            : base(_netHathoraConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerAppApi] Initializing API...");
-            this.appApi = new AppV1Api(_hathoraSdkConfig);
+            this.appApi = new AppV1Api(base.HathoraSdkConfig);
         }
         
         

@@ -14,18 +14,25 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
     /// * Call Init() to pass UserConfig/instances.
     /// * Does not handle UI.
     /// </summary>
-    public class NetHathoraClientRoomApi : NetHathoraApiBase
+    public class NetHathoraClientClientRoomApi : NetHathoraClientApiBase
     {
         private RoomV2Api roomApi;
 
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_netSession"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
         public override void Init(
-            Configuration _hathoraSdkConfig, 
             NetHathoraConfig _netHathoraConfig, 
-            NetSession _netSession)
+            NetSession _netSession,
+            Configuration _hathoraSdkConfig = null)
         {
-            Debug.Log("[NetHathoraClientRoomApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
-            this.roomApi = new RoomV2Api(_hathoraSdkConfig);
+            Debug.Log("[NetHathoraClientClientRoomApi] Initializing API...");
+            base.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
+            this.roomApi = new RoomV2Api(base.HathoraSdkConfig);
         }
 
 
@@ -34,7 +41,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         /// Gets connection info, like ip:port. Caches ConnectionInfo in NetSession.
         /// (!) We'll poll until we have an `Active` Status: Be sure to await!
         /// </summary>
-        /// <param name="roomId">Get this from NetHathoraClientLobbyApi join/create</param>
+        /// <param name="roomId">Get this from NetHathoraClientClientLobbyApi join/create</param>
         /// <param name="initPollTimerSecs"></param>
         /// <param name="pollTimeoutSecs"></param>
         /// <returns>Room on success</returns>
@@ -59,7 +66,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                 catch(ApiException apiException)
                 {
                     HandleClientApiException(
-                        nameof(NetHathoraClientRoomApi),
+                        nameof(NetHathoraClientClientRoomApi),
                         nameof(ClientGetConnectionInfoAsync), 
                         apiException);
                     return null; // fail
@@ -76,12 +83,12 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             // We're done polling -- sucess or timeout?
             if (connectionInfoResponse?.Status != ConnectionInfoV2.StatusEnum.Active)
             {
-                Debug.LogError("[NetHathoraClientAuthApi]**ERR @ ClientGetConnectionInfoAsync: Timed out");
+                Debug.LogError("[NetHathoraClientClientAuthApi]**ERR @ ClientGetConnectionInfoAsync: Timed out");
                 return null;
             }
 
             // Success
-            Debug.Log($"[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync => " +
+            Debug.Log($"[NetHathoraClientClientRoomApi] ClientGetConnectionInfoAsync => " +
                 $"status: {connectionInfoResponse.Status}, duration: {pollTimerTickedSecs}s");
 
             NetSession.ServerInfo = connectionInfoResponse;

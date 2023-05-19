@@ -61,7 +61,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (GUILayout.Button(btnStr, BigButtonStyle))
             {
                 devAuthLoginButtonInteractable = false;
+                
                 await HathoraServerAuth.DevAuthLogin(selectedConfig);
+                
                 devAuthLoginButtonInteractable = true; 
                 InvokeRequestRepaint();
             }

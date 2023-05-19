@@ -18,18 +18,25 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
     /// * Call Init() to pass UserConfig/instances.
     /// * Does not handle UI.
     /// </summary>
-    public class NetHathoraClientLobbyApi : NetHathoraApiBase
+    public class NetHathoraClientClientLobbyApi : NetHathoraClientApiBase
     {
         private LobbyV2Api lobbyApi;
 
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_netSession"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
         public override void Init(
-            Configuration _hathoraSdkConfig, 
-            NetHathoraConfig _netHathoraConfig, 
-            NetSession _netSession)
+            NetHathoraConfig _netHathoraConfig,
+            NetSession _netSession,
+            Configuration _hathoraSdkConfig = null)
         {
-            Debug.Log("[NetHathoraClientLobbyApi] Initializing API...");
-            base.Init(_hathoraSdkConfig, _netHathoraConfig, _netSession);
-            this.lobbyApi = new LobbyV2Api(_hathoraSdkConfig);
+            Debug.Log("[NetHathoraClientClientLobbyApi] Initializing API...");
+            base.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
+            this.lobbyApi = new LobbyV2Api(base.HathoraSdkConfig);
         }
 
 
@@ -58,13 +65,13 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientLobbyApi),
+                    nameof(NetHathoraClientClientLobbyApi),
                     nameof(ClientCreateLobbyAsync), 
                     apiException);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientClientLobbyApi] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
             NetSession.Lobby = lobby;
             
             return lobby;
@@ -88,13 +95,13 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientLobbyApi),
+                    nameof(NetHathoraClientClientLobbyApi),
                     nameof(ClientGetLobbyInfoAsync), 
                     apiException);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientGetLobbyInfoAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientClientLobbyApi] ClientGetLobbyInfoAsync => roomId: {lobby.RoomId}");
             NetSession.Lobby = lobby;
             
             return lobby;
@@ -113,13 +120,13 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientLobbyApi),
+                    nameof(NetHathoraClientClientLobbyApi),
                     nameof(ClientListPublicLobbiesAsync), 
                     apiException);
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientListPublicLobbiesAsync => " +
+            Debug.Log($"[NetHathoraClientClientLobbyApi] ClientListPublicLobbiesAsync => " +
                 $"numLobbiesFound: {lobbies?.Count ?? 0}");
             
             return lobbies;

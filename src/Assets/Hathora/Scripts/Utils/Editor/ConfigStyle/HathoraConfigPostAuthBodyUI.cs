@@ -1,14 +1,11 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Threading;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
-using Hathora.Scripts.SdkWrapper.Models;
-using NUnit.Framework;
+using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,10 +13,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
     public class HathoraConfigPostAuthBodyUI : HathoraConfigUIBase
     {
-        private readonly SerializedProperty devAuthTokenProp;
-        private readonly SerializedProperty appIdProp;
-        
         private bool devReAuthLoginButtonInteractable;
+        private bool isRefreshingExistingApps;
 
 
         #region Init
@@ -31,27 +26,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!HathoraConfigUI.ENABLE_BODY_STYLE)
                 return;
             
-            devAuthTokenProp = FindNestedProperty(SerializedConfig, getDevAuthTokenPath()); 
-            Assert.IsNotNull(devAuthTokenProp, "!SerializedProperty for " +
-                $"{nameof(devAuthTokenProp)}: '{getDevAuthTokenPath()}'");
-            
-            appIdProp = FindNestedProperty(SerializedConfig, getAppIdTokenPath());
-            Assert.IsNotNull(appIdProp, "!SerializedProperty for " +
-                $"{nameof(appIdProp)}: '{getAppIdTokenPath()}'");
+            Debug.Log("[HathoraConfigPostAuthBodyUI] @ Constructor");
         }
-
-        private static string[] getDevAuthTokenPath() => new[]
-        {
-            NetHathoraConfig.SerializedFieldNames.HathoraCoreOpts,
-            HathoraCoreOpts.SerializedFieldNames.DevAuthOpts,
-            HathoraDevAuthTokenOpts.SerializedFieldNames.DevAuthToken,
-        };
-        
-        private static string[] getAppIdTokenPath() => new[]
-        {
-            NetHathoraConfig.SerializedFieldNames.HathoraCoreOpts,
-            HathoraCoreOpts.SerializedFieldNames.AppId,
-        };
         #endregion // Init
         
         
@@ -71,12 +47,31 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
             insertAppIdField();
+            
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.BeginHorizontal();
             insertExistingAppsDropdown();
+            insertExistingAppsRefreshBtn(); // !await
+            GUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
         }
-        
+
+        private async Task insertExistingAppsRefreshBtn()
+        {
+            EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
+            if (GUILayout.Button("↻", GeneralButtonStyle))
+            {
+                isRefreshingExistingApps = true;
+
+                HathoraServerAppApi appApi = new(Config); 
+                await appApi.GetAppsAsync();
+                
+                isRefreshingExistingApps = false;
+            }
+        }
+
         private void insertExistingAppsDropdown()
         {
-            EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
                 "(enter appId above - or select app below)</color>", CenterAlignLabelStyle);
 
@@ -105,7 +100,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                     $"{nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex)}=={selectedIndex}");
             }
             
-            EditorGUILayout.EndVertical();
             EditorGUILayout.Space(10);
         }
 
@@ -165,15 +159,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             InsertLeftLabel(labelStr: "Developer Token",
                 tooltip: "Developer Token is used to authenticate with Hathora Cloud SDK");
-
+            
             // USER INPUT >>
-            string newPassword = EditorGUILayout.PasswordField(
-                devAuthTokenProp.stringValue,
+            string newDevAuthToken = EditorGUILayout.PasswordField(
+                Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
                 options: null);
 
-            if (newPassword != devAuthTokenProp.stringValue)
+            if (newDevAuthToken != Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken)
             {
-                devAuthTokenProp.stringValue = newPassword;
+                Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken = newDevAuthToken;
                 SerializedConfig.ApplyModifiedProperties();
             }
 
@@ -191,12 +185,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             // USER INPUT >>
             string newAppId = EditorGUILayout.TextField(
-                appIdProp.stringValue,
+                Config.HathoraCoreOpts.AppId,
                 options: null);
 
-            if (newAppId != appIdProp.stringValue)
+            if (newAppId != Config.HathoraCoreOpts.AppId)
             {
-                appIdProp.stringValue = newAppId;
+                Config.HathoraCoreOpts.AppId = newAppId;
                 SerializedConfig.ApplyModifiedProperties();
             }
 

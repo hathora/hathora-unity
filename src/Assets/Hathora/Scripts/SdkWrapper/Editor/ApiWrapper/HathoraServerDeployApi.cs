@@ -20,13 +20,20 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         private HathoraDeployOpts deployOpts => NetHathoraConfig.HathoraDeployOpts;
 
         
-        public HathoraServerDeployApi(
-            Configuration _hathoraSdkConfig, 
-            NetHathoraConfig _netHathoraConfig)
-            : base(_hathoraSdkConfig, _netHathoraConfig)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
+        public HathoraServerDeployApi( 
+            NetHathoraConfig _netHathoraConfig,
+            Configuration _hathoraSdkConfig = null)
+            : base(_netHathoraConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
-            this.deployApi = new DeploymentV1Api(_hathoraSdkConfig);
+            this.deployApi = new DeploymentV1Api(base.HathoraSdkConfig);
         }
         
         

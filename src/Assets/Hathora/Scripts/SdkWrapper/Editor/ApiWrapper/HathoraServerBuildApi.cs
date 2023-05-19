@@ -13,14 +13,22 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
     public class HathoraServerBuildApi : HathoraServerApiBase
     {
         private readonly BuildV1Api buildApi;
+
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Set in base as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
         public HathoraServerBuildApi(
-            Configuration _hathoraSdkConfig, 
-            NetHathoraConfig _netHathoraConfig) 
-            : base(_hathoraSdkConfig, _netHathoraConfig)
+            NetHathoraConfig _netHathoraConfig,
+            Configuration _hathoraSdkConfig = null) 
+            : base(_netHathoraConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
-            this.buildApi = new BuildV1Api(_hathoraSdkConfig);
+            this.buildApi = new BuildV1Api(base.HathoraSdkConfig);
         }
         
         

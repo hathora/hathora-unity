@@ -2,6 +2,7 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
+using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Common;
 using Application = UnityEngine.Application;
 
@@ -24,5 +25,9 @@ namespace Hathora.Scripts.Utils
                 : NormalizePath(dirtyPathToUnityProjRoot);
         }
 
+        public static Configuration GenerateSdkConfig(NetHathoraConfig _netHathoraConfig) => new()
+        {
+            AccessToken = _netHathoraConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+        };
     }
 }

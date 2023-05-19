@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.Utils;
 using Configuration = Hathora.Cloud.Sdk.Client.Configuration;
 
 namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
@@ -25,14 +26,19 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <summary>
         /// Server calls use Dev token.
         /// </summary>
-        /// <param name="_hathoraSdkConfig">SDK config that we pass to Hathora API calls</param>
-        /// <param name="_netHathoraConfig">Find via Unity editor top menu: Hathora >> Find Configs</param>
+        /// <param name="_netHathoraConfig">
+        /// Find via Unity editor top menu: Hathora >> Find Configs
+        /// </param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in children.
+        /// </param>
         protected HathoraServerApiBase(
-            Configuration _hathoraSdkConfig, 
-            NetHathoraConfig _netHathoraConfig)
+            NetHathoraConfig _netHathoraConfig,
+            Configuration _hathoraSdkConfig = null)
         {
-            this.HathoraSdkConfig = _hathoraSdkConfig;
             this.NetHathoraConfig = _netHathoraConfig;
+            this.HathoraSdkConfig = _hathoraSdkConfig ?? 
+                HathoraUtils.GenerateSdkConfig(_netHathoraConfig);
         }
 
         protected static void HandleServerApiException(

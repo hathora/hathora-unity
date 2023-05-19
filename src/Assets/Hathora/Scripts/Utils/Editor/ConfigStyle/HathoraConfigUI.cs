@@ -47,10 +47,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void applyChanges()
         {
-            // Call this when values have been changed in the custom editor
-            if (GUI.changed)
-                EditorUtility.SetDirty(selectedConfig);
-            
             // Apply the modified properties to the target object
             serializedObject.ApplyModifiedProperties();
         }
@@ -81,10 +77,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 initDrawUtils();
             
             serializedConfig.Update();
-
-            // Call this when values have been changed in the custom editor
-            if (GUI.changed)
-                EditorUtility.SetDirty(selectedConfig);
         }
 
         private void initDrawUtils()

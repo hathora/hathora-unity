@@ -56,8 +56,10 @@ namespace Hathora.Scripts.Net.Client
         
         private void Start()
         {
-            this.hathoraSdkConfig = new Configuration();
-            ClientApis.InitAll(hathoraSdkConfig, netHathoraConfig, netSession);
+            ClientApis.InitAll(
+                netHathoraConfig, 
+                netSession, 
+                _hathoraSdkConfig: null); // Base will create this
         }
         #endregion // Init
         
@@ -71,7 +73,7 @@ namespace Hathora.Scripts.Net.Client
             AuthResult result = null;
             try
             {
-                result = await ClientApis.authApi.ClientAuthAsync();
+                result = await ClientApis.clientAuthApi.ClientAuthAsync();
             }
             catch
             {
@@ -92,7 +94,7 @@ namespace Hathora.Scripts.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApi.ClientCreateLobbyAsync(visibility);
+                lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(visibility);
             }
             catch (Exception e)
             {
@@ -113,7 +115,7 @@ namespace Hathora.Scripts.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApi.ClientGetLobbyInfoAsync(roomId);
+                lobby = await ClientApis.clientLobbyApi.ClientGetLobbyInfoAsync(roomId);
             }
             catch (Exception e)
             {
@@ -131,7 +133,7 @@ namespace Hathora.Scripts.Net.Client
             List<Lobby> lobbies = null;
             try
             {
-                lobbies = await ClientApis.lobbyApi.ClientListPublicLobbiesAsync();
+                lobbies = await ClientApis.clientLobbyApi.ClientListPublicLobbiesAsync();
             }
             catch (Exception e)
             {
@@ -151,7 +153,7 @@ namespace Hathora.Scripts.Net.Client
             ConnectionInfoV2 connectionInfo;
             try
             {
-                connectionInfo = await ClientApis.roomApi.ClientGetConnectionInfoAsync(roomId);
+                connectionInfo = await ClientApis.clientRoomApi.ClientGetConnectionInfoAsync(roomId);
             }
             catch (Exception e)
             {
