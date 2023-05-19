@@ -41,7 +41,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             ApiException _apiException)
         {
             Debug.LogError($"[{_className}.{_funcName}] API Error: " +
-                $"{_apiException.ErrorCode} | {_apiException.ErrorContent} | {_apiException.Message}");
+                $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
             
             throw _apiException;
         }

@@ -38,7 +38,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             ApiException _apiException)
         {
             UnityEngine.Debug.LogError($"[{_className}.{_funcName}] API Error: " +
-                $"{_apiException.ErrorCode} | {_apiException.ErrorContent} | {_apiException.Message}");
+                $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
 
             throw _apiException;
         }
