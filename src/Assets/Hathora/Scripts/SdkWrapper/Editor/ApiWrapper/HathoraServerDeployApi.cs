@@ -35,16 +35,16 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(double buildId)
         {
-            HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts; 
-            DeploymentConfig deployConfig = new()
-            {
-                PlanName = deployOpts.PlanName,
-                RoomsPerProcess = deployOpts.RoomsPerProcess,
-                ContainerPort = deployOpts.TransportInfo.PortNumber,
-                TransportType = deployOpts.TransportInfo.TransportType,
-                Env = parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
-                // AdditionalProperties = // TODO
-            };
+            HathoraDeployOpts deployOpts = NetHathoraConfig.HathoraDeployOpts;
+            
+            // TODO
+            DeploymentConfig deployConfig = new(
+                // parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
+                // deployOpts.RoomsPerProcess, 
+                // deployOpts.PlanName, 
+                // deployOpts.AdvancedDeployOpts, 
+                // deployOpts.ContainerPortWrapper.PortNumber, 
+            );
 
             Deployment cloudDeployResult;
             try

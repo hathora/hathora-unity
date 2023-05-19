@@ -10,7 +10,7 @@ namespace Hathora.Scripts.Net.Common.Models
     /// Set transpport configurations for where the server will listen.
     /// </summary>
     [Serializable]
-    public class TransportInfo
+    public class ContainerPortWrapper
     {
         [SerializeField, Tooltip("Default: UDP. UDP is recommended for realtime games: Faster, but less reliable.")]
         private TransportType _transportType = TransportType.Udp;

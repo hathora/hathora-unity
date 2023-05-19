@@ -29,12 +29,14 @@ namespace Hathora.Scripts.SdkWrapper.Models
                 set => _planName = value;
             }
 
+            [FormerlySerializedAs("containerPortWrapper")]
+            [FormerlySerializedAs("_transportInfo")]
             [SerializeField, Tooltip("Default: Tiny. Billing Option: You only get charged for active rooms.")]
-            private TransportInfo _transportInfo;
-            public TransportInfo TransportInfo
+            private ContainerPortWrapper _containerPortWrapper;
+            public ContainerPortWrapper ContainerPortWrapper
             {
-                get => _transportInfo;
-                set => _transportInfo = value;
+                get => _containerPortWrapper;
+                set => _containerPortWrapper = value;
             }
 
             [SerializeField, Tooltip("(!) Like an `.env` file, these are all strings. ")]
@@ -63,7 +65,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
             {
                 public static string RoomsPerProcess => nameof(_roomsPerProcess);
                 public static string PlanName => nameof(_planName);
-                public static string TransportInfo => nameof(_transportInfo);
+                public static string TransportInfo => nameof(_containerPortWrapper);
                 public static string EnvVars => nameof(_envVars);
                 public static string AdvancedDeployOpts => nameof(_advancedDeployOpts);
             }

@@ -1,6 +1,8 @@
 // dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using UnityEngine;
 
@@ -21,8 +23,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
             
         [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
              "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
-        public ExtraTransportInfo _extraTransportInfo1;
-        public ExtraTransportInfo ExtraTransportInfo1
+        public ExtraContainerPortWrapper _extraTransportInfo1;
+        public ExtraContainerPortWrapper ExtraTransportInfo1
         {
             get => _extraTransportInfo1;
             set => _extraTransportInfo1 = value;
@@ -30,8 +32,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
         
         [SerializeField, Tooltip("In rare cases, you may want to provide multiple (up to 2 more) transports. " +
              "Leave the nickname empty and we'll ignore this. Ensure the port differs from the others.")]
-        public ExtraTransportInfo _extraTransportInfo2;
-        public ExtraTransportInfo ExtraTransportInfo2
+        public ExtraContainerPortWrapper _extraTransportInfo2;
+        public ExtraContainerPortWrapper ExtraTransportInfo2
         {
             get => _extraTransportInfo2;
             set => _extraTransportInfo2 = value;

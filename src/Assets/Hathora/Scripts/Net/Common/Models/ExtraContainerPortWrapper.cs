@@ -8,11 +8,11 @@ namespace Hathora.Scripts.Net.Common.Models
 {
     /// <summary>
     /// Set transpport configurations for where the server will listen.
-    /// Unlike TransportInfo, here, you can customize the nickname (instead of "default").
+    /// Unlike ContainerPortWrapper, here, you can customize the nickname (instead of "default").
     /// Leave the nickname null and we'll ignore this class.
     /// </summary>
     [Serializable]
-    public class ExtraTransportInfo : TransportInfo
+    public class ExtraContainerPortWrapper : ContainerPortWrapper
     {
         [SerializeField, Tooltip("Choose an arbitrary name to identify this transpport easier. " +
              "`Default` is reserved. Leave this empty and we'll ignore this class.")]

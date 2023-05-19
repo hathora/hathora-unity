@@ -1,6 +1,8 @@
 // Created by dylan@hathora.dev
 
+using System.Collections.Generic;
 using System.IO;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.SdkWrapper.Models;
 using Hathora.Scripts.Utils;
 using UnityEngine;
@@ -47,6 +49,9 @@ namespace Hathora.Scripts.Net.Common
             get => _hathoraLobbyRoomOpts;
             set => _hathoraLobbyRoomOpts = value;
         }
+        
+        
+        // Utils
 
         /// <summary>
         /// Explicit typings for FindNestedProperty() calls
@@ -75,7 +80,7 @@ namespace Hathora.Scripts.Net.Common
             _hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
             !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
-            _hathoraDeployOpts.TransportInfo.PortNumber > 1024;
+            _hathoraDeployOpts.ContainerPortWrapper.PortNumber > 1024;
 
         /// <summary>
         /// Combines path, then normalizes
