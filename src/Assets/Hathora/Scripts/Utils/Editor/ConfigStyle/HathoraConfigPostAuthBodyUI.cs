@@ -46,19 +46,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
+            insertAppIdCombo();
+        }
+
+        private void insertAppIdCombo()
+        {
+            EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
             insertAppIdField();
-            
+
             EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal();
+            
             insertExistingAppsDropdown();
             insertExistingAppsRefreshBtn(); // !await
+            
             GUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
+            EditorGUI.EndDisabledGroup();
         }
 
         private async Task insertExistingAppsRefreshBtn()
         {
-            EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
             if (GUILayout.Button("↻", GeneralButtonStyle))
             {
                 isRefreshingExistingApps = true;
@@ -66,7 +74,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 HathoraServerAppApi appApi = new(Config); 
                 await appApi.GetAppsAsync();
                 
-                isRefreshingExistingApps = false;
+                isRefreshingExistingApps = false; 
             }
         }
 
@@ -119,7 +127,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 InvokeRequestRepaint();
             }
             
-            EditorGUI.EndDisabledGroup(); 
+            EditorGUI.EndDisabledGroup();
 
             if (HathoraServerAuth.HasCancellableToken && !devReAuthLoginButtonInteractable)
             {

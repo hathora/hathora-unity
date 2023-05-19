@@ -38,9 +38,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <returns>Returns App on success</returns>
         public async Task<List<ApplicationWithDeployment>> GetAppsAsync()
         {
-            List<ApplicationWithDeployment> getAppsResult;
+            List<ApplicationWithDeployment> getAppsResult; 
             try
-            {
+            {  
                 getAppsResult = await appApi.GetAppsAsync();
             }
             catch (ApiException apiErr)
