@@ -58,10 +58,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 throw;
             }
 
-            Deployment cloudDeployResult;
+            Deployment createDeploymentResult;
             try
             {
-                cloudDeployResult = await deployApi.CreateDeploymentAsync(
+                createDeploymentResult = await deployApi.CreateDeploymentAsync(
                     AppId,
                     buildId,
                     deployConfig);
@@ -69,17 +69,17 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             catch (ApiException apiErr)
             {
                 HandleServerApiException(
-                    nameof(HathoraServerBuildApi),
+                    nameof(HathoraServerDeployApi),
                     nameof(CreateDeploymentAsync), 
                     apiErr);
                 return null;
             }
 
             Debug.Log($"[HathoraServerDeployApi] " +
-                $"BuildId: '{cloudDeployResult?.BuildId}', " +
-                $"DeployId: '{cloudDeployResult?.DeploymentId}");
+                $"BuildId: '{createDeploymentResult?.BuildId}', " +
+                $"DeployId: '{createDeploymentResult?.DeploymentId}");
 
-            return cloudDeployResult;
+            return createDeploymentResult;
         }
         
         /// <summary>
@@ -88,23 +88,23 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <returns>Returns Deployment on success</returns>
         public async Task<List<Deployment>> GetDeploymentsAsync()
         {
-            List<Deployment> cloudDeployListResult;
+            List<Deployment> getDeploymentsResult;
             try
             {
-                cloudDeployListResult = await deployApi.GetDeploymentsAsync(AppId);
+                getDeploymentsResult = await deployApi.GetDeploymentsAsync(AppId);
             }
             catch (ApiException apiErr)
             {
                 HandleServerApiException(
-                    nameof(HathoraServerBuildApi),
+                    nameof(HathoraServerDeployApi),
                     nameof(GetDeploymentsAsync), 
                     apiErr);
                 return null;
             }
 
-            Debug.Log($"[HathoraServerDeployApi] num: '{cloudDeployListResult?.Count}'");
+            Debug.Log($"[HathoraServerDeployApi] num: '{getDeploymentsResult?.Count}'");
 
-            return cloudDeployListResult;
+            return getDeploymentsResult;
         }
         #endregion // Server Deploy Async Hathora SDK Calls
 

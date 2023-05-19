@@ -44,7 +44,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             catch (ApiException apiErr)
             {
                 HandleServerApiException(
-                    nameof(HathoraServerBuildApi),
+                    nameof(HathoraServerAppApi),
                     nameof(GetAppsAsync), 
                     apiErr);
                 return null;

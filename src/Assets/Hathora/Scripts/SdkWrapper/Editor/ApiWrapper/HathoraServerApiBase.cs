@@ -17,6 +17,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
     {
         protected Configuration HathoraSdkConfig { get; private set; }
         protected NetHathoraConfig NetHathoraConfig { get; private set; }
+        
+        // Shortcuts
+        protected string AppId => NetHathoraConfig.HathoraCoreOpts.AppId;
 
 
         /// <summary>

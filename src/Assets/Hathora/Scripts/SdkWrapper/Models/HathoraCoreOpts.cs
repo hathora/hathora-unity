@@ -1,6 +1,9 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Models
@@ -14,6 +17,27 @@ namespace Hathora.Scripts.SdkWrapper.Models
         {
             get => _appId;
             set => _appId = value;
+        }
+        
+        /// <summary>Not shown to User</summary>
+        private int _existingAppsSelectedIndex;
+        public int ExistingAppsSelectedIndex
+        {
+            get => _existingAppsSelectedIndex;
+            set => _existingAppsSelectedIndex = value;
+        }
+
+        /// <summary>Not shown to User: pulled from App API.</summary>
+        public List<string> GetExistingAppNames() =>
+            _existingApps?.Select(app => app.AppName).ToList()
+            ?? new List<string>(); // Default to empty list
+        
+        // Not shown to user
+        private List<ApplicationWithDeployment> _existingApps;
+        public List<ApplicationWithDeployment> ExistingApps
+        {
+            get => _existingApps;
+            set => _existingApps = value;
         }
         
        
@@ -40,6 +64,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
         {
             public static string AppId => nameof(_appId);
             public static string DevAuthOpts => nameof(_devAuthOpts);
+            // public static string GetExistingAppNames => nameof(_existing);
+            // public static string ExistingAppNamesSelectedIndex => nameof(_existingAppsSelectedIndex);
         }
     }
 }
