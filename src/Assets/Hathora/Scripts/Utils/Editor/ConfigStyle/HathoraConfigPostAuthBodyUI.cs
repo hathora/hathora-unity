@@ -15,6 +15,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
     {
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
+        
+        private bool isServerBuildFoldout;
+        private bool isDeploymentFoldout;
+        private bool isCreateRoomLobbyFoldout;
 
 
         #region Init
@@ -38,8 +42,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
             insertBodyHeader();
-            insertServerBuildSettingsDropdown();
-            insertDeploymentSettingsDropdown();
+            insertFoldouts();
         }
 
         private void insertBodyHeader()
@@ -48,8 +51,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertLoginToHathoraConsoleBtn(); // !await
             insertAppIdCombo();
         }
-
-        private void insertAppIdCombo()
+        
+        private void insertFoldouts()
+        {
+            insertServerBuildSettingsFoldout();
+            insertDeploymentSettingsFoldout();
+            insertCreateRoomOrLobbyFoldout();
+        }
+        #endregion // Main
+        
+        
+                private void insertAppIdCombo()
         {
             EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
             insertAppIdField();
@@ -57,7 +69,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal();
             
-            insertExistingAppsDropdown();
+            insertExistingAppsPopup(); // This actually drops down, despite the name
             insertExistingAppsRefreshBtn(); // !await
             
             GUILayout.EndHorizontal();
@@ -78,7 +90,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             }
         }
 
-        private void insertExistingAppsDropdown()
+        private void insertExistingAppsPopup()
         {
             GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
                 "(enter appId above - or select app below)</color>", CenterAlignLabelStyle);
@@ -148,17 +160,42 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             InvokeRequestRepaint();
         }
-
-        private void insertServerBuildSettingsDropdown()
+        
+        private void insertServerBuildSettingsFoldout()
         {
+            isServerBuildFoldout = EditorGUILayout.Foldout(
+                isServerBuildFoldout, 
+                "Server Build Settings");
             
+            if (isServerBuildFoldout)
+            {
+                // TODO 
+            }
         }
         
-        private void insertDeploymentSettingsDropdown()
+        private void insertDeploymentSettingsFoldout()
         {
+            isDeploymentFoldout = EditorGUILayout.Foldout(
+                isDeploymentFoldout, 
+                "Hathora Deployment Configuration");
             
+            if (isDeploymentFoldout)
+            {
+                // TODO 
+            }
         }
-        #endregion // Main
+        
+        private void insertCreateRoomOrLobbyFoldout()
+        {
+            isCreateRoomLobbyFoldout = EditorGUILayout.Foldout(
+                isCreateRoomLobbyFoldout, 
+                "Create Room or Lobby");
+            
+            if (isCreateRoomLobbyFoldout)
+            {
+                // TODO 
+            }
+        }
 
         
         private void insertDevTokenPasswordField()
