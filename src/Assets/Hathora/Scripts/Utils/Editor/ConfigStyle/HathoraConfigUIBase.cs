@@ -1,6 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Hathora.Scripts.Net.Common;
 using NUnit.Framework;
 using UnityEditor;
@@ -191,5 +193,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!string.IsNullOrEmpty(tooltip))
                 InsertTooltipIcon(tooltip);
         }
+        
+        /// <summary>
+        /// SerializedProperty does not natively contain a ListVal.
+        /// </summary>
+        /// <param name="_prop"></param>
+        /// <returns></returns>
+        protected List<string> GetListFromSerializedProperty(SerializedProperty _prop) => 
+            Enumerable.Range(0, _prop.arraySize)
+                .Select(i => _prop.GetArrayElementAtIndex(i).stringValue)
+                .ToList();
     }
 }
