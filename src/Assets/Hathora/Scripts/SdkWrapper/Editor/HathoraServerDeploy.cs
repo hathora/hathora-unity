@@ -69,7 +69,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                await Task.FromException<Exception>(e);
                 return;
             }
             Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
@@ -89,7 +88,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                await Task.FromException<Exception>(e);
                 return;
             }
             Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
@@ -105,7 +103,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                await Task.FromException<Exception>(e);
                 return;
             }
             Assert.IsNotNull(deployment, "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
@@ -125,7 +122,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                await Task.FromException(e);
                 return null;
             }
 
@@ -166,7 +162,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                await Task.FromException(e);
                 return null;
             }
 
@@ -202,8 +197,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             {
                 Debug.LogError("[HathoraServerDeploy.writeDockerFileAsync] " +
                     $"Failed to write Dockerfile to {pathToDockerfile}:\n{e}");
-                
-                await Task.FromException(e);
+
+                return;
             }
         }
 

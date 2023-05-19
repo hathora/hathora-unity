@@ -157,7 +157,6 @@ namespace Hathora.Scripts.Net.Client
             {
                 Debug.LogError($"[NetHathoraClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
                 NetUI.Singleton.OnGetServerInfoFail();
-                await Task.FromException<Exception>(e);
                 return; // fail
             }
             
