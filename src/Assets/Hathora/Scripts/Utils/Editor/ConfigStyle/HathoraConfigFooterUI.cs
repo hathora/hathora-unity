@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Models;
@@ -21,6 +22,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         public void Draw()
         {
+            EditorGUILayout.Space(20f);
+            
             if (IsAuthed)
                 insertPostAuthFooter();
             else
@@ -59,7 +62,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private async Task insertBuildUploadDeployBtn(bool _enabled)
         {
-            GUILayout.Space(15);
             GUI.enabled = _enabled;
                 
             if (GUILayout.Button("Build, Upload & Deploy New Version", GeneralButtonStyle))
@@ -68,7 +70,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 if (buildReport.summary.result != BuildResult.Succeeded)
                     return;
                 
-                await HathoraServerDeploy.DeployToHathoraAsync(Config);
+                Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
                 EditorGUILayout.Space(20);
             }
             

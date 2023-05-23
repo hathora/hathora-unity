@@ -21,7 +21,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// TODO: Support cancel token.
         /// </summary>
         /// <param name="_netConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static async Task DeployToHathoraAsync(NetHathoraConfig _netConfig)
+        public static async Task<Deployment> DeployToHathoraAsync(NetHathoraConfig _netConfig)
         {
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
                 "<color=yellow>Starting...</color>");
@@ -63,7 +63,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                return;
+                return null;
             }
             Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
             
@@ -82,7 +82,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                return;
+                return null;
             }
             Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
             
@@ -97,9 +97,11 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             catch (Exception e)
             {
-                return;
+                return null;
             }
             Assert.IsNotNull(deployment, "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
+
+            return deployment;
         }
 
         private static async Task<Deployment> deployBuildAsync(

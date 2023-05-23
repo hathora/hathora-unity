@@ -2,7 +2,6 @@
 
 using Hathora.Scripts.Net.Common;
 using UnityEditor;
-using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {

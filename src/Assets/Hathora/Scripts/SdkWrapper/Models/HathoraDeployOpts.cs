@@ -60,5 +60,10 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _advancedDeployOpts;
             set => _advancedDeployOpts = value;
         }
+
+        /// <summary>If you deployed something, we set the cached result</summary>
+        private Deployment lastDeployment;
+        
+        
     }
 }
