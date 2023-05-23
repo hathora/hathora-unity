@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -34,22 +35,22 @@ namespace Hathora.Scripts.SdkWrapper.Editor
 
             
             #region Dockerfile >> Compress to .tar.gz
-            // // Generate the Dockerfile: Paths will be different for each collaborator\
-            // string dockerFileContent = generateDockerFileStr(deployPaths);
-            // await writeDockerFileAsync(
-            //     deployPaths.PathToDockerfile,
-            //     dockerFileContent);
-            //
-            // // Compress build into .tar.gz (gzipped tarball)
-            // List<string> filePathsToCompress = new()
-            // {
-            //     deployPaths.ExeBuildDir, 
-            //     deployPaths.PathToDockerfile,
-            // };
-            //
-            // await HathoraEditorUtils.TarballDeployFilesVia7zAsync(
-            //     deployPaths, 
-            //     filePathsToCompress);
+            // Generate the Dockerfile: Paths will be different for each collaborator
+            string dockerFileContent = generateDockerFileStr(deployPaths);
+            await writeDockerFileAsync(
+                deployPaths.PathToDockerfile,
+                dockerFileContent);
+            
+            // Compress build into .tar.gz (gzipped tarball)
+            List<string> filePathsToCompress = new()
+            {
+                deployPaths.ExeBuildDir, 
+                deployPaths.PathToDockerfile,
+            };
+            
+            await HathoraEditorUtils.TarballDeployFilesVia7zAsync(
+                deployPaths, 
+                filePathsToCompress);
             #endregion // Dockerfile >> Compress to .tar.gz
 
 
@@ -142,7 +143,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 runBuildResult = await _buildApi.RunCloudBuildAsync(buildId, fileStream);
             }
 
-            Debug.Log($"runBuildResult=={runBuildResult}");
+            string successStr = runBuildResult.Length > 0 ? "Success" : "Failed";
+            Debug.Log($"runBuildResult=={successStr}");
+            
             return runBuildResult;
         }
 
