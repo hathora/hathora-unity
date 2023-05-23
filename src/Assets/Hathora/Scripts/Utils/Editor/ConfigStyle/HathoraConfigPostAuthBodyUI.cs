@@ -49,9 +49,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!IsAuthed)
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
+            // EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             insertBodyHeader();
+            // EditorGUILayout.EndVertical();
+
             EditorGUILayout.Space(20f);
             insertFoldouts();
+            
         }
 
         private void insertBodyHeader()
@@ -63,24 +67,26 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertLoginTokenGroup()
         {
-            EditorGUILayout.BeginVertical(GUI.skin.box);
-            
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
             
-            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(10);
         }
 
         private void insertFoldouts()
         {
             insertServerBuildSettingsFoldout();
+
+            insertFieldVertSpace();
             insertDeploymentSettingsFoldout();
+            
+            insertFieldVertSpace();
             insertCreateRoomOrLobbyFoldout();
         }
         
         private void insertAppIdGroup()
         {
-            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
             insertAppIdHorizHeader();
             insertAppsListHorizGroup();
@@ -103,14 +109,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void insertAppsListHorizGroup()
         {
             EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
-            EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal();
             
             insertExistingAppsPopup(); // This actually drops down, despite the name
             insertExistingAppsRefreshBtn(); // !await
             
             GUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
             EditorGUI.EndDisabledGroup();
         }
         
@@ -119,6 +123,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!CheckHasSelectedApp())
                 return;
             
+            EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal();
             GUILayout.Label("<b>AppId:</b>", LeftAlignLabelStyle, GUILayout.ExpandWidth(false));
 
@@ -132,7 +137,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 onCopyAppIdBtnClick(selectedAppId);
 
             GUILayout.EndHorizontal();
-            EditorGUILayout.Space(10f);
+            EditorGUILayout.EndVertical();
         }
 
         private void onCopyAppIdBtnClick(string _selectedAppId)
@@ -193,11 +198,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUI.EndDisabledGroup();
 
             if (HathoraServerAuth.HasCancellableToken && !devReAuthLoginButtonInteractable)
-            {
                 insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
-            }
-            
-            EditorGUILayout.Space(10);
         }
         
         private void insertAuthCancelBtn(CancellationTokenSource _cts) 
@@ -213,9 +214,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private void insertServerBuildSettingsFoldout()
         {
-            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
             isServerBuildFoldout = EditorGUILayout.Foldout(
-                isServerBuildFoldout, 
+                isServerBuildFoldout,
                 "Server Build Settings");
 
             if (!isServerBuildFoldout)
@@ -224,6 +226,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             }
             
+            EditorGUI.indentLevel++;
             EditorGUILayout.Space(10);
             
             insertServerBuildExeNameHorizGroup();
@@ -234,7 +237,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertGenerateServerBuildBtn(); // !await
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
-            EditorGUILayout.Space(20);
+            EditorGUI.indentLevel--;
         }
 
         private async Task insertGenerateServerBuildBtn()
@@ -259,7 +262,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!isServerBuildAdvancedFoldout)
                 return;
             
-            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             
             // TODO
             
@@ -295,7 +298,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertDeploymentSettingsFoldout()
         {
-            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             isDeploymentFoldout = EditorGUILayout.Foldout(
                 isDeploymentFoldout, 
                 "Hathora Deployment Configuration");
@@ -306,15 +309,38 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             }
     
+            EditorGUI.indentLevel++;
             EditorGUILayout.Space(10);
-            // TODO
             
-            EditorGUILayout.Space(10);
             insertDeployAppHelpbox();
             insertDeployAppBtn(); // !await
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
             EditorGUILayout.Space(20);
+            EditorGUI.indentLevel--;
+        }
+        
+        private void insertCreateRoomOrLobbyFoldout()
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            isCreateRoomLobbyFoldout = EditorGUILayout.Foldout(
+                isCreateRoomLobbyFoldout, 
+                "Create Room or Lobby");
+            
+            if (isCreateRoomLobbyFoldout)
+            {
+                EditorGUILayout.EndVertical(); // End of foldout box skin
+                return;
+            }
+    
+            EditorGUI.indentLevel++;
+            EditorGUILayout.Space(10);
+            
+            // TODO
+            
+            EditorGUILayout.EndVertical(); // End of foldout box skin
+            EditorGUILayout.Space(20);
+            EditorGUI.indentLevel--;
         }
 
         private void insertDeployAppHelpbox()
@@ -335,24 +361,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             
             Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
-
             Assert.That(deployment?.BuildId, Is.Not.Null,
                 "Deployment failed: Check console for details.");
         }
 
-        private void insertCreateRoomOrLobbyFoldout()
-        {
-            isCreateRoomLobbyFoldout = EditorGUILayout.Foldout(
-                isCreateRoomLobbyFoldout, 
-                "Create Room or Lobby");
-            
-            if (isCreateRoomLobbyFoldout)
-            {
-                // TODO 
-            }
-        }
-
-        
         private void insertDevTokenPasswordField()
         {
             GUILayout.BeginHorizontal();

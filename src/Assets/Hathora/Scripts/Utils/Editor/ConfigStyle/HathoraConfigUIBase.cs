@@ -6,7 +6,6 @@ using System.Linq;
 using Hathora.Scripts.Net.Common;
 using NUnit.Framework;
 using UnityEditor;
-using UnityEditor.Graphs;
 using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
@@ -57,7 +56,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             initBtnFoldoutStyles();
             initLabelStyles();
         }
-        
+
         /// <summary>
         /// Adds padding, rich text, and sets font size to 13.
         /// </summary>
