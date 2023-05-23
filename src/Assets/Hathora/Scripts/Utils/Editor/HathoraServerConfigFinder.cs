@@ -191,13 +191,16 @@ namespace Hathora.Scripts.Utils.Editor
         {
             foreach (NetHathoraConfig config in serverConfigs)
             {
+                EditorGUILayout.BeginVertical(GUI.skin.box);
                 EditorGUILayout.BeginHorizontal();
+                
                 GUILayout.Label(config.name, GUILayout.ExpandWidth(true));
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                     selectHathoraServerConfig(config);
 
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
                 EditorGUILayout.Space(5);
             }
 
