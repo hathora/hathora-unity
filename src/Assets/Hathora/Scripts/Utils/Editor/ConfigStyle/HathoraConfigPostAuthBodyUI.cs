@@ -7,7 +7,9 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
+using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Application = Hathora.Cloud.Sdk.Model.Application;
 
@@ -19,9 +21,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
         
+        // Main foldouts
         private bool isServerBuildFoldout;
         private bool isDeploymentFoldout;
         private bool isCreateRoomLobbyFoldout;
+        
+        // Sub foldouts
+        private bool isServerBuildAdvancedFoldout;
         #endregion // Vars
 
 
@@ -44,21 +50,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
             insertBodyHeader();
+            EditorGUILayout.Space(20f);
             insertFoldouts();
         }
 
         private void insertBodyHeader()
         {
+            insertLoginTokenGroup();
+            InsertHorizontalLine(1.5f, Color.gray, _space: 15);
+            insertAppIdGroup();
+        }
+
+        private void insertLoginTokenGroup()
+        {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
-
-            InsertHorizontalLine(1.5f, Color.gray, _space: 15);
             
-            insertAppIdGroup();
-            
-            EditorGUILayout.Space(20f);
+            EditorGUILayout.EndVertical();
         }
-        
+
         private void insertFoldouts()
         {
             insertServerBuildSettingsFoldout();
@@ -68,9 +80,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private void insertAppIdGroup()
         {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+
             insertAppIdHorizHeader();
             insertAppsListHorizGroup();
             insertAppIdDisplayCopyGroup();
+            
+            EditorGUILayout.EndVertical();
         }
         
         private void insertAppIdHorizHeader()
@@ -78,6 +94,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.BeginHorizontal();
             
             insertTargetAppLabelWithTooltip();
+            GUILayout.FlexibleSpace();
             insertSelectAppToUseOpacityLabel();
             
             GUILayout.EndHorizontal();
@@ -107,6 +124,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             string selectedAppId = Config.HathoraCoreOpts.AppId;
             base.insertLeftSelectableLabel(selectedAppId);
+            GUILayout.FlexibleSpace();
             
             // USER INPUT >>
             bool clickedCopyAppIdBtn = insertLeftGeneralBtn("Copy AppId");
@@ -141,13 +159,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             List<string> displayedOptionsList = Config.HathoraCoreOpts.GetExistingAppNames();
             string[] displayedOptionsArr = displayedOptionsList?.ToArray();
-            
+    
             int selectedIndex = Config.HathoraCoreOpts.ExistingAppsSelectedIndex;
-            
-            // USER INPUT >>
+    
             int newSelectedIndex = EditorGUILayout.Popup(
                 selectedIndex, 
-                displayedOptionsArr);
+                displayedOptionsArr,
+                GUILayout.ExpandWidth(true));
 
             bool isNewValidIndex = displayedOptionsList != null &&
                 selectedIndex >= 0 &&
@@ -156,14 +174,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             if (isNewValidIndex)
                 onSelectedPopupAppChanged(newSelectedIndex);
-
-            EditorGUILayout.Space(10);
+            
+            GUILayout.Space(10f);
         }
 
         private async Task insertLoginToHathoraConsoleBtn()
         {
             EditorGUI.BeginDisabledGroup(disabled: false); 
-            EditorGUILayout.BeginVertical(GUI.skin.box);
             
             if (GUILayout.Button("Log in with another account", GeneralButtonStyle))
             {
@@ -180,7 +197,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
             }
             
-            EditorGUILayout.EndVertical();
             EditorGUILayout.Space(10);
         }
         
@@ -197,28 +213,133 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private void insertServerBuildSettingsFoldout()
         {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
             isServerBuildFoldout = EditorGUILayout.Foldout(
                 isServerBuildFoldout, 
                 "Server Build Settings");
-            
-            if (isServerBuildFoldout)
+
+            if (!isServerBuildFoldout)
             {
-                // TODO 
+                EditorGUILayout.EndVertical(); // End of foldout box skin
+                return;
             }
+            
+            EditorGUILayout.Space(10);
+            
+            insertServerBuildExeNameHorizGroup();
+            insertBuildFileNameHorizGroup();
+            insertServerBuildAdvancedFoldout();
+
+            EditorGUILayout.Space(10);
+            insertGenerateServerBuildBtn(); // !await
+            
+            EditorGUILayout.EndVertical(); // End of foldout box skin
+            EditorGUILayout.Space(20);
         }
-        
+
+        private async Task insertGenerateServerBuildBtn()
+        {
+            bool clickedBuildBtn = insertLeftGeneralBtn("Generate Server Build");
+            if (!clickedBuildBtn)
+                return;
+            
+            BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
+            Assert.That(
+                buildReport.summary.result,
+                Is.EqualTo(BuildResult.Succeeded),
+                "Server build failed. Check console for details.");
+        }
+
+        private void insertServerBuildAdvancedFoldout()
+        {
+            isServerBuildAdvancedFoldout = EditorGUILayout.Foldout(
+                isServerBuildAdvancedFoldout, 
+                "Advanced");
+
+            if (!isServerBuildAdvancedFoldout)
+                return;
+            
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            
+            // TODO
+            
+            EditorGUILayout.EndVertical();
+        }
+
+        private void insertServerBuildExeNameHorizGroup()
+        {
+            string inputStr = base.insertHorizLabeledTextField(
+                _labelStr: "Build directory", 
+                _tooltip: "Default: `Build-Linux-Server`",
+                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName);
+            
+            bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
+            if (isChanged)
+                onServerBuildDirChanged(inputStr);
+
+            insertFieldVertSpace();
+        }
+        private void insertBuildFileNameHorizGroup()
+        {
+            string inputStr = base.insertHorizLabeledTextField(
+                _labelStr: "Build file name", 
+                _tooltip: "Default: `Unity-LinuxServer.x86_64",
+                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName);
+            
+            bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
+            if (isChanged)
+                onServerBuildExeNameChanged(inputStr);
+            
+            insertFieldVertSpace();
+        }
+
         private void insertDeploymentSettingsFoldout()
         {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
             isDeploymentFoldout = EditorGUILayout.Foldout(
                 isDeploymentFoldout, 
                 "Hathora Deployment Configuration");
             
             if (isDeploymentFoldout)
             {
-                // TODO 
+                EditorGUILayout.EndVertical(); // End of foldout box skin
+                return;
             }
+    
+            EditorGUILayout.Space(10);
+            // TODO
+            
+            EditorGUILayout.Space(10);
+            insertDeployAppHelpbox();
+            insertDeployAppBtn(); // !await
+            
+            EditorGUILayout.EndVertical(); // End of foldout box skin
+            EditorGUILayout.Space(20);
         }
-        
+
+        private void insertDeployAppHelpbox()
+        {
+            // TODO: Validate that the correct fields are filled before allowing a button click
+            const MessageType helpMsgType = MessageType.Info;
+            const string helpMsg = "This action will create a new deployment version of your application. " +
+                "New rooms will be created with this version of your server.";
+
+            // Post the help box *before* we disable the button so it's easier to see (if toggleable)
+            EditorGUILayout.HelpBox(helpMsg, helpMsgType);
+        }
+
+        private async Task insertDeployAppBtn()
+        {
+            bool clickedDeployBtn = insertLeftGeneralBtn("Deploy Application");
+            if (!clickedDeployBtn)
+                return;
+            
+            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
+
+            Assert.That(deployment?.BuildId, Is.Not.Null,
+                "Deployment failed: Check console for details.");
+        }
+
         private void insertCreateRoomOrLobbyFoldout()
         {
             isCreateRoomLobbyFoldout = EditorGUILayout.Foldout(
@@ -285,6 +406,24 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             setSelectedApp(_newSelectedIndex);
         }
+        
+        private void onServerBuildDirChanged(string _inputStr)
+        {
+            Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName = _inputStr;
+            
+            SaveConfigChange(
+                nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName), 
+                _inputStr);
+        }        
+        
+        private void onServerBuildExeNameChanged(string _inputStr)
+        {
+            Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName = _inputStr;
+            
+            SaveConfigChange(
+                nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName), 
+                _inputStr);
+        }
         #endregion // Event Logic
         
         
@@ -294,12 +433,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             Config.HathoraCoreOpts.AppId = Config.HathoraCoreOpts.ExistingApps?[_newSelectedIndex]?.AppId;
             Config.HathoraCoreOpts.ExistingAppsSelectedIndex = _newSelectedIndex;
-            
-            Debug.Log($"[{nameof(HathoraConfigPostAuthBodyUI)}] Set new " +
-                $"{nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex)}=={_newSelectedIndex}");
-            
-            SerializedConfig.ApplyModifiedProperties();
+
+            SaveConfigChange(
+                nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex), 
+                _newSelectedIndex.ToString());
         }
+        
+        /// <summary>The default vert spacing between fields is cramped</summary>
+        private void insertFieldVertSpace() =>
+            EditorGUILayout.Space(5f);
         #endregion // Utils
     }
 }
