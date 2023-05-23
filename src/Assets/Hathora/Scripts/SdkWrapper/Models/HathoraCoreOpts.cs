@@ -21,7 +21,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _appId = value;
         }
         
-        private int _existingAppsSelectedIndex;
+        private int _existingAppsSelectedIndex = -1;
         public int ExistingAppsSelectedIndex
         {
             get => _existingAppsSelectedIndex;
@@ -33,7 +33,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
             _existingApps?.Select(app => app.AppName).ToList()
             ?? new List<string>(); // Default to empty list
         
-        private List<ApplicationWithDeployment> _existingApps;
+        private List<ApplicationWithDeployment> _existingApps = new();
         public List<ApplicationWithDeployment> ExistingApps
         {
             get => _existingApps;
@@ -44,7 +44,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
 #if UNITY_SERVER || DEBUG
         /// <summary>Doc | https://hathora.dev/docs/guides/generate-admin-token</summary>
         [SerializeField, Tooltip("Set earlier from log in button")]
-        private HathoraDevAuthTokenOpts _devAuthOpts;
+        private HathoraDevAuthTokenOpts _devAuthOpts = new();
         
         /// <summary>Doc | https://hathora.dev/docs/guides/generate-admin-token</summary>
         public HathoraDevAuthTokenOpts DevAuthOpts

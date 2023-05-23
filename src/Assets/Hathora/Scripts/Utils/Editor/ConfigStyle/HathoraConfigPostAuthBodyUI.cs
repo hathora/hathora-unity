@@ -9,17 +9,20 @@ using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using UnityEditor;
 using UnityEngine;
+using Application = Hathora.Cloud.Sdk.Model.Application;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
     public class HathoraConfigPostAuthBodyUI : HathoraConfigUIBase
     {
+        #region Vars
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
         
         private bool isServerBuildFoldout;
         private bool isDeploymentFoldout;
         private bool isCreateRoomLobbyFoldout;
+        #endregion // Vars
 
 
         #region Init
@@ -28,15 +31,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SerializedObject _serializedConfig)
             : base(_config, _serializedConfig)
         {
-            if (!HathoraConfigUI.ENABLE_BODY_STYLE)
-                return;
-            
-            Debug.Log("[HathoraConfigPostAuthBodyUI] @ Constructor");
+            // if (!HathoraConfigUI.ENABLE_BODY_STYLE)
+            //     return;
         }
         #endregion // Init
         
         
-        #region Main
+        #region UI Draw
         public void Draw()
         {
             if (!IsAuthed)
@@ -51,9 +52,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
 
-            base.InsertHorizontalLine(1.5f, Color.gray, _space: 15);
+            InsertHorizontalLine(1.5f, Color.gray, _space: 15);
             
-            insertAppIdCombo();
+            insertAppIdGroup();
+            
+            EditorGUILayout.Space(20f);
         }
         
         private void insertFoldouts()
@@ -62,14 +65,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertDeploymentSettingsFoldout();
             insertCreateRoomOrLobbyFoldout();
         }
-        #endregion // Main
         
+        private void insertAppIdGroup()
+        {
+            insertAppIdHorizHeader();
+            insertAppsListHorizGroup();
+            insertAppIdDisplayCopyGroup();
+        }
         
-        private void insertAppIdCombo()
+        private void insertAppIdHorizHeader()
+        {
+            GUILayout.BeginHorizontal();
+            
+            insertTargetAppLabelWithTooltip();
+            insertSelectAppToUseOpacityLabel();
+            
+            GUILayout.EndHorizontal();
+        }
+        
+        private void insertAppsListHorizGroup()
         {
             EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
-            insertAppIdField();
-
             EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal();
             
@@ -80,26 +96,49 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.EndVertical();
             EditorGUI.EndDisabledGroup();
         }
+        
+        private void insertAppIdDisplayCopyGroup()
+        {
+            if (!CheckHasSelectedApp())
+                return;
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("<b>AppId:</b>", LeftAlignLabelStyle, GUILayout.ExpandWidth(false));
+
+            string selectedAppId = Config.HathoraCoreOpts.AppId;
+            base.insertLeftSelectableLabel(selectedAppId);
+            
+            // USER INPUT >>
+            bool clickedCopyAppIdBtn = insertLeftGeneralBtn("Copy AppId");
+            if (clickedCopyAppIdBtn)
+                onCopyAppIdBtnClick(selectedAppId);
+
+            GUILayout.EndHorizontal();
+            EditorGUILayout.Space(10f);
+        }
+
+        private void onCopyAppIdBtnClick(string _selectedAppId)
+        {
+            GUIUtility.systemCopyBuffer = _selectedAppId; // Copy to clipboard
+            Debug.Log($"Copied AppId to clipboard: `{_selectedAppId}`");
+        }
+
+        private void insertSelectAppToUseOpacityLabel()
+        {
+            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GRAY_TRANSPARENT_COLOR_HEX}>" +
+                "Select an application to use</color>", CenterAlignLabelStyle);
+        }
 
         private async Task insertExistingAppsRefreshBtn()
         {
-            if (GUILayout.Button("↻ Refresh List", GeneralButtonStyle))
-            {
-                isRefreshingExistingApps = true;
-
-                HathoraServerAppApi appApi = new(Config); 
-                List<ApplicationWithDeployment> apps = await appApi.GetAppsAsync();
-                Config.HathoraCoreOpts.ExistingApps = apps; // Cache the response to Config
-                
-                isRefreshingExistingApps = false;
-            }
+            // USER INPUT >>
+            bool clickedAppRefreshBtn = insertLeftGeneralBtn("↻ Refresh List"); 
+            if (clickedAppRefreshBtn)
+                onRefreshAppsListBtnClick(); // !await
         }
 
         private void insertExistingAppsPopup()
         {
-            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
-                "(enter appId above - or select app below)</color>", CenterAlignLabelStyle);
-
             List<string> displayedOptionsList = Config.HathoraCoreOpts.GetExistingAppNames();
             string[] displayedOptionsArr = displayedOptionsList?.ToArray();
             
@@ -114,17 +153,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 selectedIndex >= 0 &&
                 newSelectedIndex != selectedIndex &&
                 selectedIndex < displayedOptionsList.Count;
-            
+
             if (isNewValidIndex)
-            {
-                selectedIndex = newSelectedIndex;
-                Config.HathoraCoreOpts.ExistingAppsSelectedIndex = selectedIndex;
-                SerializedConfig.ApplyModifiedProperties();
-                
-                Debug.Log($"[{nameof(HathoraConfigPostAuthBodyUI)}] Set new " +
-                    $"{nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex)}=={selectedIndex}");
-            }
-            
+                onSelectedPopupAppChanged(newSelectedIndex);
+
             EditorGUILayout.Space(10);
         }
 
@@ -204,8 +236,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             GUILayout.BeginHorizontal();
 
-            InsertLeftLabel(labelStr: "Developer Token",
-                tooltip: "Developer Token is used to authenticate with Hathora Cloud SDK");
+            InsertLeftLabel(_labelStr: "Developer Token",
+                _tooltip: "Developer Token is used to authenticate with Hathora Cloud SDK");
             
             // USER INPUT >>
             string newDevAuthToken = EditorGUILayout.PasswordField(
@@ -221,28 +253,53 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.EndHorizontal();
             EditorGUILayout.Space(10f);
         }
-        
-        private void insertAppIdField()
+
+        private void insertTargetAppLabelWithTooltip()
         {
-            GUILayout.BeginHorizontal();
-
-            InsertLeftLabel(labelStr: "Application ID",
-                tooltip: "Defines which app to use for this project. " +
-                    "Create a new one in the Hathora console.");
-
-            // USER INPUT >>
-            string newAppId = EditorGUILayout.TextField(
-                Config.HathoraCoreOpts.AppId,
-                options: null);
-
-            if (newAppId != Config.HathoraCoreOpts.AppId)
-            {
-                Config.HathoraCoreOpts.AppId = newAppId;
-                SerializedConfig.ApplyModifiedProperties();
-            }
-
-            GUILayout.EndHorizontal();
-            EditorGUILayout.Space(10f);
+            InsertLeftLabel(_labelStr: "Target Application",
+                _tooltip: "Defines which app to use for this project. " +
+                "Create a new one in the Hathora console.");
         }
+        #endregion // UI Draw
+
+        
+        #region Event Logic
+        private async Task onRefreshAppsListBtnClick()
+        {
+            isRefreshingExistingApps = true;
+            HathoraServerAppApi appApi = new(Config); 
+            
+            List<ApplicationWithDeployment> apps = await appApi.GetAppsAsync();
+            
+            Config.HathoraCoreOpts.ExistingApps = apps; // Cache the response to Config
+            
+            // If selected app is -1 and apps count is > 0, select the first app
+            bool hasSelectedApp = Config.HathoraCoreOpts.ExistingAppsSelectedIndex != -1;
+            if (!hasSelectedApp && apps.Count > 0)
+                setSelectedApp(_newSelectedIndex: 0);
+            
+            isRefreshingExistingApps = false;
+        }
+        
+        private void onSelectedPopupAppChanged(int _newSelectedIndex)
+        {
+            setSelectedApp(_newSelectedIndex);
+        }
+        #endregion // Event Logic
+        
+        
+        #region Utils
+        /// <summary>Sets AppId + ExistingAppsSelectedIndex</summary>
+        private void setSelectedApp(int _newSelectedIndex)
+        {
+            Config.HathoraCoreOpts.AppId = Config.HathoraCoreOpts.ExistingApps?[_newSelectedIndex]?.AppId;
+            Config.HathoraCoreOpts.ExistingAppsSelectedIndex = _newSelectedIndex;
+            
+            Debug.Log($"[{nameof(HathoraConfigPostAuthBodyUI)}] Set new " +
+                $"{nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex)}=={_newSelectedIndex}");
+            
+            SerializedConfig.ApplyModifiedProperties();
+        }
+        #endregion // Utils
     }
 }

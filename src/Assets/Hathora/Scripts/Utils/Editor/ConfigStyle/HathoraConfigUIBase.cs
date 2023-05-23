@@ -96,6 +96,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <returns></returns>
         protected bool CheckHasAuthToken() =>
             !string.IsNullOrEmpty(Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
+        
+        protected bool CheckHasSelectedApp() => 
+            !string.IsNullOrEmpty(Config.HathoraCoreOpts.AppId);
 
         /// <summary>
         /// Add to this event to request a repaint from the main editor UI.
@@ -192,27 +195,44 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         protected void InsertTooltipIcon(string _tooltipStr)
         {
-            // Load and display the tooltip icon
+            // Load and display the _tooltip icon
             Texture2D infoIcon = Resources.Load<Texture2D>("Icons/infoIcon");
             GUIContent iconContent = new(infoIcon, _tooltipStr);
             GUILayout.Label(iconContent, GUILayout.ExpandWidth(false));
         }
 
         /// <summary>
-        /// Add tooltip str to include a tooltip icon + hover text
+        /// Add _tooltip str to include a _tooltip icon + hover text
         /// </summary>
-        /// <param name="labelStr"></param>
-        /// <param name="tooltip"></param>
-        protected void InsertLeftLabel(string labelStr, string tooltip = null)
+        /// <param name="_labelStr"></param>
+        /// <param name="_tooltip"></param>
+        /// <param name="_selectable">Want to select some text for copying?</param>
+        protected void InsertLeftLabel(
+            string _labelStr,
+            string _tooltip = null,
+            bool _selectable = false)
         {
-            GUIContent labelContent = new(labelStr);
-            GUILayout.Label(
-                labelContent, 
-                LeftAlignLabelStyle, 
-                GUILayout.ExpandWidth(false));
+            GUIContent labelContent = new(_labelStr);
+            GUILayoutOption expandWidthOpt = GUILayout.ExpandWidth(false);
+            
+            if (_selectable)
+            {
+                EditorGUILayout.SelectableLabel(
+                    _labelStr,
+                    LeftAlignLabelStyle,
+                    expandWidthOpt);
+            }
+            else
+            {
+                GUILayout.Label(
+                    labelContent,
+                    LeftAlignLabelStyle,
+                    expandWidthOpt);
+            }
+            
 
-            if (!string.IsNullOrEmpty(tooltip))
-                InsertTooltipIcon(tooltip);
+            if (!string.IsNullOrEmpty(_tooltip))
+                InsertTooltipIcon(_tooltip);
         }
 
         protected void InsertCenterLabel(string labelStr)
@@ -248,7 +268,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="_btnLabelStr"></param>
         /// <param name="_btnStyle"></param>
@@ -272,5 +291,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             return clickedBtn;
         }
+
+        protected void insertLeftSelectableLabel(string _contentStr)
+        {
+            float lineHeight = EditorGUIUtility.singleLineHeight;
+
+            Rect labelRect = GUILayoutUtility.GetRect(
+                new GUIContent(_contentStr), 
+                LeftAlignLabelStyle, 
+                GUILayout.ExpandWidth(true), 
+                GUILayout.Height(lineHeight));
+            
+            EditorGUI.SelectableLabel(labelRect, _contentStr, LeftAlignLabelStyle);
+        }
+
+        /// <returns>bool clicked</returns>
+        protected bool insertLeftGeneralBtn(string _content) =>
+            GUILayout.Button(_content, GeneralButtonStyle);
     }
 }

@@ -32,7 +32,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        private ContainerPortWrapper _containerPortWrapper;
+        private ContainerPortWrapper _containerPortWrapper = new();
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         public ContainerPortWrapper ContainerPortWrapper
@@ -42,7 +42,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>(!) Like an `.env` file, these are all strings.</summary>
-        private List<HathoraEnvVars> _envVars;
+        private List<HathoraEnvVars> _envVars = new();
 
         /// <summary>(!) Like an `.env` file, these are all strings.</summary>
         public List<HathoraEnvVars> EnvVars
@@ -52,7 +52,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>You probably don't need to touch these, unless debugging</summary>
-        private HathoraDeployAdvancedOpts _advancedDeployOpts;
+        private HathoraDeployAdvancedOpts _advancedDeployOpts = new();
 
         /// <summary>You probably don't need to touch these, unless debugging</summary>
         public HathoraDeployAdvancedOpts AdvancedDeployOpts

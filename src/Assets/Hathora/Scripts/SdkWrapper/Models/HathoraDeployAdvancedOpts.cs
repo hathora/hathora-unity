@@ -32,7 +32,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public ExtraContainerPortWrapper _extraTransportInfo1;
+        public ExtraContainerPortWrapper _extraTransportInfo1 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
@@ -50,7 +50,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public ExtraContainerPortWrapper _extraTransportInfo2;
+        public ExtraContainerPortWrapper _extraTransportInfo2 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.

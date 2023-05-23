@@ -19,7 +19,7 @@ namespace Hathora.Scripts.Net.Common
         #region Vars
         // ----------------------------------------
         [SerializeField]
-        private HathoraCoreOpts _hathoraCoreOpts;
+        private HathoraCoreOpts _hathoraCoreOpts = new();
         public HathoraCoreOpts HathoraCoreOpts
         {
             get => _hathoraCoreOpts;
@@ -27,7 +27,7 @@ namespace Hathora.Scripts.Net.Common
         }
 
         [SerializeField]
-        private HathoraAutoBuildOpts linuxHathoraAutoBuildOpts;
+        private HathoraAutoBuildOpts linuxHathoraAutoBuildOpts = new();
         public HathoraAutoBuildOpts LinuxHathoraAutoBuildOpts
         {
             get => linuxHathoraAutoBuildOpts;
@@ -35,7 +35,7 @@ namespace Hathora.Scripts.Net.Common
         }
 
         [SerializeField] 
-        private HathoraDeployOpts _hathoraDeployOpts;
+        private HathoraDeployOpts _hathoraDeployOpts = new();
         public HathoraDeployOpts HathoraDeployOpts
         {
             get => _hathoraDeployOpts;
@@ -43,25 +43,11 @@ namespace Hathora.Scripts.Net.Common
         }
         
         [SerializeField]
-        private HathoraLobbyRoomOpts _hathoraLobbyRoomOpts;
+        private HathoraLobbyRoomOpts _hathoraLobbyRoomOpts = new();
         public HathoraLobbyRoomOpts HathoraLobbyRoomOpts
         {
             get => _hathoraLobbyRoomOpts;
             set => _hathoraLobbyRoomOpts = value;
-        }
-        
-        
-        // Utils
-
-        /// <summary>
-        /// Explicit typings for FindNestedProperty() calls
-        /// </summary>
-        public struct SerializedFieldNames
-        {
-            public static string HathoraCoreOpts => nameof(_hathoraCoreOpts);
-            public static string LinuxAutoBuildOpts => nameof(linuxHathoraAutoBuildOpts);
-            public static string HathoraDeployOpts => nameof(_hathoraDeployOpts);
-            public static string HathoraLobbyRoomOpts => nameof(_hathoraLobbyRoomOpts);
         }
         #endregion // Vars
 

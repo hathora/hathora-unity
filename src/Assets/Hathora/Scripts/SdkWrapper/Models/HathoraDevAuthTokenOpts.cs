@@ -23,18 +23,9 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _forceNewToken;
             set => _forceNewToken = value;
         }
-
+        
         
         // Public utils
         public bool HasAuthToken => !string.IsNullOrEmpty(_devAuthToken);
-
-        /// <summary>
-        /// Explicit typings for FindNestedProperty() calls
-        /// </summary>
-        public struct SerializedFieldNames
-        {
-            public static string DevAuthToken => nameof(_devAuthToken);
-            public static string ForceNewToken => nameof(_forceNewToken);
-        }
     }
 }
