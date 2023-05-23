@@ -308,5 +308,33 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <returns>bool clicked</returns>
         protected bool insertLeftGeneralBtn(string _content) =>
             GUILayout.Button(_content, GeneralButtonStyle);
+        
+        /// <summary>
+        /// </summary>
+        /// <param name="_labelStr"></param>
+        /// <param name="_tooltip"></param>
+        /// <param name="_val"></param>
+        /// <returns>inputStr</returns>
+        protected string insertHorizLabeledTextField(
+            string _labelStr,
+            string _tooltip,
+            string _val)
+        {
+            EditorGUILayout.BeginHorizontal();
+            
+            InsertLeftLabel(_labelStr, _tooltip);
+            
+            GUILayoutOption expandWidthOpt = GUILayout.ExpandWidth(true);
+            string inputStr = GUILayout.TextField(_val, expandWidthOpt);
+            
+            EditorGUILayout.EndHorizontal();
+            return inputStr;
+        }
+
+        protected void SaveConfigChange(string _key, string _newVal)
+        {
+            Debug.Log($"[HathoraConfigUIBase] Set new Config vals for: `{_key}` to: `{_newVal}`");
+            SerializedConfig.ApplyModifiedProperties();
+        }
     }
 }
