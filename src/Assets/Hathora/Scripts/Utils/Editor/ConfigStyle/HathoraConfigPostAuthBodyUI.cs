@@ -3,6 +3,7 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
@@ -61,7 +62,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         #endregion // Main
         
         
-                private void insertAppIdCombo()
+        private void insertAppIdCombo()
         {
             EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
             insertAppIdField();
@@ -84,9 +85,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 isRefreshingExistingApps = true;
 
                 HathoraServerAppApi appApi = new(Config); 
-                await appApi.GetAppsAsync();
+                List<ApplicationWithDeployment> apps = await appApi.GetAppsAsync();
+                Config.HathoraCoreOpts.ExistingApps = apps; // Cache the response to Config
                 
-                isRefreshingExistingApps = false; 
+                isRefreshingExistingApps = false;
             }
         }
 

@@ -52,7 +52,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerAppApi] num: '{getAppsResult?.Count}'");
+            Debug.Log($"[HathoraServerAppApi.GetAppsAsync] num: '{getAppsResult?.Count}'");
 
             return getAppsResult;
         }
