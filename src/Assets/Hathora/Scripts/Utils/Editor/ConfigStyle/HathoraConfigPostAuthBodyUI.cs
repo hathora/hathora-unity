@@ -50,6 +50,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
+
+            base.InsertHorizontalLine(1.5f, Color.gray, _space: 15);
+            
             insertAppIdCombo();
         }
         

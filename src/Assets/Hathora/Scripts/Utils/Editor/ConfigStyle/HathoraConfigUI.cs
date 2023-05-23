@@ -114,7 +114,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         //         return;
         //     }
         //
-        //     // DrawHorizontalLine(1, Color.gray);
+        //     // InsertHorizontalLine(1, Color.gray);
         //     EditorGUILayout.Space(10);
         //
         //     EditorGUILayout.BeginVertical(GUI.skin.box);

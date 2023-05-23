@@ -117,7 +117,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUI.FocusControl("Dummy");
         }
         
-        protected void DrawHorizontalLine(float thickness, Color color, int _space = 0)
+        protected void InsertHorizontalLine(float thickness, Color color, int _space = 0)
         {
             Rect lineRect = EditorGUILayout.GetControlRect(hasLabel: false, thickness);
             lineRect.height = thickness;
