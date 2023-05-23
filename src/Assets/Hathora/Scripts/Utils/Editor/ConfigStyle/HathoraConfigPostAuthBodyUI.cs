@@ -80,7 +80,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private async Task insertExistingAppsRefreshBtn()
         {
-            if (GUILayout.Button("↻", GeneralButtonStyle))
+            if (GUILayout.Button("↻ Refresh List", GeneralButtonStyle))
             {
                 isRefreshingExistingApps = true;
 
@@ -128,12 +128,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private async Task insertLoginToHathoraConsoleBtn()
         {
             EditorGUI.BeginDisabledGroup(disabled: false); 
-
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
-                "(enter token above - or log in below)</color>", CenterAlignLabelStyle);
             
-            if (GUILayout.Button("Log in to Hathora Console", GeneralButtonStyle))
+            if (GUILayout.Button("Log in with another account", GeneralButtonStyle))
             {
                 devReAuthLoginButtonInteractable = false;
                 await HathoraServerAuth.DevAuthLogin(Config);

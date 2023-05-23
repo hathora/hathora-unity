@@ -23,42 +23,44 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
         private const string issuerUri = "https://auth.hathora.com";
         private const string audienceUri = "https://cloud.hathora.com";
 
-        public async Task<string> GetTokenAsync(
-            NetHathoraConfig _netHathoraConfig,
-            CancellationToken cancelToken)
-        {
-            // Share the same path as the CLI
-            string refreshTokenPath = Path.Combine(
+        private static string getRefreshTokenCachePath() =>
+            Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 ".config",
                 "hathora",
-                "token"
-            );
+                "token");
+        
 
-            if (File.Exists(refreshTokenPath))
-            {
-                // if (!_netHathoraConfig.HathoraCoreOpts.DevAuthOpts.ForceNewToken)
-                // TODO: Add a force refresh option (deletes the file)
-                Debug.Log($"A token file already present at {refreshTokenPath}. We'll use this " +
-                    "token, instead. If you'd like to get a new one, please remove this file");
+        /// <summary>
+        /// (!) Drive read intensive, and !async
+        /// </summary>
+        /// <returns></returns>
+        public static string CheckForExistingCachedTokenAsync()
+        {
+            // Share the same path as the CLI
+            string refreshTokenPath = getRefreshTokenCachePath();
+
+            if (!File.Exists(refreshTokenPath))
+                return null;
             
-                return File.ReadAllText(refreshTokenPath); // (!) The Async variant is bugged, freezing Unity
-                
-                // Delete this so we can make a new one
-                File.Delete(refreshTokenPath);
-            }
-
+            Debug.Log($"Found already-present auth token file at: `{refreshTokenPath}`");
+            return File.ReadAllText(refreshTokenPath); // (!) The Async variant is bugged, freezing Unity
+        }
+        
+        public async Task<string> GetTokenAsync(CancellationToken cancelToken)
+        {
             Auth0DeviceResponse deviceAuthorizationResponse = await requestDeviceAuthorizationAsync();
-
             if (deviceAuthorizationResponse == null)
             {
                 Debug.Log("Error: Failed to get device authorizatio");
                 return null;
             }
 
+            string refreshTokenCachePath = getRefreshTokenCachePath();
+            
             return await openBrowserAwaitAuth(
                 deviceAuthorizationResponse, 
-                refreshTokenPath,
+                refreshTokenCachePath,
                 cancelToken);
         }
 
@@ -67,7 +69,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
             string refreshTokenPath,
             CancellationToken cancelToken)
         {
-
             Debug.Log("Openening browser for login; ensure you see the following code: " +
                 $"'<color=yellow>{deviceAuthorizationResponse.UserCode}</color>'");
 

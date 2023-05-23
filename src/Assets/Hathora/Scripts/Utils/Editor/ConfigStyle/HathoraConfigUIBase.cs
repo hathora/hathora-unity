@@ -6,6 +6,7 @@ using System.Linq;
 using Hathora.Scripts.Net.Common;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.Graphs;
 using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
@@ -90,6 +91,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         }
         #endregion // Init
 
+        
+        /// <summary>Are we logged in, already (is Config dev auth token set)?</summary>
+        /// <returns></returns>
+        protected bool CheckHasAuthToken() =>
+            !string.IsNullOrEmpty(Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
 
         /// <summary>
         /// Add to this event to request a repaint from the main editor UI.
@@ -111,21 +117,36 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUI.FocusControl("Dummy");
         }
         
-        protected void DrawHorizontalLine(float thickness, Color color)
+        protected void DrawHorizontalLine(float thickness, Color color, int _space = 0)
         {
             Rect lineRect = EditorGUILayout.GetControlRect(hasLabel: false, thickness);
             lineRect.height = thickness;
             EditorGUI.DrawRect(lineRect, color);
+            
+            if (_space > 0)
+                EditorGUILayout.Space(_space);
         }
         
-        protected void InsertLinkLabel(string _label, string _url)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_label"></param>
+        /// <param name="_url"></param>
+        /// <param name="centerAlign">Wrap in a horizontal layout with flex space</param>
+        protected void InsertLinkLabel(string _label, string _url, bool centerAlign)
         {
+            if (centerAlign)
+                StartCenterHorizAlign();
+            
             if (EditorGUILayout.LinkButton(
                     _label,
                     GUILayout.ExpandWidth(false)))
             {
                 Application.OpenURL(_url);
             }
+            
+            if (centerAlign)
+                EndCenterHorizAlign();
         }
         
         protected static SerializedProperty FindNestedProperty(
@@ -193,6 +214,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!string.IsNullOrEmpty(tooltip))
                 InsertTooltipIcon(tooltip);
         }
+
+        protected void InsertCenterLabel(string labelStr)
+        {
+            StartCenterHorizAlign();
+            GUILayout.Label(labelStr, PreLinkLabelStyle);
+            EndCenterHorizAlign();
+        }
         
         /// <summary>
         /// SerializedProperty does not natively contain a ListVal.
@@ -203,5 +231,46 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             Enumerable.Range(0, _prop.arraySize)
                 .Select(i => _prop.GetArrayElementAtIndex(i).stringValue)
                 .ToList();
+
+        /// <summary>
+        /// Useful for smaller buttons you want centered for less emphasis.
+        /// </summary>
+        protected void StartCenterHorizAlign()
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+        }
+
+        protected void EndCenterHorizAlign()
+        {
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_btnLabelStr"></param>
+        /// <param name="_btnStyle"></param>
+        /// <param name="_percentWidthOfScreen"></param>
+        /// <returns>OnClick bool</returns>
+        protected bool insertSmallCenteredBtn(
+            string _btnLabelStr, 
+            GUIStyle _btnStyle = null, 
+            float _percentWidthOfScreen = 0.35f)
+        {
+            // This should be smaller than Login btn: Set to 35% of screen width
+            GUILayoutOption regBtnWidth = GUILayout.Width(Screen.width * _percentWidthOfScreen);
+
+            GUIStyle btnStyle = _btnStyle == null
+                ? GeneralButtonStyle
+                : _btnStyle;
+            
+            // USER INPUT >>
+            bool clickedBtn = GUILayout.Button(_btnLabelStr, btnStyle, regBtnWidth);
+            EditorGUILayout.Space(10f);
+
+            return clickedBtn;
+        }
     }
 }

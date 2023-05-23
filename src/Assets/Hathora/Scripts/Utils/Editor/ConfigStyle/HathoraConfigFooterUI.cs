@@ -5,7 +5,6 @@ using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using Task = System.Threading.Tasks.Task;
 
@@ -23,46 +22,45 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         public void Draw()
         {
             if (IsAuthed)
-            {
-                insertBuildUploadDeployComboBtn();
-                return;
-            }
-            
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.Label("Learn more about Hathora Cloud", PreLinkLabelStyle);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            InsertLinkLabel("Documentation", HathoraEditorUtils.HATHORA_DOCS_URL);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
- 
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            InsertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
+                insertPostAuthFooter();
+            else
+                insertPreAuthFooter();
         }
-        
-        private async Task insertBuildUploadDeployComboBtn()
+
+        private void insertPostAuthFooter()
         {
-            GUILayout.Space(15);
-            
             bool meetsDeployBtnReqs = Config.MeetsDeployBtnReqs();
-            MessageType helpMsgType = meetsDeployBtnReqs ? MessageType.Info : MessageType.Error;
-            string helpMsg = meetsDeployBtnReqs
+            
+            insertBuildUploadDeployHelpbox(_enabled: meetsDeployBtnReqs);
+            insertBuildUploadDeployBtn(_enabled: meetsDeployBtnReqs); // !await
+        }
+
+        private void insertBuildUploadDeployHelpbox(bool _enabled)
+        {
+            MessageType helpMsgType = _enabled ? MessageType.Info : MessageType.Error;
+            string helpMsg = _enabled
                 ? "This action will create a new server build, upload to Hathora, " +
-                  "and create a new development version of your application."
+                "and create a new development version of your application."
                 : $"Requires set: {nameof(HathoraCoreOpts.AppId)}, " +
-                  $"{nameof(HathoraAutoBuildOpts.ServerBuildExeName)}, " +
-                  $"{nameof(HathoraAutoBuildOpts.ServerBuildDirName)}, ";
+                $"{nameof(HathoraAutoBuildOpts.ServerBuildExeName)}, " +
+                $"{nameof(HathoraAutoBuildOpts.ServerBuildDirName)}, ";
 
             // Post the help box *before* we disable the button so it's easier to see
             EditorGUILayout.HelpBox(helpMsg, helpMsgType);
-            GUI.enabled = meetsDeployBtnReqs;
+        }
+
+        private void insertPreAuthFooter()
+        {
+            DrawHorizontalLine(1.5f, Color.gray, _space: 20);
+            InsertCenterLabel("Learn more about Hathora Cloud");
+            InsertLinkLabel("Documentation", HathoraEditorUtils.HATHORA_DOCS_URL, centerAlign: true);
+            InsertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL, centerAlign: true);
+        }
+
+        private async Task insertBuildUploadDeployBtn(bool _enabled)
+        {
+            GUILayout.Space(15);
+            GUI.enabled = _enabled;
                 
             if (GUILayout.Button("Build, Upload & Deploy New Version", GeneralButtonStyle))
             {

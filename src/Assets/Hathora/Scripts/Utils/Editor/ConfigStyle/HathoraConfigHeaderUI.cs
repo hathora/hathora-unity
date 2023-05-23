@@ -32,8 +32,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private void insertHeaderBtns()
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
+            StartCenterHorizAlign();
             
             GUILayoutOption[] buttonOptions =
             {
@@ -68,8 +67,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 Application.OpenURL(HathoraEditorUtils.HATHORA_HOME_URL);
             }
 
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
+            EndCenterHorizAlign();
         }
         
         /// <summary>
