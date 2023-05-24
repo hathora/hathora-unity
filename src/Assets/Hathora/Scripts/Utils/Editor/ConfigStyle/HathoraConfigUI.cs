@@ -2,6 +2,7 @@
 
 using Hathora.Scripts.Net.Common;
 using UnityEditor;
+using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
@@ -11,10 +12,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
     [CustomEditor(typeof(NetHathoraConfig))]
     public class HathoraConfigUI : UnityEditor.Editor
     {
+        #region Vars
         /// <summary>Set false to view the "raw" ScriptableObject</summary>
         public const bool ENABLE_BODY_STYLE = true;
         
-        #region Vars
         private HathoraConfigHeaderUI headerUI;
         private HathoraConfigPreAuthBodyUI preAuthBodyUI;
         private HathoraConfigPostAuthBodyUI postAuthAuthPostAuthBodyUI;
@@ -41,13 +42,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             checkForDirtyRefs();
             drawHeaderBodyFooter();
-            applyChanges();
-        }
-
-        private void applyChanges()
-        {
-            // Apply the modified properties to the target object
-            serializedObject.ApplyModifiedProperties();
+            // (!) Saved changes occur @ HathoraConfigUIBase.SaveConfigChange()
         }
 
         private void drawHeaderBodyFooter()

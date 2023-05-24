@@ -12,6 +12,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
     public class HathoraCoreOpts
     {
         /// <summary>Get from your Hathora dashboard</summary>
+        [SerializeField]
         private string _appId;
 
         /// <summary>Get from your Hathora dashboard</summary>
@@ -21,6 +22,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _appId = value;
         }
         
+        [SerializeField]
         private int _existingAppsSelectedIndex = -1;
         public int ExistingAppsSelectedIndex
         {
@@ -33,6 +35,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
             _existingApps?.Select(app => app.AppName).ToList()
             ?? new List<string>(); // Default to empty list
         
+        [SerializeField]
         private List<ApplicationWithDeployment> _existingApps = new();
         public List<ApplicationWithDeployment> ExistingApps
         {

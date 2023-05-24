@@ -320,12 +320,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             string _val)
         {
             EditorGUILayout.BeginHorizontal();
-            
+
             InsertLeftLabel(_labelStr, _tooltip);
-            
+
             GUILayoutOption expandWidthOpt = GUILayout.ExpandWidth(true);
+            string controlName = $"{_labelStr}_TextField";
+
+            GUI.SetNextControlName(controlName);
             string inputStr = GUILayout.TextField(_val, expandWidthOpt);
-            
+
             EditorGUILayout.EndHorizontal();
             return inputStr;
         }
@@ -333,7 +336,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected void SaveConfigChange(string _key, string _newVal)
         {
             Debug.Log($"[HathoraConfigUIBase] Set new Config vals for: `{_key}` to: `{_newVal}`");
+            
             SerializedConfig.ApplyModifiedProperties();
+            EditorUtility.SetDirty(Config); // Mark the object as dirty
+            AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using Hathora.Scripts.Utils.Extensions;
+using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -15,6 +16,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Perhaps you are curious *what* we're uploading via the
         /// `.hathora` temp dir; or want to edit the Dockerfile?
         /// </summary>
+        [SerializeField] 
         private bool _keepTempDir;
         
         /// <summary>
@@ -32,7 +34,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public ExtraContainerPortWrapper _extraTransportInfo1 = new();
+        [SerializeField] 
+        private ExtraContainerPortWrapper _extraTransportInfo1 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
@@ -50,7 +53,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public ExtraContainerPortWrapper _extraTransportInfo2 = new();
+        [SerializeField] 
+        private ExtraContainerPortWrapper _extraTransportInfo2 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
@@ -62,8 +66,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _extraTransportInfo2;
             set => _extraTransportInfo2 = value;
         }
-            
-            
+        
+
         /// <summary>Useful for CreateDeploymentAsync() via HathoraDeployOpts.</summary>
         public bool CheckHasAdditionalContainerPorts() =>
             !string.IsNullOrEmpty(_extraTransportInfo1?.TransportNickname) ||

@@ -1,8 +1,6 @@
 // Created by dylan@hathora.dev
 
-using System.Collections.Generic;
 using System.IO;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.SdkWrapper.Models;
 using Hathora.Scripts.Utils;
 using UnityEngine;
@@ -27,11 +25,11 @@ namespace Hathora.Scripts.Net.Common
         }
 
         [SerializeField]
-        private HathoraAutoBuildOpts linuxHathoraAutoBuildOpts = new();
+        private HathoraAutoBuildOpts _linuxHathoraAutoBuildOpts = new();
         public HathoraAutoBuildOpts LinuxHathoraAutoBuildOpts
         {
-            get => linuxHathoraAutoBuildOpts;
-            set => linuxHathoraAutoBuildOpts = value;
+            get => _linuxHathoraAutoBuildOpts;
+            set => _linuxHathoraAutoBuildOpts = value;
         }
 
         [SerializeField] 
@@ -58,14 +56,14 @@ namespace Hathora.Scripts.Net.Common
         }
 
         public bool MeetsBuildBtnReqs() =>
-            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildExeName);
+            !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName);
                                                           
         public bool MeetsDeployBtnReqs() =>
             !string.IsNullOrEmpty(_hathoraCoreOpts.AppId) &&
             _hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
-            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
+            !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
+            !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
             _hathoraDeployOpts.ContainerPortWrapper.PortNumber > 1024;
 
         /// <summary>
@@ -74,8 +72,8 @@ namespace Hathora.Scripts.Net.Common
         /// <returns></returns>
         public string GetNormalizedPathToBuildExe() => Path.GetFullPath(Path.Combine(
             HathoraUtils.GetNormalizedPathToProjRoot(), 
-            linuxHathoraAutoBuildOpts.ServerBuildDirName, 
-            linuxHathoraAutoBuildOpts.ServerBuildExeName));
+            _linuxHathoraAutoBuildOpts.ServerBuildDirName, 
+            _linuxHathoraAutoBuildOpts.ServerBuildExeName));
         
 
     }

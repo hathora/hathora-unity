@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -9,6 +10,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
      {
          // Private Serialized
          /// <summary>Default: Build-Server</summary>
+         [SerializeField]
          private string _serverBuildDirName = "Build-Server";
 
          /// <summary>Default: Build-Server</summary>
@@ -19,6 +21,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
          }
 
          /// <summary>Default: Hathora-Unity-LinuxServer.x86_64</summary>
+         [SerializeField]
          private string _serverBuildExeName = "Hathora-Unity-LinuxServer.x86_64";
          
          /// <summary>Default: Hathora-Unity-LinuxServer.x86_64</summary>
@@ -29,6 +32,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
          }
 
          /// <summary>The same as checking 'Developer Build' in build opts</summary>
+         [SerializeField]
          private bool _isDevBuild = true;
          
          /// <summary>The same as checking 'Developer Build' in build opts</summary>
@@ -39,6 +43,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
          }
          
          /// <summary>If an old build exists, first delete this dir?</summary>
+         [SerializeField]
          private bool _cleanBuildDir = true;
 
          /// <summary>If an old build exists, first delete this dir?</summary>

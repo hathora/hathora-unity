@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using Hathora.Scripts.Utils;
+using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -12,6 +13,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
     public class HathoraDeployOpts
     {
         /// <summary>Default: 1. How many rooms do you want to support per server?</summary>
+        [SerializeField]
         private int _roomsPerProcess = 1;
 
         /// <summary>Default: 1. How many rooms do you want to support per server?</summary>
@@ -22,6 +24,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
+        [SerializeField]
         private PlanName _planName = PlanName.Tiny;
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
@@ -32,6 +35,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
+        [SerializeField]
         private ContainerPortWrapper _containerPortWrapper = new();
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
@@ -42,6 +46,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>(!) Like an `.env` file, these are all strings.</summary>
+        [SerializeField]
         private List<HathoraEnvVars> _envVars = new();
 
         /// <summary>(!) Like an `.env` file, these are all strings.</summary>
@@ -52,6 +57,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>You probably don't need to touch these, unless debugging</summary>
+        [SerializeField]
         private HathoraDeployAdvancedOpts _advancedDeployOpts = new();
 
         /// <summary>You probably don't need to touch these, unless debugging</summary>
@@ -62,8 +68,15 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>If you deployed something, we set the cached result</summary>
-        private Deployment lastDeployment;
+        // [SerializeField] // TODO: Make serializable. For now, this won't persist between Unity sessions.
+        private Deployment _lastDeployment;
         
+        /// <summary>If you deployed something, we set the cached result</summary>
+        public Deployment LastDeployment
+        {
+            get => _lastDeployment;
+            set => _lastDeployment = value;
+        }
         
     }
 }
