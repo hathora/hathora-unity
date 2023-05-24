@@ -8,6 +8,9 @@ namespace Hathora.Scripts.Net.Common.Models
 {
     /// <summary>
     /// Set transpport configurations for where the server will listen.
+    /// --- 
+    /// This is a wrapper for Hathora SDK's `ContainerPort` model.
+    /// We'll eventually replace this with a [Serializable] revamp of the model.
     /// </summary>
     [Serializable]
     public class ContainerPortWrapper
@@ -28,12 +31,32 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _portNumber = value;
         }
 
+        
         // Public utils
+
+        public ContainerPortWrapper()
+        {
+        }
+        
+        public ContainerPortWrapper(ContainerPort _containerPort)
+        {
+            this._transportType = _containerPort.TransportType;
+            this._portNumber = _containerPort.Port;
+        }
         
         /// <summary>
         /// Override this if you want the name to be custom
         /// </summary>
         /// <returns></returns>
         public virtual string GetTransportNickname() => "default";
+
+        public virtual ContainerPort ToContainerPortType() => new()
+        {
+            TransportType = TransportType,
+            Name = GetTransportNickname(),
+            Port = PortNumber,
+            // AdditionalProperties = TODO
+        };
+
     }
 }
