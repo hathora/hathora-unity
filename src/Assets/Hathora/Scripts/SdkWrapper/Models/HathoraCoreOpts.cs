@@ -33,25 +33,39 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
-        [FormerlySerializedAs("_existingApps")]
         [SerializeField]
-        private List<ApplicationWithDeploymentWrapper> _existingAppsWithDeployment = new();
+        private List<ApplicationWithDeploymentWrapper> _existingAppsWithDeploymentWrapper = new();
+        
+        public List<ApplicationWithDeploymentWrapper> ExistingAppsWithDeploymentWrapper
+        {
+            get => _existingAppsWithDeploymentWrapper;
+            set => _existingAppsWithDeploymentWrapper = value;
+        }
 
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
-        public List<ApplicationWithDeployment> ExistingApps
+        public List<ApplicationWithDeployment> ExistingAppsWithDeployment
         {
-            get => _existingAppsWithDeployment
+            get => this._existingAppsWithDeploymentWrapper
                 .Select(app => app.ToApplicationWithDeploymentType())
                 .ToList();
 
-            set => _existingAppsWithDeployment = value
-                .Select(app => new ApplicationWithDeploymentWrapper(app))
-                .ToList();
+            set  
+            {
+                if (value == null)
+                    return;
+                
+                List<ApplicationWithDeploymentWrapper> parsedList = _existingAppsWithDeploymentWrapper = value
+                    .Select(app => new ApplicationWithDeploymentWrapper(app))
+                    .ToList();
+
+                this._existingAppsWithDeploymentWrapper = parsedList;
+            }
         }
-        
+
         /// <summary>Cached from App API</summary>
-        public List<string> GetExistingAppNames() =>
-            _existingAppsWithDeployment?.Select(app => app.AppName).ToList()
+        public List<string> GetExistingAppNames() => _existingAppsWithDeploymentWrapper?
+                .Select(app => app.AppName)
+                .ToList() 
             ?? new List<string>(); // Default to empty list
         
         

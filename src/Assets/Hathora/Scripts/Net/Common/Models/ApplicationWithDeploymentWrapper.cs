@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common.Models
 {
@@ -14,6 +15,14 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class ApplicationWithDeploymentWrapper
     {
+        [SerializeField]
+        private string _appId;
+        public string AppId 
+        { 
+            get => _appId;
+            set => _appId = value;
+        }
+        
         /// <summary>Serialized from `DateTime`.</summary>
         [SerializeField]
         private string _createdAtWrapper;
@@ -21,8 +30,19 @@ namespace Hathora.Scripts.Net.Common.Models
         /// <summary>Serialized from `DateTime`.</summary>
         public DateTime CreatedAt
         {
-            get => DateTime.Parse(_createdAtWrapper);
+            get => DateTime.TryParse(_createdAtWrapper, out DateTime parsedDateTime) 
+                ? parsedDateTime 
+                : DateTime.MinValue;
+
             set => _createdAtWrapper = value.ToString(CultureInfo.InvariantCulture);
+        }
+        
+        [SerializeField]
+        private string _createdBy;
+        public string CreatedBy 
+        { 
+            get => _createdBy;
+            set => _createdBy = value;
         }
         
         [SerializeField]
@@ -41,10 +61,13 @@ namespace Hathora.Scripts.Net.Common.Models
         /// <summary>Serialized from `DateTime`.</summary>
         public DateTime? DeletedAt
         {
-            get => DateTime.Parse(_deletedAtWrapper);
+            get => DateTime.TryParse(_deletedAtWrapper, out DateTime parsedDateTime)
+                ? parsedDateTime
+                : null;
+            
             set => _deletedAtWrapper = value.ToString();
         }
-
+ 
         [SerializeField]
         private string _orgId;
         public string OrgId 
@@ -82,8 +105,10 @@ namespace Hathora.Scripts.Net.Common.Models
         private DeploymentWrapper _deploymentWrapper;
         public Deployment Deployment 
         { 
-            get => _deploymentWrapper.ToDeploymentType();
-            set => _deploymentWrapper = new DeploymentWrapper(value);
+            get => _deploymentWrapper?.ToDeploymentType();
+            set => _deploymentWrapper = value == null 
+                ? null 
+                : new DeploymentWrapper(value);
         }
         
         
@@ -98,28 +123,54 @@ namespace Hathora.Scripts.Net.Common.Models
         
         public ApplicationWithDeploymentWrapper(ApplicationWithDeployment _appWithDeployment)
         {
+            if (_appWithDeployment == null)
+                return;
+
+            this.AppId = _appWithDeployment.AppId;
+            this.AppName = _appWithDeployment.AppName;
             this.CreatedAt = _appWithDeployment.CreatedAt;
-            this.DeletedBy = _appWithDeployment.DeletedBy;
+            this.DeletedBy = _appWithDeployment.DeletedBy; 
             this.DeletedAt = _appWithDeployment.DeletedAt;
             this.AppSecret = _appWithDeployment.AppSecret;
-            this.AppName = _appWithDeployment.AppName;
             this.OrgId = _appWithDeployment.OrgId;
             this.Deployment = _appWithDeployment.Deployment;
-            this.AuthConfiguration = _appWithDeployment.AuthConfiguration; // TODO
+            this.AuthConfiguration = _appWithDeployment.AuthConfiguration;
             // this.AdditionalProperties = _appWithDeployment.AdditionalProperties; // TODO
         }
 
-        public ApplicationWithDeployment ToApplicationWithDeploymentType() => new()
+        private void setMissingDefaults()
         {
-            DeletedBy = this.DeletedBy,
-            DeletedAt = this.DeletedAt,
-            CreatedAt = this.CreatedAt,
-            AppSecret = this.AppSecret,
-            AppName = this.AppName,
-            OrgId = this.OrgId,
-            Deployment = this.Deployment,
-            AuthConfiguration = this.AuthConfiguration, // TODO
-            // AdditionalProperties = this.AdditionalProperties, // TODO
-        };
+            CreatedBy ??= "";
+            DeletedBy ??= "";
+            AppSecret ??= "";
+            OrgId ??= "";
+            AuthConfiguration ??= new ApplicationAuthConfiguration();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public ApplicationWithDeployment ToApplicationWithDeploymentType()
+        {
+            // (!) Throws on req'd val == null
+            setMissingDefaults();
+            
+            ApplicationWithDeployment appWithDeploy = new(
+                DeletedBy,
+                DeletedAt,
+                CreatedAt,
+                CreatedBy,
+                OrgId,
+                AuthConfiguration,
+                AppSecret,
+                AppId,
+                AppName, 
+                Deployment
+            );
+
+            // appWithDeploy.AdditionalProperties = this.AdditionalProperties; // TODO
+
+            return appWithDeploy;
+        }
     }
 }

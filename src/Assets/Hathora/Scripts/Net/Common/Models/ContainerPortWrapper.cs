@@ -40,6 +40,9 @@ namespace Hathora.Scripts.Net.Common.Models
         
         public ContainerPortWrapper(ContainerPort _containerPort)
         {
+            if (_containerPort == null)
+                return;
+            
             this._transportType = _containerPort.TransportType;
             this._portNumber = _containerPort.Port;
         }
@@ -52,8 +55,11 @@ namespace Hathora.Scripts.Net.Common.Models
 
         public virtual ContainerPort ToContainerPortType() => new()
         {
-            TransportType = TransportType,
+            // Req'd >>
             Name = GetTransportNickname(),
+
+            // Optional >>
+            TransportType = TransportType,
             Port = PortNumber,
             // AdditionalProperties = TODO
         };

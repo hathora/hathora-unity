@@ -56,6 +56,9 @@ namespace Hathora.Scripts.Net.Common.Models
         
         public ApplicationAuthConfigurationWrapper(ApplicationAuthConfiguration _appAuthConfig)
         {
+            if (_appAuthConfig == null)
+                return;
+
             // this.Google = _appAuthConfig.Google; // TODO
             // this.Nickname = _appAuthConfig.Nickname; // TODO
             // this.Anonymous = _appAuthConfig.Anonymous; // TODO
@@ -64,6 +67,7 @@ namespace Hathora.Scripts.Net.Common.Models
 
         public ApplicationAuthConfiguration ToApplicationAuthConfigurationType() => new()
         {
+            // Optional >>
             // Google = this.Google, // TODO
             // Nickname = this.Nickname, // TODO
             // Anonymous = this.Anonymous, // TODO

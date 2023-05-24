@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -94,7 +95,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
             insertAppIdHorizHeader();
-            insertAppsListHorizGroup();
+            insertAppsListPopupListHorizGroup();
             insertAppIdDisplayCopyGroup();
             
             EditorGUILayout.EndVertical();
@@ -111,15 +112,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.EndHorizontal();
         }
         
-        private void insertAppsListHorizGroup()
+        /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
+        private void insertAppsListPopupListHorizGroup()
         {
             EditorGUI.BeginDisabledGroup(disabled: isRefreshingExistingApps);
             GUILayout.BeginHorizontal();
             
-            insertExistingAppsPopup(); // This actually drops down, despite the name
+            insertExistingAppsPopupList(); // This actually drops down, despite the name
             insertExistingAppsRefreshBtn(); // !await
             
-            GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal(); 
             EditorGUI.EndDisabledGroup();
         }
         
@@ -165,7 +167,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 onRefreshAppsListBtnClick(); // !await
         }
 
-        private void insertExistingAppsPopup()
+        /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
+        private void insertExistingAppsPopupList()
         {
             List<string> displayedOptionsList = Config.HathoraCoreOpts.GetExistingAppNames();
             string[] displayedOptionsArr = displayedOptionsList?.ToArray();
@@ -410,17 +413,39 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             HathoraServerAppApi appApi = new(Config); 
             
             List<ApplicationWithDeployment> apps = await appApi.GetAppsAsync();
-            
-            Config.HathoraCoreOpts.ExistingApps = apps; // Cache the response to Config
-            
+
+            try
+            {
+                // The wrappers go through a great deal of parsing
+                Config.HathoraCoreOpts.ExistingAppsWithDeployment = apps; // Cache the response to Config
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error setting " +
+                    $"{nameof(Config.HathoraCoreOpts.ExistingAppsWithDeployment)}: {e}");
+                throw;
+            }
+
+            List<ApplicationWithDeployment> DELETEME = null;
+            try
+            {
+                DELETEME = Config.HathoraCoreOpts.ExistingAppsWithDeployment; // TEST
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
+              
             // If selected app is -1 and apps count is > 0, select the first app
             bool hasSelectedApp = Config.HathoraCoreOpts.ExistingAppsSelectedIndex != -1;
             if (!hasSelectedApp && apps.Count > 0)
-                setSelectedApp(_newSelectedIndex: 0);
+                setSelectedApp(_newSelectedIndex: 0); 
             
             isRefreshingExistingApps = false;
         }
         
+        /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
         private void onSelectedPopupAppChanged(int _newSelectedIndex)
         {
             setSelectedApp(_newSelectedIndex);
@@ -448,7 +473,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <summary>Sets AppId + ExistingAppsSelectedIndex</summary>
         private void setSelectedApp(int _newSelectedIndex)
         {
-            Config.HathoraCoreOpts.AppId = Config.HathoraCoreOpts.ExistingApps?[_newSelectedIndex]?.AppId;
+            Config.HathoraCoreOpts.AppId = Config.HathoraCoreOpts.ExistingAppsWithDeployment?[_newSelectedIndex]?.AppId;
             Config.HathoraCoreOpts.ExistingAppsSelectedIndex = _newSelectedIndex;
 
             SaveConfigChange(

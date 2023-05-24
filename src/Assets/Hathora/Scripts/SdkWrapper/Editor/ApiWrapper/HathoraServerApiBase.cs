@@ -42,7 +42,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         }
 
         protected static void HandleServerApiException(
-            string _className,
+            string _className, 
             string _funcName,
             ApiException _apiException)
         {

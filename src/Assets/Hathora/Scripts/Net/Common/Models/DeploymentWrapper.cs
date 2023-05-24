@@ -161,6 +161,9 @@ namespace Hathora.Scripts.Net.Common.Models
         
         public DeploymentWrapper(Deployment _deployment)
         {
+            if (_deployment == null)
+                return;
+            
             this.PlanName = _deployment.PlanName;
             this.TransportType = _deployment.TransportType;
             this.RoomsPerProcess = _deployment.RoomsPerProcess;
@@ -177,23 +180,27 @@ namespace Hathora.Scripts.Net.Common.Models
             // AdditionalProperties = _deployment.AdditionalProperties;
         }
 
-        public Deployment ToDeploymentType() =>
-            new()
-            {
-                CreatedAt = this.CreatedAt,
-                CreatedBy = this.CreatedBy,
-                PlanName = this.PlanName, 
-                TransportType = this.TransportType,
-                RoomsPerProcess = this.RoomsPerProcess,
-                AdditionalContainerPorts = this.AdditionalContainerPorts,
-                DefaultContainerPort = this.ContainerPort,
-                RequestedMemoryMB = this.RequestedMemoryMB,
-                RequestedCPU = this.RequestedCPU,
-                DeploymentId = this.DeploymentId,
-                BuildId = this.BuildId,
-                AppId = this.AppId,
-                // Env = this.Env,
+        public Deployment ToDeploymentType()
+        {
+            // (!) Throws on missing req'd arg
+            List<DeploymentEnvInner> emptyEnv = new();
+            
+            return new(
+                env: emptyEnv,
+                createdAt: this.CreatedAt,
+                createdBy: this.CreatedBy,
+                planName: this.PlanName,
+                transportType: this.TransportType,
+                roomsPerProcess: this.RoomsPerProcess,
+                additionalContainerPorts: this.AdditionalContainerPorts,
+                defaultContainerPort: this.ContainerPort,
+                requestedMemoryMB: this.RequestedMemoryMB,
+                requestedCPU: this.RequestedCPU,
+                deploymentId: this.DeploymentId,
+                buildId: this.BuildId,
+                appId: this.AppId // Env = this.Env,
                 // AdditionalProperties = this.AdditionalProperties
-            };
+            );   
+        }
     }
 }
