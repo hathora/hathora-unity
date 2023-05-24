@@ -309,10 +309,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             }
     
-            EditorGUI.indentLevel++;
             EditorGUILayout.Space(10);
             
-            insertDeployAppHelpbox();
+            insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
+            
+            EditorGUI.indentLevel++;
             insertDeployAppBtn(); // !await
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
