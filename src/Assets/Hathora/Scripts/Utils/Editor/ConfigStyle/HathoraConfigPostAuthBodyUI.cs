@@ -28,6 +28,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         // Sub foldouts
         private bool isServerBuildAdvancedFoldout;
+        
+        // Focus
+        private bool buildDirNameTxtFieldHasFocus;
         #endregion // Vars
 
 
@@ -53,15 +56,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertBodyHeader();
             // EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space(20f);
+            EditorGUILayout.Space(30f);
             insertFoldouts();
-            
         }
 
         private void insertBodyHeader()
         {
             insertLoginTokenGroup();
-            InsertHorizontalLine(1.5f, Color.gray, _space: 15);
+            
+            // InsertHorizontalLine(1f, Color.gray, _space: 15);
+            GUILayout.Space(20f); // Space looks better than line w/group boxes
+            
             insertAppIdGroup();
         }
 
@@ -229,8 +234,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUI.indentLevel++;
             EditorGUILayout.Space(10);
             
-            insertServerBuildExeNameHorizGroup();
-            insertBuildFileNameHorizGroup();
+            insertBuildDirNameHorizGroup();
+            insertBuildFileExeNameHorizGroup();
             insertServerBuildAdvancedFoldout();
 
             EditorGUILayout.Space(10);
@@ -268,21 +273,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             EditorGUILayout.EndVertical();
         }
-
-        private void insertServerBuildExeNameHorizGroup()
+        
+        private void insertBuildDirNameHorizGroup()
         {
             string inputStr = base.insertHorizLabeledTextField(
-                _labelStr: "Build directory", 
+                _labelStr: "Build directory",
                 _tooltip: "Default: `Build-Linux-Server`",
                 _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName);
-            
+
             bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
             if (isChanged)
                 onServerBuildDirChanged(inputStr);
 
             insertFieldVertSpace();
         }
-        private void insertBuildFileNameHorizGroup()
+        
+        private void insertBuildFileExeNameHorizGroup()
         {
             string inputStr = base.insertHorizLabeledTextField(
                 _labelStr: "Build file name", 
@@ -423,7 +429,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void onServerBuildDirChanged(string _inputStr)
         {
             Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName = _inputStr;
-            
             SaveConfigChange(
                 nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName), 
                 _inputStr);
@@ -438,8 +443,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 _inputStr);
         }
         #endregion // Event Logic
-        
-        
+
         #region Utils
         /// <summary>Sets AppId + ExistingAppsSelectedIndex</summary>
         private void setSelectedApp(int _newSelectedIndex)

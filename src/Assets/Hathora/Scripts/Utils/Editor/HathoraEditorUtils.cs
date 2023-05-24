@@ -31,18 +31,18 @@ namespace Hathora.Scripts.Utils.Editor
         #region Style/Color
         // HEX OPACITY GUIDE >>
         // ##########################################
-        // 0% Opacity: 00 (fully transparent)
-        // 20% Opacity: 33
-        // 40% Opacity: 66
-        // 60% Opacity: 99
-        // 80% Opacity: CC
-        // 100% Opacity: FF (fully opaque)
+        // 0%: 00 (fully transparent)
+        // 20%: 33
+        // 40%: 66
+        // 60%: 99
+        // 80%: CC
+        // 100%: FF (fully opaque)
         // ##########################################
         
         public const string HATHORA_GREEN_COLOR_HEX = "#76FDBA";
         public const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#20124D";
-        public const string HATHORA_GRAY_TRANSPARENT_COLOR_HEX = "#91919199"; // 60% opacity
+        public const string HATHORA_GRAY_TRANSPARENT_COLOR_HEX = "#919191CC"; // 60% opacity
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
         public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);

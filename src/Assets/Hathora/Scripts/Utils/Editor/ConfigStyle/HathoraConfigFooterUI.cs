@@ -22,7 +22,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         public void Draw()
         {
-            EditorGUILayout.Space(20f);
+            EditorGUILayout.Space(30f);
             
             if (IsAuthed)
                 insertPostAuthFooter();
