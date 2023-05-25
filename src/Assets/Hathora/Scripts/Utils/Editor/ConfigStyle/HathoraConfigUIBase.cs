@@ -26,6 +26,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected GUIStyle CenterAlignSmLabelStyle { get; private set; }
         protected GUIStyle CenterAlignLargerTxtLabelNoWrapStyle { get; private set; }
         protected GUIStyle LeftAlignLabelStyle { get; private set; }
+        protected GUIStyle LeftAlignNoWrapLabelStyle { get; private set; }
         protected GUIStyle CenterLinkLabelStyle { get; private set; }
         protected GUIStyle RightAlignLabelStyle { get; private set; }
         protected GUIStyle PreLinkLabelStyle { get; private set; }
@@ -75,6 +76,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void initLabelStyles()
         {
             this.LeftAlignLabelStyle ??= HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleLeft);
+            this.LeftAlignNoWrapLabelStyle ??= HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleLeft, _wordWrap:false);
             this.CenterAlignLabelStyle ??= HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleCenter);
             this.RightAlignLabelStyle ??= HathoraEditorUtils.GetRichLabelStyle(TextAnchor.MiddleRight);
             this.CenterLinkLabelStyle ??= HathoraEditorUtils.GetRichLinkStyle(TextAnchor.MiddleCenter);

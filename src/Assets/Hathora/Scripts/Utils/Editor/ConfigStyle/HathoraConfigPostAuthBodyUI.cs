@@ -132,7 +132,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             EditorGUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal();
-            GUILayout.Label("<b>AppId:</b>", LeftAlignLabelStyle, GUILayout.ExpandWidth(false));
+            GUILayout.Label("<b>AppId:</b>", LeftAlignNoWrapLabelStyle, GUILayout.ExpandWidth(false));
 
             string selectedAppId = Config.HathoraCoreOpts.AppId;
             base.insertLeftSelectableLabel(selectedAppId);
@@ -195,7 +195,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             EditorGUI.BeginDisabledGroup(disabled: false); 
             
-            if (GUILayout.Button("Log in with another account", GeneralButtonStyle))
+            if (GUILayout.Button($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>[Logged In]</color> " +
+                    $"Log in with another account", GeneralButtonStyle))
             {
                 devReAuthLoginButtonInteractable = false;
                 await HathoraServerAuth.DevAuthLogin(Config);
