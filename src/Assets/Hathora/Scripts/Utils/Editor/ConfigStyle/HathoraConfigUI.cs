@@ -100,7 +100,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         #region Core Buttons
         // private void insertSplitButtons(NetHathoraConfig _config, bool _isAuthed)
         // {
-        //     EditorGUILayout.Space(5);
+        //     EditorGUILayout.Space(5f);
         //
         //     if (!_isAuthed)
         //     {
@@ -109,7 +109,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         //     }
         //
         //     // InsertHorizontalLine(1, Color.gray);
-        //     EditorGUILayout.Space(10);
+        //     EditorGUILayout.Space(10f);
         //
         //     EditorGUILayout.BeginVertical(GUI.skin.box);
         //     GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
@@ -117,7 +117,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         //     insertBuildBtn(_config);
         //     EditorGUILayout.EndVertical();
         //
-        //     EditorGUILayout.Space(10);
+        //     EditorGUILayout.Space(10f);
         //
         //     EditorGUILayout.BeginVertical(GUI.skin.box);
         //     GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
@@ -128,12 +128,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         // private static async Task insertHathoraDeployBtn(NetHathoraConfig selectedConfig)
         // {
-        //     GUI.enabled = selectedConfig.MeetsDeployBtnReqs();;
+        //     GUI.enabled = selectedConfig.MeetsDeployBtnReqs();
         //
         //     if (GUILayout.Button("Deploy to Hathora", GeneralButtonStyle))
         //     {
         //         await HathoraServerDeploy.DeployToHathoraAsync(selectedConfig);
-        //         EditorGUILayout.Space(20);
+        //         EditorGUILayout.Space(20f);
         //     }
         //     
         //     GUI.enabled = true;

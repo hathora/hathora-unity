@@ -43,7 +43,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertRegAuthBtns();
 
             EditorGUILayout.EndVertical();
-            EditorGUILayout.Space(10);
+            InsertSpace2x();
             
             InvokeRequestRepaint();
         }
@@ -54,7 +54,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.Label(labelStr, 
                 CenterAlignLabelStyle);
             
-            EditorGUILayout.Space(10f);        
+            InsertSpace2x();        
         }
         
         /// <summary>
@@ -88,7 +88,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void InsertMoreActionsLbl()
         {
             InsertCenterLabel("<b>- or -</b>");
-            EditorGUILayout.Space(5f);
+            InsertSpace1x();
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 onInsertTokenCacheBtnClick(cachedToken);
                 
             EndCenterHorizAlign();
-            EditorGUILayout.Space(10f);
+            InsertSpace2x();
         }
 
         private async Task insertRegisterLinkLbl()
@@ -144,7 +144,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (GUILayout.Button("Log in to Hathora Cloud", BigButtonStyle))
                 await onLoginBtnClick();
             
-            EditorGUILayout.Space(10f);
+            InsertSpace2x();
         }
         
         private void insertAuthCancelBtn(
@@ -155,7 +155,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (GUILayout.Button(_cancelLabelStr, GeneralButtonStyle))
                 onCancelBtnClick(_cts);
             
-            EditorGUILayout.Space(10f);
+            InsertSpace2x();
             InvokeRequestRepaint();
         }
         

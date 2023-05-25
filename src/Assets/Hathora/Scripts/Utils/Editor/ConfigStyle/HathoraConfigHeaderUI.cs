@@ -22,12 +22,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 _wrapperExtension: 55f); // Place banner @ top
             HathoraEditorUtils.InsertHathoraSloganLbl();
 
-            EditorGUILayout.Space(5);
+            InsertSpace1x();
             insertHeaderBtns();
             GUILayout.EndVertical();
             
             insertEditingTemplateWarningMemo();
-            EditorGUILayout.Space(10f);
+            InsertSpace2x();
         }
         
         private void insertHeaderBtns()
@@ -46,21 +46,21 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_GETTING_STARTED_URL);
             }
 
-            EditorGUILayout.Space(5);
+            InsertSpace1x();
 
             if (GUILayout.Button("Tutorial", GeneralButtonStyle, buttonOptions))
             {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_UNITY_TUTORIAL_URL);
             }
 
-            EditorGUILayout.Space(5);
+            InsertSpace1x();
 
             if (GUILayout.Button("Discord", GeneralButtonStyle, buttonOptions))
             {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DISCORD_URL);
             }
 
-            EditorGUILayout.Space(5);
+            InsertSpace1x();
 
             if (GUILayout.Button("Website", GeneralButtonStyle, buttonOptions))
             {
@@ -85,7 +85,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 "2. Add dupe to .gitignore >> treat as an .env file", 
                 MessageType.Warning);
             
-            EditorGUILayout.Space(10);
+            InsertSpace2x();
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertBodyHeader();
             // EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space(30f);
+            InsertSpace4x();
             insertFoldouts();
         }
 
@@ -67,7 +67,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertLoginTokenGroup();
             
             // InsertHorizontalLine(1f, Color.gray, _space: 15);
-            GUILayout.Space(20f); // Space looks better than line w/group boxes
+            InsertSpace3x(); // Space looks better than line w/group boxes
             
             insertAppIdGroup();
         }
@@ -77,17 +77,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertDevTokenPasswordField();
             insertLoginToHathoraConsoleBtn(); // !await
             
-            EditorGUILayout.Space(10);
+            InsertSpace2x();
         }
 
         private void insertFoldouts()
         {
             insertServerBuildSettingsFoldout();
 
-            insertFieldVertSpace();
+            InsertSpace1x();
             insertDeploymentSettingsFoldout();
             
-            insertFieldVertSpace();
+            InsertSpace1x();
             insertCreateRoomOrLobbyFoldout();
         }
         
@@ -189,7 +189,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (isNewValidIndex)
                 onSelectedAppPopupIndexChanged(newSelectedIndex);
             
-            GUILayout.Space(10f);
+            InsertSpace2x();
         }
 
         private async Task insertLoginToHathoraConsoleBtn()
@@ -237,13 +237,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             }
             
             EditorGUI.indentLevel++;
-            EditorGUILayout.Space(10);
+            InsertSpace2x();
             
             insertBuildDirNameHorizGroup();
             insertBuildFileExeNameHorizGroup();
             insertServerBuildAdvancedFoldout();
 
-            EditorGUILayout.Space(10);
+            InsertSpace2x();
             insertGenerateServerBuildBtn(); // !await
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
@@ -290,7 +290,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (isChanged)
                 onServerBuildDirChanged(inputStr);
 
-            insertFieldVertSpace();
+            InsertSpace1x();
         }
         
         private void insertBuildFileExeNameHorizGroup()
@@ -304,7 +304,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (isChanged)
                 onServerBuildExeNameChanged(inputStr);
             
-            insertFieldVertSpace();
+            InsertSpace1x();
         }
 
         private void insertDeploymentSettingsFoldout()
@@ -320,16 +320,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             }
     
-            GUILayout.Space(10f);
+            InsertSpace2x();
             
             insertPlanSizeHorizPopupList();
             insertRoomsPerProcessHorizSliderGroup();
             insertContainerPortNumberHorizSliderGroup();
+            insertTransportTypeHorizRadioBtnGroup();
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
             insertDeployAppBtn(); // !await
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
-            EditorGUILayout.Space(20);
+            InsertSpace3x();
         }
 
         private void insertRoomsPerProcessHorizSliderGroup()
@@ -346,7 +347,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (isChanged)
                 onRoomsPerProcessSliderNumChanged(inputInt);
             
-            insertFieldVertSpace();
+            InsertSpace1x();
         }
         
         private void insertContainerPortNumberHorizSliderGroup()
@@ -363,7 +364,24 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (isChanged)
                 onContainerPortNumberSliderNumChanged(inputInt);
             
-            insertFieldVertSpace();
+            InsertSpace1x();
+        }
+        
+        private void insertTransportTypeHorizRadioBtnGroup()
+        {
+            int inputInt = base.insertHorizLabeledIntSlider(
+                _labelStr: "Container port number",
+                _tooltip: "Default: 7777 (<1024 is generally reserved by system)",
+                _val: Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
+                _minVal: 1024,
+                _maxVal: 49151,
+                _alignPopup: GuiAlign.SmallRight);
+
+            bool isChanged = inputInt != Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber;
+            if (isChanged)
+                onContainerPortNumberSliderNumChanged(inputInt);
+            
+            InsertSpace1x();
         }
 
         private void insertPlanSizeHorizPopupList()
@@ -388,7 +406,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (isNewValidIndex)
                 onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
             
-            GUILayout.Space(10f);
+            InsertSpace2x();
         }
 
         private void insertCreateRoomOrLobbyFoldout()
@@ -405,18 +423,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             }
     
             EditorGUI.indentLevel++;
-            EditorGUILayout.Space(10);
+            InsertSpace2x();
             
             // TODO
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
-            EditorGUILayout.Space(20);
+            InsertSpace3x();
             EditorGUI.indentLevel--;
         }
 
         private void insertDeployAppHelpbox()
         {
-            GUILayout.Space(10f);
+            InsertSpace2x();
             
             // TODO: Validate that the correct fields are filled before allowing a button click
             const MessageType helpMsgType = MessageType.Info;
@@ -457,7 +475,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             }
 
             GUILayout.EndHorizontal();
-            EditorGUILayout.Space(10f);
+            InsertSpace2x();
         }
 
         private void insertTargetAppLabelWithTooltip()
@@ -558,10 +576,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex), 
                 _newSelectedIndex.ToString());
         }
-        
-        /// <summary>The default vert spacing between fields is cramped</summary>
-        private void insertFieldVertSpace() =>
-            EditorGUILayout.Space(5f);
         #endregion // Utils
     }
 }

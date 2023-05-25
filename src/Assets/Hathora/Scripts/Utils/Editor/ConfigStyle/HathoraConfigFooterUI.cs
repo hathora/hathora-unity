@@ -22,7 +22,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         public void Draw()
         {
-            EditorGUILayout.Space(30f);
+            InsertSpace4x();
             
             if (IsAuthed)
                 insertPostAuthFooter();
@@ -71,7 +71,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                     return;
                 
                 Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
-                EditorGUILayout.Space(20);
+                InsertSpace3x();
             }
             
             GUI.enabled = true;

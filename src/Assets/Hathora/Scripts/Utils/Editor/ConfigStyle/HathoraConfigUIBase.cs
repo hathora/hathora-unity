@@ -313,7 +313,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             // USER INPUT >>
             bool clickedBtn = GUILayout.Button(_btnLabelStr, btnStyle, regBtnWidth);
-            EditorGUILayout.Space(10f);
+            InsertSpace2x();
 
             return clickedBtn;
         }
@@ -450,5 +450,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
              EditorUtility.SetDirty(Config); // Mark the object as dirty
              AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
          }
+        
+        protected void InsertSpace1x() =>
+            EditorGUILayout.Space(5f);
+
+        protected void InsertSpace2x() => 
+            EditorGUILayout.Space(10f);
+        
+        protected void InsertSpace3x() => 
+            EditorGUILayout.Space(20f);
+        
+        protected void InsertSpace4x() => 
+            EditorGUILayout.Space(30f);
     }
 }
