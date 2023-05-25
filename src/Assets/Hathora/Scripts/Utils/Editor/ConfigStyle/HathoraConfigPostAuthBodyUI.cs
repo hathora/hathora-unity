@@ -453,17 +453,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                     $"{nameof(Config.HathoraCoreOpts.ExistingAppsWithDeployment)}: {e}");
                 throw;
             }
-
-            List<ApplicationWithDeployment> DELETEME = null; 
-            try
-            {
-                DELETEME = Config.HathoraCoreOpts.ExistingAppsWithDeployment; // TEST
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
               
             // If selected app is -1 and apps count is > 0, select the first app
             bool hasSelectedApp = Config.HathoraCoreOpts.ExistingAppsSelectedIndex != -1;
