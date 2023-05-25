@@ -323,7 +323,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.Space(10f);
             
             insertPlanSizeHorizPopupList();
-            insertRoomsPerProcessHorizGroup();
+            insertRoomsPerProcessHorizSliderGroup();
+            insertContainerPortNumberHorizSliderGroup();
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
             insertDeployAppBtn(); // !await
             
@@ -331,7 +332,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.Space(20);
         }
 
-        private void insertRoomsPerProcessHorizGroup()
+        private void insertRoomsPerProcessHorizSliderGroup()
         {
             int inputInt = base.insertHorizLabeledIntSlider(
                 _labelStr: "Rooms per process",
@@ -344,6 +345,23 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             bool isChanged = inputInt != Config.HathoraDeployOpts.RoomsPerProcess;
             if (isChanged)
                 onRoomsPerProcessSliderNumChanged(inputInt);
+            
+            insertFieldVertSpace();
+        }
+        
+        private void insertContainerPortNumberHorizSliderGroup()
+        {
+            int inputInt = base.insertHorizLabeledIntSlider(
+                _labelStr: "Container port number",
+                _tooltip: "Default: 7777 (<1024 is generally reserved by system)",
+                _val: Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
+                _minVal: 1024,
+                _maxVal: 49151,
+                _alignPopup: GuiAlign.SmallRight);
+
+            bool isChanged = inputInt != Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber;
+            if (isChanged)
+                onContainerPortNumberSliderNumChanged(inputInt);
             
             insertFieldVertSpace();
         }
@@ -500,6 +518,14 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             Config.HathoraDeployOpts.RoomsPerProcess = _inputInt;
             SaveConfigChange(
                 nameof(Config.HathoraDeployOpts.RoomsPerProcess), 
+                _inputInt.ToString());
+        }
+        
+        private void onContainerPortNumberSliderNumChanged(int _inputInt)
+        {
+            Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber = _inputInt;
+            SaveConfigChange(
+                nameof(Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
                 _inputInt.ToString());
         }
         
