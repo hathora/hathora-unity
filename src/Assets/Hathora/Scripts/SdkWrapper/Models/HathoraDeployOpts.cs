@@ -42,6 +42,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _planSizeSelectedIndex = value;
         }
 
+        
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         [SerializeField]
         private ContainerPortWrapper _containerPortWrapper = new();
@@ -52,6 +53,15 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _containerPortWrapper;
             set => _containerPortWrapper = value;
         }
+        
+        [SerializeField]
+        private int _transportTypeSelectedIndex = (int)TransportType.Udp;
+        public int TransportTypeSelectedIndex
+        {
+            get => _transportTypeSelectedIndex;
+            set => _transportTypeSelectedIndex = value;
+        }
+        
 
         /// <summary>(!) Like an `.env` file, these are all strings.</summary>
         [SerializeField]
