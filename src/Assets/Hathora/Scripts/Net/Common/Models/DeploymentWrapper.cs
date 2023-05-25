@@ -106,7 +106,7 @@ namespace Hathora.Scripts.Net.Common.Models
         private string _createdBy;
         public string CreatedBy
         {
-            get => _createdBy;
+            get => _createdBy ?? "";
             set => _createdBy = value;
         }
         
