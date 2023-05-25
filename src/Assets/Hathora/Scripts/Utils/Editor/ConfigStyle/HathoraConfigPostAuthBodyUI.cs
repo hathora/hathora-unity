@@ -3,6 +3,7 @@
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
@@ -186,7 +187,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 selectedIndex < displayedOptionsList.Count;
 
             if (isNewValidIndex)
-                onSelectedPopupAppChanged(newSelectedIndex);
+                onSelectedAppPopupIndexChanged(newSelectedIndex);
             
             GUILayout.Space(10f);
         }
@@ -319,10 +320,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             }
     
+            GUILayout.Space(10f);
+            insertPlanSizeHorizPopupList();
+            
             EditorGUILayout.Space(10);
-            
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
-            
             EditorGUI.indentLevel++;
             insertDeployAppBtn(); // !await
             
@@ -330,7 +332,32 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.Space(20);
             EditorGUI.indentLevel--;
         }
-        
+
+        private void insertPlanSizeHorizPopupList()
+        {
+            int selectedIndex = Config.HathoraDeployOpts.PlanSizeSelectedIndex;
+            
+            // Get list of string names from PlanName Enum members
+            string[] displayOptsStrArr = GetStrArrOfEnumMemberKeys<PlanName>();
+            
+            int newSelectedIndex = base.insertHorizLabeledPopupList(
+                _labelStr: "Plan Size",
+                _tooltip: "Default: `Tiny` (Most affordable for pre-production)",
+                _displayOptsStrArr: displayOptsStrArr,
+                _selectedIndex: selectedIndex,
+                GuiAlign.SmallRight);
+
+            bool isNewValidIndex = displayOptsStrArr != null &&
+                selectedIndex >= 0 &&
+                newSelectedIndex != selectedIndex &&
+                selectedIndex < displayOptsStrArr.Length;
+
+            if (isNewValidIndex)
+                onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
+            
+            GUILayout.Space(10f);
+        }
+
         private void insertCreateRoomOrLobbyFoldout()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -447,9 +474,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         }
         
         /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
-        private void onSelectedPopupAppChanged(int _newSelectedIndex)
+        private void onSelectedAppPopupIndexChanged(int _newSelectedIndex)
         {
+            // There may be more than 1 way to set this, so we curry to a common func
             setSelectedApp(_newSelectedIndex);
+        }
+        
+        private void onSelectedPlanSizePopupIndexChanged(int _newSelectedIndex)
+        {
+            Config.HathoraDeployOpts.PlanSizeSelectedIndex = _newSelectedIndex;
+            SaveConfigChange(
+                nameof(Config.HathoraDeployOpts.PlanSizeSelectedIndex), 
+                _newSelectedIndex.ToString());
         }
         
         private void onServerBuildDirChanged(string _inputStr)

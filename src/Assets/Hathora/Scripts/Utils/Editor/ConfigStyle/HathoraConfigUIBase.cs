@@ -35,6 +35,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected GUIStyle BtnsFoldoutStyle { get; private set; }
 
         public event Action RequestRepaint;
+
+        public enum GuiAlign
+        {
+            Stretched,
+            SmallLeft,
+            SmallRight,
+        }
         #endregion // Vars
 
         
@@ -377,17 +384,24 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             string _labelStr,
             string _tooltip,
             string[] _displayOptsStrArr,
-            int _selectedIndex)
+            int _selectedIndex,
+            GuiAlign _alignPopup = GuiAlign.Stretched)
         {
             EditorGUILayout.BeginHorizontal();
 
             InsertLeftLabel(_labelStr, _tooltip);
             
+            if (_alignPopup == GuiAlign.SmallRight)
+                GUILayout.FlexibleSpace();
+            
             // USER INPUT >>
             int newSelectedIndex = EditorGUILayout.Popup(
                 _selectedIndex, 
                 _displayOptsStrArr,
-                GUILayout.ExpandWidth(true));
+                GUILayout.ExpandWidth(_alignPopup == GuiAlign.Stretched));
+            
+            if (_alignPopup == GuiAlign.SmallLeft)
+                GUILayout.FlexibleSpace();
 
             EditorGUILayout.EndHorizontal();
             return newSelectedIndex;

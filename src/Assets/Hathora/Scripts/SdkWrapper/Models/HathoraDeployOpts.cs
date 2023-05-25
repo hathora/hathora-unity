@@ -34,6 +34,14 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _planName = value;
         }
 
+        [SerializeField]
+        private int _planSizeSelectedIndex = (int)PlanName.Tiny;
+        public int PlanSizeSelectedIndex
+        {
+            get => _planSizeSelectedIndex;
+            set => _planSizeSelectedIndex = value;
+        }
+
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         [SerializeField]
         private ContainerPortWrapper _containerPortWrapper = new();
@@ -77,6 +85,5 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _lastDeployment;
             set => _lastDeployment = value;
         }
-        
     }
 }
