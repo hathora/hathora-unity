@@ -372,6 +372,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 .Select(e => e.ToString())
                 .ToArray();
 
+        private static GUILayoutOption[] GetDefaultInputLayoutOpts() => new[]
+        {
+            GUILayout.ExpandWidth(true),
+            GUILayout.MaxWidth(250f),
+        };
+        
         /// <summary>
         /// {label} {tooltip} {popupList}
         /// </summary>
@@ -398,7 +404,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             int newSelectedIndex = EditorGUILayout.Popup(
                 _selectedIndex, 
                 _displayOptsStrArr,
-                GUILayout.ExpandWidth(_alignPopup == GuiAlign.Stretched));
+                GetDefaultInputLayoutOpts());
             
             if (_alignPopup == GuiAlign.SmallLeft)
                 GUILayout.FlexibleSpace();
@@ -407,13 +413,42 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             return newSelectedIndex;
         }
 
-        protected void SaveConfigChange(string _key, string _newVal)
+        protected int insertHorizLabeledIntSlider(
+            string _labelStr,
+            string _tooltip,
+            int _val,
+            int _minVal = 0,
+            int _maxVal = int.MaxValue,
+            GuiAlign _alignPopup = GuiAlign.Stretched)
         {
-            Debug.Log($"[HathoraConfigUIBase] Set new Config vals for: `{_key}` to: `{_newVal}`");
+            EditorGUILayout.BeginHorizontal();
             
-            SerializedConfig.ApplyModifiedProperties();
-            EditorUtility.SetDirty(Config); // Mark the object as dirty
-            AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
-        }
+            InsertLeftLabel(_labelStr, _tooltip);
+
+            if (_alignPopup == GuiAlign.SmallRight)
+                GUILayout.FlexibleSpace();
+             
+            // USER INPUT >>
+            int inputInt = EditorGUILayout.IntSlider(
+                _val,
+                _minVal,
+                _maxVal,
+                GetDefaultInputLayoutOpts());
+
+            if (_alignPopup == GuiAlign.SmallLeft)
+                GUILayout.FlexibleSpace();
+
+            EditorGUILayout.EndHorizontal();
+            return inputInt;
+        }        
+        
+        protected void SaveConfigChange(string _key, string _newVal)
+         {
+             Debug.Log($"[HathoraConfigUIBase] Set new Config vals for: `{_key}` to: `{_newVal}`");
+             
+             SerializedConfig.ApplyModifiedProperties();
+             EditorUtility.SetDirty(Config); // Mark the object as dirty
+             AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
+         }
     }
 }
