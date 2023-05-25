@@ -337,7 +337,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             int inputInt = base.insertHorizLabeledIntSlider(
                 _labelStr: "Rooms per process",
-                _tooltip: "Default: 1",
+                _tooltip: null, // "Default: 1",
                 _val: Config.HathoraDeployOpts.RoomsPerProcess,
                 _minVal: 1,
                 _maxVal: 10000,
@@ -369,19 +369,28 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private void insertTransportTypeHorizRadioBtnGroup()
         {
-            int inputInt = base.insertHorizLabeledIntSlider(
-                _labelStr: "Container port number",
-                _tooltip: "Default: 7777 (<1024 is generally reserved by system)",
-                _val: Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
-                _minVal: 1024,
-                _maxVal: 49151,
-                _alignPopup: GuiAlign.SmallRight);
-
-            bool isChanged = inputInt != Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber;
-            if (isChanged)
-                onContainerPortNumberSliderNumChanged(inputInt);
+            int selectedIndex = Config.HathoraDeployOpts.TransportTypeSelectedIndex;
             
-            InsertSpace1x();
+            // Get list of string names from PlanName Enum members. Set UPPER.
+            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<TransportType>()
+                .Select(opt => opt.ToUpperInvariant())
+                .ToList();
+
+            int newSelectedIndex = base.insertHorizLabeledPopupList(
+                _labelStr: "Transport Type",
+                _tooltip: "Default: `UDP` (Fastest; although less reliable)",
+                _displayOptsStrArr: displayOptsStrList.ToArray(),
+                _selectedIndex: selectedIndex,
+                GuiAlign.SmallRight);
+
+            bool isNewValidIndex = selectedIndex >= 0 &&
+                newSelectedIndex != selectedIndex &&
+                selectedIndex < displayOptsStrList.Count;
+
+            if (isNewValidIndex)
+                onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
+            
+            InsertSpace2x();
         }
 
         private void insertPlanSizeHorizPopupList()
@@ -389,7 +398,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             int selectedIndex = Config.HathoraDeployOpts.PlanSizeSelectedIndex;
             
             // Get list of string names from PlanName Enum members
-            string[] displayOptsStrArr = GetStrArrOfEnumMemberKeys<PlanName>();
+            string[] displayOptsStrArr = GetStrListOfEnumMemberKeys<PlanName>().ToArray();
             
             int newSelectedIndex = base.insertHorizLabeledPopupList(
                 _labelStr: "Plan Size",

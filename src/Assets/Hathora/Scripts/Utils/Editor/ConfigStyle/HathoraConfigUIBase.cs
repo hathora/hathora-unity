@@ -365,12 +365,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// </summary>
         /// <typeparam name="TEnum"></typeparam>
         /// <returns></returns>
-        protected static string[] GetStrArrOfEnumMemberKeys<TEnum>() 
+        protected static List<string> GetStrListOfEnumMemberKeys<TEnum>() 
             where TEnum : Enum => Enum
                 .GetValues(typeof(TEnum))
                 .Cast<TEnum>()
                 .Select(e => e.ToString())
-                .ToArray();
+                .ToList();
 
         private static GUILayoutOption[] GetDefaultInputLayoutOpts() => new[]
         {
