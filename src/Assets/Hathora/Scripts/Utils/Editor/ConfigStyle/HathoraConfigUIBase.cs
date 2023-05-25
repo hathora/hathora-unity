@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
 using NUnit.Framework;
 using UnityEditor;
@@ -129,15 +130,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 EditorGUILayout.Space(_space);
         }
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_label"></param>
-        /// <param name="_url"></param>
-        /// <param name="centerAlign">Wrap in a horizontal layout with flex space</param>
-        protected void InsertLinkLabel(string _label, string _url, bool centerAlign)
+        /// <param name="_centerAlign">Wrap in a horizontal layout with flex space</param>
+        protected void InsertLinkLabel(
+            string _label, 
+            string _url, 
+            bool _centerAlign)
         {
-            if (centerAlign)
+            if (_centerAlign)
                 StartCenterHorizAlign();
             
             if (EditorGUILayout.LinkButton(
@@ -147,8 +146,37 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 Application.OpenURL(_url);
             }
             
-            if (centerAlign)
+            if (_centerAlign)
                 EndCenterHorizAlign();
+        }
+        
+        /// <summary>
+        /// Handle the click event yourself
+        /// </summary>
+        /// <param name="_label"></param>
+        /// <param name="_centerAlign">Wrap in a horizontal layout with flex space</param>
+        /// <returns>clickedLabelLink</returns>
+        protected bool InsertLinkLabelEvent(string _label, bool _centerAlign)
+        {
+            if (_centerAlign)
+                StartCenterHorizAlign();
+
+            // Use label rect to capture click events.
+            Rect labelRect = GUILayoutUtility.GetRect(
+                new GUIContent(_label), 
+                CenterAlignLabelStyle);
+
+            GUI.Label(labelRect, _label, CenterAlignLabelStyle);
+
+            // Check if left mouse button is clicked within label rect
+            bool clickedLabelLink = Event.current.type == EventType.MouseDown 
+                && Event.current.button == 0 
+                && labelRect.Contains(Event.current.mousePosition);
+
+            if (_centerAlign)
+                EndCenterHorizAlign();
+
+            return clickedLabelLink;
         }
         
         protected static SerializedProperty FindNestedProperty(

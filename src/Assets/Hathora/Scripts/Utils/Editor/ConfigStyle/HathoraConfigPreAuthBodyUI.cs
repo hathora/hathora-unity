@@ -66,8 +66,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             // !await these
             insertDevAuthLoginBtn();
-            insertTokenCacheBtnCheck();
-            insertRegisterBtn();
+            InsertMoreActionsLbl();
+            insertRegisterOrTokenCacheLogin();
 
             EditorGUI.EndDisabledGroup(); 
 
@@ -75,51 +75,67 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
         }
 
+        private void insertRegisterOrTokenCacheLogin()
+        {
+            tokenCheckSetCache();
+            
+            if (CheckHasCachedToken())
+                insertTokenCacheBtn();
+            else
+                insertRegisterLinkLbl();
+        }
+
+        private void InsertMoreActionsLbl()
+        {
+            InsertCenterLabel("<b>- or -</b>");
+            EditorGUILayout.Space(5f);
+        }
+
         /// <summary>
         /// If we didn't check it before and exists, insert the button
         /// </summary>
-        private void insertTokenCacheBtnCheck()
+        private void tokenCheckSetCache()
         {
             if (!checkedTokenCache)
             {
                 cachedToken = Auth0Login.CheckForExistingCachedTokenAsync();
                 checkedTokenCache = true;
             }
-
-            if (CheckHasCachedToken())
-                insertTokenCacheBtn();
         }
 
         private void insertTokenCacheBtn()
         {
             StartCenterHorizAlign();
 
+            string btnLabel = "Existing token cache found:\n" +
+                $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}><b>Log in with token</b></color>";
+            
             // USER INPUT >>
-            string btnLabel = $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}><b>(!)</b></color> " +
-                $"Log in with existing token found in cache";
+            // if (GUILayout.Button(btnLabel, CenterAlignLabelStyle))
+            bool clickedLabelLink = InsertLinkLabelEvent(btnLabel, _centerAlign: true);
             
-            if (GUILayout.Button(btnLabel, GeneralButtonStyle))
+            if (clickedLabelLink)
                 onInsertTokenCacheBtnClick(cachedToken);
-            
+                
             EndCenterHorizAlign();
             EditorGUILayout.Space(10f);
         }
 
-        private async Task insertRegisterBtn()
+        private async Task insertRegisterLinkLbl()
         {
             StartCenterHorizAlign();
 
+            string btnLabel = $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"<b>Register Now</b></color>";
+        
             // USER INPUT >>
-            bool clickedRegBtn = insertSmallCenteredBtn(
-                "Register Now",
-                GeneralButtonStyle,
-                _percentWidthOfScreen: 0.35f);
+            // if (GUILayout.Button(btnLabel, CenterAlignLabelStyle))
+            bool clickedLabelLink = InsertLinkLabelEvent(btnLabel, _centerAlign: true);
 
-            if (clickedRegBtn)
-                await onLoginBtnClick();
+            if (clickedLabelLink)
+                onLoginBtnClick();
             
             EndCenterHorizAlign();
-            EditorGUILayout.Space(10f);
         }
 
         private async Task insertDevAuthLoginBtn()
@@ -131,10 +147,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.Space(10f);
         }
         
-        private void insertAuthCancelBtn(CancellationTokenSource _cts) 
+        private void insertAuthCancelBtn(
+            CancellationTokenSource _cts, 
+            string _cancelLabelStr = "Cancel") 
         {
             // USER INPUT >>
-            if (GUILayout.Button("Cancel", GeneralButtonStyle))
+            if (GUILayout.Button(_cancelLabelStr, GeneralButtonStyle))
                 onCancelBtnClick(_cts);
             
             EditorGUILayout.Space(10f);

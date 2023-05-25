@@ -9,7 +9,7 @@ namespace Hathora.Scripts.Net.Common
 {
     /// <summary>
     /// Sensitive info will not be included in Client builds.
-    /// For meta objects (like the banner and btns), see HathoraConfigEditor.
+    /// For meta objects (like the banner and btns), see `HathoraConfigUI`.
     /// </summary>
     [CreateAssetMenu(fileName = nameof(NetHathoraConfig), menuName = "Hathora/Config File")]
     public class NetHathoraConfig : ScriptableObject

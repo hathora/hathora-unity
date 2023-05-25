@@ -43,6 +43,7 @@ namespace Hathora.Scripts.Utils.Editor
         public const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#20124D";
         public const string HATHORA_GRAY_TRANSPARENT_COLOR_HEX = "#919191CC"; // 60% opacity
+        public const string HATHORA_LINK_COLOR_HEX = "#0000EE";
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
         public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);
@@ -97,6 +98,7 @@ namespace Hathora.Scripts.Utils.Editor
                 margin = DefaultMargin,
                 padding = DefaultMargin,
                 wordWrap = true,
+                richText = true,
             };
             
             style.padding.right = 0;

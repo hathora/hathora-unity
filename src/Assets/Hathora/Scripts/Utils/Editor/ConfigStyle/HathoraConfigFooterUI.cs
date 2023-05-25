@@ -56,8 +56,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             InsertHorizontalLine(1.5f, Color.gray, _space: 20);
             InsertCenterLabel("Learn more about Hathora Cloud");
-            InsertLinkLabel("Documentation", HathoraEditorUtils.HATHORA_DOCS_URL, centerAlign: true);
-            InsertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL, centerAlign: true);
+            InsertLinkLabel("Documentation", HathoraEditorUtils.HATHORA_DOCS_URL, _centerAlign: true);
+            InsertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL, _centerAlign: true);
         }
 
         private async Task insertBuildUploadDeployBtn(bool _enabled)
