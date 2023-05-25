@@ -100,7 +100,7 @@ namespace Hathora.Scripts.Utils.Editor
         }
         
 
-        [MenuItem("Hathora/Find Configs _%#h", priority = -1000)] // Ctrl + Shift + H
+        [MenuItem("Hathora/Config Finder Window _%#h", priority = -1000)] // Ctrl + Shift + H
         public static void ShowWindowSelect1stFound()
         {
             ShowWindowOnly();

@@ -40,6 +40,19 @@ namespace Hathora.Scripts.Net.Client
         private void Awake()
         {
             setSingleton();
+            assertUsingValidNetConfig();
+        }
+
+        private void assertUsingValidNetConfig()
+        {
+            const string baseName = nameof(netHathoraConfig);
+            string configName = netHathoraConfig.name;
+            bool isTemplate = configName != $"{baseName}.template";
+            
+            if (!isTemplate)
+                return;
+
+            NetUI.Singleton.SetInvalidConfig(configName);
         }
 
         private void setSingleton()

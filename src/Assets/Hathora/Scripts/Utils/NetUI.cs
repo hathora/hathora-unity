@@ -20,6 +20,10 @@ namespace Hathora.Scripts.Utils
     public class NetUI : MonoBehaviour
     {
         #region Serialized Fields
+        [Header("Help")]
+        [SerializeField]
+        private GameObject InvalidConfigPnl;
+
         [Header("CLI")]
         [SerializeField]
         private TextMeshProUGUI debugMemoTxt;
@@ -355,7 +359,15 @@ namespace Hathora.Scripts.Utils
             fadeTxt.gameObject.SetActive(false);
             fadeTxt.color = originalColor;
         }
+        
+        public void SetInvalidConfig(string _configName)
+        {
+            Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
+                "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
+            
+            authBtn.gameObject.SetActive(false);
+            InvalidConfigPnl.SetActive(true);
+        }
         #endregion /Dynamic UI
-
     }
 }
