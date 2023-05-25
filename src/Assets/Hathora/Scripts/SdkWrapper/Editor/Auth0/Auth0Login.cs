@@ -66,10 +66,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
 
         private async Task<string> openBrowserAwaitAuth(
             Auth0DeviceResponse deviceAuthorizationResponse, 
-            string refreshTokenPath,
+            string refreshTokenFilePath,
             CancellationToken cancelToken)
         {
-            Debug.Log("Openening browser for login; ensure you see the following code: " +
+            Debug.Log("Opening browser for login; ensure you see the following code: " +
                 $"'<color=yellow>{deviceAuthorizationResponse.UserCode}</color>'");
 
             // Open browser with the provided verification URI.
@@ -100,10 +100,27 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
                 // Debug.LogError("[Auth0Login]**ERR @ openBrowserAwaitAuth => Failed to get refreshToken");
                 return null;
             }
+            
+            // Ensure dir exists
+            string directoryPath = Path.GetDirectoryName(refreshTokenFilePath);
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
 
-            await File.WriteAllTextAsync(refreshTokenPath, refreshToken);
+            try
+            {
+                await File.WriteAllTextAsync(
+                    refreshTokenFilePath,
+            refreshToken, 
+                    cancelToken);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
+            
             Debug.Log($"[Auth0Login] Successful dev auth; " +
-                $"cached credentials to {refreshTokenPath}");
+                $"cached credentials to {refreshTokenFilePath}");
 
             return refreshToken;
         }
@@ -173,7 +190,15 @@ namespace Hathora.Scripts.SdkWrapper.Editor.Auth0
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
 
-                await request.SendWebRequest().AsTask();
+                try
+                {
+                    await request.SendWebRequest().AsTask();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error: {e}");
+                    throw;
+                }
 
                 // While we wait, we should get 403 errors - expected
                 if (request.result == UnityWebRequest.Result.Success)
