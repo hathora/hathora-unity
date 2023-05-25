@@ -321,16 +321,31 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             }
     
             GUILayout.Space(10f);
-            insertPlanSizeHorizPopupList();
             
-            EditorGUILayout.Space(10);
+            insertPlanSizeHorizPopupList();
+            insertRoomsPerProcessHorizGroup();
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
-            EditorGUI.indentLevel++;
             insertDeployAppBtn(); // !await
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
             EditorGUILayout.Space(20);
-            EditorGUI.indentLevel--;
+        }
+
+        private void insertRoomsPerProcessHorizGroup()
+        {
+            int inputInt = base.insertHorizLabeledIntSlider(
+                _labelStr: "Rooms per process",
+                _tooltip: "Default: 1",
+                _val: Config.HathoraDeployOpts.RoomsPerProcess,
+                _minVal: 1,
+                _maxVal: 10000,
+                _alignPopup: GuiAlign.SmallRight);
+
+            bool isChanged = inputInt != Config.HathoraDeployOpts.RoomsPerProcess;
+            if (isChanged)
+                onRoomsPerProcessSliderNumChanged(inputInt);
+            
+            insertFieldVertSpace();
         }
 
         private void insertPlanSizeHorizPopupList()
@@ -383,6 +398,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertDeployAppHelpbox()
         {
+            GUILayout.Space(10f);
+            
             // TODO: Validate that the correct fields are filled before allowing a button click
             const MessageType helpMsgType = MessageType.Info;
             const string helpMsg = "This action will create a new deployment version of your application. " +
@@ -475,6 +492,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SaveConfigChange(
                 nameof(Config.HathoraDeployOpts.PlanSizeSelectedIndex), 
                 _newSelectedIndex.ToString());
+        }
+        
+        
+        private void onRoomsPerProcessSliderNumChanged(int _inputInt)
+        {
+            Config.HathoraDeployOpts.RoomsPerProcess = _inputInt;
+            SaveConfigChange(
+                nameof(Config.HathoraDeployOpts.RoomsPerProcess), 
+                _inputInt.ToString());
         }
         
         private void onServerBuildDirChanged(string _inputStr)
