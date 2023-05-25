@@ -287,7 +287,7 @@ namespace Hathora.Scripts.Utils
                     TransportType = TransportType.Udp,
                     Host = "127.0.0.1",
                     Port = 7777,
-                    // Name = "default",
+                    // ContainerName = "default",
                 },
                 RoomId = netSession.RoomId,
                 Status = ConnectionInfoV2.StatusEnum.Active,

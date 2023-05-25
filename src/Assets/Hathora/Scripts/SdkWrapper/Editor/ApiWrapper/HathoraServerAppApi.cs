@@ -25,8 +25,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             NetHathoraConfig _netHathoraConfig,
             Configuration _hathoraSdkConfig = null)
             : base(_netHathoraConfig, _hathoraSdkConfig)
-        {
-            Debug.Log("[HathoraServerAppApi] Initializing API...");
+        { 
+            Debug.Log("[HathoraServerAppApi] Initializing API..."); 
             this.appApi = new AppV1Api(base.HathoraSdkConfig);
         }
         
@@ -38,7 +38,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <returns>Returns App on success</returns>
         public async Task<List<ApplicationWithDeployment>> GetAppsAsync()
         {
-            List<ApplicationWithDeployment> getAppsResult; 
+            List<ApplicationWithDeployment> getAppsResult;   
             try
             {  
                 getAppsResult = await appApi.GetAppsAsync();
@@ -49,7 +49,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                     nameof(HathoraServerAppApi),
                     nameof(GetAppsAsync), 
                     apiErr);
-                return null;
+                return null; 
             }
 
             Debug.Log($"[HathoraServerAppApi.GetAppsAsync] num: '{getAppsResult?.Count}'");

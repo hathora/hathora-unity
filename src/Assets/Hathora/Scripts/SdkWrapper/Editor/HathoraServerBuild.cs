@@ -52,7 +52,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             string _serverBuildExeFullPath)
         {
             EditorBuildSettingsScene[] scenesInBuildSettings = EditorBuildSettings.scenes; // From build settings
-            string[] scenePaths = scenesInBuildSettings.Select(scene => scene.path).ToArray();
+            string[] scenePaths = scenesInBuildSettings?.Select(scene => scene.path).ToArray();
             
             return new BuildPlayerOptions
             {

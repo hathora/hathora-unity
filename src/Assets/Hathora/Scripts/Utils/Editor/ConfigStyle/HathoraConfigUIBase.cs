@@ -268,16 +268,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.Label(labelStr, PreLinkLabelStyle);
             EndCenterHorizAlign();
         }
-        
-        /// <summary>
-        /// SerializedProperty does not natively contain a ListVal.
-        /// </summary>
-        /// <param name="_prop"></param>
-        /// <returns></returns>
-        protected List<string> GetListFromSerializedProperty(SerializedProperty _prop) => 
-            Enumerable.Range(0, _prop.arraySize)
-                .Select(i => _prop.GetArrayElementAtIndex(i).stringValue)
-                .ToList();
 
         /// <summary>
         /// Useful for smaller buttons you want centered for less emphasis.

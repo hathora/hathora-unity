@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using FishNet.Object;
 using Hathora.Cloud.Sdk.Model;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -35,13 +36,16 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _transportType = value;
         }
         
-        // [SerializeField] // TODO
-        // private List<DeploymentEnvInner> _env;
-        // public List<DeploymentEnvInner> Env 
-        // { 
-        //     get => _env;
-        //     set => _env = value;
-        // }
+        [SerializeField] // TODO
+        private List<DeploymentEnvInner> _env;
+        public List<DeploymentEnvInner> Env
+        {
+            get => new List<DeploymentEnvInner>();
+            // get => _env;
+            
+            set => _env = value;
+
+        }
         
         [SerializeField]
         private double _roomsPerProcess;
@@ -54,38 +58,32 @@ namespace Hathora.Scripts.Net.Common.Models
         
         /// <summary>Parses from List of ContainerPort</summary>
         [SerializeField]
-        private List<ExtraContainerPortWrapper> _additionalContainerPorts;
+        private List<AdditionalContainerPortWrapper> _additionalContainerPorts;
 
         /// <summary>Parses from List of ContainerPort</summary>
         public List<ContainerPort> AdditionalContainerPorts
         {
-            get => _additionalContainerPorts
+            get => _additionalContainerPorts?
                 .Select(port => port.ToContainerPortType())
                 .ToList();
 
-            set => _additionalContainerPorts = value
-                .Select(port => new ExtraContainerPortWrapper(port))
+            set => _additionalContainerPorts = value?
+                .Select(port => new AdditionalContainerPortWrapper(port))
                 .ToList();
         }
+        
 
         /// <summary>Parses from ContainerPort</summary>
         [SerializeField]
-        private ContainerPortWrapper defaultContainerPortWrapperWrapper;
+        private ContainerPortWrapper defaultContainerPortWrapperWrapper = new();
         
-        /// <summary>Parses from ContainerPort</summary>
-        public ContainerPortWrapper DefaultContainerPortWrapper 
-        { 
-            get => defaultContainerPortWrapperWrapper;
-            set => defaultContainerPortWrapperWrapper = value;
-        }
-        
-        
+        [FormerlySerializedAs("_containerPortWrapper")]
         [SerializeField]
-        private ContainerPortWrapper _containerPortWrapper;
-        public ContainerPort ContainerPort 
+        private ContainerPortWrapper _defaultContainerPortWrapper;
+        public ContainerPort DefaultContainerPort 
         { 
-            get => _containerPortWrapper.ToContainerPortType();
-            set => _containerPortWrapper = new ContainerPortWrapper(value);
+            get => _defaultContainerPortWrapper?.ToContainerPortType();
+            set => _defaultContainerPortWrapper = new ContainerPortWrapper(value);
         }
         
         
@@ -96,7 +94,10 @@ namespace Hathora.Scripts.Net.Common.Models
         /// <summary>Serialized from `DateTime`.</summary>
         public DateTime CreatedAt
         {
-            get => DateTime.Parse(_createdAtWrapper);
+            get => DateTime.TryParse(_createdAtWrapper, out DateTime parsedDateTime) 
+                ? parsedDateTime 
+                : DateTime.MinValue;
+            
             set => _createdAtWrapper = value.ToString(CultureInfo.InvariantCulture);
         }
         
@@ -167,7 +168,7 @@ namespace Hathora.Scripts.Net.Common.Models
             this.PlanName = _deployment.PlanName;
             this.TransportType = _deployment.TransportType;
             this.RoomsPerProcess = _deployment.RoomsPerProcess;
-            this.DefaultContainerPortWrapper = new ContainerPortWrapper(_deployment.DefaultContainerPort);
+            this._defaultContainerPortWrapper = new ContainerPortWrapper(_deployment.DefaultContainerPort);
             this.AdditionalContainerPorts = _deployment.AdditionalContainerPorts;
             this.CreatedAt = _deployment.CreatedAt;
             this.CreatedBy = _deployment.CreatedBy;
@@ -183,24 +184,37 @@ namespace Hathora.Scripts.Net.Common.Models
         public Deployment ToDeploymentType()
         {
             // (!) Throws on missing req'd arg
-            List<DeploymentEnvInner> emptyEnv = new();
-            
-            return new(
-                env: emptyEnv,
-                createdAt: this.CreatedAt,
-                createdBy: this.CreatedBy,
-                planName: this.PlanName,
-                transportType: this.TransportType,
-                roomsPerProcess: this.RoomsPerProcess,
-                additionalContainerPorts: this.AdditionalContainerPorts,
-                defaultContainerPort: this.ContainerPort,
-                requestedMemoryMB: this.RequestedMemoryMB,
-                requestedCPU: this.RequestedCPU,
-                deploymentId: this.DeploymentId,
-                buildId: this.BuildId,
-                appId: this.AppId // Env = this.Env,
-                // AdditionalProperties = this.AdditionalProperties
-            );   
+            Deployment deployment = null;
+            try
+            {
+                deployment = new(
+                    env: Env,
+                    createdAt: this.CreatedAt,
+                    createdBy: this.CreatedBy,
+                    planName: this.PlanName,
+                    transportType: this.TransportType,
+                    roomsPerProcess: this.RoomsPerProcess,
+                    additionalContainerPorts: this.AdditionalContainerPorts,
+                    defaultContainerPort: this.DefaultContainerPort,
+                    requestedMemoryMB: this.RequestedMemoryMB,
+                    requestedCPU: this.RequestedCPU,
+                    deploymentId: this.DeploymentId,
+                    buildId: this.BuildId,
+                    appId: this.AppId // Env = this.Env,
+                    // AdditionalProperties = this.AdditionalProperties 
+                );
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
+
+            return deployment;
+        }
+
+        private void setMissingDefaults()
+        {
         }
     }
 }

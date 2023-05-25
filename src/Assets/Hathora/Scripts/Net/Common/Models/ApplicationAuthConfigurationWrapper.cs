@@ -65,13 +65,27 @@ namespace Hathora.Scripts.Net.Common.Models
             // this.AdditionalProperties = _appWithDeployment.AdditionalProperties; // TODO
         }
 
-        public ApplicationAuthConfiguration ToApplicationAuthConfigurationType() => new()
+        public ApplicationAuthConfiguration ToApplicationAuthConfigurationType()
         {
-            // Optional >>
-            // Google = this.Google, // TODO
-            // Nickname = this.Nickname, // TODO
-            // Anonymous = this.Anonymous, // TODO
-            // AdditionalProperties = this.AdditionalProperties, // TODO
-        };
+            ApplicationAuthConfiguration appAuthConfig = null;
+            try
+            {
+                appAuthConfig = new()
+                {
+                    // Optional >>
+                    // Google = this.Google, // TODO
+                    // Nickname = this.Nickname, // TODO
+                    // Anonymous = this.Anonymous, // TODO
+                    // AdditionalProperties = this.AdditionalProperties, // TODO
+                };
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogError($"Error: {e}");
+                throw;
+            }
+
+            return appAuthConfig;
+        }
     }
 }

@@ -426,7 +426,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 throw;
             }
 
-            List<ApplicationWithDeployment> DELETEME = null;
+            List<ApplicationWithDeployment> DELETEME = null; 
             try
             {
                 DELETEME = Config.HathoraCoreOpts.ExistingAppsWithDeployment; // TEST

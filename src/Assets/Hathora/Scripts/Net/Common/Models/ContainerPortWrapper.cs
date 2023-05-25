@@ -53,16 +53,29 @@ namespace Hathora.Scripts.Net.Common.Models
         /// <returns></returns>
         public virtual string GetTransportNickname() => "default";
 
-        public virtual ContainerPort ToContainerPortType() => new()
+        public virtual ContainerPort ToContainerPortType()
         {
-            // Req'd >>
-            Name = GetTransportNickname(),
+            ContainerPort containerPort = null;
+            string containerName = this.GetTransportNickname();
+            
+            try
+            {
+                containerPort = new(
+                    this.TransportType,
+                    this.PortNumber,
+                    containerName
+                );
+    
+                // AdditionalProperties = TODO
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
 
-            // Optional >>
-            TransportType = TransportType,
-            Port = PortNumber,
-            // AdditionalProperties = TODO
-        };
+            return containerPort;
+        }
 
     }
 }

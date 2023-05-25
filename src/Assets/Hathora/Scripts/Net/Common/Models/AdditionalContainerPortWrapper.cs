@@ -16,7 +16,7 @@ namespace Hathora.Scripts.Net.Common.Models
     /// We'll eventually replace this with a [Serializable] revamp of the model.
     /// </summary>
     [Serializable]
-    public class ExtraContainerPortWrapper : ContainerPortWrapper
+    public class AdditionalContainerPortWrapper : ContainerPortWrapper
     {
         [SerializeField, Tooltip("Choose an arbitrary name to identify this transpport easier. " +
              "`Default` is reserved. Leave this empty and we'll ignore this class.")]
@@ -27,11 +27,11 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _transportNickname = value;
         }
         
-        public ExtraContainerPortWrapper()
+        public AdditionalContainerPortWrapper()
         {
         }
 
-        public ExtraContainerPortWrapper(ContainerPort _containerPort)
+        public AdditionalContainerPortWrapper(ContainerPort _containerPort)
             : base(_containerPort)
         {
             this._transportNickname = _containerPort.Name;

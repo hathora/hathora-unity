@@ -236,7 +236,7 @@ namespace Hathora.Scripts.Utils.Editor
         private void findAllHathoraServerConfigs()
         {
             string[] guids = AssetDatabase.FindAssets("t:Hathora.Scripts.Net.Server.NetHathoraConfig");
-            serverConfigs = guids.Select(guid => AssetDatabase.LoadAssetAtPath<NetHathoraConfig>(
+            serverConfigs = guids?.Select(guid => AssetDatabase.LoadAssetAtPath<NetHathoraConfig>(
                 AssetDatabase.GUIDToAssetPath(guid))).ToList();
         }
 

@@ -140,11 +140,11 @@ namespace Hathora.Scripts.Net.Common.Models
 
         private void setMissingDefaults()
         {
-            CreatedBy ??= "";
-            DeletedBy ??= "";
-            AppSecret ??= "";
-            OrgId ??= "";
-            AuthConfiguration ??= new ApplicationAuthConfiguration();
+            this.CreatedBy ??= "";
+            this.DeletedBy ??= "";
+            this.AppSecret ??= "";
+            this.OrgId ??= "";
+            this.AuthConfiguration ??= new ApplicationAuthConfiguration();
         }
 
         /// <summary>
@@ -154,20 +154,29 @@ namespace Hathora.Scripts.Net.Common.Models
         {
             // (!) Throws on req'd val == null
             setMissingDefaults();
-            
-            ApplicationWithDeployment appWithDeploy = new(
-                DeletedBy,
-                DeletedAt,
-                CreatedAt,
-                CreatedBy,
-                OrgId,
-                AuthConfiguration,
-                AppSecret,
-                AppId,
-                AppName, 
-                Deployment
-            );
 
+            ApplicationWithDeployment appWithDeploy = null;
+            try
+            {
+                appWithDeploy = new ApplicationWithDeployment(
+                    DeletedBy,
+                    DeletedAt,
+                    CreatedAt,
+                    CreatedBy,
+                    OrgId,
+                    AuthConfiguration,
+                    AppSecret,
+                    AppId,
+                    AppName, 
+                    Deployment
+                );
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
+            
             // appWithDeploy.AdditionalProperties = this.AdditionalProperties; // TODO
 
             return appWithDeploy;

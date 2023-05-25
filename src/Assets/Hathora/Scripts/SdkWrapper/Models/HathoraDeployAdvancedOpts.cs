@@ -6,6 +6,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using Hathora.Scripts.Utils.Extensions;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -34,18 +35,19 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
+        [FormerlySerializedAs("_extraTransportInfo1")]
         [SerializeField] 
-        private ExtraContainerPortWrapper _extraTransportInfo1 = new();
+        private AdditionalContainerPortWrapper additionalTransportInfo1 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public ExtraContainerPortWrapper ExtraTransportInfo1
+        public AdditionalContainerPortWrapper AdditionalTransportInfo1
         {
-            get => _extraTransportInfo1;
-            set => _extraTransportInfo1 = value;
+            get => additionalTransportInfo1;
+            set => additionalTransportInfo1 = value;
         }
         
         /// <summary>
@@ -53,25 +55,26 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
+        [FormerlySerializedAs("_extraTransportInfo2")]
         [SerializeField] 
-        private ExtraContainerPortWrapper _extraTransportInfo2 = new();
+        private AdditionalContainerPortWrapper additionalTransportInfo2 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public ExtraContainerPortWrapper ExtraTransportInfo2
+        public AdditionalContainerPortWrapper AdditionalTransportInfo2
         {
-            get => _extraTransportInfo2;
-            set => _extraTransportInfo2 = value;
+            get => additionalTransportInfo2;
+            set => additionalTransportInfo2 = value;
         }
         
 
         /// <summary>Useful for CreateDeploymentAsync() via HathoraDeployOpts.</summary>
         public bool CheckHasAdditionalContainerPorts() =>
-            !string.IsNullOrEmpty(_extraTransportInfo1?.TransportNickname) ||
-            !string.IsNullOrEmpty(_extraTransportInfo2?.TransportNickname); 
+            !string.IsNullOrEmpty(additionalTransportInfo1?.TransportNickname) ||
+            !string.IsNullOrEmpty(additionalTransportInfo2?.TransportNickname); 
 
         /// <summary>
         /// Returns a List of Hathora SDK ContainerPort.
@@ -84,20 +87,20 @@ namespace Hathora.Scripts.SdkWrapper.Models
             
             List<ContainerPort> extraContainerPorts = new();
             
-            if (checkIsValidExtraTransportInfo(_extraTransportInfo1))
-                extraContainerPorts.AddIfNotNull(ParseToSdkContainerToPort(_extraTransportInfo1));
+            if (checkIsValidExtraTransportInfo(additionalTransportInfo1))
+                extraContainerPorts.AddIfNotNull(ParseToSdkContainerToPort(additionalTransportInfo1));
             
-            if (checkIsValidExtraTransportInfo(_extraTransportInfo2))
-                extraContainerPorts.AddIfNotNull(ParseToSdkContainerToPort(_extraTransportInfo2));
+            if (checkIsValidExtraTransportInfo(additionalTransportInfo2))
+                extraContainerPorts.AddIfNotNull(ParseToSdkContainerToPort(additionalTransportInfo2));
 
             return extraContainerPorts;
         }
 
-        private bool checkIsValidExtraTransportInfo(ExtraContainerPortWrapper containerPortWrapper) =>
+        private bool checkIsValidExtraTransportInfo(AdditionalContainerPortWrapper containerPortWrapper) =>
             !string.IsNullOrEmpty(containerPortWrapper?.TransportNickname) &&
             containerPortWrapper.PortNumber != 7777;
 
-        public ContainerPort ParseToSdkContainerToPort(ExtraContainerPortWrapper containerPortWrapper)
+        public ContainerPort ParseToSdkContainerToPort(AdditionalContainerPortWrapper containerPortWrapper)
         {
             if (containerPortWrapper == null)
                 return null;

@@ -45,10 +45,17 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
         public List<ApplicationWithDeployment> ExistingAppsWithDeployment
         {
-            get => this._existingAppsWithDeploymentWrapper
-                .Select(app => app.ToApplicationWithDeploymentType())
-                .ToList();
+            get {
+                if (this._existingAppsWithDeploymentWrapper == null)
+                    return new List<ApplicationWithDeployment>();
+                
+                List<ApplicationWithDeployment> appsWithDeployment = this._existingAppsWithDeploymentWrapper
+                    .Select(app => app.ToApplicationWithDeploymentType())
+                    .ToList();
 
+                return appsWithDeployment;
+            }
+            
             set  
             {
                 if (value == null)
