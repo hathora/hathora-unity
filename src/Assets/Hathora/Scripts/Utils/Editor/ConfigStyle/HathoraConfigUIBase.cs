@@ -329,6 +329,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.Button(_content, GeneralButtonStyle);
         
         /// <summary>
+        /// {label} {tooltip} {input}
         /// </summary>
         /// <param name="_labelStr"></param>
         /// <param name="_tooltip"></param>
@@ -343,14 +344,53 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             InsertLeftLabel(_labelStr, _tooltip);
 
-            GUILayoutOption expandWidthOpt = GUILayout.ExpandWidth(true);
-            string controlName = $"{_labelStr}_TextField";
-
-            GUI.SetNextControlName(controlName);
-            string inputStr = GUILayout.TextField(_val, expandWidthOpt);
+            // USER INPUT >>
+            string inputStr = GUILayout.TextField(
+                _val, 
+                GUILayout.ExpandWidth(true));
 
             EditorGUILayout.EndHorizontal();
             return inputStr;
+        }
+        
+        /// <summary>
+        /// Useful for Popup lists (dropdowns) for GUI selection.
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <returns></returns>
+        protected static string[] GetStrArrOfEnumMemberKeys<TEnum>() 
+            where TEnum : Enum => Enum
+                .GetValues(typeof(TEnum))
+                .Cast<TEnum>()
+                .Select(e => e.ToString())
+                .ToArray();
+
+        /// <summary>
+        /// {label} {tooltip} {popupList}
+        /// </summary>
+        /// <param name="_labelStr"></param>
+        /// <param name="_tooltip"></param>
+        /// <param name="_displayOptsStrArr"></param>
+        /// <param name="_selectedIndex"></param>
+        /// <returns>Returns selected index</returns>
+        protected int insertHorizLabeledPopupList(
+            string _labelStr,
+            string _tooltip,
+            string[] _displayOptsStrArr,
+            int _selectedIndex)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            InsertLeftLabel(_labelStr, _tooltip);
+            
+            // USER INPUT >>
+            int newSelectedIndex = EditorGUILayout.Popup(
+                _selectedIndex, 
+                _displayOptsStrArr,
+                GUILayout.ExpandWidth(true));
+
+            EditorGUILayout.EndHorizontal();
+            return newSelectedIndex;
         }
 
         protected void SaveConfigChange(string _key, string _newVal)
