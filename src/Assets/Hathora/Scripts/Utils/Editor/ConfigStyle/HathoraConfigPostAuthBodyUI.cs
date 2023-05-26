@@ -9,7 +9,6 @@ using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using NUnit.Framework;
 using UnityEditor;
-using UnityEditor.Build.Reporting;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
@@ -17,6 +16,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
     {
         #region Vars
         private HathoraConfigPostAuthBodyHeaderUI _bodyHeaderUI;
+        private HathoraConfigPostAuthBodyBuildUI _bodyBuildUI;
         
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
@@ -52,6 +52,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void initDrawUtils()
         {
             _bodyHeaderUI = new HathoraConfigPostAuthBodyHeaderUI(Config, SerializedConfig);
+            _bodyBuildUI = new HathoraConfigPostAuthBodyBuildUI(Config, SerializedConfig);
         }
         #endregion // Init
         
@@ -69,7 +70,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertBodyFoldouts()
         {
-            insertServerBuildSettingsFoldout();
+            _bodyBuildUI.Draw();
 
             InsertSpace1x();
             insertDeploymentSettingsFoldout();
@@ -77,47 +78,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertSpace1x();
             insertCreateRoomOrLobbyFoldout();
         }
-        
-        private void insertServerBuildSettingsFoldout()
-        {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-            isServerBuildFoldout = EditorGUILayout.Foldout(
-                isServerBuildFoldout,
-                "Server Build Settings");
-
-            if (!isServerBuildFoldout)
-            {
-                EditorGUILayout.EndVertical(); // End of foldout box skin
-                return;
-            }
-            
-            EditorGUI.indentLevel++;
-            InsertSpace2x();
-            
-            insertBuildDirNameHorizGroup();
-            insertBuildFileExeNameHorizGroup();
-
-            InsertSpace2x();
-            insertGenerateServerBuildBtn(); // !await
-            
-            EditorGUILayout.EndVertical(); // End of foldout box skin
-            EditorGUI.indentLevel--;
-        }
-
-        private async Task insertGenerateServerBuildBtn()
-        {
-            bool clickedBuildBtn = insertLeftGeneralBtn("Generate Server Build");
-            if (!clickedBuildBtn)
-                return;
-            
-            BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
-            Assert.That(
-                buildReport.summary.result,
-                Is.EqualTo(BuildResult.Succeeded),
-                "Server build failed. Check console for details.");
-        }
-
+       
         private void insertServerBuildAdvancedFoldout()
         {
             isServerBuildAdvancedFoldout = EditorGUILayout.Foldout(
@@ -134,34 +95,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.EndVertical();
         }
         
-        private void insertBuildDirNameHorizGroup()
-        {
-            string inputStr = base.insertHorizLabeledTextField(
-                _labelStr: "Build directory",
-                _tooltip: "Default: `Build-Linux-Server`",
-                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName);
-
-            bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
-            if (isChanged)
-                onServerBuildDirChanged(inputStr);
-
-            InsertSpace1x();
-        }
-        
-        private void insertBuildFileExeNameHorizGroup()
-        {
-            string inputStr = base.insertHorizLabeledTextField(
-                _labelStr: "Build file name", 
-                _tooltip: "Default: `Unity-LinuxServer.x86_64",
-                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName);
-            
-            bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
-            if (isChanged)
-                onServerBuildExeNameChanged(inputStr);
-            
-            InsertSpace1x();
-        }
-
         private void insertDeploymentSettingsFoldout()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -409,23 +342,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SaveConfigChange(
                 nameof(Config.HathoraDeployOpts.TransportTypeSelectedIndex), 
                 _newSelectedIndex.ToString());
-        }
-        
-        private void onServerBuildDirChanged(string _inputStr)
-        {
-            Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName = _inputStr;
-            SaveConfigChange(
-                nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName), 
-                _inputStr);
-        }        
-        
-        private void onServerBuildExeNameChanged(string _inputStr)
-        {
-            Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName = _inputStr;
-            
-            SaveConfigChange(
-                nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName), 
-                _inputStr);
         }
         #endregion // Event Logic
     }
