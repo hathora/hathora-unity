@@ -388,7 +388,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 selectedIndex < displayOptsStrList.Count;
 
             if (isNewValidIndex)
-                onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
+                onSelectedTransportTypeRadioBtnIndexChanged(newSelectedIndex);
             
             InsertSpace2x();
         }
@@ -554,6 +554,14 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             SaveConfigChange(
                 nameof(Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
                 _inputInt.ToString());
+        }
+        
+        private void onSelectedTransportTypeRadioBtnIndexChanged(int _newSelectedIndex)
+        {
+            Config.HathoraDeployOpts.TransportTypeSelectedIndex = _newSelectedIndex;
+            SaveConfigChange(
+                nameof(Config.HathoraDeployOpts.TransportTypeSelectedIndex), 
+                _newSelectedIndex.ToString());
         }
         
         private void onServerBuildDirChanged(string _inputStr)
