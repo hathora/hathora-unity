@@ -325,6 +325,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertRoomsPerProcessHorizSliderGroup();
             insertContainerPortNumberHorizSliderGroup();
             insertTransportTypeHorizRadioBtnGroup();
+            insertServerBuildAdvancedFoldout();
+
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
             insertDeployAppBtn(); // !await
             
@@ -454,11 +456,36 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUI.indentLevel++;
             InsertSpace2x();
             
-            // TODO
+            insertRegionHorizPopupList();
             
             EditorGUILayout.EndVertical(); // End of foldout box skin
             InsertSpace3x();
             EditorGUI.indentLevel--;
+        }
+
+        private void insertRegionHorizPopupList()
+        {
+            int selectedIndex = Config.HathoraLobbyRoomOpts.RegionSelectedIndex;
+            
+            // Get list of string names from Region Enum members. Set UPPER.
+            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<Region>(
+                EnumListOpts.PascalWithSpaces);
+
+            int newSelectedIndex = base.insertHorizLabeledPopupList(
+                _labelStr: "Region",
+                _tooltip: "Default: `Seattle`",
+                _displayOptsStrArr: displayOptsStrList.ToArray(),
+                _selectedIndex: selectedIndex,
+                GuiAlign.SmallRight);
+
+            bool isNewValidIndex = selectedIndex >= 0 &&
+                newSelectedIndex != selectedIndex &&
+                selectedIndex < displayOptsStrList.Count;
+
+            if (isNewValidIndex)
+                onSelectedRegionPopupIndexChanged(newSelectedIndex);
+            
+            InsertSpace2x();
         }
 
         private void insertDeployAppHelpbox()
@@ -559,7 +586,14 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 _newSelectedIndex.ToString());
         }
         
-        
+        private void onSelectedRegionPopupIndexChanged(int _newSelectedIndex)
+        {
+            Config.HathoraLobbyRoomOpts.RegionSelectedIndex = _newSelectedIndex;
+            SaveConfigChange(
+                nameof(Config.HathoraLobbyRoomOpts.RegionSelectedIndex), 
+                _newSelectedIndex.ToString());
+        }
+
         private void onRoomsPerProcessSliderNumChanged(int _inputInt)
         {
             Config.HathoraDeployOpts.RoomsPerProcess = _inputInt;
