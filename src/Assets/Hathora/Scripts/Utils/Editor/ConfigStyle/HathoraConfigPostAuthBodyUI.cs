@@ -393,24 +393,46 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertSpace2x();
         }
 
+        private static string getPlanNameListWithExtraInfo(PlanName _planName)
+        {
+            switch (_planName)
+            {
+                default:
+                case PlanName.Tiny:
+                    return $"{nameof(PlanName.Tiny)} (Shared core, 1GB)";
+                
+                case PlanName.Small:
+                    return $"{nameof(PlanName.Small)} (1 core, 2GB)";
+                
+                case PlanName.Medium:
+                    return $"{nameof(PlanName.Medium)} (2 cores, 4GB)";
+                
+                case PlanName.Large:
+                    return $"{nameof(PlanName.Large)} (4 cores, 8GB)"; 
+            }
+        }
+
         private void insertPlanSizeHorizPopupList()
         {
             int selectedIndex = Config.HathoraDeployOpts.PlanSizeSelectedIndex;
             
-            // Get list of string names from PlanName Enum members
-            string[] displayOptsStrArr = GetStrListOfEnumMemberKeys<PlanName>().ToArray();
-            
+            // Get list of string names from PlanName Enum members - with extra info
+            List<string> displayOptsStrArr = Enum
+                .GetValues(typeof(PlanName))
+                .Cast<PlanName>()
+                .Select(getPlanNameListWithExtraInfo)
+                .ToList();
+
             int newSelectedIndex = base.insertHorizLabeledPopupList(
                 _labelStr: "Plan Size",
                 _tooltip: "Default: `Tiny` (Most affordable for pre-production)",
-                _displayOptsStrArr: displayOptsStrArr,
+                _displayOptsStrArr: displayOptsStrArr.ToArray(),
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
 
-            bool isNewValidIndex = displayOptsStrArr != null &&
-                selectedIndex >= 0 &&
+            bool isNewValidIndex = selectedIndex >= 0 &&
                 newSelectedIndex != selectedIndex &&
-                selectedIndex < displayOptsStrArr.Length;
+                selectedIndex < displayOptsStrArr.Count;
 
             if (isNewValidIndex)
                 onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
