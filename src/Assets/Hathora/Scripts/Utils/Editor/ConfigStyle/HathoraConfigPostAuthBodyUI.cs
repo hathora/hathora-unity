@@ -241,7 +241,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             insertBuildDirNameHorizGroup();
             insertBuildFileExeNameHorizGroup();
-            insertServerBuildAdvancedFoldout();
 
             InsertSpace2x();
             insertGenerateServerBuildBtn(); // !await
