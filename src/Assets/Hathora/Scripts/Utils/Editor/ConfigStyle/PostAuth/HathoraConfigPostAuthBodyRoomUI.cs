@@ -1,8 +1,11 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.SdkWrapper.Editor;
+using NUnit.Framework;
 using UnityEditor;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
@@ -60,13 +63,30 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     
             EditorGUI.indentLevel++;
             InsertSpace2x();
-            
-            insertRegionHorizPopupList();
-            roomLobbyUI.Draw();
-            
+
+            insertCreateRoomOrLobbyFoldoutComponents();
+
             EditorGUILayout.EndVertical(); // End of foldout box skin
             InsertSpace3x();
             EditorGUI.indentLevel--;
+        }
+
+        private void insertCreateRoomOrLobbyFoldoutComponents()
+        {
+            insertRegionHorizPopupList();
+            roomLobbyUI.Draw();
+            insertCreateRoomLobbyBtn();
+        }
+
+        private async Task insertCreateRoomLobbyBtn()
+        {
+            bool clickedCreateRoomLobbyBtn = insertLeftGeneralBtn("Deploy Application");
+            if (!clickedCreateRoomLobbyBtn)
+                return;
+            
+            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
+            Assert.That(deployment?.BuildId, Is.Not.Null,
+                "Deployment failed: Check console for details.");
         }
 
         private void insertRegionHorizPopupList()

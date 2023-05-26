@@ -56,14 +56,19 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             EditorGUI.indentLevel++;
             InsertSpace2x();
             
+            insertBuildSettingsFoldoutComponents();
+            
+            EditorGUILayout.EndVertical(); // End of foldout box skin
+            EditorGUI.indentLevel--;
+        }
+
+        private void insertBuildSettingsFoldoutComponents()
+        {
             insertBuildDirNameHorizGroup();
             insertBuildFileExeNameHorizGroup();
 
             InsertSpace2x();
             insertGenerateServerBuildBtn(); // !await
-            
-            EditorGUILayout.EndVertical(); // End of foldout box skin
-            EditorGUI.indentLevel--;
         }
 
         private async Task insertGenerateServerBuildBtn()

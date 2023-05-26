@@ -48,10 +48,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
             _bodyHeaderUI.Draw();
             InsertSpace4x();
-            insertBodyFoldouts();
+            insertBodyFoldoutComponents();
         }
 
-        private void insertBodyFoldouts()
+        private void insertBodyFoldoutComponents()
         {
             _bodyBuildUI.Draw();
 

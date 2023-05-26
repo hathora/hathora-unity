@@ -45,10 +45,14 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             
-            // TODO
-            
+            insertAdvancedDeployFoldoutComponents();
             
             EditorGUILayout.EndVertical();
+        }
+
+        private void insertAdvancedDeployFoldoutComponents()
+        {
+            // TODO
         }
         #endregion // UI Draw
 

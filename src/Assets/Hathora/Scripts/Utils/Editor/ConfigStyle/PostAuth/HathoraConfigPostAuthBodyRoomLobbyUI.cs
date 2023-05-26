@@ -49,12 +49,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     
             EditorGUI.indentLevel++;
             InsertSpace2x();
-            
-            // TODO: Add lobby settings UI here.
-            
+
+            insertLobbySettingsFoldoutComponents();
+                
             EditorGUILayout.EndVertical(); // End of foldout box skin
             InsertSpace3x();
             EditorGUI.indentLevel--;
+        }
+
+        private void insertLobbySettingsFoldoutComponents()
+        {
+            // TODO
         }
         #endregion // UI Draw
 

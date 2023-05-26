@@ -39,10 +39,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (!IsAuthed)
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
-            insertBodyHeader();
+            insertBodyHeaderComponents();
         }
 
-        private void insertBodyHeader()
+        private void insertBodyHeaderComponents()
         {
             insertLoginTokenGroup();
             
@@ -64,10 +64,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
+            // -----------------------------
             insertAppIdHorizHeader();
             insertAppsListPopupListHorizGroup();
             insertAppIdDisplayCopyGroup();
             
+            // -----------------------------
             EditorGUILayout.EndVertical();
         }
         

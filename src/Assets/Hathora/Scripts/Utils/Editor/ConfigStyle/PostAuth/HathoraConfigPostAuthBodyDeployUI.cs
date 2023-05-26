@@ -67,7 +67,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             }
     
             InsertSpace2x();
-            
+
+            insertDeploymentSettingsFoldoutComponents();
+
+            EditorGUILayout.EndVertical(); // End of foldout box skin
+            InsertSpace3x();
+        }
+
+        private void insertDeploymentSettingsFoldoutComponents()
+        {
             insertPlanSizeHorizPopupList();
             insertRoomsPerProcessHorizSliderGroup();
             insertContainerPortNumberHorizSliderGroup();
@@ -76,9 +84,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
             insertDeployAppBtn(); // !await
-            
-            EditorGUILayout.EndVertical(); // End of foldout box skin
-            InsertSpace3x();
         }
 
         private void insertRoomsPerProcessHorizSliderGroup()
