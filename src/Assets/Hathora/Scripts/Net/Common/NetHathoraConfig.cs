@@ -64,7 +64,7 @@ namespace Hathora.Scripts.Net.Common
             _hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
-            _hathoraDeployOpts.ContainerPortWrapper.PortNumber > 1024;
+            _hathoraDeployOpts.ContainerPortWrapper.PortNumber >= 1024;
 
         /// <summary>
         /// Combines path, then normalizes
