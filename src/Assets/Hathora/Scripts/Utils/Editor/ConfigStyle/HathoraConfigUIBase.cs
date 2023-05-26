@@ -413,6 +413,47 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             return newSelectedIndex;
         }
 
+        /// <summary>TODO: This is difficult to make look good</summary>
+        // protected int InsertHorizLabeledRadioButtonGroup(
+        //     string _labelStr,
+        //     string _tooltip,
+        //     string[] _displayOptsStrArr,
+        //     int _selectedIndex,
+        //     GuiAlign _alignPopup = GuiAlign.Stretched,
+        //     int _buttonWidth = 100,
+        //     int _bufferSpaceAfterTooltip = 30)
+        // {
+        //     EditorGUILayout.BeginHorizontal();
+        //
+        //     InsertLeftLabel(_labelStr, _tooltip);
+        //     GUILayout.Space(_bufferSpaceAfterTooltip);
+        //
+        //     if (_alignPopup == GuiAlign.SmallRight)
+        //         GUILayout.FlexibleSpace();
+        //
+        //     int newSelectedIndex = _selectedIndex;
+        //
+        //     for (int i = 0; i < _displayOptsStrArr.Length; i++)
+        //     {
+        //         bool wasSelected = _selectedIndex == i;
+        //         bool nowSelected = GUILayout.Toggle(
+        //             wasSelected,
+        //             _displayOptsStrArr[i],
+        //             GUILayout.Width(_buttonWidth));
+        //
+        //         // If the button state changed and it's now selected
+        //         if (wasSelected != nowSelected && nowSelected)
+        //             newSelectedIndex = i;
+        //     }
+        //
+        //     if (_alignPopup == GuiAlign.SmallLeft)
+        //         GUILayout.FlexibleSpace();
+        //
+        //     EditorGUILayout.EndHorizontal();
+        //
+        //     return newSelectedIndex;
+        // }
+
         protected int insertHorizLabeledIntSlider(
             string _labelStr,
             string _tooltip,
