@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
+using Hathora.Scripts.Utils;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Models
@@ -12,7 +13,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
     [Serializable]
     public class HathoraCoreOpts
     {
-        /// <summary>Get from your Hathora dashboard</summary>
+        /// <summary>Get from your Hathora dashboard.</summary>
         [SerializeField]
         private string _appId;
 
@@ -66,11 +67,31 @@ namespace Hathora.Scripts.SdkWrapper.Models
             }
         }
 
-        /// <summary>Cached from App API</summary>
-        public List<string> GetExistingAppNames() => _existingAppsWithDeploymentWrapper?
-                .Select(app => app.AppName)
-                .ToList() 
-            ?? new List<string>(); // Default to empty list
+        /// <summary>Cached from App API.</summary>
+        /// <param name="_prependDummyIndex0Str">
+        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
+        /// </param>
+        public List<string> GetExistingAppNames(string _prependDummyIndex0Str)
+        {
+            if (_existingAppsWithDeploymentWrapper == null)
+                return new List<string>();
+
+            IEnumerable<string> enumerable = _existingAppsWithDeploymentWrapper?
+                .Select(app => app.AppName);
+
+            if (!string.IsNullOrEmpty(_prependDummyIndex0Str))
+            {
+                if (HathoraUtils.SDK_ENUM_STARTING_INDEX == 0)
+                {
+                    Debug.LogWarning("HathoraUtils.SDK_ENUM_STARTING_INDEX == 0, " +
+                        "but you are using a _prependDummyIndex0Str: Intentional?");
+                }    
+                
+                enumerable = enumerable.Prepend(_prependDummyIndex0Str);
+            }      
+
+            return enumerable.ToList();
+        }
         
         
 #if UNITY_SERVER || DEBUG

@@ -24,17 +24,21 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _roomsPerProcess = value;
         }
 
-        public PlanName SelectedPlanName => 
-            (PlanName)_planNameSelectedIndex;
-
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
         private int _planNameSelectedIndex = (int)PlanName.Tiny;
+
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public int PlanNameSelectedIndex
         {
             get => _planNameSelectedIndex;
             set => _planNameSelectedIndex = value;
         }
 
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
+        public PlanName SelectedPlanName => 
+            (PlanName)_planNameSelectedIndex;
+        
         
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         [SerializeField]
@@ -46,12 +50,17 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _containerPortWrapper;
             set => _containerPortWrapper = value;
         }
+        
 
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public TransportType SelectedTransportType => 
             (TransportType)_transportTypeSelectedIndex;
         
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
         private int _transportTypeSelectedIndex = (int)TransportType.Udp;
+       
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public int TransportTypeSelectedIndex
         {
             get => _transportTypeSelectedIndex;

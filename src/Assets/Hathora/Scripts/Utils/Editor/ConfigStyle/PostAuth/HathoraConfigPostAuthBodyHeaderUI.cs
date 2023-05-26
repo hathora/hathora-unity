@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -103,7 +104,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return;
             
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.BeginHorizontal(); // AppIdDisplayCopyGroup
+            GUILayout.BeginHorizontal(); // AppIdDisplayCopyGroup 
             
             InsertLeftLabel(
                 "<b>AppId:</b>", 
@@ -147,7 +148,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
         private void insertExistingAppsPopupList()
         {
-            List<string> displayedOptionsList = Config.HathoraCoreOpts.GetExistingAppNames();
+            List<string> displayedOptionsList = Config.HathoraCoreOpts.GetExistingAppNames(
+                _prependDummyIndex0Str: null);
+                
             string[] displayedOptionsArr = displayedOptionsList?.ToArray();
     
             int selectedIndex = Config.HathoraCoreOpts.ExistingAppsSelectedIndex;
@@ -237,7 +240,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             List<ApplicationWithDeployment> apps = await appApi.GetAppsAsync();
 
-            try
+            try 
             {
                 // The wrappers go through a great deal of parsing
                 Config.HathoraCoreOpts.ExistingAppsWithDeployment = apps; // Cache the response to Config

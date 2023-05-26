@@ -76,7 +76,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             insertRegionHorizPopupList();
             roomLobbyUI.Draw();
+            
+            EditorGUI.BeginDisabledGroup(disabled: true); // TODO: WIP - Enable after finished
             insertCreateRoomLobbyBtn();
+            EditorGUI.EndDisabledGroup();
+            
             insertViewLogsMetricsLinkLbl();
         }
 

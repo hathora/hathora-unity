@@ -420,10 +420,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// </summary>
         /// <typeparam name="TEnum"></typeparam>
         /// <returns></returns>
-        protected static List<string> GetStrListOfEnumMemberKeys<TEnum>(EnumListOpts _opts)
-            where TEnum : Enum
+        /// <param name="_opts"></param>
+        /// <param name="_prependDummyIndex0Str">
+        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
+        /// </param>
+        protected static List<string> GetStrListOfEnumMemberKeys<TEnum>(
+            EnumListOpts _opts,
+            string _prependDummyIndex0Str = null) where TEnum : Enum
         {
-            IEnumerable<string> strEnumerable = Enum
+            IEnumerable<string> enumerable = Enum
                 .GetValues(typeof(TEnum))
                 .Cast<TEnum>()
                 .Select(e =>
@@ -436,7 +441,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                     };
                 });
 
-            return strEnumerable.ToList();
+            if (!string.IsNullOrEmpty(_prependDummyIndex0Str))
+                enumerable = enumerable.Prepend(_prependDummyIndex0Str);
+
+            return enumerable.ToList();
         }
 
         private static GUILayoutOption[] GetDefaultInputLayoutOpts(
@@ -628,5 +636,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         protected void InsertSpace4x() => 
             EditorGUILayout.Space(30f);
+
+        /// <summary>
+        /// </summary>
+        /// <param name="_prependDummyIndex0Str">
+        /// (!) Hathora SDK has 1-based Enums.  You may want to prepend a dummy
+        /// like "None", although you'd have to later validate it.
+        /// </param>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <returns></returns>
+        protected List<string> GetDisplayOptsStrArrFromEnum<TEnum>(string _prependDummyIndex0Str)
+            where TEnum : Enum
+        {
+            IEnumerable<string> enumerable = Enum
+                .GetValues(typeof(TEnum))
+                .Cast<TEnum>()
+                .Select(x => x.ToString());
+            
+            if (!string.IsNullOrEmpty(_prependDummyIndex0Str))
+                enumerable = enumerable.Prepend(_prependDummyIndex0Str);
+
+            return enumerable.ToList();
+        }
     }
 }

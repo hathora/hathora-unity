@@ -15,13 +15,17 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class ContainerPortWrapper
     {
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField, Tooltip("Default: UDP. UDP is recommended for realtime games: Faster, but less reliable.")]
         private TransportType _transportType = TransportType.Udp;
+       
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public TransportType TransportType
         {
             get => _transportType;
             set => _transportType = value;
         }    
+        
 
         [SerializeField, Range(1024, 65535), Tooltip("Default: 7777; or use 1024~65535")]
         private int _portNumber = 7777;

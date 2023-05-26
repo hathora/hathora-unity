@@ -1,8 +1,6 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
@@ -16,9 +14,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     {
         #region Vars
         private HathoraConfigPostAuthBodyDeployAdvUI _advancedDeployUI;
-
+            
         // Foldouts
         private bool isDeploymentFoldout;
+        
+        // Flags
+        private bool isDeploying; 
         #endregion // Vars
 
 
@@ -82,8 +83,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             insertTransportTypeHorizRadioBtnGroup();
             _advancedDeployUI.Draw();
 
-            insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
+            bool enableDeployBtn = checkIsReadyToEnableToDeployBtn(); 
+            if (enableDeployBtn || isDeploying)
+                insertDeployAppHelpbox();
+            else
+                insertDeployAppHelpboxErr();
+
+            EditorGUI.BeginDisabledGroup(disabled: !enableDeployBtn);
             insertDeployAppBtn(); // !await
+            EditorGUI.EndDisabledGroup();
         }
 
         private void insertRoomsPerProcessHorizSliderGroup()
@@ -126,7 +134,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             // Get list of string names from PlanName Enum members. Set UPPER.
             List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<TransportType>(
-                EnumListOpts.AllCaps);
+                EnumListOpts.AllCaps,
+                _prependDummyIndex0Str: "<Choose a Transport Type>");
 
             int newSelectedIndex = base.insertHorizLabeledPopupList(
                 _labelStr: "Transport Type",
@@ -170,11 +179,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             // Get list of string names from PlanName Enum members - with extra info.
             // The index order is !modified.
-            List<string> displayOptsStrArr = Enum
-                .GetValues(typeof(PlanName))
-                .Cast<PlanName>()
-                .Select(getPlanNameListWithExtraInfo)
-                .ToList();
+            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<PlanName>(
+                _prependDummyIndex0Str: "<Choose a Plan>");
 
             int newSelectedIndex = base.insertHorizLabeledPopupList(
                 _labelStr: "Plan Size",
@@ -192,12 +198,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             InsertSpace2x();
         }
-
+        
         private void insertDeployAppHelpbox()
         {
             InsertSpace2x();
             
-            // TODO: Validate that the correct fields are filled before allowing a button click
             const MessageType helpMsgType = MessageType.Info;
             const string helpMsg = "This action will create a new deployment version of your application. " +
                 "New rooms will be created with this version of your server.";
@@ -205,16 +210,38 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpMsg, helpMsgType);
         }
+        
+        private void insertDeployAppHelpboxErr()
+        {
+            InsertSpace2x();
+            
+            const MessageType helpMsgType = MessageType.Error;
+            const string helpMsg = "Missing required: Plan Size, Rooms per Process, " +
+                "Container Port Number, Transport Type";
 
+            // Post the help box *before* we disable the button so it's easier to see (if toggleable)
+            EditorGUILayout.HelpBox(helpMsg, helpMsgType);
+        }
+
+        /// <summary>
+        /// TODO: Add cancel btn
+        /// </summary>
         private async Task insertDeployAppBtn()
         {
-            bool clickedDeployBtn = insertLeftGeneralBtn("Deploy Application");
+            string btnLabelStr = isDeploying 
+                ? "Deploying: This may take some time..." 
+                : "Deploy Application";
+            
+            bool clickedDeployBtn = insertLeftGeneralBtn(btnLabelStr);
             InsertSpace1x();
             
             if (!clickedDeployBtn)
                 return;
+
+            isDeploying = true;
+            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config); // TODO: Pass cancel token
+            isDeploying = false;
             
-            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
             Assert.That(deployment?.BuildId, Is.Not.Null,
                 "Deployment failed: Check console for details.");
         }
@@ -254,5 +281,20 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 _inputInt.ToString());
         }
         #endregion // Event Logic
+        
+        
+        #region Utils
+        /// <summary>
+        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes
+        /// </summary>
+        /// <returns></returns>
+        private bool checkIsReadyToEnableToDeployBtn() =>
+            !isDeploying &&
+            Config.HathoraDeployOpts.PlanNameSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX &&
+            Config.HathoraDeployOpts.RoomsPerProcess > 0 &&
+            Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber > 0 &&
+            Config.HathoraDeployOpts.TransportTypeSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX;
+
+        #endregion //Utils
     }
 }

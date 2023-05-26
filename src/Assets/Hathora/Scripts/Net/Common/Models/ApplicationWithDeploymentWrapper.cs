@@ -100,12 +100,20 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _appName = value;
         }
         
-        
+         
         [SerializeField]
         private DeploymentWrapper _deploymentWrapper;
         public Deployment Deployment 
         { 
-            get => _deploymentWrapper?.ToDeploymentType();
+            get
+            {
+                // Ensure !null and minimally validate
+                if (string.IsNullOrEmpty(_deploymentWrapper?.AppId))
+                    return null;
+                
+                return _deploymentWrapper.ToDeploymentType();
+            }
+            
             set => _deploymentWrapper = value == null 
                 ? null 
                 : new DeploymentWrapper(value);
