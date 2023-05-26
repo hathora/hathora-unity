@@ -6,7 +6,6 @@ using System.Linq;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -18,11 +17,9 @@ namespace Hathora.Scripts.SdkWrapper.Models
         private string _appId;
 
         /// <summary>Get from your Hathora dashboard</summary>
-        public string AppId
-        {
-            get => _appId;
-            set => _appId = value;
-        }
+        public string AppId => _existingAppsSelectedIndex < 0
+            ? null
+            : ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId;
         
         [SerializeField]
         private int _existingAppsSelectedIndex = -1;

@@ -98,7 +98,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
             bool isChanged = inputInt != Config.HathoraDeployOpts.RoomsPerProcess;
             if (isChanged)
-                onRoomsPerProcessSliderNumChanged(inputInt);
+                onRoomsPerProcessNumChanged(inputInt);
             
             InsertSpace1x();
         }
@@ -115,7 +115,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
             bool isChanged = inputInt != Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber;
             if (isChanged)
-                onContainerPortNumberSliderNumChanged(inputInt);
+                onContainerPortNumberNumChanged(inputInt);
             
             InsertSpace1x();
         }
@@ -140,7 +140,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 selectedIndex < displayOptsStrList.Count;
 
             if (isNewValidIndex)
-                onSelectedTransportTypeRadioBtnIndexChanged(newSelectedIndex);
+                onSelectedTransportTypePopupIndexChanged(newSelectedIndex);
             
             InsertSpace2x();
         }
@@ -168,7 +168,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             int selectedIndex = Config.HathoraDeployOpts.PlanNameSelectedIndex;
             
-            // Get list of string names from PlanName Enum members - with extra info
+            // Get list of string names from PlanName Enum members - with extra info.
+            // The index order is !modified.
             List<string> displayOptsStrArr = Enum
                 .GetValues(typeof(PlanName))
                 .Cast<PlanName>()
@@ -229,15 +230,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 _newSelectedIndex.ToString());
         }
         
-        private void onSelectedRegionPopupIndexChanged(int _newSelectedIndex)
+        private void onSelectedTransportTypePopupIndexChanged(int _newSelectedIndex)
         {
-            Config.HathoraLobbyRoomOpts.RegionSelectedIndex = _newSelectedIndex;
+            Config.HathoraDeployOpts.TransportTypeSelectedIndex = _newSelectedIndex;
             SaveConfigChange(
-                nameof(Config.HathoraLobbyRoomOpts.RegionSelectedIndex), 
+                nameof(Config.HathoraDeployOpts.TransportTypeSelectedIndex), 
                 _newSelectedIndex.ToString());
         }
 
-        private void onRoomsPerProcessSliderNumChanged(int _inputInt)
+        private void onRoomsPerProcessNumChanged(int _inputInt)
         {
             Config.HathoraDeployOpts.RoomsPerProcess = _inputInt;
             SaveConfigChange(
@@ -245,20 +246,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 _inputInt.ToString());
         }
         
-        private void onContainerPortNumberSliderNumChanged(int _inputInt)
+        private void onContainerPortNumberNumChanged(int _inputInt)
         {
             Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber = _inputInt;
             SaveConfigChange(
                 nameof(Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
                 _inputInt.ToString());
-        }
-        
-        private void onSelectedTransportTypeRadioBtnIndexChanged(int _newSelectedIndex)
-        {
-            Config.HathoraDeployOpts.TransportTypeSelectedIndex = _newSelectedIndex;
-            SaveConfigChange(
-                nameof(Config.HathoraDeployOpts.TransportTypeSelectedIndex), 
-                _newSelectedIndex.ToString());
         }
         #endregion // Event Logic
     }

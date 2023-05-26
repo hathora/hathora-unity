@@ -53,7 +53,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 deployConfig = new DeploymentConfig(
                     parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
                     deployOpts.RoomsPerProcess, 
-                    deployOpts.PlanName, 
+                    deployOpts.SelectedPlanName, 
                     extraContainerPorts,
                     deployOpts.ContainerPortWrapper.TransportType,
                     deployOpts.ContainerPortWrapper.PortNumber

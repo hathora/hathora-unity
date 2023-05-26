@@ -269,9 +269,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         /// <summary>Sets AppId + ExistingAppsSelectedIndex</summary>
         private void setSelectedApp(int _newSelectedIndex)
         {
-            Config.HathoraCoreOpts.AppId = Config.HathoraCoreOpts.ExistingAppsWithDeployment?[_newSelectedIndex]?.AppId;
             Config.HathoraCoreOpts.ExistingAppsSelectedIndex = _newSelectedIndex;
-
             SaveConfigChange(
                 nameof(Config.HathoraCoreOpts.ExistingAppsSelectedIndex), 
                 _newSelectedIndex.ToString());

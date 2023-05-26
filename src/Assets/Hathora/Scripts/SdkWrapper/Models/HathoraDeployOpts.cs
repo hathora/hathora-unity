@@ -24,16 +24,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _roomsPerProcess = value;
         }
 
-        /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        [SerializeField]
-        private PlanName _planName = PlanName.Tiny;
-
-        /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        public PlanName PlanName
-        {
-            get => _planName;
-            set => _planName = value;
-        }
+        public PlanName SelectedPlanName => 
+            (PlanName)_planNameSelectedIndex;
 
         [SerializeField]
         private int _planNameSelectedIndex = (int)PlanName.Tiny;
@@ -54,6 +46,9 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _containerPortWrapper;
             set => _containerPortWrapper = value;
         }
+
+        public TransportType SelectedTransportType => 
+            (TransportType)_transportTypeSelectedIndex;
         
         [SerializeField]
         private int _transportTypeSelectedIndex = (int)TransportType.Udp;
