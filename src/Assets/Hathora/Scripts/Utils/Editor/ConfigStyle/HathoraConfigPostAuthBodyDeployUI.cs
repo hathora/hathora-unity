@@ -15,6 +15,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
     public class HathoraConfigPostAuthBodyDeployUI : HathoraConfigUIBase
     {
         #region Vars
+        private HathoraConfigPostAuthBodyDeployAdvUI _advancedDeployUI;
+        
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
         
@@ -39,6 +41,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             if (!HathoraConfigUI.ENABLE_BODY_STYLE)
                 return;
+
+            initDrawUtils();
+        }
+        
+        /// <summary>
+        /// There are modulated parts of the post-auth body.
+        /// </summary>
+        private void initDrawUtils()
+        {
+            _advancedDeployUI = new HathoraConfigPostAuthBodyDeployAdvUI(Config, SerializedConfig);
         }
         #endregion // Init
         
@@ -51,23 +63,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             insertDeploymentSettingsFoldout();
         }
-       
-        private void insertServerBuildAdvancedFoldout()
-        {
-            isServerBuildAdvancedFoldout = EditorGUILayout.Foldout(
-                isServerBuildAdvancedFoldout, 
-                "Advanced");
 
-            if (!isServerBuildAdvancedFoldout)
-                return;
-            
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            
-            // TODO
-            
-            EditorGUILayout.EndVertical();
-        }
-        
         private void insertDeploymentSettingsFoldout()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -87,7 +83,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             insertRoomsPerProcessHorizSliderGroup();
             insertContainerPortNumberHorizSliderGroup();
             insertTransportTypeHorizRadioBtnGroup();
-            insertServerBuildAdvancedFoldout();
+            _advancedDeployUI.Draw();
 
             insertDeployAppHelpbox(); // indentLevel is buggy, here: Keep it above
             insertDeployAppBtn(); // !await
