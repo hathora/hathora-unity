@@ -19,7 +19,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             HathoraEditorUtils.InsertBanner(
                 _includeVerticalGroup: false,
-                _wrapperExtension: 55f); // Place banner @ top
+                _wrapperExtension: 60f); // Place banner @ top
             HathoraEditorUtils.InsertHathoraSloganLbl();
 
             InsertSpace1x();
@@ -37,35 +37,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayoutOption[] buttonOptions =
             {
                 GUILayout.MinWidth(100), 
-                GUILayout.MinHeight(20), 
+                GUILayout.MinHeight(24), 
                 GUILayout.ExpandWidth(true),
             };
             
             if (GUILayout.Button("Get Started", GeneralButtonStyle, buttonOptions))
-            {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_GETTING_STARTED_URL);
-            }
 
             InsertSpace1x();
 
             if (GUILayout.Button("Tutorial", GeneralButtonStyle, buttonOptions))
-            {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_UNITY_TUTORIAL_URL);
-            }
 
             InsertSpace1x();
 
             if (GUILayout.Button("Discord", GeneralButtonStyle, buttonOptions))
-            {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_DISCORD_URL);
-            }
 
             InsertSpace1x();
 
             if (GUILayout.Button("Website", GeneralButtonStyle, buttonOptions))
-            {
                 Application.OpenURL(HathoraEditorUtils.HATHORA_HOME_URL);
-            }
 
             EndCenterHorizAlign();
         }
