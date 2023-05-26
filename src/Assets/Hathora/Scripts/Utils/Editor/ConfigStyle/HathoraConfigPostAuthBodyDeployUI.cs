@@ -12,13 +12,9 @@ using UnityEditor;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
-    public class HathoraConfigPostAuthBodyUI : HathoraConfigUIBase
+    public class HathoraConfigPostAuthBodyDeployUI : HathoraConfigUIBase
     {
         #region Vars
-        private HathoraConfigPostAuthBodyHeaderUI _bodyHeaderUI;
-        private HathoraConfigPostAuthBodyBuildUI _bodyBuildUI;
-        private HathoraConfigPostAuthBodyDeployUI _bodyDeployUI;
-        
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
         
@@ -36,25 +32,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
 
         #region Init
-        public HathoraConfigPostAuthBodyUI(
+        public HathoraConfigPostAuthBodyDeployUI(
             NetHathoraConfig _config, 
             SerializedObject _serializedConfig)
             : base(_config, _serializedConfig)
         {
             if (!HathoraConfigUI.ENABLE_BODY_STYLE)
                 return;
-            
-            initDrawUtils();
-        }
-        
-        /// <summary>
-        /// There are modulated parts of the post-auth body.
-        /// </summary>
-        private void initDrawUtils()
-        {
-            _bodyHeaderUI = new HathoraConfigPostAuthBodyHeaderUI(Config, SerializedConfig);
-            _bodyBuildUI = new HathoraConfigPostAuthBodyBuildUI(Config, SerializedConfig);
-            _bodyDeployUI = new HathoraConfigPostAuthBodyDeployUI(Config, SerializedConfig);
         }
         #endregion // Init
         
@@ -65,20 +49,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!IsAuthed)
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
-            _bodyHeaderUI.Draw();
-            InsertSpace4x();
-            insertBodyFoldouts();
-        }
-
-        private void insertBodyFoldouts()
-        {
-            _bodyBuildUI.Draw();
-
-            InsertSpace1x();
-            _bodyDeployUI.Draw();
-            
-            InsertSpace1x();
-            insertCreateRoomOrLobbyFoldout();
+            insertDeploymentSettingsFoldout();
         }
        
         private void insertServerBuildAdvancedFoldout()
@@ -227,54 +198,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             if (isNewValidIndex)
                 onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
-            
-            InsertSpace2x();
-        }
-
-        private void insertCreateRoomOrLobbyFoldout()
-        {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            isCreateRoomLobbyFoldout = EditorGUILayout.Foldout(
-                isCreateRoomLobbyFoldout, 
-                "Create Room or Lobby");
-            
-            if (isCreateRoomLobbyFoldout)
-            {
-                EditorGUILayout.EndVertical(); // End of foldout box skin
-                return;
-            }
-    
-            EditorGUI.indentLevel++;
-            InsertSpace2x();
-            
-            insertRegionHorizPopupList();
-            
-            EditorGUILayout.EndVertical(); // End of foldout box skin
-            InsertSpace3x();
-            EditorGUI.indentLevel--;
-        }
-
-        private void insertRegionHorizPopupList()
-        {
-            int selectedIndex = Config.HathoraLobbyRoomOpts.RegionSelectedIndex;
-            
-            // Get list of string names from Region Enum members. Set UPPER.
-            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<Region>(
-                EnumListOpts.PascalWithSpaces);
-
-            int newSelectedIndex = base.insertHorizLabeledPopupList(
-                _labelStr: "Region",
-                _tooltip: "Default: `Seattle`",
-                _displayOptsStrArr: displayOptsStrList.ToArray(),
-                _selectedIndex: selectedIndex,
-                GuiAlign.SmallRight);
-
-            bool isNewValidIndex = selectedIndex >= 0 &&
-                newSelectedIndex != selectedIndex &&
-                selectedIndex < displayOptsStrList.Count;
-
-            if (isNewValidIndex)
-                onSelectedRegionPopupIndexChanged(newSelectedIndex);
             
             InsertSpace2x();
         }
