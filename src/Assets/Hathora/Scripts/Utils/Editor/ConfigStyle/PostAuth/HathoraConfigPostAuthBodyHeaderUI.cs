@@ -18,17 +18,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         #region Vars
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
-        
-        // Main foldouts
-        private bool isServerBuildFoldout;
-        private bool isDeploymentFoldout;
-        private bool isCreateRoomLobbyFoldout;
-        
-        // Sub foldouts
-        private bool isServerBuildAdvancedFoldout;
-        
-        // Focus
-        private bool buildDirNameTxtFieldHasFocus;
         #endregion // Vars
 
 

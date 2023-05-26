@@ -16,20 +16,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     {
         #region Vars
         private HathoraConfigPostAuthBodyDeployAdvUI _advancedDeployUI;
-        
-        private bool devReAuthLoginButtonInteractable;
-        private bool isRefreshingExistingApps;
-        
-        // Main foldouts
-        private bool isServerBuildFoldout;
+
+        // Foldouts
         private bool isDeploymentFoldout;
-        private bool isCreateRoomLobbyFoldout;
-        
-        // Sub foldouts
-        private bool isServerBuildAdvancedFoldout;
-        
-        // Focus
-        private bool buildDirNameTxtFieldHasFocus;
         #endregion // Vars
 
 

@@ -8,19 +8,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     public class HathoraConfigPostAuthBodyDeployAdvUI : HathoraConfigUIBase
     {
         #region Vars
-        private bool devReAuthLoginButtonInteractable;
-        private bool isRefreshingExistingApps;
-        
-        // Main foldouts
-        private bool isServerBuildFoldout;
-        private bool isDeploymentFoldout;
-        private bool isCreateRoomLobbyFoldout;
-        
-        // Sub foldouts
-        private bool isServerBuildAdvancedFoldout;
-        
-        // Focus
-        private bool buildDirNameTxtFieldHasFocus;
+        // Foldouts
+        private bool isAdvancedDeployFoldout;
         #endregion // Vars
 
 
@@ -42,21 +31,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (!IsAuthed)
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
-            insertServerBuildAdvancedFoldout();
+            insertAdvancedDeployFoldout();
         }
        
-        private void insertServerBuildAdvancedFoldout()
+        private void insertAdvancedDeployFoldout()
         {
-            isServerBuildAdvancedFoldout = EditorGUILayout.Foldout(
-                isServerBuildAdvancedFoldout, 
+            isAdvancedDeployFoldout = EditorGUILayout.Foldout(
+                isAdvancedDeployFoldout, 
                 "Advanced");
 
-            if (!isServerBuildAdvancedFoldout)
+            if (!isAdvancedDeployFoldout)
                 return;
             
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             
             // TODO
+            
             
             EditorGUILayout.EndVertical();
         }

@@ -13,19 +13,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     public class HathoraConfigPostAuthBodyBuildUI : HathoraConfigUIBase
     {
         #region Vars
-        private bool devReAuthLoginButtonInteractable;
-        private bool isRefreshingExistingApps;
-        
-        // Main foldouts
+        // Foldouts
         private bool isServerBuildFoldout;
-        private bool isDeploymentFoldout;
-        private bool isCreateRoomLobbyFoldout;
-        
-        // Sub foldouts
-        private bool isServerBuildAdvancedFoldout;
-        
-        // Focus
-        private bool buildDirNameTxtFieldHasFocus;
         #endregion // Vars
 
 
@@ -90,22 +79,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 "Server build failed. Check console for details.");
         }
 
-        private void insertServerBuildAdvancedFoldout()
-        {
-            isServerBuildAdvancedFoldout = EditorGUILayout.Foldout(
-                isServerBuildAdvancedFoldout, 
-                "Advanced");
-
-            if (!isServerBuildAdvancedFoldout)
-                return;
-            
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            
-            // TODO
-            
-            EditorGUILayout.EndVertical();
-        }
-        
         private void insertBuildDirNameHorizGroup()
         {
             string inputStr = base.insertHorizLabeledTextField(
@@ -132,25 +105,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 onServerBuildExeNameChanged(inputStr);
             
             InsertSpace1x();
-        }
-
-        private static string getPlanNameListWithExtraInfo(PlanName _planName)
-        {
-            switch (_planName)
-            {
-                default:
-                case PlanName.Tiny:
-                    return $"{nameof(PlanName.Tiny)} (Shared core, 1GB)";
-                
-                case PlanName.Small:
-                    return $"{nameof(PlanName.Small)} (1 core, 2GB)";
-                
-                case PlanName.Medium:
-                    return $"{nameof(PlanName.Medium)} (2 cores, 4GB)";
-                
-                case PlanName.Large:
-                    return $"{nameof(PlanName.Large)} (4 cores, 8GB)"; 
-            }
         }
         #endregion // UI Draw
 
