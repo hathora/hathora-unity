@@ -1,8 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
@@ -11,7 +11,7 @@ using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Utils.Editor.ConfigStyle
+namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyHeaderUI : HathoraConfigUIBase
     {

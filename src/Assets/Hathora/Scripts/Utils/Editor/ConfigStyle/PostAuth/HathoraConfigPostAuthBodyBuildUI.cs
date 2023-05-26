@@ -8,7 +8,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 
-namespace Hathora.Scripts.Utils.Editor.ConfigStyle
+namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyBuildUI : HathoraConfigUIBase
     {

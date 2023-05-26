@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 using UnityEngine;
 

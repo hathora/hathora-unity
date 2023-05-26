@@ -10,7 +10,7 @@ using Hathora.Scripts.SdkWrapper.Editor;
 using NUnit.Framework;
 using UnityEditor;
 
-namespace Hathora.Scripts.Utils.Editor.ConfigStyle
+namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyDeployUI : HathoraConfigUIBase
     {

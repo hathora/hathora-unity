@@ -1,16 +1,9 @@
 // Created by dylan@hathora.dev
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.SdkWrapper.Editor;
-using NUnit.Framework;
 using UnityEditor;
 
-namespace Hathora.Scripts.Utils.Editor.ConfigStyle
+namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyDeployAdvUI : HathoraConfigUIBase
     {
