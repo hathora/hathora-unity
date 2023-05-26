@@ -47,7 +47,7 @@ namespace Hathora.Scripts.Utils.Editor
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
         public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);
-        public static readonly RectOffset DefaultBtnPadding = new(left: 10, right: 10, top: 5, bottom: 5);
+        public static readonly RectOffset DefaultBtnPadding = new(left: 10, right: 10, top: 7, bottom: 7);
         public static readonly RectOffset NoPadding = new(left: 0, right: 0, top: 0, bottom: 0);
         public static readonly RectOffset DefaultMargin = new(left: 3, right: 3, top: 2, bottom: 2);
         public static readonly RectOffset NoMargin = new(left: 0, right: 0, top: 0, bottom: 0);

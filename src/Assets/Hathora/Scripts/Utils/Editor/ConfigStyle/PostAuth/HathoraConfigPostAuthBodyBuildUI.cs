@@ -74,6 +74,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private async Task insertGenerateServerBuildBtn()
         {
             bool clickedBuildBtn = insertLeftGeneralBtn("Generate Server Build");
+            InsertSpace1x();
+            
             if (!clickedBuildBtn)
                 return;
             

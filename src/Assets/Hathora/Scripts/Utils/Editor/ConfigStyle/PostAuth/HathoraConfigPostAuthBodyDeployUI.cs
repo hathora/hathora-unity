@@ -208,6 +208,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private async Task insertDeployAppBtn()
         {
             bool clickedDeployBtn = insertLeftGeneralBtn("Deploy Application");
+            InsertSpace1x();
+            
             if (!clickedDeployBtn)
                 return;
             

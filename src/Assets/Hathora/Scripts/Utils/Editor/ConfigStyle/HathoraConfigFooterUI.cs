@@ -36,6 +36,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             insertBuildUploadDeployHelpbox(_enabled: meetsDeployBtnReqs);
             insertBuildUploadDeployBtn(_enabled: meetsDeployBtnReqs); // !await
+            InsertSpace1x();
         }
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
@@ -71,7 +72,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                     return;
                 
                 Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
-                InsertSpace3x();
             }
             
             GUI.enabled = true;
