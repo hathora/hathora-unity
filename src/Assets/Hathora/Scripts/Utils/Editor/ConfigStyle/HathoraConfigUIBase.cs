@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
+using Hathora.Scripts.Utils.Extensions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -359,18 +360,37 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.EndHorizontal();
             return inputStr;
         }
-        
+
+        public enum EnumListOpts
+        {
+            AsIs,
+            AllCaps,
+            PascalWithSpaces,
+        }
+
         /// <summary>
         /// Useful for Popup lists (dropdowns) for GUI selection.
         /// </summary>
         /// <typeparam name="TEnum"></typeparam>
         /// <returns></returns>
-        protected static List<string> GetStrListOfEnumMemberKeys<TEnum>() 
-            where TEnum : Enum => Enum
+        protected static List<string> GetStrListOfEnumMemberKeys<TEnum>(EnumListOpts _opts)
+            where TEnum : Enum
+        {
+            IEnumerable<string> strEnumerable = Enum
                 .GetValues(typeof(TEnum))
                 .Cast<TEnum>()
-                .Select(e => e.ToString())
-                .ToList();
+                .Select(e =>
+                {
+                    return _opts switch
+                    {
+                        EnumListOpts.AllCaps => e.ToString().ToUpperInvariant(),
+                        EnumListOpts.PascalWithSpaces => e.ToString().SplitPascalCase(),
+                        _ => e.ToString(), // AsIs
+                    };
+                });
+
+            return strEnumerable.ToList();
+        }
 
         private static GUILayoutOption[] GetDefaultInputLayoutOpts() => new[]
         {

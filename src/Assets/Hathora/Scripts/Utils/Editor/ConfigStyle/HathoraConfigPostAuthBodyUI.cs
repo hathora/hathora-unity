@@ -372,9 +372,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             int selectedIndex = Config.HathoraDeployOpts.TransportTypeSelectedIndex;
             
             // Get list of string names from PlanName Enum members. Set UPPER.
-            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<TransportType>()
-                .Select(opt => opt.ToUpperInvariant())
-                .ToList();
+            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<TransportType>(
+                EnumListOpts.AllCaps);
 
             int newSelectedIndex = base.insertHorizLabeledPopupList(
                 _labelStr: "Transport Type",
