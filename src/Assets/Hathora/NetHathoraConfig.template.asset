@@ -12,31 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022a2291b89c82040a8bd048c0fdd537, type: 3}
   m_Name: NetHathoraConfig.template
   m_EditorClassIdentifier: 
-  hathoraCoreOpts:
+  _hathoraCoreOpts:
     _appId: 
-    _region: 1
+    _existingAppsSelectedIndex: -1
+    _existingAppsWithDeploymentWrapper: []
     _devAuthOpts:
       _devAuthToken: 
       _forceNewToken: 0
-  linuxAutoBuildOpts:
+  _linuxHathoraAutoBuildOpts:
     _serverBuildDirName: Build-Server
     _serverBuildExeName: Hathora-Unity-LinuxServer.x86_64
     _isDevBuild: 1
     _cleanBuildDir: 1
-  hathoraDeployOpts:
+  _hathoraDeployOpts:
     _roomsPerProcess: 1
-    _planName: 1
-    _transportInfo:
+    _planNameSelectedIndex: 1
+    _containerPortWrapper:
       _transportType: 2
       _portNumber: 7777
+    _transportTypeSelectedIndex: 2
     _envVars: []
-    advancedDeployOpts:
+    _advancedDeployOpts:
       _keepTempDir: 0
-      _extraTransportInfo1:
+      additionalTransportInfo1:
         _transportType: 2
         _portNumber: 7777
         _transportNickname: 
-      _extraTransportInfo2:
+      additionalTransportInfo2:
         _transportType: 2
         _portNumber: 7777
         _transportNickname: 
