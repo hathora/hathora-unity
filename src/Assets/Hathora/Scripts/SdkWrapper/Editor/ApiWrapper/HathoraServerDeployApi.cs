@@ -85,7 +85,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerDeployApi] " +
+            Debug.Log($"[HathoraServerDeployApi] Success - " +
                 $"BuildId: '{createDeploymentResult?.BuildId}', " +
                 $"DeployId: '{createDeploymentResult?.DeploymentId}");
 
