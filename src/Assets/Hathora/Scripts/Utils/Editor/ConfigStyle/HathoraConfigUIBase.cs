@@ -17,6 +17,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         #region Vars
         /// <summary>The selected Config instance</summary>
         protected NetHathoraConfig Config { get; }
+        
+        /// <summary>
+        /// Used to ApplyModifiedProperties() - save Config with peristence.
+        /// </summary>
         protected SerializedObject SerializedConfig { get; }
         
         /// <summary>Do we have an Auth token?</summary>

@@ -11,7 +11,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private HathoraConfigPostAuthBodyHeaderUI _bodyHeaderUI;
         private HathoraConfigPostAuthBodyBuildUI _bodyBuildUI;
         private HathoraConfigPostAuthBodyDeployUI _bodyDeployUI;
-        private HathoraConfigPostAuthBodyRoomLobbyUI _bodyRoomLobbyUI;
+        private HathoraConfigPostAuthBodyRoomUI bodyRoomUI;
         
         private bool devReAuthLoginButtonInteractable;
         private bool isRefreshingExistingApps;
@@ -49,7 +49,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             _bodyHeaderUI = new HathoraConfigPostAuthBodyHeaderUI(Config, SerializedConfig);
             _bodyBuildUI = new HathoraConfigPostAuthBodyBuildUI(Config, SerializedConfig);
             _bodyDeployUI = new HathoraConfigPostAuthBodyDeployUI(Config, SerializedConfig);
-            _bodyRoomLobbyUI = new HathoraConfigPostAuthBodyRoomLobbyUI(Config, SerializedConfig);
+            bodyRoomUI = new HathoraConfigPostAuthBodyRoomUI(Config, SerializedConfig);
         }
         #endregion // Init
         
@@ -73,7 +73,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             _bodyDeployUI.Draw();
             
             InsertSpace1x();
-            _bodyRoomLobbyUI.Draw();
+            bodyRoomUI.Draw();
         }
         #endregion // UI Draw
     }
