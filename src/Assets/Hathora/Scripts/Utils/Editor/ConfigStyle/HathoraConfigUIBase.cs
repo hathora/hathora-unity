@@ -454,6 +454,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         //     return newSelectedIndex;
         // }
 
+        /// <summary>
+        /// The slider is not ideal for large val ranges.
+        /// </summary>
+        /// <param name="_labelStr"></param>
+        /// <param name="_tooltip"></param>
+        /// <param name="_val"></param>
+        /// <param name="_minVal"></param>
+        /// <param name="_maxVal"></param>
+        /// <param name="_alignPopup"></param>
+        /// <returns></returns>
         protected int insertHorizLabeledIntSlider(
             string _labelStr,
             string _tooltip,
@@ -481,7 +491,46 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             EditorGUILayout.EndHorizontal();
             return inputInt;
-        }        
+        }
+        
+        /// <summary>
+        /// Beter than a slider for large int ranges, or in cases where
+        /// you won't really change it often.
+        /// </summary>
+        /// <param name="_labelStr"></param>
+        /// <param name="_tooltip"></param>
+        /// <param name="_val"></param>
+        /// <param name="_minVal"></param>
+        /// <param name="_maxVal"></param>
+        /// <param name="_alignPopup"></param>
+        /// <returns></returns>
+        protected int insertHorizLabeledConstrainedIntField(
+            string _labelStr,
+            string _tooltip,
+            int _val,
+            int _minVal = 0,
+            int _maxVal = int.MaxValue,
+            GuiAlign _alignPopup = GuiAlign.Stretched)
+        {
+            EditorGUILayout.BeginHorizontal();
+    
+            InsertLeftLabel(_labelStr, _tooltip);
+
+            if (_alignPopup == GuiAlign.SmallRight)
+                GUILayout.FlexibleSpace();
+
+            // USER INPUT >>
+            int inputInt = EditorGUILayout.IntField(_val, GetDefaultInputLayoutOpts());
+
+            // Constraint the value
+            inputInt = Mathf.Clamp(inputInt, _minVal, _maxVal);
+
+            if (_alignPopup == GuiAlign.SmallLeft)
+                GUILayout.FlexibleSpace();
+
+            EditorGUILayout.EndHorizontal();
+            return inputInt;
+        }
         
         protected void SaveConfigChange(string _key, string _newVal)
          {

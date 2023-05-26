@@ -335,7 +335,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertRoomsPerProcessHorizSliderGroup()
         {
-            int inputInt = base.insertHorizLabeledIntSlider(
+            int inputInt = base.insertHorizLabeledConstrainedIntField(
                 _labelStr: "Rooms per process",
                 _tooltip: null, // "Default: 1",
                 _val: Config.HathoraDeployOpts.RoomsPerProcess,
@@ -352,7 +352,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
         private void insertContainerPortNumberHorizSliderGroup()
         {
-            int inputInt = base.insertHorizLabeledIntSlider(
+            int inputInt = base.insertHorizLabeledConstrainedIntField(
                 _labelStr: "Container port number",
                 _tooltip: "Default: 7777 (<1024 is generally reserved by system)",
                 _val: Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
