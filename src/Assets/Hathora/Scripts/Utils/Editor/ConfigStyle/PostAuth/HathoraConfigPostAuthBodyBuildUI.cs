@@ -91,7 +91,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             string inputStr = base.insertHorizLabeledTextField(
                 _labelStr: "Build directory",
                 _tooltip: "Default: `Build-Linux-Server`",
-                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName);
+                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName,
+                _alignTextField: GuiAlign.SmallRight);
 
             bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
             if (isChanged)
@@ -105,7 +106,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             string inputStr = base.insertHorizLabeledTextField(
                 _labelStr: "Build file name", 
                 _tooltip: "Default: `Unity-LinuxServer.x86_64",
-                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName);
+                _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName,
+                _alignTextField: GuiAlign.SmallRight);
             
             bool isChanged = inputStr != Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
             if (isChanged)

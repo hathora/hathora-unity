@@ -27,6 +27,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected bool IsAuthed => 
             Config.HathoraCoreOpts.DevAuthOpts.HasAuthToken;
         
+        private const float DEFAULT_MAX_FIELD_WIDTH = 250F;
+        
         protected GUIStyle CenterAlignLabelStyle { get; private set; }
         protected GUIStyle CenterAlignSmLabelStyle { get; private set; }
         protected GUIStyle CenterAlignLargerTxtLabelNoWrapStyle { get; private set; }
@@ -241,37 +243,80 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUIContent iconContent = new(infoIcon, _tooltipStr);
             GUILayout.Label(iconContent, GUILayout.ExpandWidth(false));
         }
+        
+        protected void insertLeftSelectableLabel(
+            string _contentStr,
+            bool _vertCenter = false)
+        {
+            if (_vertCenter)
+            {
+                GUILayout.BeginVertical();
+                GUILayout.FlexibleSpace();    
+            }
+
+            Rect labelRect = GUILayoutUtility.GetRect(
+                new GUIContent(_contentStr),
+                LeftAlignLabelStyle,
+                GUILayout.ExpandWidth(true));
+        
+            EditorGUI.SelectableLabel(labelRect, _contentStr, LeftAlignLabelStyle);
+        
+            if (_vertCenter)
+            {
+                GUILayout.FlexibleSpace();
+                GUILayout.EndVertical();    
+            }
+
+        }
 
         /// <summary>
-        /// Add _tooltip str to include a _tooltip icon + hover text
+        /// Add _tooltip str to include a _tooltip icon + hover text.
         /// </summary>
         /// <param name="_labelStr"></param>
         /// <param name="_tooltip"></param>
         /// <param name="_selectable">Want to select some text for copying?</param>
+        /// <param name="_wrap">Should the label text be wrapped? Good for short header labels</param>
         protected void InsertLeftLabel(
             string _labelStr,
             string _tooltip = null,
-            bool _selectable = false)
+            bool _selectable = false,
+            bool _wrap = true,
+            bool _vertCenter = false)
         {
-            GUIContent labelContent = new(_labelStr);
+            GUIContent labelContent = new() { text = _labelStr };
             GUILayoutOption expandWidthOpt = GUILayout.ExpandWidth(false);
+
+            if (_vertCenter)
+            {
+                GUILayout.BeginVertical();
+                GUILayout.FlexibleSpace();
+            }
             
+            GUIStyle leftAlignStyle = _wrap 
+                ? LeftAlignNoWrapLabelStyle
+                : LeftAlignLabelStyle;
+
             if (_selectable)
             {
                 EditorGUILayout.SelectableLabel(
                     _labelStr,
-                    LeftAlignLabelStyle,
+                    leftAlignStyle,
                     expandWidthOpt);
             }
             else
             {
                 GUILayout.Label(
                     labelContent,
-                    LeftAlignLabelStyle,
+                    leftAlignStyle,
                     expandWidthOpt);
             }
             
-
+            if (_vertCenter)
+            {
+                GUILayout.FlexibleSpace();
+                GUILayout.EndVertical();
+            }
+            
             if (!string.IsNullOrEmpty(_tooltip))
                 InsertTooltipIcon(_tooltip);
         }
@@ -323,19 +368,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             return clickedBtn;
         }
 
-        protected void insertLeftSelectableLabel(string _contentStr)
-        {
-            float lineHeight = EditorGUIUtility.singleLineHeight;
-
-            Rect labelRect = GUILayoutUtility.GetRect(
-                new GUIContent(_contentStr), 
-                LeftAlignLabelStyle, 
-                GUILayout.ExpandWidth(true), 
-                GUILayout.Height(lineHeight));
-            
-            EditorGUI.SelectableLabel(labelRect, _contentStr, LeftAlignLabelStyle);
-        }
-
         /// <returns>bool clicked</returns>
         protected bool insertLeftGeneralBtn(string _content) =>
             GUILayout.Button(_content, GeneralButtonStyle);
@@ -350,16 +382,27 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected string insertHorizLabeledTextField(
             string _labelStr,
             string _tooltip,
-            string _val)
+            string _val,
+            GuiAlign _alignTextField = GuiAlign.Stretched)
         {
             EditorGUILayout.BeginHorizontal();
 
             InsertLeftLabel(_labelStr, _tooltip);
+            
+            if (_alignTextField == GuiAlign.SmallRight)
+                GUILayout.FlexibleSpace();
 
+            float maxTxtFieldWidth = _alignTextField == GuiAlign.Stretched
+                ? -1f
+                : DEFAULT_MAX_FIELD_WIDTH;
+            
             // USER INPUT >>
             string inputStr = GUILayout.TextField(
                 _val, 
-                GUILayout.ExpandWidth(true));
+                GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
+            
+            if (_alignTextField == GuiAlign.SmallLeft)
+                GUILayout.FlexibleSpace();
 
             EditorGUILayout.EndHorizontal();
             return inputStr;
@@ -396,11 +439,20 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             return strEnumerable.ToList();
         }
 
-        private static GUILayoutOption[] GetDefaultInputLayoutOpts() => new[]
+        private static GUILayoutOption[] GetDefaultInputLayoutOpts(
+            bool _expandWidth = true,
+            float _maxWidth = DEFAULT_MAX_FIELD_WIDTH) // 250
         {
-            GUILayout.ExpandWidth(true),
-            GUILayout.MaxWidth(250f),
-        };
+            List<GUILayoutOption> opts = new()
+            {
+                GUILayout.ExpandWidth(_expandWidth),
+            };
+
+            if (_maxWidth > 0)
+                opts.Add(GUILayout.MaxWidth(DEFAULT_MAX_FIELD_WIDTH));
+
+            return opts.ToArray();
+        }
         
         /// <summary>
         /// {label} {tooltip} {popupList}

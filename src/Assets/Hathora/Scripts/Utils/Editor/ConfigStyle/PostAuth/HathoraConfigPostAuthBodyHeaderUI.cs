@@ -103,11 +103,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return;
             
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("<b>AppId:</b>", LeftAlignNoWrapLabelStyle, GUILayout.ExpandWidth(false));
+            GUILayout.BeginHorizontal(); // AppIdDisplayCopyGroup
+            
+            InsertLeftLabel(
+                "<b>AppId:</b>", 
+                _wrap:false, 
+                _vertCenter:true);
 
             string selectedAppId = Config.HathoraCoreOpts.AppId;
-            base.insertLeftSelectableLabel(selectedAppId);
+            base.insertLeftSelectableLabel(selectedAppId, _vertCenter: true);
+            
             GUILayout.FlexibleSpace();
             
             // USER INPUT >>
@@ -115,8 +120,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (clickedCopyAppIdBtn)
                 onCopyAppIdBtnClick(selectedAppId);
 
-            GUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
+            GUILayout.EndHorizontal(); // AppIdDisplayCopyGroup
+            EditorGUILayout.EndVertical(); // GUI.skin.box
         }
 
         private void onCopyAppIdBtnClick(string _selectedAppId)

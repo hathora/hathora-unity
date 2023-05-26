@@ -32,6 +32,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
             insertAdvancedDeployFoldout();
+            InsertSpace2x();
         }
        
         private void insertAdvancedDeployFoldout()

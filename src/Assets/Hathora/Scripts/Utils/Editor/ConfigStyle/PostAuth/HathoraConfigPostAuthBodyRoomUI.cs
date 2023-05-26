@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -76,17 +77,33 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             insertRegionHorizPopupList();
             roomLobbyUI.Draw();
             insertCreateRoomLobbyBtn();
+            insertViewLogsMetricsLinkLbl();
+        }
+
+        private void insertViewLogsMetricsLinkLbl()
+        {
+            InsertSpace2x();
+            
+            InsertCenterLabel("View logs and metrics for your active rooms and processes below:");
+            InsertLinkLabel(
+                "Hathora Console",
+                HathoraEditorUtils.HATHORA_CONSOLE_URL,
+                _centerAlign: true);
+            
+            InsertSpace1x();
         }
 
         private async Task insertCreateRoomLobbyBtn()
         {
-            bool clickedCreateRoomLobbyBtn = insertLeftGeneralBtn("Deploy Application");
+            bool clickedCreateRoomLobbyBtn = insertLeftGeneralBtn("Create Room/Lobby");
             if (!clickedCreateRoomLobbyBtn)
                 return;
-            
-            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
-            Assert.That(deployment?.BuildId, Is.Not.Null,
-                "Deployment failed: Check console for details.");
+
+            throw new NotImplementedException("TODO");
+
+            // Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
+            // Assert.That(deployment?.BuildId, Is.Not.Null,
+            //     "Deployment failed: Check console for details.");
         }
 
         private void insertRegionHorizPopupList()
