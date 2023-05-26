@@ -58,6 +58,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                     deployOpts.ContainerPortWrapper.TransportType,
                     deployOpts.ContainerPortWrapper.PortNumber
                 );
+                
+                Debug.Log("[HathoraServerDeploy.CreateDeploymentAsync] " +
+                    $"deployConfig == <color=yellow>{deployConfig.ToJson()}</color>");
             }
             catch (Exception e)
             {
