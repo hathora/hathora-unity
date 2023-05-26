@@ -76,7 +76,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertDeploymentSettingsFoldoutComponents()
         {
-            insertPlanSizeHorizPopupList();
+            insertPlanNameHorizPopupList();
             insertRoomsPerProcessHorizSliderGroup();
             insertContainerPortNumberHorizSliderGroup();
             insertTransportTypeHorizRadioBtnGroup();
@@ -164,9 +164,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             }
         }
 
-        private void insertPlanSizeHorizPopupList()
+        private void insertPlanNameHorizPopupList()
         {
-            int selectedIndex = Config.HathoraDeployOpts.PlanSizeSelectedIndex;
+            int selectedIndex = Config.HathoraDeployOpts.PlanNameSelectedIndex;
             
             // Get list of string names from PlanName Enum members - with extra info
             List<string> displayOptsStrArr = Enum
@@ -187,7 +187,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 selectedIndex < displayOptsStrArr.Count;
 
             if (isNewValidIndex)
-                onSelectedPlanSizePopupIndexChanged(newSelectedIndex);
+                onSelectedPlanNamePopupIndexChanged(newSelectedIndex);
             
             InsertSpace2x();
         }
@@ -221,11 +221,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         
         #region Event Logic
-        private void onSelectedPlanSizePopupIndexChanged(int _newSelectedIndex)
+        private void onSelectedPlanNamePopupIndexChanged(int _newSelectedIndex)
         {
-            Config.HathoraDeployOpts.PlanSizeSelectedIndex = _newSelectedIndex;
+            Config.HathoraDeployOpts.PlanNameSelectedIndex = _newSelectedIndex;
             SaveConfigChange(
-                nameof(Config.HathoraDeployOpts.PlanSizeSelectedIndex), 
+                nameof(Config.HathoraDeployOpts.PlanNameSelectedIndex), 
                 _newSelectedIndex.ToString());
         }
         

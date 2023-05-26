@@ -6,6 +6,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using Hathora.Scripts.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -35,11 +36,11 @@ namespace Hathora.Scripts.SdkWrapper.Models
         }
 
         [SerializeField]
-        private int _planSizeSelectedIndex = (int)PlanName.Tiny;
-        public int PlanSizeSelectedIndex
+        private int _planNameSelectedIndex = (int)PlanName.Tiny;
+        public int PlanNameSelectedIndex
         {
-            get => _planSizeSelectedIndex;
-            set => _planSizeSelectedIndex = value;
+            get => _planNameSelectedIndex;
+            set => _planNameSelectedIndex = value;
         }
 
         
