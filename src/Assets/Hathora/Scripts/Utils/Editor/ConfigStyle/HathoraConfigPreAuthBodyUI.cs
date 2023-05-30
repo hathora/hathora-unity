@@ -152,8 +152,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             string _cancelLabelStr = "Cancel") 
         {
             // USER INPUT >>
-            if (GUILayout.Button(_cancelLabelStr, GeneralButtonStyle))
-                onCancelBtnClick(_cts);
+            bool clickedAuthCancelBtn = GUILayout.Button(_cancelLabelStr, GeneralButtonStyle);
+            if (clickedAuthCancelBtn)
+                onAuthCancelBtnClick(_cts);
             
             InsertSpace2x();
             InvokeRequestRepaint();
@@ -178,9 +179,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InvokeRequestRepaint();
         }
         
-        private void onCancelBtnClick(CancellationTokenSource _cts)
+        private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
         {
-            _cts?.Cancel();
+            _cancelTokenSrc?.Cancel();
             devAuthLoginButtonInteractable = true;
         }
         #endregion // Logic Events

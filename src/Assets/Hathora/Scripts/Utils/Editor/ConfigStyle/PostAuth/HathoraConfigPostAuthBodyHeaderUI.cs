@@ -56,7 +56,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertLoginTokenGroup()
         {
             insertDevTokenPasswordField();
-            insertLoginToHathoraConsoleBtn(); // !await
+            
+            bool showCancelBtn = HathoraServerAuth.HasCancellableToken && !devReAuthLoginButtonInteractable; 
+            if (showCancelBtn)
+                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
+            else
+                insertLoginToHathoraConsoleBtn(); // !await
             
             InsertSpace2x();
         }
@@ -173,34 +178,44 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private async Task insertLoginToHathoraConsoleBtn()
         {
-            EditorGUI.BeginDisabledGroup(disabled: false); 
+            string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>[Logged In]</color> " +
+                $"Log in with another account";
             
-            if (GUILayout.Button($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>[Logged In]</color> " +
-                    $"Log in with another account", GeneralButtonStyle))
+            // USER INPUT >>
+            if (GUILayout.Button(btnLabelStr, GeneralButtonStyle))
             {
                 devReAuthLoginButtonInteractable = false;
                 await HathoraServerAuth.DevAuthLogin(Config);
                 devReAuthLoginButtonInteractable = true; 
                 InvokeRequestRepaint();
             }
-            
-            EditorGUI.EndDisabledGroup();
-
-            if (HathoraServerAuth.HasCancellableToken && !devReAuthLoginButtonInteractable)
-                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
         }
         
-        private void insertAuthCancelBtn(CancellationTokenSource _cts) 
+        private void insertAuthCancelBtn(CancellationTokenSource _cancelTokenSrc)
         {
-            if (GUILayout.Button("Cancel", GeneralButtonStyle))
-            {
-                _cts?.Cancel();
-                devReAuthLoginButtonInteractable = true;
-            }
+            string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                "<b>Cancel</b> (Logging in with another account...)</color>";
             
-            InvokeRequestRepaint();
+            // USER INPUT >>
+            bool clickedCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
+            
+            if (clickedCancelBtn)
+                onAuthCancelBtnClick(_cancelTokenSrc);
         }
-        
+
+        private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onAuthCancelBtnClick");
+            onAuthDone(_cancelTokenSrc);   
+        }
+
+        private void onAuthDone(CancellationTokenSource _cancelTokenSrc = null)
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI.onAuthDone] Done (or cancelled)");
+            _cancelTokenSrc?.Cancel();
+            devReAuthLoginButtonInteractable = true;
+        }
+
         private void insertDevTokenPasswordField()
         {
             GUILayout.BeginHorizontal();

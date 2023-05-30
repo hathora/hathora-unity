@@ -116,6 +116,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
                 "<b>Cancel</b> (Creating Room/Lobby...)</color>";
 
+            // USER INPUT >>
             bool clickedCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
             if (clickedCancelBtn)
                 onCreateRoomCancelBtnClick(_cancelTokenSrc);
