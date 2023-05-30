@@ -56,24 +56,23 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertDeploymentSettingsFoldout()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            
-            isDeploymentFoldout = EditorGUILayout.Foldout(
+            isDeploymentFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isDeploymentFoldout, 
                 "Hathora Deployment Configuration");
             
             if (!isDeploymentFoldout)
             {
-                EditorGUILayout.EndVertical(); // End of foldout box skin
+                EditorGUILayout.EndFoldoutHeaderGroup();
                 return;
             }
     
+            EditorGUI.indentLevel++;
             InsertSpace2x();
 
             insertDeploymentSettingsFoldoutComponents();
 
-            EditorGUILayout.EndVertical(); // End of foldout box skin
-            InsertSpace3x();
+            EditorGUI.indentLevel--;
+            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         private void insertDeploymentSettingsFoldoutComponents()

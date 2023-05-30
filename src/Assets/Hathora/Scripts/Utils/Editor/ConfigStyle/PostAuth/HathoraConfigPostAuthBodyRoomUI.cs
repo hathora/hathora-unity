@@ -70,14 +70,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertCreateRoomOrLobbyFoldout()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            isCreateRoomLobbyFoldout = EditorGUILayout.Foldout(
+            isCreateRoomLobbyFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isCreateRoomLobbyFoldout, 
                 "Create Room or Lobby");
             
             if (!isCreateRoomLobbyFoldout)
             {
-                EditorGUILayout.EndVertical(); // End of foldout box skin
+                EditorGUILayout.EndFoldoutHeaderGroup();
                 return;
             }
     
@@ -86,9 +85,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
             insertCreateRoomOrLobbyFoldoutComponents();
 
-            EditorGUILayout.EndVertical(); // End of foldout box skin
-            InsertSpace3x();
             EditorGUI.indentLevel--;
+            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         private void insertCreateRoomOrLobbyFoldoutComponents()

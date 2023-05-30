@@ -41,15 +41,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertServerBuildSettingsFoldout()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-            isServerBuildFoldout = EditorGUILayout.Foldout(
+            isServerBuildFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isServerBuildFoldout,
                 "Server Build Settings");
 
             if (!isServerBuildFoldout)
             {
-                EditorGUILayout.EndVertical(); // End of foldout box skin
+                EditorGUILayout.EndFoldoutHeaderGroup();
                 return;
             }
             
@@ -58,8 +56,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             insertBuildSettingsFoldoutComponents();
             
-            EditorGUILayout.EndVertical(); // End of foldout box skin
             EditorGUI.indentLevel--;
+            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         private void insertBuildSettingsFoldoutComponents()

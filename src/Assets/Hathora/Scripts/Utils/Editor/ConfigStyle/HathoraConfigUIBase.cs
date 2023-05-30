@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.Utils.Extensions;
 using NUnit.Framework;
@@ -407,7 +406,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             EditorGUILayout.EndHorizontal();
             return inputStr;
         }
-
+        
         public enum EnumListOpts
         {
             AsIs,
@@ -657,6 +656,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 enumerable = enumerable.Prepend(_prependDummyIndex0Str);
 
             return enumerable.ToList();
+        }
+
+        /// <summary>
+        /// EditorGUI Indents don't seem to work in fields - this works around it.
+        /// (!) MUST include a EndFieldIndent() call somewhere at the end. Care of early return statements.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        protected void BeginFieldIndent()
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("", GUILayout.Width(10)); // Indent workaround for non-groups
+        }
+
+        protected void EndFieldIndent()
+        {
+            EditorGUILayout.EndHorizontal();
         }
     }
 }
