@@ -1,5 +1,7 @@
 // Created by dylan@hathora.dev
 
+using System.Collections.Generic;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using UnityEditor;
 using UnityEngine;
@@ -62,15 +64,43 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertLobbySettingsFoldoutComponents()
         {
-            BeginFieldIndent();
-
             insertLobbyInitConfigTextAreaHorizGroup();
+            insertLobbyVisibilityPopupListHorizGroup();
+        }
 
+        private void insertLobbyVisibilityPopupListHorizGroup()
+        { 
+            BeginFieldIndent();
+            
+            int selectedIndex = Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex;
+
+            // Get list of string names from PlanName Enum members - with extra info.
+            // The index order is !modified.
+            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<CreateLobbyRequest.VisibilityEnum>(
+                _prependDummyIndex0Str: "<Lobby Visibility>");
+
+            int newSelectedIndex = base.insertHorizLabeledPopupList(
+                _labelStr: "Visibility",
+                _tooltip: null,
+                _displayOptsStrArr: displayOptsStrArr.ToArray(),
+                _selectedIndex: selectedIndex,
+                GuiAlign.SmallRight);
+
+            bool isNewValidIndex = selectedIndex >= 0 &&
+                newSelectedIndex != selectedIndex &&
+                selectedIndex < displayOptsStrArr.Count;
+
+            if (isNewValidIndex)
+                onSelectedLobbyVisibilityPopupIndexChanged(newSelectedIndex);
+            
             EndFieldIndent();
+            InsertSpace1x();
         }
 
         private void insertLobbyInitConfigTextAreaHorizGroup()
         {
+            BeginFieldIndent();
+
             string inputStr = base.insertHorizLabeledTextField(
                 _labelStr: "Initial Config",
                 _tooltip: null,
@@ -82,6 +112,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (isChanged)
                 onLobbyInitConfigChanged(inputStr);
 
+            EndFieldIndent();
             InsertSpace1x();
         }
 
@@ -96,7 +127,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         
         #region Event Logic
-        // TODO
+        private void onSelectedLobbyVisibilityPopupIndexChanged(int _newSelectedIndex)
+        {
+            Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex = _newSelectedIndex;
+            SaveConfigChange(
+                nameof(Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex), 
+                _newSelectedIndex.ToString());        }
         #endregion // Event Logic
     }
 }

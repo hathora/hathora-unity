@@ -101,7 +101,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             insertViewLogsMetricsLinkLbl();
         }
 
-                private void insertViewLogsMetricsLinkLbl()
+        private void insertViewLogsMetricsLinkLbl()
         {
             InsertSpace2x();
             

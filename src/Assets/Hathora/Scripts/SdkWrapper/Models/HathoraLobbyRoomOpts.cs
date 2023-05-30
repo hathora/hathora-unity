@@ -4,7 +4,6 @@ using System;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Client.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -55,6 +54,17 @@ namespace Hathora.Scripts.SdkWrapper.Models
         {
             get => _initConfigJson;
             set => _initConfigJson = value;
+        }
+
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.</summary>
+        [SerializeField]
+        private int _lobbyVisibilitySelectedIndex = (int)CreateLobbyRequest.VisibilityEnum.Public; 
+
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.</summary>
+        public int LobbyVisibilitySelectedIndex
+        {
+            get => _lobbyVisibilitySelectedIndex;
+            set => _lobbyVisibilitySelectedIndex = value;
         }
         #endregion // Lobby Settings (Optional)
     }

@@ -6,7 +6,6 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common.Models;
 using Hathora.Scripts.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
