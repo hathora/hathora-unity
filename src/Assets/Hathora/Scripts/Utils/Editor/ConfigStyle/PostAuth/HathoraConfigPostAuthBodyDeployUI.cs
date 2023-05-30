@@ -57,11 +57,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertDeploymentSettingsFoldout()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            
             isDeploymentFoldout = EditorGUILayout.Foldout(
                 isDeploymentFoldout, 
                 "Hathora Deployment Configuration");
             
-            if (isDeploymentFoldout)
+            if (!isDeploymentFoldout)
             {
                 EditorGUILayout.EndVertical(); // End of foldout box skin
                 return;

@@ -41,7 +41,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 isLobbySettingsFoldout, 
                 "Lobby Settings (optional)");
             
-            if (isLobbySettingsFoldout)
+            if (!isLobbySettingsFoldout)
             {
                 EditorGUILayout.EndVertical(); // End of foldout box skin
                 return;

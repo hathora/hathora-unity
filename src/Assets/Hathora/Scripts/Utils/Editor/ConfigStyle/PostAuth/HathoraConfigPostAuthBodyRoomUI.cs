@@ -56,7 +56,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 isCreateRoomLobbyFoldout, 
                 "Create Room or Lobby");
             
-            if (isCreateRoomLobbyFoldout)
+            if (!isCreateRoomLobbyFoldout)
             {
                 EditorGUILayout.EndVertical(); // End of foldout box skin
                 return;
