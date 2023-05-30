@@ -22,15 +22,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         public static bool HasCancellableToken =>
             ActiveCts?.Token is { CanBeCanceled: true };
         
-        public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig) 
+        public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig)
         {
-            // Cancel an old op 1st
-            if (ActiveCts != null && ActiveCts.Token.CanBeCanceled)
-                ActiveCts.Cancel();
- 
-            ActiveCts = new CancellationTokenSource(
-                TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
-
+            createNewAuthCancelToken();
             Auth0Login auth = new(); 
             string refreshToken = await auth.GetTokenAsync(ActiveCts.Token);
              
@@ -43,6 +37,16 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             }
             
             SetAuthToken(_netHathoraConfig, refreshToken);
+        }
+
+        private static void createNewAuthCancelToken()
+        {
+            // Cancel an old op 1st
+            if (ActiveCts != null && ActiveCts.Token.CanBeCanceled)
+                ActiveCts.Cancel();
+ 
+            ActiveCts = new CancellationTokenSource(
+                TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
         }
 
         /// <summary>Shortcut to set dev auth token with log</summary>
