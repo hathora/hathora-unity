@@ -48,10 +48,10 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
         {
-            LobbyInitConfig lobbyInitConfig = new();
+            InitConfigExample initConfigExample = new();
             CreateLobbyRequest request = new(
                 lobbyVisibility, 
-                lobbyInitConfig, 
+                initConfigExample, 
                 NetHathoraConfig.HathoraLobbyRoomOpts.HathoraRegion);
 
             Lobby lobby;
