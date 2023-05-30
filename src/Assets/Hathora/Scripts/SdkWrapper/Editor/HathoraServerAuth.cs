@@ -26,7 +26,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         {
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
-            string refreshToken = await auth.GetTokenAsync(ActiveCts.Token);
+            string refreshToken = await auth.GetTokenAsync(cancelToken: ActiveCts.Token);
              
             if (string.IsNullOrEmpty(refreshToken))
             {

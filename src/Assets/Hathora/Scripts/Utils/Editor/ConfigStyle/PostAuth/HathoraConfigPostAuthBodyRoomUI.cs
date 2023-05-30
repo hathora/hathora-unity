@@ -8,11 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.Utils.Extensions;
 using NUnit.Framework;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,7 +20,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     {
         #region Vars
         private HathoraConfigPostAuthBodyRoomLobbyUI roomLobbyUI { get; set; }
-        public static CancellationTokenSource CreateRoomActiveCts { get; set; } // TODO
+        public static CancellationTokenSource CreateRoomActiveCancelTokenSrc { get; set; } // TODO
         private const int CREATE_ROOM_TIMEOUT_SECONDS = 30;
         private bool isCreatingRoom { get; set; }
         
@@ -104,21 +102,23 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             bool enableCreateRoomBtn = checkCanEnableCreateRoomBtn();
             insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
 
-            if (isCreatingRoom)
-                insertCreateRoomLobbyCancelBtn();
+            bool showCancelBtn = isCreatingRoom && CreateRoomActiveCancelTokenSrc.Token.CanBeCanceled; 
+            if (showCancelBtn)
+                insertCreateRoomLobbyCancelBtn(CreateRoomActiveCancelTokenSrc);
             else
                 insertCreateRoomLobbyBtn(enableCreateRoomBtn);
             
             insertViewLogsMetricsLinkLbl();
         }
 
-        private void insertCreateRoomLobbyCancelBtn()
+        private void insertCreateRoomLobbyCancelBtn(CancellationTokenSource _cancelTokenSrc)
         {
             string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
-                "Cancel Create Room/Lobby</color>";
-            
-            if (GUILayout.Button(btnLabelStr, GeneralButtonStyle))
-                onCreateRoomCancelBtnClick();
+                "<b>Cancel</b> (Creating Room/Lobby...)</color>";
+
+            bool clickedCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
+            if (clickedCancelBtn)
+                onCreateRoomCancelBtnClick(_cancelTokenSrc);
         }
         
         private void insertCreateRoomLobbyBtnHelpboxOnErr(bool _enable)
@@ -253,7 +253,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             try
             {
                 connectionInfo = await roomApi.CreateRoomAsync(
-                    _cancelToken: CreateRoomActiveCts.Token);
+                    _cancelToken: CreateRoomActiveCancelTokenSrc.Token);
             }
             catch (Exception e)
             {
@@ -268,7 +268,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             {
                 room = await roomApi.PollGetRoomUntilActiveAsync(
                     connectionInfo?.RoomId,
-                    CreateRoomActiveCts.Token);
+                    CreateRoomActiveCancelTokenSrc.Token);
             }
             catch (Exception e)
             {
@@ -284,13 +284,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             onCreateRoomDone();
         }
 
-        private void onCreateRoomCancelBtnClick() => 
-            onCreateRoomDone();
+        private void onCreateRoomCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomCancelBtnClick");
+            onCreateRoomDone(_cancelTokenSrc);
+        }
 
-        private void onCreateRoomDone()
+        private void onCreateRoomDone(CancellationTokenSource _cancelTokenSource = null)
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
-            CreateRoomActiveCts?.Cancel();
+            CreateRoomActiveCancelTokenSrc?.Cancel();
             isCreatingRoom = false;
         }
         #endregion // Event Logic
@@ -301,10 +304,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private static void createNewCreateRoomCancelToken()
         {
             // Cancel an old op 1st
-            if (CreateRoomActiveCts != null && CreateRoomActiveCts.Token.CanBeCanceled)
-                CreateRoomActiveCts.Cancel();
+            if (CreateRoomActiveCancelTokenSrc != null && CreateRoomActiveCancelTokenSrc.Token.CanBeCanceled)
+                CreateRoomActiveCancelTokenSrc.Cancel();
  
-            CreateRoomActiveCts = new CancellationTokenSource(
+            CreateRoomActiveCancelTokenSrc = new CancellationTokenSource(
                 TimeSpan.FromSeconds(CREATE_ROOM_TIMEOUT_SECONDS));
         }
         
