@@ -22,6 +22,8 @@ namespace Hathora.Scripts.SdkWrapper.Models
             ? null
             : ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId;
         
+        public bool HasAppId => !string.IsNullOrEmpty(AppId);
+        
         [SerializeField]
         private int _existingAppsSelectedIndex = -1;
         public int ExistingAppsSelectedIndex

@@ -40,10 +40,12 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         #region Server Room Async Hathora SDK Calls
         /// <summary>
         /// Wrapper for `CreateRoomAsync` to upload and room a cloud room to Hathora.
+        /// You generally want to call once to get the roomId, then poll GetRoomInfoAsync() 
+        /// (with that roomId) until status is Active.
         /// </summary>
         /// <returns>Returns Room on success</returns>
         public async Task<ConnectionInfoV2> CreateRoomAsync(
-            string roomId,
+            string roomId = null,
             CancellationToken _cancelToken = default)
         {
             CreateRoomRequest createRoomReq = null;
@@ -70,8 +72,15 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                     roomId,
                     _cancelToken);
             }
+            catch (TaskCanceledException)
+            {
+                // The user explicitly cancelled, or the Task timed out
+                Debug.Log("[HathoraServerRoomApi.GetRoomInfoAsync] Task cancelled");
+                return null;
+            }
             catch (ApiException apiErr)
             {
+                // HTTP err from Hathora Cloud
                 HandleServerApiException(
                     nameof(HathoraServerRoomApi),
                     nameof(CreateRoomAsync), 
@@ -79,14 +88,91 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerRoomApi] Success - " +
-                $"RoomId: '{createRoomResult?.RoomId}', " +
-                $"Status: '{createRoomResult?.Status}', " +
-                $"ExposedPort: '{createRoomResult?.ExposedPort}");
+            Debug.Log($"[HathoraServerRoomApi] Success: " +
+                $"<color=yellow>{createRoomResult.ToJson()}</color>");
 
             return createRoomResult;
         }
-        #endregion // Server Room Async Hathora SDK Calls
+        
+        public async Task<Room> GetRoomInfoAsync(
+            string _roomId, 
+            CancellationToken _cancelToken = default)
+        {
+            Room getRoomInfoResult;
 
+            try
+            {
+                getRoomInfoResult = await roomApi.GetRoomInfoAsync(
+                    AppId,
+                    _roomId,
+                    _cancelToken);
+            }
+            catch (TaskCanceledException)
+            {
+                // The user explicitly cancelled, or the Task timed out
+                Debug.Log("[HathoraServerRoomApi.GetRoomInfoAsync] Task cancelled");
+                return null;
+            }
+            catch (ApiException apiErr)
+            {
+                // HTTP err from Hathora Cloud
+                HandleServerApiException(
+                    nameof(HathoraServerRoomApi),
+                    nameof(GetRoomInfoAsync), 
+                    apiErr);
+                return null;
+            }
+
+            Debug.Log($"[HathoraServerRoomApi] Success: " +
+                $"<color=yellow>{getRoomInfoResult.ToJson()}</color>");
+
+            return getRoomInfoResult;
+        }
+        
+        /// <summary>This shouldn't take long, so we poll once per second.</summary>
+        /// <param name="_roomApi"></param>
+        /// <returns></returns>
+        public async Task<Room> PollGetRoomUntilActiveAsync(
+            string _roomId,
+            CancellationToken _cancelToken)
+        {
+            Room room = null;
+            int attemptNum = 0;
+            
+            while (room is not { Status: RoomStatus.Active })
+            {
+                // Validate
+                _cancelToken.ThrowIfCancellationRequested();
+
+                if (room?.Status == RoomStatus.Destroyed)
+                {
+                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.pollUntilCreatedRoom] " +
+                        "Room was destroyed.");
+                    return null;
+                }
+                
+                if (room?.Status == RoomStatus.Suspended)
+                {
+                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.pollUntilCreatedRoom] " +
+                        "Room was suspended.");
+                    return null;
+                }
+                
+                // Try again
+                attemptNum++;
+
+                Debug.Log("[HathoraConfigPostAuthBodyRoomUI.pollUntilCreatedRoom] " +
+                    $"Attempt #{attemptNum} ...");
+                
+                room = await GetRoomInfoAsync(
+                    _roomId,
+                    _cancelToken: _cancelToken);
+                
+                await Task.Delay(TimeSpan.FromSeconds(1), _cancelToken);
+            }
+
+            return room;
+        }
+        #endregion // Server Room Async Hathora SDK Calls
     }
 }

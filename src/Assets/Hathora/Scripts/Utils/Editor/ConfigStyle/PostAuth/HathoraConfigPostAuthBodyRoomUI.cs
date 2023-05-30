@@ -3,12 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
+using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
 using Hathora.Scripts.Utils.Extensions;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +21,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     public class HathoraConfigPostAuthBodyRoomUI : HathoraConfigUIBase
     {
         #region Vars
-        private HathoraConfigPostAuthBodyRoomLobbyUI roomLobbyUI;
+        private HathoraConfigPostAuthBodyRoomLobbyUI roomLobbyUI { get; set; }
+        public static CancellationTokenSource CreateRoomActiveCts { get; set; } // TODO
+        private const int CREATE_ROOM_TIMEOUT_SECONDS = 30;
+        private bool isCreatingRoom { get; set; }
         
         // Region lists
         private readonly List<string> displayOptsStrList;
@@ -88,17 +95,56 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             EditorGUI.indentLevel--;
             EditorGUILayout.EndFoldoutHeaderGroup();
         }
-
+        
         private void insertCreateRoomOrLobbyFoldoutComponents()
         {
             insertRegionHorizPopupList();
             roomLobbyUI.Draw();
             
-            EditorGUI.BeginDisabledGroup(disabled: true); // TODO: WIP - Enable after finished
-            insertCreateRoomLobbyBtn();
-            EditorGUI.EndDisabledGroup();
+            bool enableCreateRoomBtn = checkCanEnableCreateRoomBtn();
+            insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
+
+            if (isCreatingRoom)
+                insertCreateRoomLobbyBtn(enableCreateRoomBtn);
+            else
+                insertCreateRoomLobbyCancelBtn();
             
             insertViewLogsMetricsLinkLbl();
+        }
+
+        private void insertCreateRoomLobbyCancelBtn()
+        {
+            if (!GUILayout.Button("Cancel", GeneralButtonStyle))
+                return; 
+            
+            // Cancelled >>
+            onCreateRoomCancelBtnClick();
+        }
+        
+        private void insertCreateRoomLobbyBtnHelpboxOnErr(bool _enable)
+        {
+            if (_enable)
+                return;
+            
+            // Explain why the button is disabled
+            const MessageType helpMsgType = MessageType.Error;
+            StringBuilder helpMsgStrb = new("Missing required fields: ");
+            
+            // (!) Hathora SDK Enums start at index 1 (not 0)
+            if (!Config.HathoraCoreOpts.HasAppId)
+                helpMsgStrb.Append("`AppId, `");
+            
+            if (Config.HathoraLobbyRoomOpts.RegionSelectedIndex < 1)
+                helpMsgStrb.Append("`Region, `");
+            
+            if (Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex < 1)
+                helpMsgStrb.Append("`Lobby Visibility, `");
+
+            if (string.IsNullOrEmpty(Config.HathoraLobbyRoomOpts.InitConfigJson))
+                helpMsgStrb.Append("`Init Config must at least be {}, `");
+            
+            // Post the help box *before* we disable the button so it's easier to see (if toggleable)
+            EditorGUILayout.HelpBox(helpMsgStrb.ToString(), helpMsgType);
         }
 
         private void insertViewLogsMetricsLinkLbl()
@@ -118,17 +164,29 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             InsertSpace1x();
         }
 
-        private async Task insertCreateRoomLobbyBtn()
+        private async Task insertCreateRoomLobbyBtn(bool _enable)
         {
-            bool clickedCreateRoomLobbyBtn = insertLeftGeneralBtn("Create Room/Lobby");
+            string btnLabelStr = isCreatingRoom 
+                ? "Creating Room..." 
+                : "Create Room/Lobby";
+
+            EditorGUI.BeginDisabledGroup(disabled: !_enable);
+            
+            bool clickedCreateRoomLobbyBtn = InsertLeftGeneralBtn(btnLabelStr);
+
+            EditorGUI.EndDisabledGroup();
+            InsertSpace1x();
+
             if (!clickedCreateRoomLobbyBtn)
                 return;
 
-            throw new NotImplementedException("TODO");
+            onCreateRoomLobbyBtnClick(); // !await
 
             // Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
             // Assert.That(deployment?.BuildId, Is.Not.Null,
             //     "Deployment failed: Check console for details.");
+            
+            EditorGUI.EndDisabledGroup();
         }
 
         private void insertRegionHorizPopupList()
@@ -179,7 +237,84 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 $"Selected Region: {(Region)Config.HathoraLobbyRoomOpts.RegionSelectedIndex}" +
                 $" (index {_newSelectedIndex})]");
         }
+        
+        /// <summary>
+        /// On cancel, we'll set !isCreatingRoom so we can try again.
+        /// </summary>
+        private async Task onCreateRoomLobbyBtnClick()
+        {
+            isCreatingRoom = true;
+
+            createNewCreateRoomCancelToken();
+            HathoraServerRoomApi roomApi = new(Config);
+            
+            
+            ConnectionInfoV2 connectionInfo = null;
+            try
+            {
+                connectionInfo = await roomApi.CreateRoomAsync(
+                    _cancelToken: CreateRoomActiveCts.Token);
+            }
+            catch (Exception e)
+            {
+                // Could be a TaskCanceledException
+                onCreateRoomDone();
+                return;
+            }
+            
+
+            Room room = null;
+            try
+            {
+                room = await roomApi.PollGetRoomUntilActiveAsync(
+                    connectionInfo?.RoomId,
+                    CreateRoomActiveCts.Token);
+            }
+            catch (Exception e)
+            {
+                // Could be a TaskCanceledException
+                onCreateRoomDone();
+                return;
+            }
+            
+            
+            Assert.That(connectionInfo?.RoomId, Is.Not.Null,
+                "Failed to create room: See console");
+
+            onCreateRoomDone();
+        }
+
+        private void onCreateRoomCancelBtnClick() => 
+            onCreateRoomDone();
+
+        private void onCreateRoomDone()
+        {
+            CreateRoomActiveCts?.Cancel();
+            isCreatingRoom = false;
+        }
         #endregion // Event Logic
 
+        
+        #region Utils
+        /// <summary>Cancel old, create new</summary>
+        private static void createNewCreateRoomCancelToken()
+        {
+            // Cancel an old op 1st
+            if (CreateRoomActiveCts != null && CreateRoomActiveCts.Token.CanBeCanceled)
+                CreateRoomActiveCts.Cancel();
+ 
+            CreateRoomActiveCts = new CancellationTokenSource(
+                TimeSpan.FromSeconds(CREATE_ROOM_TIMEOUT_SECONDS));
+        }
+        
+        /// <summary>(!) Hathora SDK Enums start at index 1 (not 0).</summary>
+        /// <returns></returns>
+        private bool checkCanEnableCreateRoomBtn() =>
+            Config.HathoraCoreOpts.HasAppId &&
+            Config.HathoraLobbyRoomOpts.RegionSelectedIndex > 0 &&
+            Config.HathoraLobbyRoomOpts.HathoraRegion > 0 &&
+            Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex > 0 &&
+            !string.IsNullOrEmpty(Config.HathoraLobbyRoomOpts.InitConfigJson);
+        #endregion // Utils
     }
 }
