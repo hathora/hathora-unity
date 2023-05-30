@@ -398,8 +398,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             // USER INPUT >>
             string inputStr = isTextArea
-                ? GUILayout.TextArea(_val, GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth))
-                : GUILayout.TextField(_val, GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
+                ? EditorGUILayout.TextArea(_val, getDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth))
+                : GUILayout.TextField(_val, getDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
             
             if (_alignTextField == GuiAlign.SmallLeft)
                 GUILayout.FlexibleSpace();
@@ -447,17 +447,21 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             return enumerable.ToList();
         }
         
-        private static GUILayoutOption[] GetDefaultInputLayoutOpts(
-            bool _expandWidth = true,
-            float _maxWidth = DEFAULT_MAX_FIELD_WIDTH) // 250
+        private static GUILayoutOption[] getDefaultInputLayoutOpts(
+            float _maxWidth = DEFAULT_MAX_FIELD_WIDTH, 
+            bool _expandWidth = false, 
+            float _height = -1f)
         {
-            List<GUILayoutOption> opts = new()
-            {
-                GUILayout.ExpandWidth(_expandWidth),
-            };
+            List<GUILayoutOption> opts = new List<GUILayoutOption>();
 
-            if (_maxWidth > 0)
-                opts.Add(GUILayout.MaxWidth(DEFAULT_MAX_FIELD_WIDTH));
+            if (_expandWidth)
+                opts.Add(GUILayout.ExpandWidth(true));
+
+            if (_maxWidth > 0f)
+                opts.Add(GUILayout.MaxWidth(_maxWidth));
+
+            if (_height > 0f)
+                opts.Add(GUILayout.Height(_height));
 
             return opts.ToArray();
         }
@@ -488,7 +492,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             int newSelectedIndex = EditorGUILayout.Popup(
                 _selectedIndex, 
                 _displayOptsStrArr,
-                GetDefaultInputLayoutOpts());
+                getDefaultInputLayoutOpts());
             
             if (_alignPopup == GuiAlign.SmallLeft)
                 GUILayout.FlexibleSpace();
@@ -568,7 +572,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 _val,
                 _minVal,
                 _maxVal,
-                GetDefaultInputLayoutOpts());
+                getDefaultInputLayoutOpts());
 
             if (_alignPopup == GuiAlign.SmallLeft)
                 GUILayout.FlexibleSpace();
@@ -604,7 +608,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 GUILayout.FlexibleSpace();
 
             // USER INPUT >>
-            int inputInt = EditorGUILayout.IntField(_val, GetDefaultInputLayoutOpts());
+            int inputInt = EditorGUILayout.IntField(_val, getDefaultInputLayoutOpts());
 
             // Constraint the value
             inputInt = Mathf.Clamp(inputInt, _minVal, _maxVal);
