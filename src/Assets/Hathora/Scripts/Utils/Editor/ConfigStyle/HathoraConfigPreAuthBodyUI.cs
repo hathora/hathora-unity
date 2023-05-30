@@ -134,7 +134,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             bool clickedLabelLink = InsertLinkLabelEvent(btnLabel, _centerAlign: true);
 
             if (clickedLabelLink)
-                onLoginBtnClick();
+                onLoginBtnClickAsync();
             
             EndCenterHorizAlign();
         }
@@ -142,8 +142,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private async Task insertDevAuthLoginBtn()
         {
             // USER INPUT >>
-            if (GUILayout.Button("Log in to Hathora Cloud", BigButtonStyle))
-                await onLoginBtnClick();
+            bool clickedLoginBtn = GUILayout.Button("Log in to Hathora Cloud", BigButtonStyle);
+            if (clickedLoginBtn)
+                await onLoginBtnClickAsync();
             
             InsertSpace2x();
         }
@@ -166,26 +167,31 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void onInsertTokenCacheBtnClick(string _cachedAuthToken)
         {
             HathoraServerAuth.SetAuthToken(Config, _cachedAuthToken);
+            onLoginSuccess();
         }
         #endregion // UI Draw
 
         
         #region Logic Events
-        private async Task onLoginBtnClick()
+        private async Task<bool> onLoginBtnClickAsync()
         {
-            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginBtnClick");
+            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginBtnClickAsync");
             devAuthLoginButtonInteractable = false;
                 
-            await HathoraServerAuth.DevAuthLogin(Config);
-            onLoginDone();
+            bool isSuccess = await HathoraServerAuth.DevAuthLogin(Config);
+            if (isSuccess)
+                onLoginSuccess();
             
-            devAuthLoginButtonInteractable = true; 
+            devAuthLoginButtonInteractable = true;
+            return isSuccess;
         }
 
-        private void onLoginDone(CancellationTokenSource _cancelTokenSrc = null)
+        private void onLoginSuccess()
         {
-            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginDone (or cancelled)");
-            _cancelTokenSrc?.Cancel();
+            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginSuccess");
+             
+            // Set a flag to refresh apps automatically the next time we Draw post-auth body header
+            Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = true;
         }
 
         private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)

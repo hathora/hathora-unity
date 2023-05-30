@@ -9,6 +9,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
+using PlasticGui.WorkspaceWindow.Topbar;
 using UnityEditor;
 using UnityEngine;
 
@@ -144,10 +145,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertExistingAppsRefreshBtn()
         {
+            bool recentlyAuthed = Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed;
+            string btnLabelStr = recentlyAuthed ? 
+                "↻ Refreshing..." : 
+                "↻ Refresh List";
+            
             // USER INPUT >>
-            bool clickedAppRefreshBtn = InsertLeftGeneralBtn("↻ Refresh List"); 
-            if (clickedAppRefreshBtn)
+            EditorGUI.BeginDisabledGroup(disabled: recentlyAuthed); 
+            bool clickedAppRefreshBtn = InsertLeftGeneralBtn(btnLabelStr); 
+            EditorGUI.EndDisabledGroup();
+
+            if (clickedAppRefreshBtn || recentlyAuthed)
+            {
+                // TODO: Add a cancel btn
                 onRefreshAppsListBtnClick();
+                Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = false;
+            }
         }
 
         /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
@@ -247,6 +260,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         
         private async Task onRefreshAppsListBtnClick()
         {
+            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onRefreshAppsListBtnClick");   
             isRefreshingExistingApps = true;
             HathoraServerAppApi appApi = new(Config); 
             
@@ -284,14 +298,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             devReAuthLoginButtonInteractable = false;
             
             bool isSuccess = await HathoraServerAuth.DevAuthLogin(Config);
-            onLoginToHathoraConsoleBtnDone(isSuccess);
+            if (isSuccess)
+                onLoginToHathoraSuccess();
             
             devReAuthLoginButtonInteractable = true;
         }
 
-        private void onLoginToHathoraConsoleBtnDone(bool _isSuccess)
+        private void onLoginToHathoraSuccess()
         {
-            Debug.Log("[]");
+            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onLoginToHathoraSuccess");
         }
         #endregion // Event Logic
 

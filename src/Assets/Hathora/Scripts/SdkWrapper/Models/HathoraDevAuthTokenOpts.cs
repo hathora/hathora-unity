@@ -24,6 +24,9 @@ namespace Hathora.Scripts.SdkWrapper.Models
             set => _forceNewToken = value;
         }
         
+        /// <summary>Temp var that triggers refreshing apps list after init auth</summary>
+        public bool RecentlyAuthed { get; set; }
+        
         
         // Public utils
         public bool HasAuthToken => !string.IsNullOrEmpty(_devAuthToken);
