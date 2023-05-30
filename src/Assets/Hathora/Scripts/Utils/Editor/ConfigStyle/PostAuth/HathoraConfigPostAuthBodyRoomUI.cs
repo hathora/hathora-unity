@@ -89,9 +89,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             InsertSpace2x();
             
             InsertCenterLabel("View logs and metrics for your active rooms and processes below:");
+
+            string consoleAppUrl = HathoraEditorUtils.HATHORA_CONSOLE_APP_BASE_URL +
+                $"/{Config.HathoraCoreOpts.AppId}";
+            
             InsertLinkLabel(
                 "Hathora Console",
-                HathoraEditorUtils.HATHORA_CONSOLE_URL,
+                consoleAppUrl,
                 _centerAlign: true);
             
             InsertSpace1x();

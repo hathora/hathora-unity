@@ -20,7 +20,17 @@ namespace Hathora.Scripts.Utils.Editor
     {
         #region Links
         public const string HATHORA_HOME_URL = "https://hathora.dev";
-        public const string HATHORA_CONSOLE_URL = "https://console.hathora.dev";
+        
+        /// <summary>
+        /// Generally appended with application/appId: "https://console.hathora.dev/application/{appId}"
+        /// </summary>
+        public const string HATHORA_CONSOLE_BASE_URL = "https://console.hathora.dev";
+        
+        /// <summary>
+        /// Generally appended with the appId: "https://console.hathora.dev/application/{appId}"
+        /// </summary>
+        public const string HATHORA_CONSOLE_APP_BASE_URL = HATHORA_CONSOLE_BASE_URL + "/application"; 
+        
         public const string HATHORA_DOCS_URL = "https://docs.hathora.dev";
         public const string HATHORA_DOCS_DEMO_PROJECTS_URL = "https://github.com/hathora";
         public const string HATHORA_DOCS_GETTING_STARTED_URL = "https://hathora.dev/docs/get-started";
