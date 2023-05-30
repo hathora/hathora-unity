@@ -446,7 +446,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             return enumerable.ToList();
         }
-
+        
         private static GUILayoutOption[] GetDefaultInputLayoutOpts(
             bool _expandWidth = true,
             float _maxWidth = DEFAULT_MAX_FIELD_WIDTH) // 250
