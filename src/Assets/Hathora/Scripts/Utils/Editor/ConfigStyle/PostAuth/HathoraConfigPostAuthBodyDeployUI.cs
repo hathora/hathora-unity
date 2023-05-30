@@ -238,12 +238,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (!clickedDeployBtn)
                 return;
 
-            isDeploying = true;
-            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config); // TODO: Pass cancel token
-            isDeploying = false;
-            
-            Assert.That(deployment?.BuildId, Is.Not.Null,
-                "Deployment failed: Check console for details.");
+            onClickedDeployAppBtnClick(); // !await
         }
         #endregion // UI Draw
 
@@ -279,6 +274,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             SaveConfigChange(
                 nameof(Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
                 _inputInt.ToString());
+        }
+        
+        private async Task onClickedDeployAppBtnClick()
+        {
+            isDeploying = true;
+            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config); // TODO: Pass cancel token
+            isDeploying = false;
+            
+            Assert.That(deployment?.BuildId, Is.Not.Null,
+                "Deployment failed: Check console for details.");
         }
         #endregion // Event Logic
         
