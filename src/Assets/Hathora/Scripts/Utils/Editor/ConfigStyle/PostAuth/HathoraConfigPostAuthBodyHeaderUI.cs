@@ -182,15 +182,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 $"Log in with another account";
             
             // USER INPUT >>
-            if (GUILayout.Button(btnLabelStr, GeneralButtonStyle))
-            {
-                devReAuthLoginButtonInteractable = false;
-                await HathoraServerAuth.DevAuthLogin(Config);
-                devReAuthLoginButtonInteractable = true; 
-                InvokeRequestRepaint();
-            }
+            bool clickedLoginToHathoraConsoleBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
+            if (!clickedLoginToHathoraConsoleBtn)
+                return;
+
+            onLoginToHathoraConsoleBtnClick();
         }
-        
+
         private void insertAuthCancelBtn(CancellationTokenSource _cancelTokenSrc)
         {
             string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
@@ -201,19 +199,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             if (clickedCancelBtn)
                 onAuthCancelBtnClick(_cancelTokenSrc);
-        }
-
-        private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
-        {
-            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onAuthCancelBtnClick");
-            onAuthDone(_cancelTokenSrc);   
-        }
-
-        private void onAuthDone(CancellationTokenSource _cancelTokenSrc = null)
-        {
-            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI.onAuthDone] Done (or cancelled)");
-            _cancelTokenSrc?.Cancel();
-            devReAuthLoginButtonInteractable = true;
         }
 
         private void insertDevTokenPasswordField()
@@ -248,6 +233,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         
         #region Event Logic
+        private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onAuthCancelBtnClick");
+            resetAuth(_cancelTokenSrc);   
+        }
+
+        private void resetAuth(CancellationTokenSource _cancelTokenSrc)
+        {
+            _cancelTokenSrc?.Cancel();
+            devReAuthLoginButtonInteractable = true;
+        }
+        
         private async Task onRefreshAppsListBtnClick()
         {
             isRefreshingExistingApps = true;
@@ -280,6 +277,21 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             // There may be more than 1 way to set this, so we curry to a common func
             setSelectedApp(_newSelectedIndex);
+        }
+        
+        private async Task onLoginToHathoraConsoleBtnClick()
+        {
+            devReAuthLoginButtonInteractable = false;
+            
+            bool isSuccess = await HathoraServerAuth.DevAuthLogin(Config);
+            onLoginToHathoraConsoleBtnDone(isSuccess);
+            
+            devReAuthLoginButtonInteractable = true;
+        }
+
+        private void onLoginToHathoraConsoleBtnDone(bool _isSuccess)
+        {
+            Debug.Log("[]");
         }
         #endregion // Event Logic
 
