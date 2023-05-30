@@ -4,6 +4,7 @@ using System;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Client.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
@@ -33,7 +34,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Since this Enum isn't alphabatized, also care if you Sort() the list.
         /// </summary>
         [SerializeField]
-        private int _regionSelectedIndex;
+        private int _regionSelectedIndex = (int)Region.Seattle;
         
         /// <summary>
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
