@@ -33,7 +33,7 @@ namespace Hathora.Scripts.SdkWrapper.Models
         /// Since this Enum isn't alphabatized, also care if you Sort() the list.
         /// </summary>
         [SerializeField]
-        public int _regionSelectedIndex;
+        private int _regionSelectedIndex;
         
         /// <summary>
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
