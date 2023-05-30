@@ -2,6 +2,7 @@
 
 using Hathora.Scripts.Net.Common;
 using UnityEditor;
+using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 {
@@ -61,7 +62,35 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertLobbySettingsFoldoutComponents()
         {
-            // TODO
+            BeginFieldIndent();
+
+            insertLobbyInitConfigTextAreaHorizGroup();
+
+            EndFieldIndent();
+        }
+
+        private void insertLobbyInitConfigTextAreaHorizGroup()
+        {
+            string inputStr = base.insertHorizLabeledTextField(
+                _labelStr: "Initial Config",
+                _tooltip: null,
+                _val: Config.HathoraLobbyRoomOpts.InitConfigJson,
+                _alignTextField: GuiAlign.SmallRight,
+                isTextArea: true);
+
+            bool isChanged = inputStr != Config.HathoraLobbyRoomOpts.InitConfigJson;
+            if (isChanged)
+                onLobbyInitConfigChanged(inputStr);
+
+            InsertSpace1x();
+        }
+
+        private void onLobbyInitConfigChanged(string _inputStr)
+        {
+            Config.HathoraLobbyRoomOpts.InitConfigJson = _inputStr;
+            SaveConfigChange(
+                nameof(Config.HathoraLobbyRoomOpts.InitConfigJson), 
+                _inputStr);
         }
         #endregion // UI Draw
 

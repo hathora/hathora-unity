@@ -398,10 +398,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             // USER INPUT >>
             string inputStr = isTextArea
-                ? GUILayout.TextArea(_val)
-                : GUILayout.TextField(
-                    _val, 
-                    GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
+                ? GUILayout.TextArea(_val, GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth))
+                : GUILayout.TextField(_val, GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
             
             if (_alignTextField == GuiAlign.SmallLeft)
                 GUILayout.FlexibleSpace();
