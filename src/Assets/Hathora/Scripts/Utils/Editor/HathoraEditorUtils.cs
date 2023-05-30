@@ -53,6 +53,7 @@ namespace Hathora.Scripts.Utils.Editor
         public const string HATHORA_GREEN_COLOR_HEX = "#76FDBA";
         public const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#20124D";
+        public const string HATHORA_PINK_CANCEL_COLOR_HEX = "#ee72ff";
         public const string HATHORA_GRAY_TRANSPARENT_COLOR_HEX = "#919191CC"; // 60% opacity
         public const string HATHORA_LINK_COLOR_HEX = "#0000EE";
         

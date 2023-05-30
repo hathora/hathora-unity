@@ -105,20 +105,20 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
 
             if (isCreatingRoom)
-                insertCreateRoomLobbyBtn(enableCreateRoomBtn);
-            else
                 insertCreateRoomLobbyCancelBtn();
+            else
+                insertCreateRoomLobbyBtn(enableCreateRoomBtn);
             
             insertViewLogsMetricsLinkLbl();
         }
 
         private void insertCreateRoomLobbyCancelBtn()
         {
-            if (!GUILayout.Button("Cancel", GeneralButtonStyle))
-                return; 
+            string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                "Cancel Create Room/Lobby</color>";
             
-            // Cancelled >>
-            onCreateRoomCancelBtnClick();
+            if (GUILayout.Button(btnLabelStr, GeneralButtonStyle))
+                onCreateRoomCancelBtnClick();
         }
         
         private void insertCreateRoomLobbyBtnHelpboxOnErr(bool _enable)
@@ -164,7 +164,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             InsertSpace1x();
         }
 
-        private async Task insertCreateRoomLobbyBtn(bool _enable)
+        private void insertCreateRoomLobbyBtn(bool _enable)
         {
             string btnLabelStr = isCreatingRoom 
                 ? "Creating Room..." 
@@ -289,6 +289,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void onCreateRoomDone()
         {
+            Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
             CreateRoomActiveCts?.Cancel();
             isCreatingRoom = false;
         }
