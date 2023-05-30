@@ -243,7 +243,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             GUILayout.Label(iconContent, GUILayout.ExpandWidth(false));
         }
         
-        protected void insertLeftSelectableLabel(
+        protected void InsertLeftSelectableLabel(
             string _contentStr,
             bool _vertCenter = false)
         {
@@ -348,7 +348,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <param name="_btnStyle"></param>
         /// <param name="_percentWidthOfScreen"></param>
         /// <returns>OnClick bool</returns>
-        protected bool insertSmallCenteredBtn(
+        protected bool InsertSmallCenteredBtn(
             string _btnLabelStr, 
             GUIStyle _btnStyle = null, 
             float _percentWidthOfScreen = 0.35f)
@@ -368,7 +368,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         }
 
         /// <returns>bool clicked</returns>
-        protected bool insertLeftGeneralBtn(string _content) =>
+        protected bool InsertLeftGeneralBtn(string _content) =>
             GUILayout.Button(_content, GeneralButtonStyle);
         
         /// <summary>
@@ -378,7 +378,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <param name="_tooltip"></param>
         /// <param name="_val"></param>
         /// <returns>inputStr</returns>
-        protected string insertHorizLabeledTextField(
+        protected string InsertHorizLabeledTextField(
             string _labelStr,
             string _tooltip,
             string _val,
@@ -465,7 +465,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
             return opts.ToArray();
         }
-        
+
         /// <summary>
         /// {label} {tooltip} {popupList}
         /// </summary>
@@ -473,8 +473,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <param name="_tooltip"></param>
         /// <param name="_displayOptsStrArr"></param>
         /// <param name="_selectedIndex"></param>
+        /// <param name="_alignPopup"></param>
         /// <returns>Returns selected index</returns>
-        protected int insertHorizLabeledPopupList(
+        protected int InsertHorizLabeledPopupList(
             string _labelStr,
             string _tooltip,
             string[] _displayOptsStrArr,
@@ -552,7 +553,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <param name="_maxVal"></param>
         /// <param name="_alignPopup"></param>
         /// <returns></returns>
-        protected int insertHorizLabeledIntSlider(
+        protected int InsertHorizLabeledIntSlider(
             string _labelStr,
             string _tooltip,
             int _val,
@@ -592,7 +593,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <param name="_maxVal"></param>
         /// <param name="_alignPopup"></param>
         /// <returns></returns>
-        protected int insertHorizLabeledConstrainedIntField(
+        protected int InsertHorizLabeledConstrainedIntField(
             string _labelStr,
             string _tooltip,
             int _val,

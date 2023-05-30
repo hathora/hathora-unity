@@ -112,12 +112,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 _vertCenter:true);
 
             string selectedAppId = Config.HathoraCoreOpts.AppId;
-            base.insertLeftSelectableLabel(selectedAppId, _vertCenter: true);
+            base.InsertLeftSelectableLabel(selectedAppId, _vertCenter: true);
             
             GUILayout.FlexibleSpace();
             
             // USER INPUT >>
-            bool clickedCopyAppIdBtn = insertLeftGeneralBtn("Copy AppId");
+            bool clickedCopyAppIdBtn = InsertLeftGeneralBtn("Copy AppId");
             if (clickedCopyAppIdBtn)
                 onCopyAppIdBtnClick(selectedAppId);
 
@@ -140,7 +140,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertExistingAppsRefreshBtn()
         {
             // USER INPUT >>
-            bool clickedAppRefreshBtn = insertLeftGeneralBtn("↻ Refresh List"); 
+            bool clickedAppRefreshBtn = InsertLeftGeneralBtn("↻ Refresh List"); 
             if (clickedAppRefreshBtn)
                 onRefreshAppsListBtnClick();
         }

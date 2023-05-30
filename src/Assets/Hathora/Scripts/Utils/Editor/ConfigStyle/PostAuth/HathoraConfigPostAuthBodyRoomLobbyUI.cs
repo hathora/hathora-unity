@@ -79,7 +79,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<CreateLobbyRequest.VisibilityEnum>(
                 _prependDummyIndex0Str: "<Lobby Visibility>");
 
-            int newSelectedIndex = base.insertHorizLabeledPopupList(
+            int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Visibility",
                 _tooltip: null,
                 _displayOptsStrArr: displayOptsStrArr.ToArray(),
@@ -101,7 +101,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             BeginFieldIndent();
 
-            string inputStr = base.insertHorizLabeledTextField(
+            string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Initial Config",
                 _tooltip: null,
                 _val: Config.HathoraLobbyRoomOpts.InitConfigJson,

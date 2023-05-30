@@ -71,7 +71,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private async Task insertGenerateServerBuildBtn()
         {
-            bool clickedBuildBtn = insertLeftGeneralBtn("Generate Server Build");
+            bool clickedBuildBtn = InsertLeftGeneralBtn("Generate Server Build");
             InsertSpace1x();
             
             if (!clickedBuildBtn)
@@ -86,7 +86,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertBuildDirNameHorizGroup()
         {
-            string inputStr = base.insertHorizLabeledTextField(
+            string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Build directory",
                 _tooltip: "Default: `Build-Linux-Server`",
                 _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName,
@@ -101,7 +101,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         
         private void insertBuildFileExeNameHorizGroup()
         {
-            string inputStr = base.insertHorizLabeledTextField(
+            string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Build file name", 
                 _tooltip: "Default: `Unity-LinuxServer.x86_64",
                 _val: Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName,

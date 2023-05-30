@@ -145,7 +145,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             // Get display index from original index
             int displaySelectedIndex = originalIndices.IndexOf(selectedIndex);
             
-            int newDisplaySelectedIndex = base.insertHorizLabeledPopupList(
+            int newDisplaySelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Region",
                 _tooltip: "Default: `Seattle`",
                 _displayOptsStrArr: displayOptsStrList.ToArray(),

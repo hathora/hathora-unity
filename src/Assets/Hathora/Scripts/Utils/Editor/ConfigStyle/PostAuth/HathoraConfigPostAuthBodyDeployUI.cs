@@ -96,7 +96,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertRoomsPerProcessHorizSliderGroup()
         {
-            int inputInt = base.insertHorizLabeledConstrainedIntField(
+            int inputInt = base.InsertHorizLabeledConstrainedIntField(
                 _labelStr: "Rooms per process",
                 _tooltip: null, // "Default: 1",
                 _val: Config.HathoraDeployOpts.RoomsPerProcess,
@@ -113,7 +113,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         
         private void insertContainerPortNumberHorizSliderGroup()
         {
-            int inputInt = base.insertHorizLabeledConstrainedIntField(
+            int inputInt = base.InsertHorizLabeledConstrainedIntField(
                 _labelStr: "Container port number",
                 _tooltip: "Default: 7777 (<1024 is generally reserved by system)",
                 _val: Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
@@ -137,7 +137,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 EnumListOpts.AllCaps,
                 _prependDummyIndex0Str: "<Choose a Transport Type>");
 
-            int newSelectedIndex = base.insertHorizLabeledPopupList(
+            int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Transport Type",
                 _tooltip: "Default: `UDP` (Fastest; although less reliable)",
                 _displayOptsStrArr: displayOptsStrList.ToArray(),
@@ -182,7 +182,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<PlanName>(
                 _prependDummyIndex0Str: "<Choose a Plan>");
 
-            int newSelectedIndex = base.insertHorizLabeledPopupList(
+            int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Plan Size",
                 _tooltip: "Default: `Tiny` (Most affordable for pre-production)",
                 _displayOptsStrArr: displayOptsStrArr.ToArray(),
@@ -232,7 +232,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 ? "Deploying: This may take some time..." 
                 : "Deploy Application";
             
-            bool clickedDeployBtn = insertLeftGeneralBtn(btnLabelStr);
+            bool clickedDeployBtn = InsertLeftGeneralBtn(btnLabelStr);
             InsertSpace1x();
             
             if (!clickedDeployBtn)
