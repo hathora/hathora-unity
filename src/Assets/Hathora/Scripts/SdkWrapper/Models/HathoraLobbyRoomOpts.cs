@@ -1,10 +1,12 @@
 // dylan@hathora.dev
 
+using System;
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Models
 {
+    [Serializable]
     public class HathoraLobbyRoomOpts
     {
         /// <summary>
