@@ -382,7 +382,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             string _labelStr,
             string _tooltip,
             string _val,
-            GuiAlign _alignTextField = GuiAlign.Stretched)
+            GuiAlign _alignTextField = GuiAlign.Stretched,
+            bool isTextArea = false)
         {
             EditorGUILayout.BeginHorizontal();
 
@@ -396,9 +397,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 : DEFAULT_MAX_FIELD_WIDTH;
             
             // USER INPUT >>
-            string inputStr = GUILayout.TextField(
-                _val, 
-                GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
+            string inputStr = isTextArea
+                ? GUILayout.TextArea(_val)
+                : GUILayout.TextField(
+                    _val, 
+                    GetDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
             
             if (_alignTextField == GuiAlign.SmallLeft)
                 GUILayout.FlexibleSpace();
