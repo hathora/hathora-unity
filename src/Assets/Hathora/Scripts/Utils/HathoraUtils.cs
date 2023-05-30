@@ -1,9 +1,11 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Common;
+using UnityEngine;
 using Application = UnityEngine.Application;
 
 namespace Hathora.Scripts.Utils
@@ -15,6 +17,23 @@ namespace Hathora.Scripts.Utils
         /// TODO: If this ever becomes 0, delete this const and update all refs.
         /// </summary>
         public const int SDK_ENUM_STARTING_INDEX = 1;
+
+        /// <summary>
+        /// eg: "E1HKfn68Pkms5zsZsvKONw=="
+        /// https://stackoverflow.com/a/9279005 
+        /// </summary>
+        /// <returns></returns>
+        public static string GenerateShortUid(bool omitEndDblEquals)
+        {
+            string shortId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            
+            if (omitEndDblEquals && shortId.EndsWith("=="))
+                shortId = shortId[..^2]; // Exclude the last 2 chars
+
+            Debug.Log($"[HathoraUtils] ShortId Generated: {shortId}");
+
+            return shortId;
+        }
 
         public static string NormalizePath(string _path) =>
             Path.GetFullPath(_path);
