@@ -32,6 +32,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
             insertLobbySettingsFoldout();
+            InsertSpace3x();
         }
         
         private void insertLobbySettingsFoldout()
@@ -41,20 +42,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 isLobbySettingsFoldout, 
                 "Lobby Settings (optional)");
             
+            EditorGUI.indentLevel++;
             if (!isLobbySettingsFoldout)
             {
                 EditorGUILayout.EndVertical(); // End of foldout box skin
                 return;
             }
     
-            EditorGUI.indentLevel++;
             InsertSpace2x();
 
             insertLobbySettingsFoldoutComponents();
                 
             EditorGUILayout.EndVertical(); // End of foldout box skin
-            InsertSpace3x();
-            EditorGUI.indentLevel--;
         }
 
         private void insertLobbySettingsFoldoutComponents()

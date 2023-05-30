@@ -37,18 +37,24 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
        
         private void insertAdvancedDeployFoldout()
         {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             isAdvancedDeployFoldout = EditorGUILayout.Foldout(
                 isAdvancedDeployFoldout, 
                 "Advanced");
 
+            EditorGUI.indentLevel--;
             if (!isAdvancedDeployFoldout)
+            {
+                EditorGUILayout.EndVertical(); // End of foldout box skin
                 return;
+            }
             
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            InsertSpace2x();
             
             insertAdvancedDeployFoldoutComponents();
             
-            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndVertical(); // End of foldout box skin
         }
 
         private void insertAdvancedDeployFoldoutComponents()
