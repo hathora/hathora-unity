@@ -22,22 +22,46 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         public static bool HasCancellableToken =>
             ActiveCts?.Token is { CanBeCanceled: true };
         
-        public static async Task DevAuthLogin(NetHathoraConfig _netHathoraConfig)
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <returns>isSuccess</returns>
+        public static async Task<bool> DevAuthLogin(NetHathoraConfig _netHathoraConfig)
         {
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
             string refreshToken = await auth.GetTokenAsync(cancelToken: ActiveCts.Token);
-             
-            if (string.IsNullOrEmpty(refreshToken))
+            
+            bool isSuccess = onGetTokenDone(
+                _netHathoraConfig, 
+                refreshToken);
+            
+            return isSuccess;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_refreshToken"></param>
+        /// <returns>isSuccess</returns>
+        private static bool onGetTokenDone(
+            NetHathoraConfig _netHathoraConfig,
+            string _refreshToken)
+        {
+            if (string.IsNullOrEmpty(_refreshToken))
             {
                 if (ActiveCts != null && HasCancellableToken)
-                    ActiveCts?.Cancel();
-                
-                return;
+                    onGetTokenCancelled();
+
+                return false; // !isSuccess
             }
             
-            SetAuthToken(_netHathoraConfig, refreshToken);
+            SetAuthToken(_netHathoraConfig, _refreshToken);
+            return true; // isSuccess
         }
+
+        private static void onGetTokenCancelled() =>
+            ActiveCts?.Cancel();
 
         private static void createNewAuthCancelToken()
         {

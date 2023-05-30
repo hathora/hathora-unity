@@ -62,17 +62,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// </summary>
         private void insertRegAuthBtns()
         {
-            EditorGUI.BeginDisabledGroup(!devAuthLoginButtonInteractable);
+            bool showCancelBtn = HathoraServerAuth.HasCancellableToken && !devAuthLoginButtonInteractable;
             
             // !await these
+            if (showCancelBtn)
+            {
+                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
+                return;
+            }
+            
             insertDevAuthLoginBtn();
             InsertMoreActionsLbl();
             insertRegisterOrTokenCacheLogin();
-
-            EditorGUI.EndDisabledGroup(); 
-
-            if (HathoraServerAuth.HasCancellableToken && !devAuthLoginButtonInteractable)
-                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
         }
 
         private void insertRegisterOrTokenCacheLogin()
@@ -147,14 +148,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertSpace2x();
         }
         
-        private void insertAuthCancelBtn(
-            CancellationTokenSource _cts, 
-            string _cancelLabelStr = "Cancel") 
+        private void insertAuthCancelBtn(CancellationTokenSource _cancelTokenSrc) 
         {
+            string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                "<b>Cancel</b> (Logging in via browser...)</color>";
+            
             // USER INPUT >>
-            bool clickedAuthCancelBtn = GUILayout.Button(_cancelLabelStr, GeneralButtonStyle);
+            bool clickedAuthCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
             if (clickedAuthCancelBtn)
-                onAuthCancelBtnClick(_cts);
+                onAuthCancelBtnClick(_cancelTokenSrc);
             
             InsertSpace2x();
             InvokeRequestRepaint();
@@ -171,14 +173,21 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         #region Logic Events
         private async Task onLoginBtnClick()
         {
+            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginBtnClick");
             devAuthLoginButtonInteractable = false;
                 
             await HathoraServerAuth.DevAuthLogin(Config);
-                
+            onLoginDone();
+            
             devAuthLoginButtonInteractable = true; 
-            InvokeRequestRepaint();
         }
-        
+
+        private void onLoginDone(CancellationTokenSource _cancelTokenSrc = null)
+        {
+            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginDone (or cancelled)");
+            _cancelTokenSrc?.Cancel();
+        }
+
         private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
         {
             _cancelTokenSrc?.Cancel();
