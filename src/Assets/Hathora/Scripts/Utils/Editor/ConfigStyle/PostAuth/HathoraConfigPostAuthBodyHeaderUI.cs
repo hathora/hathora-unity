@@ -87,7 +87,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             GUILayout.BeginHorizontal();
             
             insertTargetAppLabelWithTooltip();
-            GUILayout.FlexibleSpace();
             insertSelectAppToUseOpacityLabel();
             
             GUILayout.EndHorizontal();
@@ -142,7 +141,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertSelectAppToUseOpacityLabel()
         {
             GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GRAY_TRANSPARENT_COLOR_HEX}>" +
-                "Select an application to use</color>", CenterAlignLabelStyle);
+                "Select an application to use</color>", LeftAlignLabelStyle);
         } 
 
         private void insertExistingAppsRefreshBtn()
