@@ -231,10 +231,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 options: null);
 
             if (newDevAuthToken != Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken)
-            {
-                Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken = newDevAuthToken;
-                SerializedConfig.ApplyModifiedProperties();
-            }
+                onDevTokenChanged(newDevAuthToken);
 
             GUILayout.EndHorizontal();
             InsertSpace2x();
@@ -250,6 +247,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         
         #region Event Logic
+        private void onDevTokenChanged(string _inputStr)
+        {
+            Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken = _inputStr;
+            
+            SaveConfigChange(
+                nameof(Config.HathoraCoreOpts.DevAuthOpts.DevAuthToken), 
+                _inputStr);
+
+            bool keyDeleted = string.IsNullOrEmpty(_inputStr); 
+            if (keyDeleted)
+            {
+                // Reset cached token checker flag
+                HathoraConfigPreAuthBodyUI.checkedTokenCache = false;   
+            }
+        }
+        
         private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
         {
             Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onAuthCancelBtnClick");

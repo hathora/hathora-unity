@@ -15,7 +15,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         // Declare an event to trigger a repaint
         private static bool devAuthLoginButtonInteractable = true;
 
-        private bool checkedTokenCache;
+        /// <summary>Checking a file for a cached token repeatedly would cause lag</summary>
+        public static bool checkedTokenCache { get; set; }
+        
         private string cachedToken;
         private bool CheckHasCachedToken() => 
             !string.IsNullOrEmpty(cachedToken);
@@ -97,11 +99,11 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// </summary>
         private void tokenCheckSetCache()
         {
-            if (!checkedTokenCache)
-            {
-                cachedToken = Auth0Login.CheckForExistingCachedTokenAsync();
-                checkedTokenCache = true;
-            }
+            if (checkedTokenCache)
+                return;
+            
+            cachedToken = Auth0Login.CheckForExistingCachedTokenAsync();
+            checkedTokenCache = true;
         }
 
         private void insertTokenCacheBtn()
