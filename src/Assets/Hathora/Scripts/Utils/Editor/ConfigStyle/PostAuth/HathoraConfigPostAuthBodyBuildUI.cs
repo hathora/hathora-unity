@@ -1,6 +1,8 @@
 // Created by dylan@hathora.dev
 
+using System.Text;
 using System.Threading.Tasks;
+using Codice.CM.Common.Tree.Partial;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
@@ -66,7 +68,35 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             insertBuildFileExeNameHorizGroup();
 
             InsertSpace2x();
+            bool enableBuildBtn = insertGenerateServerBuildBtnHelpboxOnMissingReqs();
             insertGenerateServerBuildBtn(); // !await
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>enableBuildBtn</returns>
+        private bool insertGenerateServerBuildBtnHelpboxOnMissingReqs()
+        {
+            bool enableBuildBtn =
+                Config.HathoraCoreOpts.HasAppId &&
+                Config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName &&
+                Config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName;
+
+            if (enableBuildBtn)
+                return true; // enableBuildBtn
+
+            StringBuilder helpboxLabelStrb = new("Missing required fields: ");
+            if (!Config.HathoraCoreOpts.HasAppId)
+                helpboxLabelStrb.Append($"{nameof(Config.HathoraCoreOpts.AppId)}, ");
+            
+            if (!Config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
+                helpboxLabelStrb.Append($"{nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName)}, ");
+                
+            if (!Config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
+                helpboxLabelStrb.Append($"{nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName)}, ");
+
+            EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
+            return false; // !enableBuildBtn
         }
 
         private async Task insertGenerateServerBuildBtn()

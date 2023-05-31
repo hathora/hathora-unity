@@ -19,6 +19,9 @@ namespace Hathora.Scripts.SdkWrapper.Models
              get => _serverBuildDirName;
              set => _serverBuildDirName = value;
          }
+         
+         public bool HasServerBuildDirName =>
+            !string.IsNullOrEmpty(ServerBuildDirName);
 
          /// <summary>Default: Hathora-Unity-LinuxServer.x86_64</summary>
          [SerializeField]
@@ -30,6 +33,9 @@ namespace Hathora.Scripts.SdkWrapper.Models
              get => _serverBuildExeName;
              set => _serverBuildExeName = value;
          }
+         
+        public bool HasServerBuildExeName =>
+            !string.IsNullOrEmpty(ServerBuildExeName);
 
          /// <summary>The same as checking 'Developer Build' in build opts</summary>
          [SerializeField]
