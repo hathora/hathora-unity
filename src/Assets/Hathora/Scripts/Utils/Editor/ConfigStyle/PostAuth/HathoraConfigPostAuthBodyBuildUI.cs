@@ -2,8 +2,6 @@
 
 using System.Text;
 using System.Threading.Tasks;
-using Codice.CM.Common.Tree.Partial;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using NUnit.Framework;
@@ -68,39 +66,54 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             insertBuildFileExeNameHorizGroup();
 
             InsertSpace2x();
-            bool enableBuildBtn = insertGenerateServerBuildBtnHelpboxOnMissingReqs();
-            insertGenerateServerBuildBtn(); // !await
+            
+            bool enableBuildBtn = Config.MeetsBuildAndDeployBtnReqs();
+            if (!enableBuildBtn)
+                insertGenerateServerBuildBtnHelpboxOnMissingReqs();
+            
+            insertGenerateServerBuildBtn(enableBuildBtn); // !await
+        }
+        
+        /// <summary>
+        /// Generally used for helpboxes to explain why a button is disabled.
+        /// </summary>
+        /// <param name="_config"></param>
+        /// <param name="_includeMissingReqsFieldsPrefixStr">Useful if you had a combo of this </param>
+        /// <returns></returns>
+        public static StringBuilder GetCreateBuildMissingReqsStrb(
+            NetHathoraConfig _config,
+            bool _includeMissingReqsFieldsPrefixStr = true)
+        {
+            StringBuilder helpboxLabelStrb = new(_includeMissingReqsFieldsPrefixStr 
+                ? "Missing required fields: " 
+                : ""
+            );
+            
+            // (!) Hathora SDK Enums start at index 1 (not 0)
+            if (!_config.HathoraCoreOpts.HasAppId)
+                helpboxLabelStrb.Append("AppId, ");
+            
+            if (!_config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
+                helpboxLabelStrb.Append("Server Build Dir Name}, ");
+                
+            if (!_config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
+                helpboxLabelStrb.Append("Server Build Exe Name");
+
+            return helpboxLabelStrb;
         }
 
         /// <summary>
         /// </summary>
         /// <returns>enableBuildBtn</returns>
-        private bool insertGenerateServerBuildBtnHelpboxOnMissingReqs()
+        private void insertGenerateServerBuildBtnHelpboxOnMissingReqs()
         {
-            bool enableBuildBtn =
-                Config.HathoraCoreOpts.HasAppId &&
-                Config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName &&
-                Config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName;
-
-            if (enableBuildBtn)
-                return true; // enableBuildBtn
-
-            StringBuilder helpboxLabelStrb = new("Missing required fields: ");
-            if (!Config.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("AppId, ");
-            
-            if (!Config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
-                helpboxLabelStrb.Append("Server Build Dir Name}, ");
-                
-            if (!Config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
-                helpboxLabelStrb.Append("Server Build Exe Name");
+            StringBuilder helpboxLabelStrb = GetCreateBuildMissingReqsStrb(Config);
 
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
-            return false; // !enableBuildBtn
         }
 
-        private async Task insertGenerateServerBuildBtn()
+        private async Task insertGenerateServerBuildBtn(bool _enableBuildBtn)
         {
             bool clickedBuildBtn = InsertLeftGeneralBtn("Generate Server Build");
             InsertSpace1x();

@@ -1,9 +1,11 @@
 // Created by dylan@hathora.dev
 
+using System.Text;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Models;
+using Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -32,23 +34,41 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertPostAuthFooter()
         {
-            bool meetsDeployBtnReqs = Config.MeetsDeployBtnReqs();
+            bool enableBuildUploadDeployBtn = 
+                Config.MeetsBuildBtnReqs() && 
+                Config.MeetsDeployBtnReqs(); 
             
-            insertBuildUploadDeployHelpbox(_enabled: meetsDeployBtnReqs);
-            insertBuildUploadDeployBtn(_enabled: meetsDeployBtnReqs); // !await
+            insertBuildUploadDeployHelpbox(_enabled: enableBuildUploadDeployBtn);
+            insertBuildUploadDeployBtn(_enabled: enableBuildUploadDeployBtn); // !await
             InsertSpace1x();
         }
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
         {
-            MessageType helpMsgType = _enabled ? MessageType.Info : MessageType.Error;
-            string helpMsg = _enabled
-                ? "This action will create a new server build, upload to Hathora, " +
-                "and create a new development version of your application."
-                : $"Requires set: {nameof(HathoraCoreOpts.AppId)}, " +
-                $"{nameof(HathoraAutoBuildOpts.ServerBuildExeName)}, " +
-                $"{nameof(HathoraAutoBuildOpts.ServerBuildDirName)}, ";
+            MessageType helpMsgType = _enabled 
+                ? MessageType.Info 
+                : MessageType.Error;
+            
+            string helpMsg;
+            if (_enabled)
+            {
+                helpMsg = "This action will create a new server build, upload to Hathora, " +
+                    "and create a new development version of your application.";
+            }
+            else
+            {
+                StringBuilder helpMsgStrb = new StringBuilder("Missing required fields: ")
+                    .Append(HathoraConfigPostAuthBodyBuildUI.GetCreateBuildMissingReqsStrb(
+                        Config,
+                        _includeMissingReqsFieldsPrefixStr: false))
+                    .Append(HathoraConfigPostAuthBodyRoomUI.GetCreateRoomMissingReqsStrb(
+                        Config,
+                        _includeMissingReqsFieldsPrefixStr: false));
 
+                helpMsg = helpMsgStrb.ToString();
+            }
+            
+            
             // Post the help box *before* we disable the button so it's easier to see
             EditorGUILayout.HelpBox(helpMsg, helpMsgType);
         }

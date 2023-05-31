@@ -65,6 +65,19 @@ namespace Hathora.Scripts.Net.Common
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
             _hathoraDeployOpts.ContainerPortWrapper.PortNumber >= 1024;
+        
+        public bool MeetsBuildAndDeployBtnReqs() =>
+            MeetsBuildBtnReqs() &&
+            MeetsDeployBtnReqs();
+        
+        /// <summary>(!) Hathora SDK Enums start at index 1 (not 0).</summary>
+        /// <returns></returns>
+        public bool MeetsCreateRoomBtnReqs() =>
+            HathoraCoreOpts.HasAppId &&
+            HathoraLobbyRoomOpts.RegionSelectedIndex > 0 &&
+            HathoraLobbyRoomOpts.HathoraRegion > 0 &&
+            HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex > 0 &&
+            !string.IsNullOrEmpty(HathoraLobbyRoomOpts.InitConfigJson);
 
         /// <summary>
         /// Combines path, then normalizes

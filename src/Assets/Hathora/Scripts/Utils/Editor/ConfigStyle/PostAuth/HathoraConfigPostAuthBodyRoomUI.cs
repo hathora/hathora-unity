@@ -98,7 +98,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             insertRegionHorizPopupList();
 
-            bool enableCreateRoomBtn = checkCanEnableCreateRoomBtn();
+            bool enableCreateRoomBtn = Config.MeetsCreateRoomBtnReqs();
             insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
 
             bool showCancelBtn = isCreatingRoom && CreateRoomActiveCancelTokenSrc.Token.CanBeCanceled; 
@@ -120,6 +120,37 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (clickedCancelBtn)
                 onCreateRoomCancelBtnClick(_cancelTokenSrc);
         }
+
+        /// <summary>
+        /// Generally used for helpboxes to explain why a button is disabled.
+        /// </summary>
+        /// <param name="_config"></param>
+        /// <param name="_includeMissingReqsFieldsPrefixStr">Useful if you had a combo of this </param>
+        /// <returns></returns>
+        public static StringBuilder GetCreateRoomMissingReqsStrb(
+            NetHathoraConfig _config,
+            bool _includeMissingReqsFieldsPrefixStr = true)
+        {
+            StringBuilder helpboxLabelStrb = new(_includeMissingReqsFieldsPrefixStr 
+                ? "Missing required fields: " 
+                : ""
+            );
+            
+            // (!) Hathora SDK Enums start at index 1 (not 0)
+            if (!_config.HathoraCoreOpts.HasAppId)
+                helpboxLabelStrb.Append("`AppId, `");
+            
+            if (_config.HathoraLobbyRoomOpts.RegionSelectedIndex < 1)
+                helpboxLabelStrb.Append("`Region, `");
+            
+            if (_config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex < 1)
+                helpboxLabelStrb.Append("`Lobby Visibility, `");
+
+            if (string.IsNullOrEmpty(_config.HathoraLobbyRoomOpts.InitConfigJson))
+                helpboxLabelStrb.Append("`Init Config must at least be {}, `");
+
+            return helpboxLabelStrb;
+        }
         
         private void insertCreateRoomLobbyBtnHelpboxOnErr(bool _enable)
         {
@@ -127,20 +158,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return;
             
             // Explain why the button is disabled
-            StringBuilder helpboxLabelStrb = new("Missing required fields: ");
-            
-            // (!) Hathora SDK Enums start at index 1 (not 0)
-            if (!Config.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("`AppId, `");
-            
-            if (Config.HathoraLobbyRoomOpts.RegionSelectedIndex < 1)
-                helpboxLabelStrb.Append("`Region, `");
-            
-            if (Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex < 1)
-                helpboxLabelStrb.Append("`Lobby Visibility, `");
-
-            if (string.IsNullOrEmpty(Config.HathoraLobbyRoomOpts.InitConfigJson))
-                helpboxLabelStrb.Append("`Init Config must at least be {}, `");
+            StringBuilder helpboxLabelStrb = GetCreateRoomMissingReqsStrb(Config);
             
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
@@ -309,15 +327,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             CreateRoomActiveCancelTokenSrc = new CancellationTokenSource(
                 TimeSpan.FromSeconds(CREATE_ROOM_TIMEOUT_SECONDS));
         }
-        
-        /// <summary>(!) Hathora SDK Enums start at index 1 (not 0).</summary>
-        /// <returns></returns>
-        private bool checkCanEnableCreateRoomBtn() =>
-            Config.HathoraCoreOpts.HasAppId &&
-            Config.HathoraLobbyRoomOpts.RegionSelectedIndex > 0 &&
-            Config.HathoraLobbyRoomOpts.HathoraRegion > 0 &&
-            Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex > 0 &&
-            !string.IsNullOrEmpty(Config.HathoraLobbyRoomOpts.InitConfigJson);
         #endregion // Utils
     }
 }
