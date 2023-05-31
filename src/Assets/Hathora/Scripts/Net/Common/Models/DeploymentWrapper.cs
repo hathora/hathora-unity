@@ -4,12 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using FishNet.Object;
 using Hathora.Cloud.Sdk.Model;
-using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements.Experimental;
 
 namespace Hathora.Scripts.Net.Common.Models
 {
@@ -20,7 +17,7 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class DeploymentWrapper
     {
-        [SerializeField]
+        [SerializeField, JsonProperty("planName")]
         private PlanName _planName;
         public PlanName PlanName 
         { 
@@ -28,7 +25,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _planName = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("transportType")]
         private TransportType _transportType;
         public TransportType TransportType 
         { 
@@ -36,7 +33,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _transportType = value;
         }
         
-        [SerializeField] // TODO
+        [SerializeField, JsonProperty("env")] // TODO
         private List<DeploymentEnvInner> _env;
         public List<DeploymentEnvInner> Env
         {
@@ -47,7 +44,7 @@ namespace Hathora.Scripts.Net.Common.Models
 
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("roomsPerProcess")]
         private double _roomsPerProcess;
         public double RoomsPerProcess 
         { 
@@ -57,7 +54,7 @@ namespace Hathora.Scripts.Net.Common.Models
         
         
         /// <summary>Parses from List of ContainerPort</summary>
-        [SerializeField]
+        [SerializeField, JsonProperty("additionalContainerPorts")]
         private List<AdditionalContainerPortWrapper> _additionalContainerPorts;
 
         /// <summary>Parses from List of ContainerPort</summary>
@@ -74,12 +71,8 @@ namespace Hathora.Scripts.Net.Common.Models
         
 
         /// <summary>Parses from ContainerPort</summary>
-        [SerializeField]
-        private ContainerPortWrapper defaultContainerPortWrapperWrapper = new();
-        
-        [FormerlySerializedAs("_containerPortWrapper")]
-        [SerializeField]
-        private ContainerPortWrapper _defaultContainerPortWrapper;
+        [SerializeField, JsonProperty("defaultContainerPort")]
+        private ContainerPortWrapper _defaultContainerPortWrapper = new();
         public ContainerPort DefaultContainerPort 
         { 
             get => _defaultContainerPortWrapper?.ToContainerPortType();
@@ -88,7 +81,7 @@ namespace Hathora.Scripts.Net.Common.Models
         
         
         /// <summary>Serialized from `DateTime`.</summary>
-        [SerializeField]
+        [SerializeField, JsonProperty("createdAt")]
         private string _createdAtWrapper;
         
         /// <summary>Serialized from `DateTime`.</summary>
@@ -102,7 +95,7 @@ namespace Hathora.Scripts.Net.Common.Models
         }
         
         
-        [SerializeField]
+        [SerializeField, JsonProperty("createdBy")]
         private string _createdBy;
         public string CreatedBy
         {
@@ -110,7 +103,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _createdBy = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("requestedMemoryMB")]
         private double _requestedMemoryMB;
         public double RequestedMemoryMB 
         { 
@@ -118,7 +111,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _requestedMemoryMB = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("requestedCPU")]
         private double _requestedCPU;
         public double RequestedCPU 
         { 
@@ -126,7 +119,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _requestedCPU = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("deploymentId")]
         private double _deploymentId;
         public double DeploymentId 
         { 
@@ -134,7 +127,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _deploymentId = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("buildId")]
         private double _buildId;
         public double BuildId 
         { 
@@ -142,7 +135,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _buildId = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("appId")]
         private string _appId;
 
         public string AppId 

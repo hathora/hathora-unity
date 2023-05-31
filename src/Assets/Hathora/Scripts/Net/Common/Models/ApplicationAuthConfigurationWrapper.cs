@@ -12,7 +12,7 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class ApplicationAuthConfigurationWrapper
     {
-        // [SerializeField] // TODO
+        // [SerializeField, JsonProperty("_google")] // TODO
         // private ApplicationAuthConfigurationGoogleWrapper _googleWrapper;
         // public ApplicationAuthConfigurationGoogle Google 
         // { 
@@ -22,7 +22,7 @@ namespace Hathora.Scripts.Net.Common.Models
         
         
         // /// <summary>"Construct a type with a set of properties K of type T" --from SDK</summary>
-        // [SerializeField] // TODO
+        // [SerializeField, JsonProperty("nickname")] // TODO
         // private string _nicknameWrapper;
         //
         // /// <summary>"Construct a type with a set of properties K of type T" --from SDK</summary>
@@ -34,7 +34,7 @@ namespace Hathora.Scripts.Net.Common.Models
         
         
         // /// <summary>"Construct a type with a set of properties K of type T" --from SDK</summary>
-        // [SerializeField]
+        // [SerializeField, JsonProperty("anonymous")]
         // private System.Object _anonymous;
         //
         // /// <summary>"Construct a type with a set of properties K of type T" --from SDK</summary>
@@ -44,16 +44,7 @@ namespace Hathora.Scripts.Net.Common.Models
         //     set => _anonymous = value;
         // }
         
-        
-        // [SerializeField] // TODO
-        // IDictionary<string, object> _additionalProperties;
-        // public IDictionary<string, object> AdditionalProperties 
-        // { 
-        //     get => _additionalProperties;
-        //     set => _additionalProperties = value;
-        // }
-        
-        
+
         public ApplicationAuthConfigurationWrapper(ApplicationAuthConfiguration _appAuthConfig)
         {
             if (_appAuthConfig == null)

@@ -107,9 +107,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             else
                 insertCreateRoomLobbyBtn(enableCreateRoomBtn);
 
-            bool hasLastRoomInfo = Config.HathoraLobbyRoomOpts.TODO;
+            bool hasLastRoomInfo = Config.HathoraLobbyRoomOpts.HasLastCreatedRoomInfo;
+            if (hasLastRoomInfo)
+                insertLastCreatedRoomInfoGroup();
             
             insertViewLogsMetricsLinkLbl();
+        }
+
+        private void insertLastCreatedRoomInfoGroup()
+        {
+            // throw new NotImplementedException("TODO");
         }
 
         private void insertCreateRoomLobbyCancelBtn(CancellationTokenSource _cancelTokenSrc)

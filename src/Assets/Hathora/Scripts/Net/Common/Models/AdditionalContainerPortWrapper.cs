@@ -2,6 +2,7 @@
 
 using System;
 using Hathora.Cloud.Sdk.Model;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -18,8 +19,7 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class AdditionalContainerPortWrapper : ContainerPortWrapper
     {
-        [SerializeField, Tooltip("Choose an arbitrary name to identify this transpport easier. " +
-             "`Default` is reserved. Leave this empty and we'll ignore this class.")]
+        [SerializeField, JsonProperty("name")]
         private string _transportNickname;
         public string TransportNickname
         {

@@ -3,8 +3,8 @@
 using System;
 using System.Globalization;
 using Hathora.Cloud.Sdk.Model;
+using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common.Models
 {
@@ -15,7 +15,7 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class ApplicationWithDeploymentWrapper
     {
-        [SerializeField]
+        [SerializeField, JsonProperty("appId")]
         private string _appId;
         public string AppId 
         { 
@@ -24,7 +24,7 @@ namespace Hathora.Scripts.Net.Common.Models
         }
         
         /// <summary>Serialized from `DateTime`.</summary>
-        [SerializeField]
+        [SerializeField, JsonProperty("createdAt")]
         private string _createdAtWrapper;
         
         /// <summary>Serialized from `DateTime`.</summary>
@@ -37,7 +37,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _createdAtWrapper = value.ToString(CultureInfo.InvariantCulture);
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("createdBy")]
         private string _createdBy;
         public string CreatedBy 
         { 
@@ -45,7 +45,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _createdBy = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("deletedBy")]
         private string _deletedBy;
         public string DeletedBy 
         { 
@@ -55,7 +55,7 @@ namespace Hathora.Scripts.Net.Common.Models
 
 
         /// <summary>Serialized from `DateTime`.</summary>
-        [SerializeField]
+        [SerializeField, JsonProperty("deletedAt")]
         private string _deletedAtWrapper;
         
         /// <summary>Serialized from `DateTime`.</summary>
@@ -68,7 +68,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _deletedAtWrapper = value.ToString();
         }
  
-        [SerializeField]
+        [SerializeField, JsonProperty("orgId")]
         private string _orgId;
         public string OrgId 
         { 
@@ -76,7 +76,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _orgId = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("authConfiguration")]
         private ApplicationAuthConfigurationWrapper _authConfigurationWrapper;
         public ApplicationAuthConfiguration AuthConfiguration 
         { 
@@ -84,7 +84,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _authConfigurationWrapper = new ApplicationAuthConfigurationWrapper(value);
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("appSecret")]
         private string _appSecret;
         public string AppSecret 
         { 
@@ -92,7 +92,7 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _appSecret = value;
         }
         
-        [SerializeField]
+        [SerializeField, JsonProperty("appName")]
         private string _appName;
         public string AppName 
         { 
@@ -101,7 +101,7 @@ namespace Hathora.Scripts.Net.Common.Models
         }
         
          
-        [SerializeField]
+        [SerializeField, JsonProperty("deployment")]
         private DeploymentWrapper _deploymentWrapper;
         public Deployment Deployment 
         { 
@@ -118,15 +118,6 @@ namespace Hathora.Scripts.Net.Common.Models
                 ? null 
                 : new DeploymentWrapper(value);
         }
-        
-        
-        // [SerializeField] // TODO
-        // private IDictionary<string, object> _additionalProperties;
-        // public IDictionary<string, object> AdditionalProperties 
-        // { 
-        //     get => _additionalProperties;
-        //     set => _additionalProperties = value;
-        // }
 
         
         public ApplicationWithDeploymentWrapper(ApplicationWithDeployment _appWithDeployment)

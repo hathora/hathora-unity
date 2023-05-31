@@ -2,11 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Hathora.Cloud.Sdk.Model;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common.Models
 {

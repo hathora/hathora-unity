@@ -2,6 +2,7 @@
 
 using System;
 using Hathora.Cloud.Sdk.Model;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Hathora.Scripts.Net.Common.Models
@@ -16,7 +17,7 @@ namespace Hathora.Scripts.Net.Common.Models
     public class ContainerPortWrapper
     {
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        [SerializeField, Tooltip("Default: UDP. UDP is recommended for realtime games: Faster, but less reliable.")]
+        [SerializeField, JsonProperty("transportType")]
         private TransportType _transportType = TransportType.Udp;
        
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
@@ -27,7 +28,7 @@ namespace Hathora.Scripts.Net.Common.Models
         }    
         
 
-        [SerializeField, Range(1024, 65535), Tooltip("Default: 7777; or use 1024~65535")]
+        [SerializeField, Range(1024, 65535), JsonProperty("portNumber")]
         private int _portNumber = 7777;
         public int PortNumber
         {
@@ -69,8 +70,6 @@ namespace Hathora.Scripts.Net.Common.Models
                     this.PortNumber,
                     containerName
                 );
-    
-                // AdditionalProperties = TODO
             }
             catch (Exception e)
             {

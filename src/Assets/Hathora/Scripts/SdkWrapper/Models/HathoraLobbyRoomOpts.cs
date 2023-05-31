@@ -43,6 +43,17 @@ namespace Hathora.Scripts.SdkWrapper.Models
             get => _regionSelectedIndex;
             set => _regionSelectedIndex = value;
         }
+
+        [SerializeField]
+        private Room _lastCreatedRoomInfo;
+        public Room LastCreatedRoomInfo
+        {
+            get => _lastCreatedRoomInfo;
+            set => _lastCreatedRoomInfo = value;
+        }
+        
+        public bool HasLastCreatedRoomInfo => _lastCreatedRoomInfo != null;
+        
         #endregion // Hathora Region
     }
 }
