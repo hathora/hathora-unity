@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
@@ -34,6 +35,16 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         
         #region Main
+        public void OnEnable()
+        {
+            if (selectedConfig == null)
+                selectedConfig = getSelectedInstance();
+
+            // If !authed, check again for a physical token cache file
+            if (selectedConfig != null && !IsAuthed)
+                HathoraConfigPreAuthBodyUI.CheckedTokenCache = false;
+        }
+
         /// <summary>
         /// Essentially the editor version of Update().
         /// We'll mask over the entire Config with a styled UI.
