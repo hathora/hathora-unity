@@ -60,13 +60,9 @@ namespace Hathora.Scripts.Net.Common.Models
         /// <summary>Parses from List of ContainerPort</summary>
         public List<ContainerPort> AdditionalContainerPorts
         {
-            get => _additionalContainerPorts?
-                .Select(port => port.ToContainerPortType())
-                .ToList();
-
-            set => _additionalContainerPorts = value?
-                .Select(port => new AdditionalContainerPortWrapper(port))
-                .ToList();
+            get => _additionalContainerPorts?.ConvertAll(wrapper => wrapper.ToContainerPortType());
+            set => _additionalContainerPorts = value?.ConvertAll(val => 
+                new AdditionalContainerPortWrapper(val));
         }
         
 
