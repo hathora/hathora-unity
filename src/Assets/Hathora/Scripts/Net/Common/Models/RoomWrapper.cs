@@ -15,6 +15,14 @@ namespace Hathora.Scripts.Net.Common.Models
     [Serializable]
     public class RoomWrapper
     {
+        [SerializeField, JsonProperty("appId")]
+        private string _appId;
+        public string AppId
+        {
+            get => _appId;
+            set => _appId = value;
+        }
+        
         [SerializeField, JsonProperty("status")]
         private RoomStatus _status = RoomStatus.Destroyed;
         public RoomStatus Status
@@ -47,12 +55,17 @@ namespace Hathora.Scripts.Net.Common.Models
             set => _roomId = value;
         }
 
-        [SerializeField, JsonProperty("appId")]
-        private string _appId;
-        public string AppId
+
+        public RoomWrapper(Room _room)
         {
-            get => _appId;
-            set => _appId = value;
+            if (_room == null)
+                return;
+            
+            this.AppId = _room.AppId;
+            this.Status = _room.Status;
+            this.CurrentAllocation = _room.CurrentAllocation;
+            this.Allocations = _room.Allocations;
+            this.RoomId = _room.RoomId;
         }
     }
 }

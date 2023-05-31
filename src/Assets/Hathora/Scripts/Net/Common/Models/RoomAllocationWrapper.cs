@@ -2,6 +2,7 @@
 
 using System;
 using System.Globalization;
+using Hathora.Cloud.Sdk.Model;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -55,6 +56,17 @@ namespace Hathora.Scripts.Net.Common.Models
         { 
             get => _roomAllocationId;
             set => _roomAllocationId = value;
+        }
+
+        public RoomAllocationWrapper(RoomAllocation _roomAllocation)
+        {
+            if (_roomAllocation == null)
+                return;
+            
+            this.UnscheduledAt = _roomAllocation.UnscheduledAt;
+            this.ScheduledAt = _roomAllocation.ScheduledAt;
+            this.ProcessId = _roomAllocation.ProcessId;
+            this.RoomAllocationId = _roomAllocation.RoomAllocationId;
         }
     }
 }
