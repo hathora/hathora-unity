@@ -148,7 +148,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private async Task insertDevAuthLoginBtn()
         {
             // USER INPUT >>
-            bool clickedLoginBtn = GUILayout.Button("Log in to Hathora Cloud", BigButtonStyle);
+            bool clickedLoginBtn = GUILayout.Button("Log in to Hathora Cloud", BigButtonSideMarginsStyle);
             if (clickedLoginBtn)
                 await onLoginBtnClickAsync();
             

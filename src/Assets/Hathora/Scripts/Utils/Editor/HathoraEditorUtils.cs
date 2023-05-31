@@ -59,6 +59,10 @@ namespace Hathora.Scripts.Utils.Editor
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
         public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);
+        
+        /// <summary>Useful when a button is inside a group - you don't want it to stretch 100%</summary>
+        public static readonly RectOffset SideMarginsOnly = new(left: 20, right: 20, top: 0, bottom: 0);
+        
         public static readonly RectOffset DefaultBtnPadding = new(left: 10, right: 10, top: 7, bottom: 7);
         public static readonly RectOffset NoPadding = new(left: 0, right: 0, top: 0, bottom: 0);
         public static readonly RectOffset DefaultMargin = new(left: 3, right: 3, top: 2, bottom: 2);
@@ -73,18 +77,28 @@ namespace Hathora.Scripts.Utils.Editor
             wordWrap = _wordWrap,
             // margin = DefaultMargin,
             padding = DefaultBtnPadding,
-        };        
-        public static GUIStyle GetBigButtonStyle(
-            int _fontSize = 13, 
-            bool _wordWrap = true) => new(GUI.skin.button)
-        {
-            richText = true,
-            fontSize = _fontSize,
-            wordWrap = _wordWrap,
-            // margin = DefaultMargin,
-            // padding = DefaultPadding,
-            fixedHeight = 50,
         };
+
+        public static GUIStyle GetBigButtonStyle(
+            int _fontSize = 13,
+            bool _wordWrap = true,
+            bool _sideMargins = false)
+        {
+            GUIStyle bigBtnStyle = new(GUI.skin.button)
+            {
+                richText = true,
+                fontSize = _fontSize,
+                wordWrap = _wordWrap,
+                // margin = DefaultMargin,
+                // padding = DefaultPadding,
+                fixedHeight = 50,
+            };
+
+            if (_sideMargins)
+                bigBtnStyle.margin = SideMarginsOnly;
+
+            return bigBtnStyle;
+        }
         
         public static GUIStyle GetRichLabelStyle(
             TextAnchor _align, 
