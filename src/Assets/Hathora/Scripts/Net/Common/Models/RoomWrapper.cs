@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Hathora.Cloud.Sdk.Model;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Common.Models
 {
@@ -32,19 +33,20 @@ namespace Hathora.Scripts.Net.Common.Models
         }
         
         [SerializeField, JsonProperty("currentAllocation")]
-        private RoomAllocation _currentAllocation = new();
+        private RoomAllocationWrapper _currentAllocationWrapper;
         public RoomAllocation CurrentAllocation
         {
-            get => _currentAllocation;
-            set => _currentAllocation = value;
+            get => _currentAllocationWrapper?.ToRoomAllocationType();
+            set => _currentAllocationWrapper = new RoomAllocationWrapper(value);
         }
 
         [SerializeField, JsonProperty("allocations")]
-        private List<RoomAllocation> _allocations = new();
+        private List<RoomAllocationWrapper> _allocationsWrapper = new();
         public List<RoomAllocation> Allocations
         {
-            get => _allocations;
-            set => _allocations = value;
+            get => _allocationsWrapper?.ConvertAll(wrapper => wrapper.ToRoomAllocationType());
+            set => _allocationsWrapper = value?.ConvertAll(val => 
+                new RoomAllocationWrapper(val));
         }
 
         [SerializeField, JsonProperty("roomId")]
