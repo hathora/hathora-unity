@@ -144,8 +144,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (_space > 0)
                 EditorGUILayout.Space(_space);
         }
-        
+
+        /// <param name="_url">On click, open browser to this url</param>
         /// <param name="_centerAlign">Wrap in a horizontal layout with flex space</param>
+        /// <param name="_label">Link label string</param>
         protected void InsertLinkLabel(
             string _label, 
             string _url, 
