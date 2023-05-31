@@ -259,7 +259,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (keyDeleted)
             {
                 // Reset cached token checker flag
-                HathoraConfigPreAuthBodyUI.checkedTokenCache = false;   
+                HathoraConfigPreAuthBodyUI.CheckedTokenCache = false;   
             }
         }
         
