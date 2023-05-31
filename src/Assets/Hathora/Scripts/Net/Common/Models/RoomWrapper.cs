@@ -16,7 +16,7 @@ namespace Hathora.Scripts.Net.Common.Models
     public class RoomWrapper
     {
         [SerializeField, JsonProperty("status")]
-        private RoomStatus _status;
+        private RoomStatus _status = RoomStatus.Destroyed;
         public RoomStatus Status
         {
             get => _status;
@@ -24,7 +24,7 @@ namespace Hathora.Scripts.Net.Common.Models
         }
         
         [SerializeField, JsonProperty("currentAllocation")]
-        private RoomAllocation _currentAllocation;
+        private RoomAllocation _currentAllocation = new();
         public RoomAllocation CurrentAllocation
         {
             get => _currentAllocation;
@@ -32,7 +32,7 @@ namespace Hathora.Scripts.Net.Common.Models
         }
 
         [SerializeField, JsonProperty("allocations")]
-        private List<RoomAllocation> _allocations;
+        private List<RoomAllocation> _allocations = new();
         public List<RoomAllocation> Allocations
         {
             get => _allocations;
