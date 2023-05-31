@@ -121,7 +121,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             string selectedAppId = Config.HathoraCoreOpts.AppId;
             base.InsertLeftSelectableLabel(selectedAppId, _vertCenter: true);
             
-            GUILayout.FlexibleSpace();
+            InsertFlexSpace();
             
             // USER INPUT >>
             bool clickedCopyAppIdBtn = InsertLeftGeneralBtn("Copy AppId");

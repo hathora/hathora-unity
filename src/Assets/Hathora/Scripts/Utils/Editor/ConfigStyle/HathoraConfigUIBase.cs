@@ -264,7 +264,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (_vertCenter)
             {
                 GUILayout.BeginVertical();
-                GUILayout.FlexibleSpace();    
+                InsertFlexSpace();    
             }
 
             Rect labelRect = GUILayoutUtility.GetRect(
@@ -276,7 +276,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         
             if (_vertCenter)
             {
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
                 GUILayout.EndVertical();    
             }
 
@@ -302,7 +302,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (_vertCenter)
             {
                 GUILayout.BeginVertical();
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
             }
             
             GUIStyle leftAlignStyle = _wrap 
@@ -326,7 +326,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             
             if (_vertCenter)
             {
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
                 GUILayout.EndVertical();
             }
             
@@ -347,12 +347,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected void StartCenterHorizAlign()
         {
             GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
+            InsertFlexSpace();
         }
 
         protected void EndCenterHorizAlign()
         {
-            GUILayout.FlexibleSpace();
+            InsertFlexSpace();
             GUILayout.EndHorizontal();
         }
 
@@ -404,7 +404,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertLeftLabel(_labelStr, _tooltip);
             
             if (_alignTextField == GuiAlign.SmallRight)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
 
             float maxTxtFieldWidth = _alignTextField == GuiAlign.Stretched
                 ? -1f
@@ -416,7 +416,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 : GUILayout.TextField(_val, getDefaultInputLayoutOpts(_maxWidth: maxTxtFieldWidth));
             
             if (_alignTextField == GuiAlign.SmallLeft)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
 
             EditorGUILayout.EndHorizontal();
             return inputStr;
@@ -501,7 +501,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertLeftLabel(_labelStr, _tooltip);
             
             if (_alignPopup == GuiAlign.SmallRight)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
             
             // USER INPUT >>
             int newSelectedIndex = EditorGUILayout.Popup(
@@ -510,7 +510,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 getDefaultInputLayoutOpts());
             
             if (_alignPopup == GuiAlign.SmallLeft)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
 
             EditorGUILayout.EndHorizontal();
             return newSelectedIndex;
@@ -532,7 +532,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         //     GUILayout.Space(_bufferSpaceAfterTooltip);
         //
         //     if (_alignPopup == GuiAlign.SmallRight)
-        //         GUILayout.FlexibleSpace();
+        //         InsertFlexSpace();
         //
         //     int newSelectedIndex = _selectedIndex;
         //
@@ -550,7 +550,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         //     }
         //
         //     if (_alignPopup == GuiAlign.SmallLeft)
-        //         GUILayout.FlexibleSpace();
+        //         InsertFlexSpace();
         //
         //     EditorGUILayout.EndHorizontal();
         //
@@ -580,7 +580,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertLeftLabel(_labelStr, _tooltip);
 
             if (_alignPopup == GuiAlign.SmallRight)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
              
             // USER INPUT >>
             int inputInt = EditorGUILayout.IntSlider(
@@ -590,7 +590,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 getDefaultInputLayoutOpts());
 
             if (_alignPopup == GuiAlign.SmallLeft)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
 
             EditorGUILayout.EndHorizontal();
             return inputInt;
@@ -620,7 +620,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InsertLeftLabel(_labelStr, _tooltip);
 
             if (_alignPopup == GuiAlign.SmallRight)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
 
             // USER INPUT >>
             int inputInt = EditorGUILayout.IntField(_val, getDefaultInputLayoutOpts());
@@ -629,7 +629,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             inputInt = Mathf.Clamp(inputInt, _minVal, _maxVal);
 
             if (_alignPopup == GuiAlign.SmallLeft)
-                GUILayout.FlexibleSpace();
+                InsertFlexSpace();
 
             EditorGUILayout.EndHorizontal();
             return inputInt;
@@ -643,7 +643,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
              EditorUtility.SetDirty(Config); // Mark the object as dirty
              AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
          }
-        
+
+        protected void InsertFlexSpace(int _count = 1)
+        {
+            for (int i = 0; i < _count; i++)
+                GUILayout.FlexibleSpace();
+        }
+
         protected void InsertSpace1x() =>
             EditorGUILayout.Space(5f);
 
