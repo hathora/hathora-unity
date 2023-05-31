@@ -70,14 +70,23 @@ namespace Hathora.Scripts.Utils.Editor
         
         public static GUIStyle GetRichButtonStyle(
             int _fontSize = 13, 
-            bool _wordWrap = true) => new(GUI.skin.button)
+            bool _wordWrap = true,
+            bool _sideMargins = false)
         {
-            richText = true,
-            fontSize = _fontSize,
-            wordWrap = _wordWrap,
-            // margin = DefaultMargin,
-            padding = DefaultBtnPadding,
-        };
+            GUIStyle richBtnStyle = new(GUI.skin.button)
+            {
+                richText = true,
+                fontSize = _fontSize,
+                wordWrap = _wordWrap,
+                // margin = DefaultMargin,
+                padding = DefaultBtnPadding,
+            };
+
+            if (_sideMargins)
+                richBtnStyle.margin = SideMarginsOnly;
+
+            return richBtnStyle;
+        }
 
         public static GUIStyle GetBigButtonStyle(
             int _fontSize = 13,

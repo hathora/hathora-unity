@@ -109,19 +109,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private void insertTokenCacheBtn()
         {
-            StartCenterHorizAlign();
+            InsertCenterLabel("Existing token cache found");
+        
+            // USER INPUT >> Calls back onClick
+            InsertLinkLabel(
+                "Log in with token",
+                _url: null,
+                _centerAlign: true,
+                onClick: () =>
+                {
+                    onLoginWithTokenCacheBtnClick();
+                });  
 
-            string btnLabel = "Existing token cache found:\n" +
-                $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}><b>Log in with token</b></color>";
-            
-            // USER INPUT >>
-            // if (GUILayout.Button(btnLabel, CenterAlignLabelStyle))
-            bool clickedLabelLink = InsertLinkLabelEvent(btnLabel, _centerAlign: true);
-            
-            if (clickedLabelLink)
-                onInsertTokenCacheBtnClick(cachedToken);
-                
-            EndCenterHorizAlign();
             InsertSpace2x();
         }
 
@@ -129,12 +128,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             InsertCenterLabel("Don't have an account yet?");
         
-            // // USER INPUT >>
-            // bool clickedLink = InsertLinkLabelEvent(
-            //     "Register Here",
-            //     _centerAlign: true);
-            
-            // USER INPUT >> Opens bad url, catch Exception, trigger our own event.
+            // USER INPUT >> Calls back onClick
             InsertLinkLabel(
                 "Register Here",
                 _url: null,
@@ -161,7 +155,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 "<b>Cancel</b> (Logging in via browser...)</color>";
             
             // USER INPUT >>
-            bool clickedAuthCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
+            bool clickedAuthCancelBtn = GUILayout.Button(btnLabelStr, GeneralSideMarginsButtonStyle);
             if (clickedAuthCancelBtn)
                 onAuthCancelBtnClick(_cancelTokenSrc);
             
@@ -169,6 +163,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             InvokeRequestRepaint();
         }
         
+        private void onLoginWithTokenCacheBtnClick() =>
+            onInsertTokenCacheBtnClick(cachedToken);
         
         private void onInsertTokenCacheBtnClick(string _cachedAuthToken)
         {

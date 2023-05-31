@@ -37,6 +37,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         protected GUIStyle RightAlignLabelStyle { get; private set; }
         protected GUIStyle PreLinkLabelStyle { get; private set; }
         protected GUIStyle GeneralButtonStyle { get; private set; }
+        protected GUIStyle GeneralSideMarginsButtonStyle { get; private set; }
         protected GUIStyle BigButtonStyle { get; private set; }
         protected GUIStyle BigButtonSideMarginsStyle { get; private set; }
         protected GUIStyle BtnsFoldoutStyle { get; private set; }
@@ -79,6 +80,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         private void initButtonStyles()
         {
             this.GeneralButtonStyle ??= HathoraEditorUtils.GetRichButtonStyle();
+            this.GeneralSideMarginsButtonStyle ??= HathoraEditorUtils.GetRichButtonStyle(_sideMargins: true);
             this.BigButtonStyle ??= HathoraEditorUtils.GetBigButtonStyle();
             this.BigButtonSideMarginsStyle ??= HathoraEditorUtils.GetBigButtonStyle(_sideMargins: true);
         }
