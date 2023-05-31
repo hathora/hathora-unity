@@ -145,22 +145,30 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 EditorGUILayout.Space(_space);
         }
 
-        /// <param name="_url">On click, open browser to this url</param>
+        /// <param name="_url">On click, open browser to this url; or set null for onClick only.</param>
         /// <param name="_centerAlign">Wrap in a horizontal layout with flex space</param>
         /// <param name="_label">Link label string</param>
+        /// <param name="onClick">Get a callback on click. Set _url to null to skip link completely.</param>
         protected void InsertLinkLabel(
             string _label, 
             string _url, 
-            bool _centerAlign)
+            bool _centerAlign,
+            Action onClick = null)
         {
             if (_centerAlign)
                 StartCenterHorizAlign();
+
+            bool clickedLink = EditorGUILayout.LinkButton(
+                _label,
+                GUILayout.ExpandWidth(false));
             
-            if (EditorGUILayout.LinkButton(
-                    _label,
-                    GUILayout.ExpandWidth(false)))
+            if (clickedLink)
             {
-                Application.OpenURL(_url);
+                bool isValidUrl = !string.IsNullOrEmpty(_url);
+                if (isValidUrl)
+                    Application.OpenURL(_url);
+                
+                onClick?.Invoke();
             }
             
             if (_centerAlign)
