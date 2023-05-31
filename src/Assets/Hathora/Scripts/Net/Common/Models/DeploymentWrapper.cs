@@ -143,15 +143,7 @@ namespace Hathora.Scripts.Net.Common.Models
             get => _appId;
             set => _appId = value;
         }
-        
-        // // [SerializeField] // TODO
-        // private IDictionary<string, object> _additionalProperties;
-        // public IDictionary<string, object> AdditionalProperties 
-        // { 
-        //     get => _additionalProperties;
-        //     set => _additionalProperties = value;
-        // }
-        
+
         
         public DeploymentWrapper(Deployment _deployment)
         {
@@ -171,7 +163,6 @@ namespace Hathora.Scripts.Net.Common.Models
             this.BuildId = _deployment.BuildId;
             this.AppId = _deployment.AppId;
             // Env = _deployment.Env;
-            // AdditionalProperties = _deployment.AdditionalProperties;
         }
 
         public Deployment ToDeploymentType()
@@ -194,7 +185,6 @@ namespace Hathora.Scripts.Net.Common.Models
                     deploymentId: this.DeploymentId,
                     buildId: this.BuildId,
                     appId: this.AppId // Env = this.Env,
-                    // AdditionalProperties = this.AdditionalProperties 
                 );
             }
             catch (Exception e)

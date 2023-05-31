@@ -53,7 +53,6 @@ namespace Hathora.Scripts.Net.Common.Models
             // this.Google = _appAuthConfig.Google; // TODO
             // this.Nickname = _appAuthConfig.Nickname; // TODO
             // this.Anonymous = _appAuthConfig.Anonymous; // TODO
-            // this.AdditionalProperties = _appWithDeployment.AdditionalProperties; // TODO
         }
 
         public ApplicationAuthConfiguration ToApplicationAuthConfigurationType()
@@ -67,7 +66,6 @@ namespace Hathora.Scripts.Net.Common.Models
                     // Google = this.Google, // TODO
                     // Nickname = this.Nickname, // TODO
                     // Anonymous = this.Anonymous, // TODO
-                    // AdditionalProperties = this.AdditionalProperties, // TODO
                 };
             }
             catch (Exception e)

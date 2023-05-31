@@ -52,7 +52,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             try
             {
                 createRoomReq = new CreateRoomRequest(roomOpts.HathoraRegion);
-                // createRoomReq.AdditionalProperties = // TODO  
                 
                 Debug.Log("[HathoraServerRoom.CreateRoomAsync] " +
                     $"roomConfig == <color=yellow>{createRoomReq.ToJson()}</color>");

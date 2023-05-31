@@ -134,7 +134,6 @@ namespace Hathora.Scripts.Net.Common.Models
             this.OrgId = _appWithDeployment.OrgId;
             this.Deployment = _appWithDeployment.Deployment;
             this.AuthConfiguration = _appWithDeployment.AuthConfiguration;
-            // this.AdditionalProperties = _appWithDeployment.AdditionalProperties; // TODO
         }
 
         private void setMissingDefaults()
@@ -176,8 +175,6 @@ namespace Hathora.Scripts.Net.Common.Models
                 throw;
             }
             
-            // appWithDeploy.AdditionalProperties = this.AdditionalProperties; // TODO
-
             return appWithDeploy;
         }
     }
