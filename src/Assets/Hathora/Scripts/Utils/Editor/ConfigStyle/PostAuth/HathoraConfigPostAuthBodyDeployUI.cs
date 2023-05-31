@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
@@ -214,13 +215,26 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertDeployAppHelpboxErr()
         {
             InsertSpace2x();
+
+            // (!) Hathora SDK Enums start at index 1 (not 0)
+            StringBuilder helpboxLabelStrb = new("Missing required fields: ");
+            if (!Config.HathoraCoreOpts.HasAppId)
+                helpboxLabelStrb.Append("AppId, ");
             
-            const MessageType helpMsgType = MessageType.Error;
-            const string helpMsg = "Missing required: Plan Size, Rooms per Process, " +
-                "Container Port Number, Transport Type";
+            if (Config.HathoraDeployOpts.PlanNameSelectedIndex < 1)
+                helpboxLabelStrb.Append("Plan Size, ");
+            
+            if (Config.HathoraDeployOpts.RoomsPerProcess < 1)
+                helpboxLabelStrb.Append("Rooms per Process, ");
+            
+            if (Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber < 1)
+                helpboxLabelStrb.Append("Container Port Number, ");
+            
+            if (Config.HathoraDeployOpts.TransportTypeSelectedIndex < 1)
+                helpboxLabelStrb.Append("Transport Type");
 
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
-            EditorGUILayout.HelpBox(helpMsg, helpMsgType);
+            EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
         }
 
         /// <summary>

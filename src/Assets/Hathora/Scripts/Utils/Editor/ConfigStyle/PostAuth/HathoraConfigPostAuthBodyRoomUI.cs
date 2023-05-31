@@ -127,24 +127,23 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return;
             
             // Explain why the button is disabled
-            const MessageType helpMsgType = MessageType.Error;
-            StringBuilder helpMsgStrb = new("Missing required fields: ");
+            StringBuilder helpboxLabelStrb = new("Missing required fields: ");
             
             // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!Config.HathoraCoreOpts.HasAppId)
-                helpMsgStrb.Append("`AppId, `");
+                helpboxLabelStrb.Append("`AppId, `");
             
             if (Config.HathoraLobbyRoomOpts.RegionSelectedIndex < 1)
-                helpMsgStrb.Append("`Region, `");
+                helpboxLabelStrb.Append("`Region, `");
             
             if (Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex < 1)
-                helpMsgStrb.Append("`Lobby Visibility, `");
+                helpboxLabelStrb.Append("`Lobby Visibility, `");
 
             if (string.IsNullOrEmpty(Config.HathoraLobbyRoomOpts.InitConfigJson))
-                helpMsgStrb.Append("`Init Config must at least be {}, `");
+                helpboxLabelStrb.Append("`Init Config must at least be {}, `");
             
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
-            EditorGUILayout.HelpBox(helpMsgStrb.ToString(), helpMsgType);
+            EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
         }
 
         private void insertViewLogsMetricsLinkLbl()

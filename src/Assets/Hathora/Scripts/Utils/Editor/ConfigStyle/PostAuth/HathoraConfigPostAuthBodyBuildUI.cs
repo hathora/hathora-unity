@@ -87,14 +87,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
             StringBuilder helpboxLabelStrb = new("Missing required fields: ");
             if (!Config.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append($"{nameof(Config.HathoraCoreOpts.AppId)}, ");
+                helpboxLabelStrb.Append("AppId, ");
             
             if (!Config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
-                helpboxLabelStrb.Append($"{nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildDirName)}, ");
+                helpboxLabelStrb.Append("Server Build Dir Name}, ");
                 
             if (!Config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
-                helpboxLabelStrb.Append($"{nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName)}, ");
+                helpboxLabelStrb.Append("Server Build Exe Name");
 
+            // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
             return false; // !enableBuildBtn
         }
