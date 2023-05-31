@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Scripts.Net.Common;
@@ -73,7 +74,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 return;
             }
             
-            insertDevAuthLoginBtn();
+            insertDevAuthLoginBtn(); // !await
             InsertMoreActionsLbl();
             insertRegisterOrTokenCacheLogin();
         }
@@ -126,19 +127,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         private async Task insertRegisterLinkLbl()
         {
-            StartCenterHorizAlign();
-
-            string btnLabel = $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
-                $"<b>Register Now</b></color>";
+            InsertCenterLabel("Don't have an account yet?");
         
-            // USER INPUT >>
-            // if (GUILayout.Button(btnLabel, CenterAlignLabelStyle))
-            bool clickedLabelLink = InsertLinkLabelEvent(btnLabel, _centerAlign: true);
-
-            if (clickedLabelLink)
-                onLoginBtnClickAsync();
+            // // USER INPUT >>
+            // bool clickedLink = InsertLinkLabelEvent(
+            //     "Register Here",
+            //     _centerAlign: true);
             
-            EndCenterHorizAlign();
+            // USER INPUT >> Opens bad url, catch Exception, trigger our own event.
+            InsertLinkLabel(
+                "Register Here",
+                _url: null,
+                _centerAlign: true,
+                onClick: () =>
+                {
+                    onRegisterBtnClick(); // !await
+                });  
         }
 
         private async Task insertDevAuthLoginBtn()
@@ -175,6 +179,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 
         
         #region Logic Events
+        private void onRegisterBtnClick() => 
+            onLoginBtnClickAsync(); // !await
+        
         private async Task<bool> onLoginBtnClickAsync()
         {
             Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginBtnClickAsync");
