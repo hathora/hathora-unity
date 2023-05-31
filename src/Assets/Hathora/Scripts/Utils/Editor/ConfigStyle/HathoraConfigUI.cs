@@ -3,7 +3,6 @@
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
-using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {

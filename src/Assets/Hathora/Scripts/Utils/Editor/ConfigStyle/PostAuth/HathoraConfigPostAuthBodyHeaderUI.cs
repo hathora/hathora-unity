@@ -57,10 +57,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertLoginTokenGroup()
         {
             insertDevTokenPasswordField();
-            
-            bool showCancelBtn = HathoraServerAuth.HasCancellableToken && !devReAuthLoginButtonInteractable; 
+
+            bool showCancelBtn = !HathoraServerAuth.IsAuthComplete
+                && HathoraServerAuth.HasCancellableAuthToken;
+                
             if (showCancelBtn)
-                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
+                insertAuthCancelBtn(HathoraServerAuth.AuthCancelTokenSrc);
             else
                 insertLoginToHathoraConsoleBtn(); // !await
             
@@ -141,23 +143,25 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GRAY_TRANSPARENT_COLOR_HEX}>" +
                 "Select an application to use</color>", CenterAlignLabelStyle);
-        }
+        } 
 
         private void insertExistingAppsRefreshBtn()
         {
             bool recentlyAuthed = Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed;
-            string btnLabelStr = recentlyAuthed ? 
+            bool disableBtn = isRefreshingExistingApps || recentlyAuthed;
+            
+            string btnLabelStr = disableBtn ? 
                 "↻ Refreshing..." : 
                 "↻ Refresh List";
             
             // USER INPUT >>
-            EditorGUI.BeginDisabledGroup(disabled: recentlyAuthed); 
+            EditorGUI.BeginDisabledGroup(disabled: disableBtn); 
             bool clickedAppRefreshBtn = InsertLeftGeneralBtn(btnLabelStr); 
             EditorGUI.EndDisabledGroup();
 
             if (clickedAppRefreshBtn || recentlyAuthed)
             {
-                // TODO: Add a cancel btn
+                // TODO: Replace disabled btn with a separate cancel btn
                 onRefreshAppsListBtnClick();
                 Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = false;
             }
@@ -298,15 +302,29 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             devReAuthLoginButtonInteractable = false;
             
             bool isSuccess = await HathoraServerAuth.DevAuthLogin(Config);
-            if (isSuccess)
-                onLoginToHathoraSuccess();
+            if (!isSuccess)
+                onPostAuthLoginFail();
+            else
+                onPostAuthLoginToHathoraSuccess();
             
             devReAuthLoginButtonInteractable = true;
         }
 
-        private void onLoginToHathoraSuccess()
+        private void onPostAuthLoginToHathoraSuccess()
         {
-            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onLoginToHathoraSuccess");
+            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onPostAuthLoginToHathoraSuccess");
+            
+            if (!HathoraServerAuth.IsAuthComplete)
+                HathoraServerAuth.AuthCompleteSrc?.SetResult(true); // isSuccess
+            
+            Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = true;
+        }
+
+        private void onPostAuthLoginFail()
+        {
+            Debug.Log("[HathoraConfigPreAuthBodyUI] onPostAuthLoginFail");
+            if (!HathoraServerAuth.IsAuthComplete)
+                HathoraServerAuth.AuthCompleteSrc?.SetResult(false); // !isSuccess
         }
         #endregion // Event Logic
 

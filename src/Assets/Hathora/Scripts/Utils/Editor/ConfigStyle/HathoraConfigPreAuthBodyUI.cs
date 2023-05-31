@@ -62,12 +62,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// </summary>
         private void insertRegAuthBtns()
         {
-            bool showCancelBtn = HathoraServerAuth.HasCancellableToken && !devAuthLoginButtonInteractable;
+            bool showCancelBtn = !HathoraServerAuth.IsAuthComplete && !devAuthLoginButtonInteractable;
             
             // !await these
             if (showCancelBtn)
             {
-                insertAuthCancelBtn(HathoraServerAuth.ActiveCts);
+                insertAuthCancelBtn(HathoraServerAuth.AuthCancelTokenSrc);
                 return;
             }
             
@@ -177,9 +177,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginBtnClickAsync");
             devAuthLoginButtonInteractable = false;
-                
+
+            HathoraServerAuth.AuthCompleteSrc = new TaskCompletionSource<bool>();
             bool isSuccess = await HathoraServerAuth.DevAuthLogin(Config);
-            if (isSuccess)
+            if (!isSuccess)
+                onLoginFail();
+            else
                 onLoginSuccess();
             
             devAuthLoginButtonInteractable = true;
@@ -191,7 +194,18 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginSuccess");
              
             // Set a flag to refresh apps automatically the next time we Draw post-auth body header
+            if (!HathoraServerAuth.IsAuthComplete)
+                HathoraServerAuth.AuthCompleteSrc?.SetResult(true); // isSuccess
+            
             Config.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = true;
+        }
+
+        private void onLoginFail()
+        {
+            Debug.Log("[HathoraConfigPreAuthBodyUI] onLoginFail");
+            
+            if (!HathoraServerAuth.IsAuthComplete)
+                HathoraServerAuth.AuthCompleteSrc?.SetResult(false); // !isSuccess
         }
 
         private void onAuthCancelBtnClick(CancellationTokenSource _cancelTokenSrc)

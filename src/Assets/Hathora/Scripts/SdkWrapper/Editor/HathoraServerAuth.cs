@@ -17,10 +17,24 @@ namespace Hathora.Scripts.SdkWrapper.Editor
     /// </summary>
     public static class HathoraServerAuth
     {
-        public static CancellationTokenSource ActiveCts { get; private set; }
+        static HathoraServerAuth()
+        {
+            AuthCompleteSrc = new TaskCompletionSource<bool>();
+        }
+        
+        public static TaskCompletionSource<bool> AuthCompleteSrc { get; set; }
+        public static CancellationTokenSource AuthCancelTokenSrc { get; set; }
 
-        public static bool HasCancellableToken =>
-            ActiveCts?.Token is { CanBeCanceled: true };
+        public static bool IsAuthComplete => AuthCompleteSrc?.Task?.IsCompleted ?? false;
+
+
+
+        /// <summary>
+        /// This is NOT the same as !isSuccess, as this doesn't change
+        /// on complete (just "not cancelled"). See AuthCompleteSrc
+        /// </summary>
+        public static bool HasCancellableAuthToken =>
+            AuthCancelTokenSrc?.Token is { CanBeCanceled: true };
         
         /// <summary>
         /// </summary>
@@ -30,7 +44,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         {
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
-            string refreshToken = await auth.GetTokenAsync(cancelToken: ActiveCts.Token);
+            string refreshToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);
             
             bool isSuccess = onGetTokenDone(
                 _netHathoraConfig, 
@@ -50,7 +64,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         {
             if (string.IsNullOrEmpty(_refreshToken))
             {
-                if (ActiveCts != null && HasCancellableToken)
+                // Fail >>
+                if (AuthCancelTokenSrc != null && HasCancellableAuthToken)
                     onGetTokenCancelled();
 
                 return false; // !isSuccess
@@ -61,15 +76,15 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         }
 
         private static void onGetTokenCancelled() =>
-            ActiveCts?.Cancel();
+            AuthCancelTokenSrc?.Cancel();
 
         private static void createNewAuthCancelToken()
         {
             // Cancel an old op 1st
-            if (ActiveCts != null && ActiveCts.Token.CanBeCanceled)
-                ActiveCts.Cancel();
+            if (AuthCancelTokenSrc != null && AuthCancelTokenSrc.Token.CanBeCanceled)
+                AuthCancelTokenSrc.Cancel();
  
-            ActiveCts = new CancellationTokenSource(
+            AuthCancelTokenSrc = new CancellationTokenSource(
                 TimeSpan.FromMinutes(Auth0Login.PollTimeoutMins));
         }
 

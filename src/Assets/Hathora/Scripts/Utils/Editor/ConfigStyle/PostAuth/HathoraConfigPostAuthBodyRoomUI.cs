@@ -77,7 +77,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         {
             isCreateRoomLobbyFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isCreateRoomLobbyFoldout, 
-                "Create Room or Lobby");
+                "Create Room");
             
             if (!isCreateRoomLobbyFoldout)
             {
@@ -97,8 +97,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void insertCreateRoomOrLobbyFoldoutComponents()
         {
             insertRegionHorizPopupList();
-            roomLobbyUI.Draw();
-            
+
             bool enableCreateRoomBtn = checkCanEnableCreateRoomBtn();
             insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
 
