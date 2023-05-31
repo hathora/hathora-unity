@@ -340,8 +340,8 @@ namespace Hathora.Scripts.Utils.Editor
         {
             string pathToOutputTar = $"{deployPaths.TempDirPath}/{deployPaths.ExeBuildName}.tar";
             string joinedFilesToCompress = string.Join(@""" """, filesToCompress);
-            // const string excludePattern = @"-x !*\*DoNotShip\*";
-            string tarArgs = $@"a -ttar ""{pathToOutputTar}"" ""{joinedFilesToCompress}""";
+            const string excludePattern = @"-x!*\*DoNotShip*";
+            string tarArgs = $@"a -ttar ""{pathToOutputTar}"" ""{joinedFilesToCompress}"" {excludePattern}";
             
             string tarResultLogs = await ExecuteCrossPlatformShellCmdAsync(
                 deployPaths.PathTo7zCliExe, 
