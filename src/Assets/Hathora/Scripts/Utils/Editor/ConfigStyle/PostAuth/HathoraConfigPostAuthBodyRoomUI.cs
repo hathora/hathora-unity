@@ -106,6 +106,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 insertCreateRoomLobbyCancelBtn(CreateRoomActiveCancelTokenSrc);
             else
                 insertCreateRoomLobbyBtn(enableCreateRoomBtn);
+
+            bool hasLastRoomInfo = Config.HathoraLobbyRoomOpts.TODO;
             
             insertViewLogsMetricsLinkLbl();
         }
@@ -142,12 +144,6 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             if (_config.HathoraLobbyRoomOpts.RegionSelectedIndex < 1)
                 helpboxLabelStrb.Append("`Region, `");
-            
-            if (_config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex < 1)
-                helpboxLabelStrb.Append("`Lobby Visibility, `");
-
-            if (string.IsNullOrEmpty(_config.HathoraLobbyRoomOpts.InitConfigJson))
-                helpboxLabelStrb.Append("`Init Config must at least be {}`");
 
             return helpboxLabelStrb;
         }

@@ -69,15 +69,13 @@ namespace Hathora.Scripts.Net.Common
         public bool MeetsBuildAndDeployBtnReqs() =>
             MeetsBuildBtnReqs() &&
             MeetsDeployBtnReqs();
-        
+
         /// <summary>(!) Hathora SDK Enums start at index 1 (not 0).</summary>
         /// <returns></returns>
         public bool MeetsCreateRoomBtnReqs() =>
             HathoraCoreOpts.HasAppId &&
             HathoraLobbyRoomOpts.RegionSelectedIndex > 0 &&
-            HathoraLobbyRoomOpts.HathoraRegion > 0 &&
-            HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex > 0 &&
-            !string.IsNullOrEmpty(HathoraLobbyRoomOpts.InitConfigJson);
+            HathoraLobbyRoomOpts.HathoraRegion > 0;
 
         /// <summary>
         /// Combines path, then normalizes

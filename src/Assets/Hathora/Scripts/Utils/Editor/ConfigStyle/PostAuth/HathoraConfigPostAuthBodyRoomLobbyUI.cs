@@ -56,83 +56,13 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             }
     
             InsertSpace2x();
-            
-            insertLobbySettingsFoldoutComponents();
-                
             EditorGUILayout.EndVertical(); // End of foldout box skin
-        }
-
-        private void insertLobbySettingsFoldoutComponents()
-        {
-            insertLobbyInitConfigTextAreaHorizGroup();
-            insertLobbyVisibilityPopupListHorizGroup();
-        }
-
-        private void insertLobbyVisibilityPopupListHorizGroup()
-        { 
-            BeginFieldIndent();
-            
-            int selectedIndex = Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex;
-
-            // Get list of string names from PlanName Enum members - with extra info.
-            // The index order is !modified.
-            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<CreateLobbyRequest.VisibilityEnum>(
-                _prependDummyIndex0Str: "<Lobby Visibility>");
-
-            int newSelectedIndex = base.InsertHorizLabeledPopupList(
-                _labelStr: "Visibility",
-                _tooltip: null,
-                _displayOptsStrArr: displayOptsStrArr.ToArray(),
-                _selectedIndex: selectedIndex,
-                GuiAlign.SmallRight);
-
-            bool isNewValidIndex = selectedIndex >= 0 &&
-                newSelectedIndex != selectedIndex &&
-                selectedIndex < displayOptsStrArr.Count;
-
-            if (isNewValidIndex)
-                onSelectedLobbyVisibilityPopupIndexChanged(newSelectedIndex);
-            
-            EndFieldIndent();
-            InsertSpace1x();
-        }
-
-        private void insertLobbyInitConfigTextAreaHorizGroup()
-        {
-            BeginFieldIndent();
-
-            string inputStr = base.InsertHorizLabeledTextField(
-                _labelStr: "Initial Config",
-                _tooltip: null,
-                _val: Config.HathoraLobbyRoomOpts.InitConfigJson,
-                _alignTextField: GuiAlign.SmallRight,
-                isTextArea: true);
-
-            bool isChanged = inputStr != Config.HathoraLobbyRoomOpts.InitConfigJson;
-            if (isChanged)
-                onLobbyInitConfigChanged(inputStr);
-
-            EndFieldIndent();
-            InsertSpace1x();
-        }
-
-        private void onLobbyInitConfigChanged(string _inputStr)
-        {
-            Config.HathoraLobbyRoomOpts.InitConfigJson = _inputStr;
-            SaveConfigChange(
-                nameof(Config.HathoraLobbyRoomOpts.InitConfigJson), 
-                _inputStr);
         }
         #endregion // UI Draw
 
         
         #region Event Logic
-        private void onSelectedLobbyVisibilityPopupIndexChanged(int _newSelectedIndex)
-        {
-            Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex = _newSelectedIndex;
-            SaveConfigChange(
-                nameof(Config.HathoraLobbyRoomOpts.LobbyVisibilitySelectedIndex), 
-                _newSelectedIndex.ToString());        }
+        // TODO
         #endregion // Event Logic
     }
 }
