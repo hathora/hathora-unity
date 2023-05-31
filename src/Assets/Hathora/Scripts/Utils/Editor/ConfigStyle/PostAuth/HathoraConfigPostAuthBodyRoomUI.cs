@@ -147,7 +147,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 helpboxLabelStrb.Append("`Lobby Visibility, `");
 
             if (string.IsNullOrEmpty(_config.HathoraLobbyRoomOpts.InitConfigJson))
-                helpboxLabelStrb.Append("`Init Config must at least be {}, `");
+                helpboxLabelStrb.Append("`Init Config must at least be {}`");
 
             return helpboxLabelStrb;
         }

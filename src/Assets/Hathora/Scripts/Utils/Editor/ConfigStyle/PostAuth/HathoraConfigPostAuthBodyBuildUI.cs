@@ -94,7 +94,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 helpboxLabelStrb.Append("AppId, ");
             
             if (!_config.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
-                helpboxLabelStrb.Append("Server Build Dir Name}, ");
+                helpboxLabelStrb.Append("Server Build Dir Name, ");
                 
             if (!_config.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
                 helpboxLabelStrb.Append("Server Build Exe Name");
@@ -115,10 +115,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private async Task insertGenerateServerBuildBtn(bool _enableBuildBtn)
         {
+            EditorGUI.BeginDisabledGroup(disabled: !_enableBuildBtn);
+            
+            // USER INPUT >>
             bool clickedBuildBtn = InsertLeftGeneralBtn("Generate Server Build");
+            
+            EditorGUI.EndDisabledGroup();
             InsertSpace1x();
             
-            if (!clickedBuildBtn)
+            if (!clickedBuildBtn) 
                 return;
             
             BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
