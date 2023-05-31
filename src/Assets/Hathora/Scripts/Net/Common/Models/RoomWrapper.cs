@@ -67,5 +67,39 @@ namespace Hathora.Scripts.Net.Common.Models
             this.Allocations = _room.Allocations;
             this.RoomId = _room.RoomId;
         }
+
+        private void setMissingDefaults()
+        {
+            Debug.LogWarning(
+                "[RoomWrapper] setMissingDefaults: TODO? " +
+                "(!) Hathora SDK throws Exception on missing requirement. " +
+                "Set this if you get parsing errs when creating a new `Room` " +
+                "type via `ToRoomType()`. See `ApplicationWithDeploymentWrapper.cs` " +
+                "for example.");
+        }
+        
+        public Room ToRoomType()
+        {
+            setMissingDefaults();
+            
+            Room room = null;
+            try
+            {
+                room = new Room(
+                    CurrentAllocation,
+                    Status,
+                    Allocations,
+                    RoomId,
+                    AppId
+                );
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
+            
+            return room;
+        }
     }
 }
