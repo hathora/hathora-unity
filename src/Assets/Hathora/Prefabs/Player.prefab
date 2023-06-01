@@ -760,7 +760,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
-  _ownerObjs: {fileID: 1506763428511403601}
+  _camera: {fileID: 5090726669533971462}
   _moveRate: 8
   _clientAuth: 1
 --- !u!54 &3514369712614123748
@@ -914,3 +914,4 @@ MonoBehaviour:
   _componentIndexCache: 3
   _addedNetworkObject: {fileID: 611616139817875448}
   _networkObjectCache: {fileID: 611616139817875448}
+  ownerObjWrapper: {fileID: 1506763428511403601}

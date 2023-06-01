@@ -2564,7 +2564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000015258789
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3726,6 +3726,32 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 152580447793590260, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_text
+      value: '<b>(!) You''re using a template Config!</b>
+
+
+        1. Launch <b>Config
+        Finder</b> via Hathora menu (at the top)
+
+
+        2. Click the <b>New Config</b>
+        button
+
+
+        3. Serialize it (drag the new Config into) the Hierarchy
+        <color=white>NetworkManager.Client</color>
+
+
+        4. Add to <color=white>.gitignore</color>
+        - treat as an .env file'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1601947993005168853, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6730436420827614688, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3836,6 +3862,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: HathoraManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6730436420827614714, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: netHathoraConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: b8a15350a03faa546a2393d402c2d015,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
 --- !u!114 &7213143272671949959
@@ -4157,7 +4189,6 @@ GameObject:
   - component: {fileID: 8944336656349189700}
   - component: {fileID: 8944336656349189699}
   - component: {fileID: 8944336656349189698}
-  - component: {fileID: 9078993846310988380}
   - component: {fileID: 1772917061}
   m_Layer: 0
   m_Name: MainCamera
@@ -4224,45 +4255,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8944336656349189697}
-  m_LocalRotation: {x: -0.09312464, y: -0.13925849, z: -0.020216962, w: 0.98566025}
-  m_LocalPosition: {x: 0.5, y: 1.975, z: -4}
+  m_LocalRotation: {x: 0.017282603, y: -0.13915189, z: 0.0024289112, w: 0.99011725}
+  m_LocalPosition: {x: 1, y: 3, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1499772132}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -10.907, y: -16.006, z: -0.812}
---- !u!114 &9078993846310988380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8944336656349189697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShowDebugText: 0
-  m_ShowCameraFrustum: 1
-  m_IgnoreTimeScale: 0
-  m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 2
-  m_BlendUpdateMethod: 1
-  m_DefaultBlend:
-    m_Style: 1
-    m_Time: 2
-    m_CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  m_CustomBlends: {fileID: 0}
-  m_CameraCutEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_CameraActivatedEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  m_LocalEulerAnglesHint: {x: 2, y: -16, z: 0}

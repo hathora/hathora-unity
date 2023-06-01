@@ -10,6 +10,9 @@ namespace Hathora.Scripts.Net.Client
     /// </summary>
     public class NetHathoraPlayer : NetworkBehaviour
     {
+        [SerializeField]
+        private GameObject ownerObjWrapper;
+        
         #region Init
         /// <summary>
         /// Better to use this instead of Start, in most situations.
@@ -21,6 +24,7 @@ namespace Hathora.Scripts.Net.Client
             if (!base.IsOwner)
                 return;
             
+            ownerObjWrapper.gameObject.SetActive(true);
             NetworkSpawnLogs();
         }
 
