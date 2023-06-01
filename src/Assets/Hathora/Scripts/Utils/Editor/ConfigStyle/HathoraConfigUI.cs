@@ -17,14 +17,14 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         /// <summary>Set false to view the "raw" ScriptableObject</summary>
         public const bool ENABLE_BODY_STYLE = true;
         
-        private HathoraConfigHeaderUI headerUI;
-        private HathoraConfigPreAuthBodyUI preAuthBodyUI;
-        private HathoraConfigPostAuthBodyUI postAuthAuthPostAuthBodyUI;
-        private HathoraConfigFooterUI footerUI;
+        private HathoraConfigHeaderUI headerUI { get; set; }
+        private HathoraConfigPreAuthBodyUI preAuthBodyUI { get; set; }
+        private HathoraConfigPostAuthBodyUI postAuthBodyUI { get; set; }
+        private HathoraConfigFooterUI footerUI { get; set; }
                 
-        private string previousDevAuthToken;
-        private NetHathoraConfig selectedConfig;
-        private SerializedObject serializedConfig;
+        private string previousDevAuthToken { get; set; }
+        private NetHathoraConfig selectedConfig { get; set; }
+        private SerializedObject serializedConfig { get; set; }
         
         private bool IsAuthed => 
             selectedConfig.HathoraCoreOpts.DevAuthOpts.HasAuthToken;
@@ -63,7 +63,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             if (!ENABLE_BODY_STYLE)
                 base.OnInspectorGUI(); // Show the raw config, auto-gen'd by ScriptableObj
             else if (IsAuthed)
-                postAuthAuthPostAuthBodyUI.Draw();
+                postAuthBodyUI.Draw();
             else
                 preAuthBodyUI.Draw();
             
@@ -74,7 +74,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
         {
             bool lostRefs = headerUI == null 
                 || preAuthBodyUI == null 
-                || postAuthAuthPostAuthBodyUI == null
+                || postAuthBodyUI == null
                 || footerUI == null 
                 || !ReferenceEquals(selectedConfig, getSelectedInstance());
             
@@ -93,16 +93,21 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
             headerUI = new HathoraConfigHeaderUI(selectedConfig, serializedConfig);
             preAuthBodyUI = new HathoraConfigPreAuthBodyUI(selectedConfig, serializedConfig);
             
-            postAuthAuthPostAuthBodyUI = new HathoraConfigPostAuthBodyUI(
+            postAuthBodyUI = new HathoraConfigPostAuthBodyUI(
                 selectedConfig, 
                 serializedConfig);
             
-            footerUI = new HathoraConfigFooterUI(selectedConfig, serializedConfig);
+            footerUI = new HathoraConfigFooterUI(
+                selectedConfig, 
+                serializedConfig,
+                postAuthBodyUI.BodyBuildUI,
+                postAuthBodyUI.BodyDeployUI
+            );
             
-            // Subscribe to repainting events
+            // Subscribe to repainting events // TODO: Deprecated?
             headerUI.RequestRepaint += Repaint;
             preAuthBodyUI.RequestRepaint += Repaint;
-            postAuthAuthPostAuthBodyUI.RequestRepaint += Repaint;
+            postAuthBodyUI.RequestRepaint += Repaint;
             footerUI.RequestRepaint += Repaint;
         }
         #endregion // Main

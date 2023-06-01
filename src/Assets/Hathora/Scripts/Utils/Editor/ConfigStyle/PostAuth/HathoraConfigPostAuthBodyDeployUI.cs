@@ -17,7 +17,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     {
         #region Vars
         private HathoraConfigPostAuthBodyDeployAdvUI _advancedDeployUI;
-            
+        public static CancellationTokenSource DeployingCancelTokenSrc;
+
         // Foldouts
         private bool isDeploymentFoldout;
         
@@ -291,15 +292,53 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 nameof(Config.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
                 _inputInt.ToString());
         }
-        
-        private async Task onClickedDeployAppBtnClick()
+
+        private async Task onClickedDeployAppBtnClick() => 
+            await DeployApp();
+
+        public async Task<Deployment> DeployApp()
         {
             isDeploying = true;
-            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config); // TODO: Pass cancel token
-            isDeploying = false;
+            DeployingCancelTokenSrc = new CancellationTokenSource();
             
-            Assert.That(deployment?.BuildId, Is.Not.Null,
-                "Deployment failed: Check console for details.");
+            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
+                Config, 
+                onDeployAppStatus_1ZipComplete,
+                onDeployAppStatus_2BuildReqComplete,
+                onDeployAppStatus_3UploadComplete,
+                DeployingCancelTokenSrc.Token);
+            
+            isDeploying = false;
+            onDeployAppComplete();
+            return deployment;
+        }
+
+        /// <summary>Step 1 of 4</summary>
+        private void onDeployAppStatus_1ZipComplete()
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyDeployUI] <color=yellow>onDeployAppStatus_1ZipComplete");
+            // TODO
+        }
+        
+        /// <summary>Step 2 of 4</summary>
+        private void onDeployAppStatus_2BuildReqComplete(Build _build)
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyDeployUI] <color=yellow>onDeployAppStatus_2BuildReqComplete");
+            // TODO
+        }
+        
+        /// <summary>Step 3 of 4</summary>
+        private void onDeployAppStatus_3UploadComplete()
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyDeployUI] <color=yellow>onDeployAppStatus_3UploadComplete");
+            // TODO
+        }
+
+        /// <summary>Step 4 of 4</summary>
+        private void onDeployAppComplete()
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyDeployUI] <color=yellow>onDeployAppComplete");
+            // TODO
         }
         #endregion // Event Logic
         

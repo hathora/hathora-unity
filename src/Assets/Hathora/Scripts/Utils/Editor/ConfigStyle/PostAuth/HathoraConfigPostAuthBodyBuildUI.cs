@@ -176,14 +176,20 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName), 
                 _inputStr);
         }
-        
-        public void OnGenerateServerBuildBtnClick()
+
+        private void OnGenerateServerBuildBtnClick() => 
+            GenerateServerBuild();
+
+        public BuildReport GenerateServerBuild()
         {
             BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
+            
             Assert.That(
                 buildReport.summary.result,
                 Is.EqualTo(BuildResult.Succeeded),
                 "Server build failed. Check console for details.");
+
+            return buildReport;
         }
         #endregion // Event Logic
     }

@@ -3,8 +3,6 @@
 using System.Text;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.SdkWrapper.Editor;
-using Hathora.Scripts.SdkWrapper.Models;
 using Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
@@ -15,11 +13,26 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
 {
     public class HathoraConfigFooterUI : HathoraConfigUIBase
     {
+        /// <summary>
+        /// For the combo build+deploy btn, we want to use the same deploy func
+        /// </summary>
+        private readonly HathoraConfigPostAuthBodyDeployUI postAuthBodyDeployUI;
+        
+        /// <summary>
+        /// For the combo build+deploy btn, we want to use the same build func
+        /// </summary>
+        private readonly HathoraConfigPostAuthBodyBuildUI postAuthBodyBuildUI;
+
+        
         public HathoraConfigFooterUI(
             NetHathoraConfig _config, 
-            SerializedObject _serializedConfig) 
+            SerializedObject _serializedConfig,
+            HathoraConfigPostAuthBodyBuildUI _postAuthBodyBuildUI,
+            HathoraConfigPostAuthBodyDeployUI _postAuthBodyDeployUI) 
             : base(_config, _serializedConfig)
         {
+            this.postAuthBodyBuildUI = _postAuthBodyBuildUI;
+            this.postAuthBodyDeployUI = _postAuthBodyDeployUI;
         }
 
         public void Draw()
@@ -87,11 +100,12 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle
                 
             if (GUILayout.Button("Build, Upload & Deploy New Version", GeneralButtonStyle))
             {
-                BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
+                BuildReport buildReport = postAuthBodyBuildUI.GenerateServerBuild();
                 if (buildReport.summary.result != BuildResult.Succeeded)
                     return;
                 
-                Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(Config);
+                // TODO: Check for cancel token @ postAuthBodyDeployUI.DeployingCancelTokenSrc   
+                Deployment deployment = await postAuthBodyDeployUI.DeployApp();
             }
             
             GUI.enabled = true;

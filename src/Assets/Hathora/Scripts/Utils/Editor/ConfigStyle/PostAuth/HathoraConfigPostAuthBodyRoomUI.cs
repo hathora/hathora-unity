@@ -116,7 +116,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 
         private void insertLastCreatedRoomInfoGroup()
         {
-            // throw new NotImplementedException("TODO");
+            
         }
 
         private void insertCreateRoomLobbyCancelBtn(CancellationTokenSource _cancelTokenSrc)
@@ -266,7 +266,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             isCreatingRoom = true;
 
             createNewCreateRoomCancelToken();
-            HathoraServerRoomApi roomApi = new(Config);
+            HathoraServerRoomApi serverRoomApi = new(Config);
             
             
             ConnectionInfoV2 connectionInfo = null;
@@ -297,11 +297,22 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
                 return;
             }
             
-            
+            onCreateRoomDone();
+
             Assert.That(connectionInfo?.RoomId, Is.Not.Null,
                 "Failed to create room: See console");
 
-            onCreateRoomDone();
+            onCreateRoomSuccess(room);
+        }
+
+        private void onCreateRoomSuccess(Room _room)
+        {
+            Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomSuccess");
+
+            Config.HathoraLobbyRoomOpts.LastCreatedRoomInfo = _room;
+            SaveConfigChange(
+                nameof(Config.HathoraLobbyRoomOpts.LastCreatedRoomInfo), 
+                _room?.RoomId);
         }
 
         private void onCreateRoomCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
