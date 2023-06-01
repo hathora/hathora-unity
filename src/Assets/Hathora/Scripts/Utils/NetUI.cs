@@ -20,6 +20,10 @@ namespace Hathora.Scripts.Utils
     public class NetUI : MonoBehaviour
     {
         #region Serialized Fields
+        [Header("Help")]
+        [SerializeField]
+        private GameObject InvalidConfigPnl;
+
         [Header("CLI")]
         [SerializeField]
         private TextMeshProUGUI debugMemoTxt;
@@ -93,14 +97,6 @@ namespace Hathora.Scripts.Utils
             }
 
             Singleton = this;
-        }
-
-        private void Update()
-        {
-            // if (Input.GetKeyDown(KeyCode.Escape) && getLobbyInfoInput.isActiveAndEnabled)
-            // {
-            //     getLobbyInfoInput.text = "";
-            // }
         }
         #endregion // Init
         
@@ -268,7 +264,7 @@ namespace Hathora.Scripts.Utils
             SetShowCreateOrJoinLobbyErrTxt("<color=orange>Failed to Get Lobby info - see logs</color>");
         }
 
-        public void OnGetServerInfoSuccess(ActiveConnectionInfo serverInfo)
+        public void OnGetServerInfoSuccess(ConnectionInfoV2 connectionInfo)
         {
             // ####################
             // ServerInfo:
@@ -276,7 +272,8 @@ namespace Hathora.Scripts.Utils
             // (UDP)
             // ####################
             SetServerInfoTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>ServerInfo</color></b>:\n" +
-                $"{serverInfo.Host}<color=yellow><b>:</b></color>{serverInfo.Port}\n(<color=yellow>{serverInfo.TransportType}</color>)");
+                $"{connectionInfo.ExposedPort.Host}<color=yellow><b>:</b></color>{connectionInfo.ExposedPort.Port}\n" +
+                $"(<color=yellow>{connectionInfo.ExposedPort.TransportType}</color>)");
             
             copyServerInfoBtn.gameObject.SetActive(true);
             joinLobbyAsClientBtn.gameObject.SetActive(true);
@@ -286,14 +283,22 @@ namespace Hathora.Scripts.Utils
         private void mockGetServerInfoSuccess()
         {
             Debug.Log("[NetUI]<color=yellow>**MOCKING SUCCESS**</color>");
-            // mock success // TODO: DELETE ME
-            OnGetServerInfoSuccess(new ActiveConnectionInfo(
-                0, 
-                TransportType.Udp, 
-                7777, 
-                "127.0.0.1",
-                netSession.RoomId
-            ));
+
+            ConnectionInfoV2 serverInfo = new()
+            {
+                ExposedPort = new ExposedPort
+                {
+                    TransportType = TransportType.Udp,
+                    Host = "127.0.0.1",
+                    Port = 7777,
+                    // ContainerName = "default",
+                },
+                RoomId = netSession.RoomId,
+                Status = ConnectionInfoV2.StatusEnum.Active,
+            };
+
+            netSession.ServerInfo = serverInfo; // We still need to set session for copy btn
+            OnGetServerInfoSuccess(serverInfo);
         }
         
         public void OnGetServerInfoFail()
@@ -354,7 +359,15 @@ namespace Hathora.Scripts.Utils
             fadeTxt.gameObject.SetActive(false);
             fadeTxt.color = originalColor;
         }
+        
+        public void SetInvalidConfig(string _configName)
+        {
+            Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
+                "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
+            
+            authBtn.gameObject.SetActive(false);
+            InvalidConfigPnl.SetActive(true);
+        }
         #endregion /Dynamic UI
-
     }
 }

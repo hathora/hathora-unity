@@ -2473,10 +2473,10 @@ RectTransform:
   m_Father: {fileID: 31724712}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 967, y: 741.9567}
+  m_SizeDelta: {x: 0, y: 37.930725}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1916599158
 MonoBehaviour:
@@ -2499,7 +2499,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 1877eb4a13b63734ab9caf528b8bfbe0, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2564,7 +2564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3726,66 +3726,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6730436419757131679, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 218.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420034938640, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1296837042}
-    - target: {fileID: 6730436420283370803, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 199.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370803, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 112.72
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370803, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -171
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370812, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370812, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370812, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370812, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
-      value: Hathora.Common.NetUI, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420283370815, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420475557301, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420779342456, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6730436420827614688, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3895,51 +3835,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HathoraManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436420827614691, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953532, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_Name
-      value: HathoraCanvasWrapper
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953532, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953533, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_Pivot.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953533, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_Pivot.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953533, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 435
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953533, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 330
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953533, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 6730436421059953533, guid: e4dcbec2e4ad0514a94f944ced942c4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}

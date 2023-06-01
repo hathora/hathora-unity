@@ -4,8 +4,8 @@ using System;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Net.Client.ApiWrapper;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.Net.Server;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Client
 {
@@ -19,23 +19,33 @@ namespace Hathora.Scripts.Net.Client
     [Serializable]
     public struct ClientApiContainer
     {
+        [FormerlySerializedAs("authApi")]
         [SerializeField]
-        public NetHathoraClientAuthApi authApi;
+        public NetHathoraClientClientAuthApi clientAuthApi;
         
+        [FormerlySerializedAs("lobbyApi")]
         [SerializeField]
-        public NetHathoraClientLobbyApi lobbyApi;
+        public NetHathoraClientClientLobbyApi clientLobbyApi;
 
+        [FormerlySerializedAs("roomApi")]
         [SerializeField]
-        public NetHathoraClientRoomApi roomApi;
+        public NetHathoraClientClientRoomApi clientRoomApi;
         
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_netSession"></param>
+        /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
         public void InitAll(
-            Configuration _hathoraSdkConfig, 
-            HathoraServerConfig _hathoraServerConfig, 
-            NetSession _netSession)
+            NetHathoraConfig _netHathoraConfig, 
+            NetSession _netSession,
+            Configuration _hathoraSdkConfig = null)
         {
-            authApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
-            lobbyApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
-            roomApi.Init(_hathoraSdkConfig, _hathoraServerConfig, _netSession);
+            clientAuthApi.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
+            clientLobbyApi.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
+            clientRoomApi.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
         }
     }
 }

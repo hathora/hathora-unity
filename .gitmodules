@@ -1,0 +1,4 @@
+[submodule "src/Assets/Hathora/Scripts/Sdk/hathora-cloud-sdks"]
+	path = src/Assets/Hathora/Scripts/Sdk/hathora-cloud-sdks
+	url = https://github.com/hathora/hathora-cloud-sdks
+	branch = unity

@@ -8,9 +8,9 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Client.Models;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.Net.Server;
 using Hathora.Scripts.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Net.Client
 {
@@ -22,7 +22,7 @@ namespace Hathora.Scripts.Net.Client
     public class NetHathoraClient : MonoBehaviour
     {
         [SerializeField]
-        private HathoraServerConfig hathoraServerConfig;
+        private NetHathoraConfig netHathoraConfig;
         
         [SerializeField]
         private NetSession netSession;
@@ -40,6 +40,19 @@ namespace Hathora.Scripts.Net.Client
         private void Awake()
         {
             setSingleton();
+            assertUsingValidNetConfig();
+        }
+
+        private void assertUsingValidNetConfig()
+        {
+            const string baseName = nameof(netHathoraConfig);
+            string configName = netHathoraConfig.name;
+            bool isTemplate = configName != $"{baseName}.template";
+            
+            if (!isTemplate)
+                return;
+
+            NetUI.Singleton.SetInvalidConfig(configName);
         }
 
         private void setSingleton()
@@ -56,8 +69,10 @@ namespace Hathora.Scripts.Net.Client
         
         private void Start()
         {
-            this.hathoraSdkConfig = new Configuration();
-            ClientApis.InitAll(hathoraSdkConfig, hathoraServerConfig, netSession);
+            ClientApis.InitAll(
+                netHathoraConfig, 
+                netSession, 
+                _hathoraSdkConfig: null); // Base will create this
         }
         #endregion // Init
         
@@ -71,7 +86,7 @@ namespace Hathora.Scripts.Net.Client
             AuthResult result = null;
             try
             {
-                result = await ClientApis.authApi.ClientAuthAsync();
+                result = await ClientApis.clientAuthApi.ClientAuthAsync();
             }
             catch
             {
@@ -92,7 +107,7 @@ namespace Hathora.Scripts.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApi.ClientCreateLobbyAsync(visibility);
+                lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(visibility);
             }
             catch (Exception e)
             {
@@ -113,7 +128,7 @@ namespace Hathora.Scripts.Net.Client
             Lobby lobby = null;
             try
             {
-                lobby = await ClientApis.lobbyApi.ClientGetLobbyInfoAsync(roomId);
+                lobby = await ClientApis.clientLobbyApi.ClientGetLobbyInfoAsync(roomId);
             }
             catch (Exception e)
             {
@@ -131,7 +146,7 @@ namespace Hathora.Scripts.Net.Client
             List<Lobby> lobbies = null;
             try
             {
-                lobbies = await ClientApis.lobbyApi.ClientListPublicLobbiesAsync();
+                lobbies = await ClientApis.clientLobbyApi.ClientListPublicLobbiesAsync();
             }
             catch (Exception e)
             {
@@ -148,33 +163,32 @@ namespace Hathora.Scripts.Net.Client
         /// </summary>
         public async Task GetActiveConnectionInfo(string roomId)
         {
-            ActiveConnectionInfo activeConnectionInfo;
+            ConnectionInfoV2 connectionInfo;
             try
             {
-                activeConnectionInfo = await ClientApis.roomApi.ClientGetConnectionInfoAsync(roomId);
+                connectionInfo = await ClientApis.clientRoomApi.ClientGetConnectionInfoAsync(roomId);
             }
             catch (Exception e)
             {
                 Debug.LogError($"[NetHathoraClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
                 NetUI.Singleton.OnGetServerInfoFail();
-                await Task.FromException<Exception>(e);
                 return; // fail
             }
             
             // Success
-            OnGetActiveConnectionInfoComplete(activeConnectionInfo);
+            OnGetActiveConnectionInfoComplete(connectionInfo);
         }
         
         /// <summary>AKA OnGetServerInfoSuccess</summary>
-        private void OnGetActiveConnectionInfoComplete(ActiveConnectionInfo serverInfo)
+        private void OnGetActiveConnectionInfoComplete(ConnectionInfoV2 connectionInfo)
         {
-            if (string.IsNullOrEmpty(serverInfo?.Host))
+            if (string.IsNullOrEmpty(connectionInfo?.ExposedPort?.Host))
             {
                 NetUI.Singleton.OnGetServerInfoFail();
                 return;
             }
             
-            NetUI.Singleton.OnGetServerInfoSuccess(serverInfo);
+            NetUI.Singleton.OnGetServerInfoSuccess(connectionInfo);
         }
         #endregion // Interactions from UI
         
