@@ -2564,7 +2564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000015258789
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3726,6 +3726,32 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 152580447793590260, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_text
+      value: '<b>(!) You''re using a template Config!</b>
+
+
+        1. Launch <b>Config
+        Finder</b> via Hathora menu (at the top)
+
+
+        2. Click the <b>New Config</b>
+        button
+
+
+        3. Serialize it (drag the new Config into) the Hierarchy
+        <color=white>NetworkManager.Client</color>
+
+
+        4. Add to <color=white>.gitignore</color>
+        - treat as an .env file'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1601947993005168853, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6730436420827614688, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
       propertyPath: m_Pivot.x
