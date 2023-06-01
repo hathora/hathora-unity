@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
@@ -22,7 +23,14 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// TODO: Support cancel token.
         /// </summary>
         /// <param name="_netConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
-        public static async Task<Deployment> DeployToHathoraAsync(NetHathoraConfig _netConfig)
+        /// <param name="_onZipComplete">Useful to update the UI status</param>
+        /// <param name="_onBuildReqComplete">Useful to update the UI status</param>
+        public static async Task<Deployment> DeployToHathoraAsync(
+            NetHathoraConfig _netConfig,
+            Action _onZipComplete,
+            Action<Build> _onBuildReqComplete,
+            Action _onUploadComplete,
+            CancellationToken _cancelToken = default)
         {
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
                 "<color=yellow>Starting...</color>");
@@ -39,7 +47,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             string dockerFileContent = generateDockerFileStr(deployPaths);
             await writeDockerFileAsync(
                 deployPaths.PathToDockerfile,
-                dockerFileContent);
+                dockerFileContent,
+                _cancelToken);
             
             // Compress build into .tar.gz (gzipped tarball)
             List<string> filePathsToCompress = new()
@@ -50,17 +59,21 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             
             await HathoraEditorUtils.TarballDeployFilesVia7zAsync(
                 deployPaths, 
-                filePathsToCompress);
+                filePathsToCompress,
+                _cancelToken);
+            
+            _onZipComplete?.Invoke();
             #endregion // Dockerfile >> Compress to .tar.gz
 
 
+            #region Request to build
             // Get a buildId from Hathora
             HathoraServerBuildApi buildApi = new(_netConfig);
 
             Build buildInfo = null;
             try
             {
-                buildInfo = await getBuildInfoAsync(buildApi);
+                buildInfo = await getBuildInfoAsync(buildApi, _cancelToken);
             }
             catch (Exception e)
             {
@@ -70,7 +83,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             
             // Building seems to unselect Hathora config on success
             HathoraServerConfigFinder.ShowWindowOnly();
+            #endregion // Request to build
 
+            
+            #region Upload Build
             // ----------------------------------------------
             // Upload the build to Hathora
             byte[] buildBytes = null;
@@ -86,7 +102,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
                 return null;
             }
             Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
+            #endregion // Upload Build
+
             
+            #region Deploy Build
             // ----------------------------------------------
             // Deploy the build
             HathoraServerDeployApi deployApi = new(_netConfig);
@@ -100,9 +119,13 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             {
                 return null;
             }
-            Assert.IsNotNull(deployment, "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
 
+            Assert.That(deployment?.BuildId, Is.Not.Null, 
+                "[HathoraServerBuild.DeployToHathoraAsync] Deployment failed: " +
+                "Check console for details.");
+            
             return deployment;
+            #endregion // Deploy Build
         }
 
         private static async Task<Deployment> deployBuildAsync(
@@ -140,7 +163,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             byte[] runBuildResult;
             await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
             {
-                runBuildResult = await _buildApi.RunCloudBuildAsync(buildId, fileStream);
+                runBuildResult = await _buildApi.RunCloudBuildAsync(
+                    buildId, 
+                    fileStream);
             }
 
             string successStr = runBuildResult.Length > 0 ? "Success" : "Failed";
@@ -149,7 +174,9 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             return runBuildResult;
         }
 
-        private static async Task<Build> getBuildInfoAsync(HathoraServerBuildApi _buildApi)
+        private static async Task<Build> getBuildInfoAsync(
+            HathoraServerBuildApi _buildApi,
+            CancellationToken _cancelToken = default)
         {
             Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] " +
                 "Getting build info (notably for buildId)...");
@@ -157,7 +184,7 @@ namespace Hathora.Scripts.SdkWrapper.Editor
             Build createBuildResult = null;
             try
             {
-                createBuildResult = await _buildApi.CreateBuildAsync();
+                createBuildResult = await _buildApi.CreateBuildAsync(_cancelToken);
             }
             catch (Exception e)
             {
@@ -175,10 +202,12 @@ namespace Hathora.Scripts.SdkWrapper.Editor
         /// </summary>
         /// <param name="pathToDockerfile"></param>
         /// <param name="dockerfileContent"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>path/to/Dockerfile</returns>
         private static async Task writeDockerFileAsync(
             string pathToDockerfile, 
-            string dockerfileContent)
+            string dockerfileContent,
+            CancellationToken _cancelToken = default)
         {
             // TODO: if (!overwriteDockerfile)
             if (File.Exists(pathToDockerfile))
@@ -190,7 +219,10 @@ namespace Hathora.Scripts.SdkWrapper.Editor
 
             try
             {
-                await File.WriteAllTextAsync(pathToDockerfile, dockerfileContent);
+                await File.WriteAllTextAsync(
+                    pathToDockerfile, 
+                    dockerfileContent, 
+                    _cancelToken);
             }
             catch (Exception e)
             {

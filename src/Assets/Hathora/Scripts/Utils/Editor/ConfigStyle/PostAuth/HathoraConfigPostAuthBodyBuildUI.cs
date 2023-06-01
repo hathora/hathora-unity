@@ -122,15 +122,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             
             EditorGUI.EndDisabledGroup();
             InsertSpace1x();
-            
-            if (!clickedBuildBtn) 
-                return;
-            
-            BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
-            Assert.That(
-                buildReport.summary.result,
-                Is.EqualTo(BuildResult.Succeeded),
-                "Server build failed. Check console for details.");
+
+            if (clickedBuildBtn)
+                OnGenerateServerBuildBtnClick();
         }
 
         private void insertBuildDirNameHorizGroup()
@@ -181,6 +175,15 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             SaveConfigChange(
                 nameof(Config.LinuxHathoraAutoBuildOpts.ServerBuildExeName), 
                 _inputStr);
+        }
+        
+        public void OnGenerateServerBuildBtnClick()
+        {
+            BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(Config);
+            Assert.That(
+                buildReport.summary.result,
+                Is.EqualTo(BuildResult.Succeeded),
+                "Server build failed. Check console for details.");
         }
         #endregion // Event Logic
     }

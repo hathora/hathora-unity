@@ -2,12 +2,14 @@
 
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
 
 namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
 {

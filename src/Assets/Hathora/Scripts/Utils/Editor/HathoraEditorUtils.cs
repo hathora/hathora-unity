@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Scripts.SdkWrapper.Models;
 using NUnit.Framework;
@@ -245,22 +246,24 @@ namespace Hathora.Scripts.Utils.Editor
                 GetRichLabelStyle(_align: TextAnchor.MiddleCenter));
         }
 
-        /// <summary>
-        /// Useful for 7z compression handling.
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="args"></param>
+        /// <summary>Useful for 7z compression handling.</summary>
+        /// <param name="_cmd"></param>
+        /// <param name="_args"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        private static async Task<string> ExecuteCrossPlatformShellCmdAsync(string cmd, string args)
+        private static async Task<string> ExecuteCrossPlatformShellCmdAsync(
+            string _cmd, 
+            string _args,
+            CancellationToken _cancelToken = default)
         {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string shell = isWindows ? "cmd.exe" : "/bin/bash";
             string escapedArgs = isWindows 
-                ? $"/c {cmd} {args}" 
-                : $"-c \"{cmd} {args}\"";
+                ? $"/c {_cmd} {_args}" 
+                : $"-c \"{_cmd} {_args}\"";
             
             Debug.Log($"[HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync] " +
-                $"shell: {shell}, cmd args: <color=yellow>`{cmd} {args}`</color>");
+                $"shell: {shell}, cmd args: <color=yellow>`{_cmd} {_args}`</color>");
 
             Process process = new()
             {
@@ -282,7 +285,7 @@ namespace Hathora.Scripts.Utils.Editor
             Task<string> errorTask = process.StandardError.ReadToEndAsync();
 
             // Wait for the process to finish and read the output and error
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync(_cancelToken);
 
             // Combine output and error
             string output = await outputTask;
@@ -301,18 +304,24 @@ namespace Hathora.Scripts.Utils.Editor
         /// </summary>
         /// <param name="deployPaths">Path info</param>
         /// <param name="filesToCompress"></param>
+        /// <param name="_cancelToken"></param>
         public static async Task TarballDeployFilesVia7zAsync(
             HathoraDeployPaths deployPaths,
-            List<string> filesToCompress)
+            List<string> filesToCompress,
+            CancellationToken _cancelToken = default)
         {
             // file [ Dockerfile, {buildDir} ] >> file.tar
-            string pathToOutputTar = await compressWithTarVia7zAsync(deployPaths, filesToCompress);
+            string pathToOutputTar = await compressWithTarVia7zAsync(
+                deployPaths, 
+                filesToCompress,
+                _cancelToken);
             
             // file.tar >> file.tar.gz ("Tarball")
             string pathToOutputTarGz = await compressTarAsGzVia7zAsync(
                 deployPaths, 
                 pathToOutputTar,
-                _deleteOldTar: true);
+                _deleteOldTar: true,
+                _cancelToken);
 
             // Assert the tarball exists
             Assert.IsTrue(File.Exists(pathToOutputTarGz),
@@ -325,18 +334,21 @@ namespace Hathora.Scripts.Utils.Editor
         /// <param name="_deployPaths"></param>
         /// <param name="_pathToOutputTar"></param>
         /// <param name="_deleteOldTar"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns></returns>
         private static async Task<string> compressTarAsGzVia7zAsync(
             HathoraDeployPaths _deployPaths,
             string _pathToOutputTar, 
-            bool _deleteOldTar)
+            bool _deleteOldTar,
+            CancellationToken _cancelToken = default)
         {
             string pathToOutputTarGz = $"{_pathToOutputTar}.gz";
             string gzipArgs = $@"a -tgzip ""{pathToOutputTarGz}"" ""{_pathToOutputTar}""";
             
             string gzipResultLogs = await ExecuteCrossPlatformShellCmdAsync(
                 _deployPaths.PathTo7zCliExe, 
-                gzipArgs);
+                gzipArgs,
+                _cancelToken);
             
             // TODO: if (verboseLogs)
             Debug.Log($"[HathoraEditorUtils.compressTarAsGzVia7zAsync] " +
@@ -356,10 +368,12 @@ namespace Hathora.Scripts.Utils.Editor
         /// </summary>
         /// <param name="deployPaths"></param>
         /// <param name="filesToCompress"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>"path/to/output.tar"</returns>
         private static async Task<string> compressWithTarVia7zAsync(
             HathoraDeployPaths deployPaths, 
-            List<string> filesToCompress)
+            List<string> filesToCompress,
+            CancellationToken _cancelToken = default)
         {
             string pathToOutputTar = $"{deployPaths.TempDirPath}/{deployPaths.ExeBuildName}.tar";
             string joinedFilesToCompress = string.Join(@""" """, filesToCompress);
@@ -368,7 +382,8 @@ namespace Hathora.Scripts.Utils.Editor
             
             string tarResultLogs = await ExecuteCrossPlatformShellCmdAsync(
                 deployPaths.PathTo7zCliExe, 
-                tarArgs);
+                tarArgs,
+                _cancelToken);
             
             // TODO: if (verboseLogs)
             Debug.Log($"[HathoraEditorUtils.compressWithTarVia7zAsync] " +

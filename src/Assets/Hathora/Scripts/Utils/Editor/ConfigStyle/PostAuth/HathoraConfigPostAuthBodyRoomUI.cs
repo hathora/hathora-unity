@@ -20,7 +20,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     {
         #region Vars
         private HathoraConfigPostAuthBodyRoomLobbyUI roomLobbyUI { get; set; }
-        public static CancellationTokenSource CreateRoomActiveCancelTokenSrc { get; set; } // TODO
+        public static CancellationTokenSource CreateRoomCancelTokenSrc { get; set; } // TODO
         private const int CREATE_ROOM_TIMEOUT_SECONDS = 30;
         private bool isCreatingRoom { get; set; }
         
@@ -101,9 +101,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             bool enableCreateRoomBtn = Config.MeetsCreateRoomBtnReqs();
             insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
 
-            bool showCancelBtn = isCreatingRoom && CreateRoomActiveCancelTokenSrc.Token.CanBeCanceled; 
+            bool showCancelBtn = isCreatingRoom && CreateRoomCancelTokenSrc.Token.CanBeCanceled; 
             if (showCancelBtn)
-                insertCreateRoomLobbyCancelBtn(CreateRoomActiveCancelTokenSrc);
+                insertCreateRoomLobbyCancelBtn(CreateRoomCancelTokenSrc);
             else
                 insertCreateRoomLobbyBtn(enableCreateRoomBtn);
 
@@ -272,8 +272,8 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             ConnectionInfoV2 connectionInfo = null;
             try
             {
-                connectionInfo = await roomApi.CreateRoomAsync(
-                    _cancelToken: CreateRoomActiveCancelTokenSrc.Token);
+                connectionInfo = await serverRoomApi.CreateRoomAsync(
+                    _cancelToken: CreateRoomCancelTokenSrc.Token);
             }
             catch (Exception e)
             {
@@ -286,9 +286,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             Room room = null;
             try
             {
-                room = await roomApi.PollGetRoomUntilActiveAsync(
+                room = await serverRoomApi.PollGetRoomUntilActiveAsync(
                     connectionInfo?.RoomId,
-                    CreateRoomActiveCancelTokenSrc.Token);
+                    CreateRoomCancelTokenSrc.Token);
             }
             catch (Exception e)
             {
@@ -313,7 +313,7 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private void onCreateRoomDone(CancellationTokenSource _cancelTokenSource = null)
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
-            CreateRoomActiveCancelTokenSrc?.Cancel();
+            CreateRoomCancelTokenSrc?.Cancel();
             isCreatingRoom = false;
         }
         #endregion // Event Logic
@@ -324,10 +324,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         private static void createNewCreateRoomCancelToken()
         {
             // Cancel an old op 1st
-            if (CreateRoomActiveCancelTokenSrc != null && CreateRoomActiveCancelTokenSrc.Token.CanBeCanceled)
-                CreateRoomActiveCancelTokenSrc.Cancel();
+            if (CreateRoomCancelTokenSrc != null && CreateRoomCancelTokenSrc.Token.CanBeCanceled)
+                CreateRoomCancelTokenSrc.Cancel();
  
-            CreateRoomActiveCancelTokenSrc = new CancellationTokenSource(
+            CreateRoomCancelTokenSrc = new CancellationTokenSource(
                 TimeSpan.FromSeconds(CREATE_ROOM_TIMEOUT_SECONDS));
         }
         #endregion // Utils

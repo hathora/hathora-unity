@@ -8,10 +8,10 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
     public class HathoraConfigPostAuthBodyUI : HathoraConfigUIBase
     {
         #region Vars
-        private HathoraConfigPostAuthBodyHeaderUI _bodyHeaderUI;
-        private HathoraConfigPostAuthBodyBuildUI _bodyBuildUI;
-        private HathoraConfigPostAuthBodyDeployUI _bodyDeployUI;
-        private HathoraConfigPostAuthBodyRoomUI bodyRoomUI;
+        private HathoraConfigPostAuthBodyHeaderUI bodyHeaderUI {get;set; }
+        public HathoraConfigPostAuthBodyBuildUI BodyBuildUI {get;set; }
+        public HathoraConfigPostAuthBodyDeployUI BodyDeployUI {get;set; }
+        private HathoraConfigPostAuthBodyRoomUI bodyRoomUI {get;set; }
         #endregion // Vars
 
 
@@ -32,9 +32,9 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
         /// </summary>
         private void initDrawUtils()
         {
-            _bodyHeaderUI = new HathoraConfigPostAuthBodyHeaderUI(Config, SerializedConfig);
-            _bodyBuildUI = new HathoraConfigPostAuthBodyBuildUI(Config, SerializedConfig);
-            _bodyDeployUI = new HathoraConfigPostAuthBodyDeployUI(Config, SerializedConfig);
+            bodyHeaderUI = new HathoraConfigPostAuthBodyHeaderUI(Config, SerializedConfig);
+            BodyBuildUI = new HathoraConfigPostAuthBodyBuildUI(Config, SerializedConfig);
+            BodyDeployUI = new HathoraConfigPostAuthBodyDeployUI(Config, SerializedConfig);
             bodyRoomUI = new HathoraConfigPostAuthBodyRoomUI(Config, SerializedConfig);
         }
         #endregion // Init
@@ -46,17 +46,17 @@ namespace Hathora.Scripts.Utils.Editor.ConfigStyle.PostAuth
             if (!IsAuthed)
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
-            _bodyHeaderUI.Draw();
+            bodyHeaderUI.Draw();
             InsertSpace4x();
             insertBodyFoldoutComponents();
         }
 
         private void insertBodyFoldoutComponents()
         {
-            _bodyBuildUI.Draw();
+            BodyBuildUI.Draw();
 
             InsertSpace1x();
-            _bodyDeployUI.Draw();
+            BodyDeployUI.Draw();
             
             InsertSpace1x();
             bodyRoomUI.Draw();
