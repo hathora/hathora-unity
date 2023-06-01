@@ -1,7 +1,6 @@
 ﻿using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace FishNet.Example.Scened
 {
@@ -9,11 +8,8 @@ namespace FishNet.Example.Scened
 
     public class PlayerController : NetworkBehaviour
     {
-        [FormerlySerializedAs("_owningPlayerObjs")]
-        [FormerlySerializedAs("_owningPlayerWrapper")]
-        [FormerlySerializedAs("_camera")]
         [SerializeField]
-        private GameObject _ownerObjs;
+        private GameObject _camera;
         [SerializeField]
         private float _moveRate = 4f;
         [SerializeField]
@@ -23,7 +19,7 @@ namespace FishNet.Example.Scened
         {
             base.OnStartClient();
             if (base.IsOwner)
-                _ownerObjs.SetActive(true);
+                _camera.SetActive(true);
         }
 
         private void Update()
