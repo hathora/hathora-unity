@@ -1,15 +1,13 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Client.Models;
 using Hathora.Scripts.Net.Common;
-using Hathora.Scripts.SdkWrapper.Models;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Hathora.Scripts.Net.Client.ApiWrapper
@@ -45,8 +43,11 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         /// Create a new Player Client Lobby.
         /// </summary>
         /// <param name="lobbyVisibility"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>Lobby on success</returns>
-        public async Task<Lobby> ClientCreateLobbyAsync(CreateLobbyRequest.VisibilityEnum lobbyVisibility)
+        public async Task<Lobby> ClientCreateLobbyAsync(
+            CreateLobbyRequest.VisibilityEnum lobbyVisibility,
+            CancellationToken _cancelToken = default)
         {
             InitConfigExample initConfigExample = new();
             CreateLobbyRequest request = new(
@@ -60,7 +61,8 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                 lobby = await lobbyApi.CreateLobbyAsync(
                     NetHathoraConfig.HathoraCoreOpts.AppId,
                     NetSession.PlayerAuthToken, // Player token; not dev
-                    request);
+                    request,
+                    cancellationToken: _cancelToken);
             }
             catch (ApiException apiException)
             {
@@ -76,21 +78,25 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             
             return lobby;
         }
-         
+
         /// <summary>
         /// Gets Lobby info, if we already know the roomId.
         /// (!) Creating a room will also return Lobby info; you probably want to do this if interested in *joining*.
         /// </summary>
         /// <param name="roomId"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<Lobby> ClientGetLobbyInfoAsync(string roomId)
+        public async Task<Lobby> ClientGetLobbyInfoAsync(
+            string roomId,
+            CancellationToken _cancelToken = default)
         {
             Lobby lobby;
             try
             {
                 lobby = await lobbyApi.GetLobbyInfoAsync(
                     NetHathoraConfig.HathoraCoreOpts.AppId,
-                    roomId);
+                    roomId,
+                    _cancelToken);
             }
             catch (ApiException apiException)
             {
@@ -107,15 +113,20 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
             return lobby;
         }
         
-        [ItemCanBeNull]
-        public async Task<List<Lobby>> ClientListPublicLobbiesAsync()
+        /// <summary>
+        /// </summary>
+        /// <param name="_cancelToken"></param>
+        /// <returns></returns>
+        public async Task<List<Lobby>> ClientListPublicLobbiesAsync(
+            CancellationToken _cancelToken = default)
         {
             List<Lobby> lobbies;
             try
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
                     NetHathoraConfig.HathoraCoreOpts.AppId,
-                    NetHathoraConfig.HathoraLobbyRoomOpts.HathoraRegion);
+                    NetHathoraConfig.HathoraLobbyRoomOpts.HathoraRegion,
+                    _cancelToken);
             }
             catch (ApiException apiException)
             {

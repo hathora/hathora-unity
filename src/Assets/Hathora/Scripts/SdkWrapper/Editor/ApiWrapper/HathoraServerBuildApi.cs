@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
@@ -16,7 +17,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 
         
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="_netHathoraConfig"></param>
         /// <param name="_hathoraSdkConfig">
@@ -35,17 +35,19 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         
         #region Server Build Async Hathora SDK Calls
         /// <summary>
-        /// Wrapper for `CreateBuildAsync` to request an cloud build (tarball upload).
+        /// Wrapper for `CreateBuildAsync` to request an cloud build (_tarball upload).
         /// </summary>
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns Build on success >> Pass this info to RunCloudBuildAsync()</returns>
-        public async Task<Build> CreateBuildAsync()
+        public async Task<Build> CreateBuildAsync(CancellationToken _cancelToken = default)
         {
             Build createCloudBuildResult;
             
             try
             {
                 createCloudBuildResult = await buildApi.CreateBuildAsync(
-                    NetHathoraConfig.HathoraCoreOpts.AppId);
+                    NetHathoraConfig.HathoraCoreOpts.AppId,
+                    _cancelToken);
             }
             catch (ApiException apiException)
             {
@@ -62,14 +64,18 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 
             return createCloudBuildResult;
         }
-        
+
         /// <summary>
-        /// Wrapper for `RunBuildAsync` to upload the tarball after calling 
+        /// Wrapper for `RunBuildAsync` to upload the _tarball after calling 
         /// </summary>
         /// <param name="_buildId"></param>
-        /// <param name="tarball"></param>
+        /// <param name="_tarball"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns byte[] on success</returns>
-        public async Task<byte[]> RunCloudBuildAsync(double _buildId, Stream tarball)
+        public async Task<byte[]> RunCloudBuildAsync(
+            double _buildId, 
+            Stream _tarball,
+            CancellationToken _cancelToken = default)
         {
             byte[] cloudRunBuildResultByteArr;
             
@@ -78,7 +84,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 cloudRunBuildResultByteArr = await buildApi.RunBuildAsync(
                     NetHathoraConfig.HathoraCoreOpts.AppId,
                     _buildId,
-                    tarball);
+                    _tarball,
+                    _cancelToken);
             }
             catch (ApiException apiException)
             {

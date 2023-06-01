@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
@@ -44,11 +45,13 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
         /// <param name="roomId">Get this from NetHathoraClientClientLobbyApi join/create</param>
         /// <param name="initPollTimerSecs"></param>
         /// <param name="pollTimeoutSecs"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>Room on success</returns>
         public async Task<ConnectionInfoV2> ClientGetConnectionInfoAsync(
             string roomId, 
             float initPollTimerSecs = 0.1f, 
-            float pollTimeoutSecs = 10f)
+            float pollTimeoutSecs = 10f,
+            CancellationToken _cancelToken = default)
         {
             float pollTimerTickedSecs = 0;
             
@@ -61,7 +64,8 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                 {
                     connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
                         NetHathoraConfig.HathoraCoreOpts.AppId, 
-                        roomId);
+                        roomId,
+                        _cancelToken);
                 }
                 catch(ApiException apiException)
                 {
@@ -76,7 +80,7 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
                 if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
                     break;
                 
-                await Task.Delay(TimeSpan.FromSeconds(initPollTimerSecs));
+                await Task.Delay(TimeSpan.FromSeconds(initPollTimerSecs), _cancelToken);
             }
 
             // -----------------------------------------

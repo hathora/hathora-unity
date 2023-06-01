@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
@@ -35,13 +36,15 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateAppAsync` to upload and app a cloud app to Hathora.
         /// </summary>
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns App on success</returns>
-        public async Task<List<ApplicationWithDeployment>> GetAppsAsync()
+        public async Task<List<ApplicationWithDeployment>> GetAppsAsync(
+            CancellationToken _cancelToken = default)
         {
             List<ApplicationWithDeployment> getAppsResult;   
             try
             {  
-                getAppsResult = await appApi.GetAppsAsync();
+                getAppsResult = await appApi.GetAppsAsync(_cancelToken);
             }
             catch (ApiException apiErr)
             {

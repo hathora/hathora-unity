@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
@@ -21,7 +22,6 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 
         
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="_netHathoraConfig"></param>
         /// <param name="_hathoraSdkConfig">
@@ -41,10 +41,15 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
+        /// <param name="buildId"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns Deployment on success</returns>
-        public async Task<Deployment> CreateDeploymentAsync(double buildId)
+        public async Task<Deployment> CreateDeploymentAsync(
+            double buildId,
+            CancellationToken _cancelToken = default)
         {
-            List<ContainerPort> extraContainerPorts = deployOpts.AdvancedDeployOpts.GetExtraContainerPorts();
+            List<ContainerPort> extraContainerPorts = 
+                deployOpts.AdvancedDeployOpts.GetExtraContainerPorts();
             
             // (!) Throws on constructor Exception
             DeploymentConfig deployConfig = null;
@@ -74,7 +79,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
                 createDeploymentResult = await deployApi.CreateDeploymentAsync(
                     AppId,
                     buildId,
-                    deployConfig);
+                    deployConfig,
+                    _cancelToken);
             }
             catch (ApiException apiErr)
             {
@@ -91,17 +97,19 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 
             return createDeploymentResult;
         }
-        
+
         /// <summary>
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns Deployment on success</returns>
-        public async Task<List<Deployment>> GetDeploymentsAsync()
+        public async Task<List<Deployment>> GetDeploymentsAsync(
+            CancellationToken _cancelToken = default)
         {
             List<Deployment> getDeploymentsResult;
             try
             {
-                getDeploymentsResult = await deployApi.GetDeploymentsAsync(AppId);
+                getDeploymentsResult = await deployApi.GetDeploymentsAsync(AppId, _cancelToken);
             }
             catch (ApiException apiErr)
             {

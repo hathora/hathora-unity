@@ -1,6 +1,6 @@
 // Created by dylan@hathora.dev
 
-using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
@@ -39,13 +39,16 @@ namespace Hathora.Scripts.Net.Client.ApiWrapper
 
 
         #region Client Auth Async Hathora SDK Calls
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns AuthResult on success</returns>
-        public async Task<AuthResult> ClientAuthAsync()
+        public async Task<AuthResult> ClientAuthAsync(CancellationToken _cancelToken = default)
         {
             LoginResponse anonLoginResult;
             try
             {
-                anonLoginResult = await authApi.LoginAnonymousAsync(NetHathoraConfig.HathoraCoreOpts.AppId);
+                anonLoginResult = await authApi.LoginAnonymousAsync(
+                    NetHathoraConfig.HathoraCoreOpts.AppId, 
+                    _cancelToken);
             }
             catch (ApiException apiException)
             {

@@ -1,8 +1,6 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
@@ -10,7 +8,6 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Models;
-using Hathora.Scripts.Utils;
 using UnityEngine;
 
 namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
@@ -43,6 +40,8 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
         /// You generally want to call once to get the roomId, then poll GetRoomInfoAsync() 
         /// (with that roomId) until status is Active.
         /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns>Returns Room on success</returns>
         public async Task<ConnectionInfoV2> CreateRoomAsync(
             string roomId = null,
@@ -93,6 +92,11 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
             return createRoomResult;
         }
         
+        /// <summary>
+        /// </summary>
+        /// <param name="_roomId"></param>
+        /// <param name="_cancelToken"></param>
+        /// <returns></returns>
         public async Task<Room> GetRoomInfoAsync(
             string _roomId, 
             CancellationToken _cancelToken = default)
@@ -127,13 +131,14 @@ namespace Hathora.Scripts.SdkWrapper.Editor.ApiWrapper
 
             return getRoomInfoResult;
         }
-        
+
         /// <summary>This shouldn't take long, so we poll once per second.</summary>
-        /// <param name="_roomApi"></param>
+        /// <param name="_roomId"></param>
+        /// <param name="_cancelToken"></param>
         /// <returns></returns>
         public async Task<Room> PollGetRoomUntilActiveAsync(
             string _roomId,
-            CancellationToken _cancelToken)
+            CancellationToken _cancelToken = default)
         {
             Room room = null;
             int attemptNum = 0;
