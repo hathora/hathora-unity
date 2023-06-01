@@ -2,14 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Net.Common;
 using Hathora.Scripts.SdkWrapper.Editor;
 using Hathora.Scripts.SdkWrapper.Editor.ApiWrapper;
-using PlasticGui.WorkspaceWindow.Topbar;
 using UnityEditor;
 using UnityEngine;
 
