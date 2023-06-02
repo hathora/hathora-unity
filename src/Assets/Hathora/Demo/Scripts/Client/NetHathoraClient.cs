@@ -45,6 +45,14 @@ namespace Hathora.Demos.Scripts.Client
 
         private void assertUsingValidNetConfig()
         {
+            // Are we using any Client Config at all?
+            if (netHathoraConfig == null)
+            {
+                NetUI.Singleton.SetInvalidConfig(_configName: null);
+                return;
+            }
+            
+            // Are we using a template?
             const string baseName = nameof(netHathoraConfig);
             string configName = netHathoraConfig.name;
             bool isTemplate = configName != $"{baseName}.template";
@@ -109,7 +117,7 @@ namespace Hathora.Demos.Scripts.Client
             {
                 lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(
                     _visibility,
-                    netHathoraConfig.HathoraRegion);
+                    netHathoraConfig.FallbackRegion); // TODO: Get Region from User Input
             }
             catch (Exception e)
             {

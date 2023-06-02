@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Client;
+using Hathora.Scripts.Client.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -361,8 +362,16 @@ namespace Hathora.Demos.Scripts.Client
         
         public void SetInvalidConfig(string _configName)
         {
-            Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
-                "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
+            if (_configName == null)
+            {
+                Debug.LogError($"[{nameof(NetHathoraClient)}] !{nameof(HathoraClientConfig)} - " +
+                    $"Serialize one at HathoraManager (GameObject)'s {nameof(NetHathoraClient)} component");
+            }
+            else if (_configName.Contains(".template"))
+            {
+                Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
+                    "Using template Config! Create a new one via top menu `Hathora/Config Finder`");    
+            }
             
             authBtn.gameObject.SetActive(false);
             InvalidConfigPnl.SetActive(true);

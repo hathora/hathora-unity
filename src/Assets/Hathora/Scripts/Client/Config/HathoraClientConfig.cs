@@ -2,6 +2,7 @@
 
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Scripts.Client.Config
 {
@@ -10,6 +11,7 @@ namespace Hathora.Scripts.Client.Config
     public class HathoraClientConfig : ScriptableObject
     {
         #region Vars
+        [Header("These should match your `HathoraServerConfig`")]
         [SerializeField, Tooltip("Get from your Hathora dashboard, or copy from " +
              "Hathora Server Config (t:HathoraServerConfig)")]
         private string _appId;
@@ -26,12 +28,15 @@ namespace Hathora.Scripts.Client.Config
         
         public bool HasAppId => !string.IsNullOrEmpty(_appId);
 
+        [System.Obsolete("The user should be prompted instead of hard-coding")]
+        [SerializeField, Tooltip("You likely want to get user input instead of use this")]
+        private Region fallbackRegion = Region.Seattle;
 
-        private Region hathoraRegion = Region.Seattle;
-        public Region HathoraRegion
+        [System.Obsolete("The user should be prompted instead of hard-coding")]
+        public Region FallbackRegion
         {
-            get => hathoraRegion;
-            set => hathoraRegion = value;
+            get => fallbackRegion;
+            set => fallbackRegion = value;
         }
         #endregion // Vars
 

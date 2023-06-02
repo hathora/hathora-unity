@@ -127,7 +127,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
                     HathoraClientConfig.AppId,
-                    HathoraClientConfig.HathoraRegion,
+                    HathoraClientConfig.FallbackRegion,
                     _cancelToken);
             }
             catch (ApiException apiException)
