@@ -1,0 +1,74 @@
+// Created by dylan@hathora.dev
+
+using System.Threading;
+using System.Threading.Tasks;
+using Hathora.Scripts.Client.Models;
+using Hathora.Scripts.Common;
+using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
+using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
+using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Server.Config;
+using UnityEngine;
+
+namespace Hathora.Scripts.Client.ApiWrapper
+{
+    /// <summary>
+    /// * Call Init() to pass UserConfig/instances.
+    /// * Does not handle UI.
+    /// </summary>
+    public class NetHathoraClientClientAuthApi : NetHathoraClientApiBase
+    {
+        private AuthV1Api authApi;
+
+        
+        /// <summary>
+        /// </summary>
+        /// <param name="_hathoraClientConfig"></param>
+        /// <param name="_netSession"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
+        public override void Init(
+            HathoraClientConfig _hathoraClientConfig, 
+            NetSession _netSession,
+            Configuration _hathoraSdkConfig = null)
+        {
+            Debug.Log("[NetHathoraClientClientAuthApi] Initializing API...");
+            base.Init(_hathoraClientConfig, _netSession, _hathoraSdkConfig);
+            this.authApi = new AuthV1Api(base.HathoraSdkConfig);
+        }
+
+
+        #region Client Auth Async Hathora SDK Calls
+        /// <param name="_cancelToken"></param>
+        /// <returns>Returns AuthResult on success</returns>
+        public async Task<AuthResult> ClientAuthAsync(CancellationToken _cancelToken = default)
+        {
+            LoginResponse anonLoginResult;
+            try
+            {
+                anonLoginResult = await authApi.LoginAnonymousAsync(
+                    HathoraClientConfig.HathoraCoreOpts.AppId, 
+                    _cancelToken);
+            }
+            catch (ApiException apiException)
+            {
+                HandleClientApiException(
+                    nameof(NetHathoraClientClientAuthApi),
+                    nameof(ClientAuthAsync), 
+                    apiException);
+                return null;
+            }
+
+            bool isAuthed = !string.IsNullOrEmpty(anonLoginResult?.Token); 
+            Debug.Log($"[NetHathoraClientClientAuthApi] isAuthed: {isAuthed}");
+
+            if (!isAuthed)
+                return null;
+            
+            NetSession.InitNetSession(anonLoginResult.Token);
+            return new AuthResult(anonLoginResult.Token);
+        }
+        #endregion // Server Auth Async Hathora SDK Calls
+    }
+}

@@ -1,0 +1,63 @@
+// Created by dylan@hathora.dev
+
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
+using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
+using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
+using Debug = UnityEngine.Debug;
+
+namespace Hathora.Scripts.Server.ApiWrapper
+{
+    public class HathoraServerAppApi : HathoraServerApiBase
+    {
+        private readonly AppV1Api appApi;
+
+        
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraSdkConfig">
+        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
+        /// </param>
+        public HathoraServerAppApi(
+            NetHathoraConfig _netHathoraConfig,
+            Configuration _hathoraSdkConfig = null)
+            : base(_netHathoraConfig, _hathoraSdkConfig)
+        { 
+            Debug.Log("[HathoraServerAppApi] Initializing API..."); 
+            this.appApi = new AppV1Api(base.HathoraSdkConfig);
+        }
+        
+        
+        #region Server App Async Hathora SDK Calls
+        /// <summary>
+        /// Wrapper for `CreateAppAsync` to upload and app a cloud app to Hathora.
+        /// </summary>
+        /// <param name="_cancelToken"></param>
+        /// <returns>Returns App on success</returns>
+        public async Task<List<ApplicationWithDeployment>> GetAppsAsync(
+            CancellationToken _cancelToken = default)
+        {
+            List<ApplicationWithDeployment> getAppsResult;   
+            try
+            {  
+                getAppsResult = await appApi.GetAppsAsync(_cancelToken);
+            }
+            catch (ApiException apiErr)
+            {
+                HandleServerApiException(
+                    nameof(HathoraServerAppApi),
+                    nameof(GetAppsAsync), 
+                    apiErr);
+                return null; 
+            }
+
+            Debug.Log($"[HathoraServerAppApi.GetAppsAsync] num: '{getAppsResult?.Count}'");
+
+            return getAppsResult;
+        }
+        #endregion // Server App Async Hathora SDK Calls
+    }
+}
