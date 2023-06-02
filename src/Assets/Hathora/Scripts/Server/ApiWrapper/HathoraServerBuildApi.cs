@@ -3,9 +3,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Server.Config;
 using UnityEngine;
 
 namespace Hathora.Scripts.Server.ApiWrapper
@@ -17,14 +15,14 @@ namespace Hathora.Scripts.Server.ApiWrapper
         
         /// <summary>
         /// </summary>
-        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraServerConfig"></param>
         /// <param name="_hathoraSdkConfig">
         /// Set in base as `HathoraSdkConfig`; potentially null in child.
         /// </param>
         public HathoraServerBuildApi(
-            NetHathoraConfig _netHathoraConfig,
+            HathoraServerConfig _hathoraServerConfig,
             Configuration _hathoraSdkConfig = null) 
-            : base(_netHathoraConfig, _hathoraSdkConfig)
+            : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
             this.buildApi = new BuildV1Api(base.HathoraSdkConfig);
@@ -45,7 +43,7 @@ namespace Hathora.Scripts.Server.ApiWrapper
             try
             {
                 createCloudBuildResult = await buildApi.CreateBuildAsync(
-                    NetHathoraConfig.HathoraCoreOpts.AppId,
+                    HathoraServerConfig.HathoraCoreOpts.AppId,
                     _cancelToken);
             }
             catch (ApiException apiException)
@@ -81,7 +79,7 @@ namespace Hathora.Scripts.Server.ApiWrapper
             try
             {
                 cloudRunBuildResultByteArr = await buildApi.RunBuildAsync(
-                    NetHathoraConfig.HathoraCoreOpts.AppId,
+                    HathoraServerConfig.HathoraCoreOpts.AppId,
                     _buildId,
                     _tarball,
                     _cancelToken);

@@ -3,9 +3,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Server.Config;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Scripts.Server.ApiWrapper
@@ -17,14 +15,14 @@ namespace Hathora.Scripts.Server.ApiWrapper
         
         /// <summary>
         /// </summary>
-        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraServerConfig"></param>
         /// <param name="_hathoraSdkConfig">
         /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
         /// </param>
         public HathoraServerAppApi(
-            NetHathoraConfig _netHathoraConfig,
+            HathoraServerConfig _hathoraServerConfig,
             Configuration _hathoraSdkConfig = null)
-            : base(_netHathoraConfig, _hathoraSdkConfig)
+            : base(_hathoraServerConfig, _hathoraSdkConfig)
         { 
             Debug.Log("[HathoraServerAppApi] Initializing API..."); 
             this.appApi = new AppV1Api(base.HathoraSdkConfig);

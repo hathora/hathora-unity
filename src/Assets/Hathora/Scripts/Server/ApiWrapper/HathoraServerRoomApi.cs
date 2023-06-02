@@ -3,6 +3,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Scripts.Server.Config;
 using Hathora.Scripts.Server.Models;
 using UnityEngine;
 
@@ -11,19 +12,19 @@ namespace Hathora.Scripts.Server.ApiWrapper
     public class HathoraServerRoomApi : HathoraServerApiBase
     {
         private readonly RoomV2Api roomApi;
-        private HathoraLobbyRoomOpts roomOpts => NetHathoraConfig.HathoraLobbyRoomOpts;
+        private HathoraLobbyRoomOpts roomOpts => HathoraServerConfig.HathoraLobbyRoomOpts;
 
         
         /// <summary>
         /// </summary>
-        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraServerConfig"></param>
         /// <param name="_hathoraSdkConfig">
         /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
         /// </param>
         public HathoraServerRoomApi( 
-            NetHathoraConfig _netHathoraConfig,
+            HathoraServerConfig _hathoraServerConfig,
             Configuration _hathoraSdkConfig = null)
-            : base(_netHathoraConfig, _hathoraSdkConfig)
+            : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerRoomApi] Initializing API...");
             this.roomApi = new RoomV2Api(base.HathoraSdkConfig);

@@ -1,7 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
-using Hathora.Scripts.Client;
+using Hathora.Scripts;
 using Hathora.Scripts.Client.ApiWrapper;
 using Hathora.Scripts.Common;
 using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
@@ -22,15 +22,15 @@ namespace Hathora.Demos.Scripts.Client.Models
     {
         [FormerlySerializedAs("authApi")]
         [SerializeField]
-        public NetHathoraClientClientAuthApi clientAuthApi;
+        public NetHathoraClientAuthApi clientAuthApi;
         
         [FormerlySerializedAs("lobbyApi")]
         [SerializeField]
-        public NetHathoraClientClientLobbyApi clientLobbyApi;
+        public NetHathoraClientLobbyApi clientLobbyApi;
 
         [FormerlySerializedAs("roomApi")]
         [SerializeField]
-        public NetHathoraClientClientRoomApi clientRoomApi;
+        public NetHathoraClientRoomApi clientRoomApi;
         
         
         /// <summary>
@@ -40,7 +40,7 @@ namespace Hathora.Demos.Scripts.Client.Models
         /// <param name="_netSession"></param>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
         public void InitAll(
-            NetHathoraConfig _netHathoraConfig, 
+            HathoraClientConfig _netHathoraConfig, 
             NetSession _netSession,
             Configuration _hathoraSdkConfig = null)
         {

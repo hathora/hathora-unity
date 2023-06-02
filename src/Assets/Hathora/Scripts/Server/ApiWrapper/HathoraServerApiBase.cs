@@ -1,7 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Configuration = Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client.Configuration;
+using Hathora.Scripts.Server.Config;
 
 namespace Hathora.Scripts.Server.ApiWrapper
 {
@@ -13,28 +13,28 @@ namespace Hathora.Scripts.Server.ApiWrapper
     public abstract class HathoraServerApiBase
     {
         protected Configuration HathoraSdkConfig { get; private set; }
-        protected NetHathoraConfig NetHathoraConfig { get; private set; }
+        protected HathoraServerConfig HathoraServerConfig { get; private set; }
         
         // Shortcuts
-        protected string AppId => NetHathoraConfig.HathoraCoreOpts.AppId;
+        protected string AppId => HathoraServerConfig.HathoraCoreOpts.AppId;
 
 
         /// <summary>
         /// Server calls use Dev token.
         /// </summary>
-        /// <param name="_netHathoraConfig">
+        /// <param name="_hathoraServerConfig">
         /// Find via Unity editor top menu: Hathora >> Find Configs
         /// </param>
         /// <param name="_hathoraSdkConfig">
         /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in children.
         /// </param>
         protected HathoraServerApiBase(
-            NetHathoraConfig _netHathoraConfig,
+            HathoraServerConfig _hathoraServerConfig,
             Configuration _hathoraSdkConfig = null)
         {
-            this.NetHathoraConfig = _netHathoraConfig;
+            this.HathoraServerConfig = _hathoraServerConfig;
             this.HathoraSdkConfig = _hathoraSdkConfig ?? 
-                HathoraUtils.GenerateSdkConfig(_netHathoraConfig);
+                HathoraUtils.GenerateSdkConfig(_hathoraServerConfig);
         }
 
         protected static void HandleServerApiException(

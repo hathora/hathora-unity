@@ -24,7 +24,7 @@ This project comes with 2 demos within 1 scene:
 
 1. Open ./Scenes/HathoraDemoScene -> find NetworkManager GameObject. 
 
-2. Find NetHathoraClient.NetHathoraConfig component.
+2. Find NetHathoraClient.HathoraClientConfig component.
 
 3. Click the right () circle to choose a Config to use (or make a new one via top menu `Hathora/Configuration`).
 

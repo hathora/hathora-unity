@@ -1,5 +1,7 @@
 // Created by dylan@hathora.dev
 
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Scripts.Client.Config;
 using Hathora.Scripts.Common;
 using Hathora.Scripts.Common.Utils;
 using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
@@ -24,7 +26,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
         /// </summary>
         /// <param name="_hathoraClientConfig">Find via Unity editor top menu: Hathora >> Find Configs</param>
         /// <param name="_netSession">Client (not player) session instance for updating cache.</param>
-        /// <param name="_hathoraSdkConfig">SDK config that we pass to Hathora API calls</param>
+        /// <param name="_hathoraSdkConfig">SDKConfig that we pass to Hathora API calls</param>
         public virtual void Init(
             HathoraClientConfig _hathoraClientConfig,
             NetSession _netSession,
@@ -33,8 +35,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
             this.HathoraClientConfig = _hathoraClientConfig;
             this.NetSession = _netSession;
             
-            this.HathoraSdkConfig = _hathoraSdkConfig ?? 
-                HathoraUtils.GenerateSdkConfig(_hathoraClientConfig);
+            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig(_hathoraClientConfig);
         }
         
         protected static void HandleClientApiException(
@@ -47,5 +48,8 @@ namespace Hathora.Scripts.Client.ApiWrapper
             
             throw _apiException;
         }
+
+        public static Configuration GenerateSdkConfig(
+            HathoraClientConfig _hathoraClientConfig) => new();
     }
 }

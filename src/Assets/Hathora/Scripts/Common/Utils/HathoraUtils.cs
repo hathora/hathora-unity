@@ -3,7 +3,6 @@
 using System;
 using System.IO;
 using Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Server.Config;
 using UnityEngine;
 using Application = UnityEngine.Application;
 
@@ -48,10 +47,5 @@ namespace Hathora.Scripts.Common.Utils
                 ? null 
                 : NormalizePath(dirtyPathToUnityProjRoot);
         }
-
-        public static Configuration GenerateSdkConfig(HathoraClientConfig _hathoraClientConfig) => new()
-        {
-            AccessToken = _hathoraClientConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-        };
     }
 }

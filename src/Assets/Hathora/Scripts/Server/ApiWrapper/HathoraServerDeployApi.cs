@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Scripts.Server.Config;
 using Hathora.Scripts.Server.Models;
 using UnityEngine;
 
@@ -12,19 +13,19 @@ namespace Hathora.Scripts.Server.ApiWrapper
     public class HathoraServerDeployApi : HathoraServerApiBase
     {
         private readonly DeploymentV1Api deployApi;
-        private HathoraDeployOpts deployOpts => NetHathoraConfig.HathoraDeployOpts;
+        private HathoraDeployOpts deployOpts => HathoraServerConfig.HathoraDeployOpts;
 
         
         /// <summary>
         /// </summary>
-        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraServerConfig"></param>
         /// <param name="_hathoraSdkConfig">
         /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
         /// </param>
         public HathoraServerDeployApi( 
-            NetHathoraConfig _netHathoraConfig,
+            HathoraServerConfig _hathoraServerConfig,
             Configuration _hathoraSdkConfig = null)
-            : base(_netHathoraConfig, _hathoraSdkConfig)
+            : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
             this.deployApi = new DeploymentV1Api(base.HathoraSdkConfig);
@@ -130,12 +131,12 @@ namespace Hathora.Scripts.Server.ApiWrapper
         private List<DeploymentConfigEnvInner> parseEnvFromConfig()
         {
             // Validate
-            List<HathoraEnvVars> envVars = NetHathoraConfig.HathoraDeployOpts.EnvVars;
+            List<HathoraEnvVars> envVars = HathoraServerConfig.HathoraDeployOpts.EnvVars;
             if (envVars == null || envVars.Count == 0) 
                 return new List<DeploymentConfigEnvInner>();
             
             // Parse
-            return NetHathoraConfig.HathoraDeployOpts.EnvVars.Select(env => 
+            return HathoraServerConfig.HathoraDeployOpts.EnvVars.Select(env => 
                 new DeploymentConfigEnvInner(env.Key, env.StrVal)).ToList();
         }
     }
