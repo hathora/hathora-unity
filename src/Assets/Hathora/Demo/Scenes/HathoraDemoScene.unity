@@ -3866,7 +3866,8 @@ PrefabInstance:
         type: 3}
       propertyPath: netHathoraConfig
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
 --- !u!114 &7213143272671949959

@@ -1,0 +1,138 @@
+Index: csharp/src/Hathora.Cloud.Sdk/Client/ApiClient.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/csharp/src/Hathora.Cloud.Sdk/Client/ApiClient.cs b/csharp/src/Hathora.Cloud.Sdk/Client/ApiClient.cs
+--- a/csharp/src/Hathora.Cloud.Sdk/Client/ApiClient.cs	(revision b80df0ee3de6cf98d38f249ef154d840d39f9f75)
++++ b/csharp/src/Hathora.Cloud.Sdk/Client/ApiClient.cs	(date 1684441358291)
+@@ -147,7 +147,7 @@
+                     throw new ApiException((int)request.responseCode, request.error, text);
+                 }
+             }
+-            
++
+             if (type != typeof(System.Object) && request.responseCode >= 200 && request.responseCode < 300)
+             {
+                 throw new UnexpectedResponseException(request, type);
+@@ -222,6 +222,15 @@
+         {
+         }
+ 
++        public static byte[] ToByteArray(Stream stream)
++        {
++            stream.Position = 0;
++            byte[] buffer = new byte[stream.Length];
++            for (int totalBytesCopied = 0; totalBytesCopied < stream.Length; )
++                totalBytesCopied += stream.Read(buffer, totalBytesCopied, Convert.ToInt32(stream.Length) - totalBytesCopied);
++            return buffer;
++        }
++
+         /// <summary>
+         /// Provides all logic for constructing a new UnityWebRequest.
+         /// At this point, all information for querying the service is known. Here, it is simply
+@@ -260,7 +269,7 @@
+             var uri = builder.GetFullUri();
+             UnityWebRequest request = null;
+ 
+-            if (contentType == "multipart/form-data")
++            if (contentType != null && contentType.Contains("multipart/form-data"))
+             {
+                 var formData = new List<IMultipartFormSection>();
+                 foreach (var formParameter in options.FormParameters)
+@@ -268,7 +277,21 @@
+                     formData.Add(new MultipartFormDataSection(formParameter.Key, formParameter.Value));
+                 }
+ 
+-                request = UnityWebRequest.Post(uri, formData);
++                if (options.FileParameters != null && options.FileParameters.Count > 0)
++                {
++                    foreach (var fileParam in options.FileParameters)
++                    {
++                        foreach (var file in fileParam.Value)
++                        {
++                            formData.Add(new MultipartFormFileSection("file", ToByteArray(file.Content), file.Name, "application/octet-stream"));
++                        }
++                    }
++                }
++
++                var boundary = UnityWebRequest.GenerateBoundary();
++                options.HeaderParameters.Remove("Content-Type");
++                options.HeaderParameters.Add("Content-Type", "multipart/form-data; boundary=" + Encoding.UTF8.GetString(boundary, 0, boundary.Length));
++                request = UnityWebRequest.Post(uri, formData, boundary);
+                 request.method = method;
+             }
+             else if (contentType == "application/x-www-form-urlencoded")
+@@ -417,7 +440,7 @@
+                 {
+                     await tsc.Task;
+                 }
+-                
++
+                 if (request.result == UnityWebRequest.Result.ConnectionError ||
+                     request.result == UnityWebRequest.Result.DataProcessingError)
+                 {
+@@ -642,4 +665,4 @@
+         }
+         #endregion ISynchronousClient
+     }
+-}
+\ No newline at end of file
++}
+Index: csharp/src/Hathora.Cloud.Sdk/Client/RequestOptions.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/csharp/src/Hathora.Cloud.Sdk/Client/RequestOptions.cs b/csharp/src/Hathora.Cloud.Sdk/Client/RequestOptions.cs
+--- a/csharp/src/Hathora.Cloud.Sdk/Client/RequestOptions.cs	(revision b80df0ee3de6cf98d38f249ef154d840d39f9f75)
++++ b/csharp/src/Hathora.Cloud.Sdk/Client/RequestOptions.cs	(date 1684441494162)
+@@ -43,6 +43,11 @@
+         /// </summary>
+         public Dictionary<string, string> FormParameters { get; set; }
+ 
++        /// <summary>
++        /// File parameters to be sent along with the request.
++        /// </summary>
++        public Multimap<string, FileParameter> FileParameters { get; set; }
++
+         /// <summary>
+         /// Cookies to be sent along with the request.
+         /// </summary>
+@@ -62,6 +67,7 @@
+             QueryParameters = new Multimap<string, string>();
+             HeaderParameters = new Multimap<string, string>();
+             FormParameters = new Dictionary<string, string>();
++            FileParameters = new Multimap<string, FileParameter>();
+             Cookies = new List<Cookie>();
+         }
+     }
+Index: csharp/src/Hathora.Cloud.Sdk/Api/BuildV1Api.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/csharp/src/Hathora.Cloud.Sdk/Api/BuildV1Api.cs b/csharp/src/Hathora.Cloud.Sdk/Api/BuildV1Api.cs
+--- a/csharp/src/Hathora.Cloud.Sdk/Api/BuildV1Api.cs	(revision b80df0ee3de6cf98d38f249ef154d840d39f9f75)
++++ b/csharp/src/Hathora.Cloud.Sdk/Api/BuildV1Api.cs	(date 1684441760563)
+@@ -13,9 +13,12 @@
+ using System.Collections.ObjectModel;
+ using System.Linq;
+ using System.Net;
++using System.Net.Http;
+ using System.Net.Mime;
++using System.Text;
+ using Hathora.Cloud.Sdk.Client;
+ using Hathora.Cloud.Sdk.Model;
++using UnityEngine.Networking;
+ 
+ namespace Hathora.Cloud.Sdk.Api
+ {
+@@ -1095,6 +1098,7 @@
+ 
+             localVarRequestOptions.PathParameters.Add("appId", Hathora.Cloud.Sdk.Client.ClientUtils.ParameterToString(appId)); // path parameter
+             localVarRequestOptions.PathParameters.Add("buildId", Hathora.Cloud.Sdk.Client.ClientUtils.ParameterToString(buildId)); // path parameter
++            localVarRequestOptions.FileParameters.Add("file", file);
+ 
+             // authentication (auth0) required
+             // bearer authentication required
