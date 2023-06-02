@@ -3,7 +3,6 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Hathora.Scripts.Common.Utils;
-using Hathora.Scripts.Server.Config;
 
 namespace Hathora.Scripts.Server.Models
 {

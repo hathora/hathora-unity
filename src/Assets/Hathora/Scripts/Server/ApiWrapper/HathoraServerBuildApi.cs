@@ -3,7 +3,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Server.Config;
+using Hathora.Cloud.Sdk.Api;
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
 namespace Hathora.Scripts.Server.ApiWrapper

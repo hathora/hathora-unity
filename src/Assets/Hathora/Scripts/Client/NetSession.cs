@@ -1,6 +1,6 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
+using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
 namespace Hathora.Scripts.Client

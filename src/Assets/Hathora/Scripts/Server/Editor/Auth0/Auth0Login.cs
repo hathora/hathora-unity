@@ -4,12 +4,13 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Server.Config.Editor.Auth0.Models;
+using Hathora.Scripts.Common.Extensions;
+using Hathora.Scripts.Server.Editor.Auth0.Models;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Hathora.Scripts.Server.Config.Editor.Auth0
+namespace Hathora.Scripts.Server.Editor.Auth0
 {
     /// <summary>
     /// 1. Get device auth code from 

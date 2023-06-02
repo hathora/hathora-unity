@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Server.ApiWrapper;
-using Hathora.Scripts.Server.Config;
 using Hathora.Scripts.Server.Models;
 using UnityEngine.Assertions;
 using UnityEngine.TestTools.Constraints;
@@ -130,9 +129,8 @@ namespace Hathora.Scripts.Server.Editor
                 return null;
             }
 
-            Assert.That(deployment?.BuildId, Is.Not.Null, 
-                "[HathoraServerBuild.DeployToHathoraAsync] Deployment failed: " +
-                "Check console for details.");
+            Assert.IsTrue(deployment?.BuildId > 0,  
+                "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
             
             return deployment;
             #endregion // Deploy Build

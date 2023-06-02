@@ -3,11 +3,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Common;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Server.Config;
+using Hathora.Cloud.Sdk.Api;
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Client.Config;
 using UnityEngine;
 
 namespace Hathora.Scripts.Client.ApiWrapper
@@ -43,23 +42,26 @@ namespace Hathora.Scripts.Client.ApiWrapper
         /// Create a new Player Client Lobby.
         /// </summary>
         /// <param name="lobbyVisibility"></param>
+        /// <param name="_initConfigJsonStr"></param>
         /// <param name="_cancelToken"></param>
+        /// <param name="_region"></param>
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
             CreateLobbyRequest.VisibilityEnum lobbyVisibility,
+            Region _region,
             string _initConfigJsonStr = "{}",
             CancellationToken _cancelToken = default)
         {
             CreateLobbyRequest request = new(
                 lobbyVisibility, 
                 _initConfigJsonStr, 
-                HathoraClientConfig.HathoraLobbyRoomOpts.HathoraRegion);
+                _region);
 
             Lobby lobby;
             try
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
-                    HathoraClientConfig.HathoraCoreOpts.AppId,
+                    HathoraClientConfig.AppId,
                     NetSession.PlayerAuthToken, // Player token; not dev
                     request,
                     cancellationToken: _cancelToken);
@@ -94,7 +96,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
             try
             {
                 lobby = await lobbyApi.GetLobbyInfoAsync(
-                    HathoraClientConfig.HathoraCoreOpts.AppId,
+                    HathoraClientConfig.AppId,
                     roomId,
                     _cancelToken);
             }
@@ -124,8 +126,8 @@ namespace Hathora.Scripts.Client.ApiWrapper
             try
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
-                    HathoraClientConfig.HathoraCoreOpts.AppId,
-                    HathoraClientConfig.HathoraLobbyRoomOpts.HathoraRegion,
+                    HathoraClientConfig.AppId,
+                    HathoraClientConfig.HathoraRegion,
                     _cancelToken);
             }
             catch (ApiException apiException)

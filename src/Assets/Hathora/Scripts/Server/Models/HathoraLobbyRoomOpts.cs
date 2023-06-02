@@ -1,6 +1,7 @@
 // dylan@hathora.dev
 
 using System;
+using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
 namespace Hathora.Scripts.Server.Models

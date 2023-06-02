@@ -1,9 +1,8 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 
-namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth
+namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyUI : HathoraConfigUIBase
     {

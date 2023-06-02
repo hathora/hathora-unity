@@ -2,10 +2,6 @@
 
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Scripts.Client.Config;
-using Hathora.Scripts.Common;
-using Hathora.Scripts.Common.Utils;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Server.Config;
 using UnityEngine;
 
 namespace Hathora.Scripts.Client.ApiWrapper
@@ -35,7 +31,8 @@ namespace Hathora.Scripts.Client.ApiWrapper
             this.HathoraClientConfig = _hathoraClientConfig;
             this.NetSession = _netSession;
             
-            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig(_hathoraClientConfig);
+            this.HathoraSdkConfig = _hathoraSdkConfig ?? 
+                GenerateSdkConfig(_hathoraClientConfig);
         }
         
         protected static void HandleClientApiException(
@@ -49,7 +46,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
             throw _apiException;
         }
 
-        public static Configuration GenerateSdkConfig(
+        private static Configuration GenerateSdkConfig(
             HathoraClientConfig _hathoraClientConfig) => new();
     }
 }

@@ -6,11 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Editor;
+using Hathora.Scripts.Common.Extensions;
 using Hathora.Scripts.Server.ApiWrapper;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.TestTools.Constraints;
 
-namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth
+namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyRoomUI : HathoraConfigUIBase
     {
@@ -295,7 +300,7 @@ namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth
             
             onCreateRoomDone();
 
-            Assert.That(connectionInfo?.RoomId, Is.Not.Null,
+            Assert.IsNotNull(connectionInfo?.RoomId,
                 "Failed to create room: See console");
 
             onCreateRoomSuccess(room);

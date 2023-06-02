@@ -1,10 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System.Text;
-using Hathora.Scripts.Server.Config;
-using Hathora.Scripts.Server.Config.Editor;
-using Hathora.Scripts.Server.Config.Editor.ConfigStyle;
-using Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Editor;
 using Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 using UnityEditor.Build.Reporting;

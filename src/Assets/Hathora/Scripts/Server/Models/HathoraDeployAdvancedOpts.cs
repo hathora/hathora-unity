@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Extensions;
+using Hathora.Scripts.Common.Models;
 using UnityEngine;
 using UnityEngine.Serialization;
 

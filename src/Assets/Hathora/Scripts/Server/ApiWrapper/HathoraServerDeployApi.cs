@@ -2,9 +2,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Server.Config;
+using Hathora.Cloud.Sdk.Api;
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Utils;
 using Hathora.Scripts.Server.Models;
 using UnityEngine;
 

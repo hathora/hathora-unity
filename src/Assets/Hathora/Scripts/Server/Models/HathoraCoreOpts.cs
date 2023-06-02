@@ -3,6 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Models;
+using Hathora.Scripts.Common.Utils;
 using UnityEngine;
 
 namespace Hathora.Scripts.Server.Models
@@ -48,7 +51,7 @@ namespace Hathora.Scripts.Server.Models
                 
                 // Parse from `ApplicationWithDeploymentWrapper` to `ApplicationWithDeployment` 
                 List<ApplicationWithDeployment> appsWithDeployment = this._existingAppsWithDeploymentWrapper
-                    .Select<>(app => app.ToApplicationWithDeploymentType())
+                    .Select(app => app.ToApplicationWithDeploymentType())
                     .ToList();
 
                 return appsWithDeployment;

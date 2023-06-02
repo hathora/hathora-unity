@@ -3,11 +3,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Common;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Server.Config;
+using Hathora.Cloud.Sdk.Api;
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Client.Config;
 using UnityEngine;
 
 namespace Hathora.Scripts.Client.ApiWrapper
@@ -64,7 +63,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
                 try
                 {
                     connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
-                        HathoraClientConfig.HathoraCoreOpts.AppId, 
+                        HathoraClientConfig.AppId, 
                         roomId,
                         _cancelToken);
                 }

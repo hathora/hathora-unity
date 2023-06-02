@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
 namespace Hathora.Scripts.Client.Config
@@ -24,6 +25,14 @@ namespace Hathora.Scripts.Client.Config
         }
         
         public bool HasAppId => !string.IsNullOrEmpty(_appId);
+
+
+        private Region hathoraRegion = Region.Seattle;
+        public Region HathoraRegion
+        {
+            get => hathoraRegion;
+            set => hathoraRegion = value;
+        }
         #endregion // Vars
 
 

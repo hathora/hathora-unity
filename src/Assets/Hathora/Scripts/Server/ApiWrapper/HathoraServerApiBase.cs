@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Server.Config;
+using Hathora.Cloud.Sdk.Client;
 
 namespace Hathora.Scripts.Server.ApiWrapper
 {
@@ -33,8 +32,7 @@ namespace Hathora.Scripts.Server.ApiWrapper
             Configuration _hathoraSdkConfig = null)
         {
             this.HathoraServerConfig = _hathoraServerConfig;
-            this.HathoraSdkConfig = _hathoraSdkConfig ?? 
-                HathoraUtils.GenerateSdkConfig(_hathoraServerConfig);
+            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig(_hathoraServerConfig);
         }
 
         protected static void HandleServerApiException(
@@ -47,5 +45,11 @@ namespace Hathora.Scripts.Server.ApiWrapper
 
             throw _apiException;
         }
+
+        private static Configuration GenerateSdkConfig(HathoraServerConfig _hathoraClientConfig) => new()
+        {
+            AccessToken = _hathoraClientConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+        };
+        
     }
 }

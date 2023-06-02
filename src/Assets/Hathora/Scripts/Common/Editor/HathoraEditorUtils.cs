@@ -251,7 +251,7 @@ namespace Hathora.Scripts.Common.Editor
         /// <param name="_args"></param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        private static async Task<string> ExecuteCrossPlatformShellCmdAsync(
+        public static async Task<string> ExecuteCrossPlatformShellCmdAsync(
             string _cmd, 
             string _args,
             CancellationToken _cancelToken = default)

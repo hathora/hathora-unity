@@ -1,10 +1,11 @@
 // Created by dylan@hathora.dev
 
 using System.IO;
+using Hathora.Scripts.Common.Utils;
 using Hathora.Scripts.Server.Models;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Config
+namespace Hathora.Scripts.Server
 {
     /// <summary>
     /// Sensitive info will not be included in Client builds.

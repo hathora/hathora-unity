@@ -1,11 +1,9 @@
 // Created by dylan@hathora.dev
 
 using System.Linq;
-using Hathora.Scripts.Server.Config;
-using Hathora.Scripts.Server.Editor;
 using UnityEditor;
 
-namespace Hathora.Scripts.Common.Editor
+namespace Hathora.Scripts.Server.Editor
 {
     public class HathoraServerAssetPostprocessor : AssetPostprocessor
     {

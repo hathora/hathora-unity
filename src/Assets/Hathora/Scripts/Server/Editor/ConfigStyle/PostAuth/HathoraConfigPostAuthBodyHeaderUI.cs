@@ -4,10 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Editor;
 using Hathora.Scripts.Server.ApiWrapper;
-using Hathora.Scripts.Server.Config;
-using Hathora.Scripts.Server.Config.Editor;
-using Hathora.Scripts.Server.Config.Editor.ConfigStyle;
 using UnityEditor;
 using UnityEngine;
 

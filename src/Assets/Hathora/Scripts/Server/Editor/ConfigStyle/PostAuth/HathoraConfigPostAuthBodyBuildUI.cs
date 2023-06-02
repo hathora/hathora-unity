@@ -4,8 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEngine.Assertions;
 
-namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth
+namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyBuildUI : HathoraConfigUIBase
     {
@@ -181,9 +182,7 @@ namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth
         {
             BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(ServerConfig);
             
-            Assert.That(
-                buildReport.summary.result,
-                Is.EqualTo(BuildResult.Succeeded),
+            Assert.AreEqual(buildReport.summary.result, BuildResult.Succeeded,
                 "Server build failed. Check console for details.");
 
             return buildReport;

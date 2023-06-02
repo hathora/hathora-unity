@@ -1,9 +1,10 @@
 // Created by dylan@hathora.dev
 
+using Hathora.Scripts.Common.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle
+namespace Hathora.Scripts.Server.Editor.ConfigStyle
 {
     public class HathoraConfigHeaderUI : HathoraConfigUIBase
     {

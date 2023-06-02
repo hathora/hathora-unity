@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Server.Config;
-using Hathora.Scripts.Server.Config.Editor;
-using Hathora.Scripts.Server.Config.Editor.ConfigStyle;
-using Hathora.Scripts.Server.Config.Editor.ConfigStyle.PostAuth;
+using Hathora.Cloud.Sdk.Model;
+using Hathora.Scripts.Common.Utils;
 using UnityEditor;
 using UnityEngine;
 

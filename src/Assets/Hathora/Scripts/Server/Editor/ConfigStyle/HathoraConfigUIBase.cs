@@ -3,10 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hathora.Scripts.Common.Editor;
+using Hathora.Scripts.Common.Extensions;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.TestTools.Constraints;
 
-namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle
+namespace Hathora.Scripts.Server.Editor.ConfigStyle
 {
     public abstract class HathoraConfigUIBase
     {
@@ -55,8 +59,8 @@ namespace Hathora.Scripts.Server.Config.Editor.ConfigStyle
             HathoraServerConfig _serverConfig, 
             SerializedObject _serializedConfig)
         {
-            Assert.That(_serverConfig, Is.Not.Null, "ServerConfig cannot be null");
-            Assert.That(_serializedConfig, Is.Not.Null, "SerializedConfig cannot be null");
+            Assert.IsNotNull(_serverConfig, "ServerConfig cannot be null");
+            Assert.IsNotNull(_serializedConfig, "SerializedConfig cannot be null");
             
             this.ServerConfig = _serverConfig;
             this.SerializedConfig = _serializedConfig;

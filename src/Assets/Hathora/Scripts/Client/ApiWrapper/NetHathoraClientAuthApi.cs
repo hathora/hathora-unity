@@ -2,13 +2,12 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Api;
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Scripts.Client.Config;
 using Hathora.Scripts.Client.Models;
 using Hathora.Scripts.Common;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Api;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Client;
-using Hathora.Scripts.Sdk.hathora_cloud_sdks.csharp.src.Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Server.Config;
 using UnityEngine;
 
 namespace Hathora.Scripts.Client.ApiWrapper
@@ -49,7 +48,7 @@ namespace Hathora.Scripts.Client.ApiWrapper
             try
             {
                 anonLoginResult = await authApi.LoginAnonymousAsync(
-                    HathoraClientConfig.HathoraCoreOpts.AppId, 
+                    HathoraClientConfig.AppId, 
                     _cancelToken);
             }
             catch (ApiException apiException)
