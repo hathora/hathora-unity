@@ -105,13 +105,13 @@ namespace Hathora.Demo.Scripts.Client
         public void OnAuthLoginBtnClick()
         {
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            hathoraClient.AuthLoginAsync();
+            hathoraClient.AuthLoginAsync(); // !await
         }
 
         public void OnCreateLobbyBtnClick()
         {
             SetShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
-            hathoraClient.CreateLobbyAsync(); // public lobby
+            hathoraClient.CreateLobbyAsync(); // !await // public lobby
         }
 
         /// <summary>

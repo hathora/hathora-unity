@@ -47,20 +47,7 @@ namespace Hathora.Demo.Scripts.Client
         {
             // Are we using any Client Config at all?
             if (netHathoraConfig == null)
-            {
                 NetUI.Singleton.SetInvalidConfig(_configName: null);
-                return;
-            }
-            
-            // Are we using a template?
-            const string baseName = nameof(netHathoraConfig);
-            string configName = netHathoraConfig.name;
-            bool isTemplate = configName != $"{baseName}.template";
-            
-            if (!isTemplate)
-                return;
-
-            NetUI.Singleton.SetInvalidConfig(configName);
         }
 
         private void setSingleton()
