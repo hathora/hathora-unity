@@ -2,7 +2,7 @@
 
 using Hathora.Cloud.Sdk.Client;
 
-namespace Hathora.Scripts.Server.ApiWrapper
+namespace Hathora.Core.Scripts.Server.ApiWrapper
 {
     /// <summary>
     /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.

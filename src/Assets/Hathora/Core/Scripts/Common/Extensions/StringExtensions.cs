@@ -2,7 +2,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace Hathora.Scripts.Common.Extensions
+namespace Hathora.Core.Scripts.Common.Extensions
 {
     public static class StringExtensions
     {

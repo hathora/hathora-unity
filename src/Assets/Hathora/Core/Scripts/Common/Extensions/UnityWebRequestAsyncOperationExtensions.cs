@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
-namespace Hathora.Scripts.Common.Extensions
+namespace Hathora.Core.Scripts.Common.Extensions
 {
     /// <summary>
     /// Allow an awaitable Task

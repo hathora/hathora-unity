@@ -4,13 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Client;
-using Hathora.Scripts.Client.Config;
+using Hathora.Core.Scripts.Client;
+using Hathora.Core.Scripts.Client.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Hathora.Demos.Scripts.Client
+namespace Hathora.Demo.Scripts.Client
 {
     /// <summary>
     /// Handles the non-Player UI so we can keep the logic separate.

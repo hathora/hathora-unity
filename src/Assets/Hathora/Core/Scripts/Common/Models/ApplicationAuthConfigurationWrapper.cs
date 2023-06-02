@@ -3,7 +3,7 @@
 using System;
 using Hathora.Cloud.Sdk.Model;
 
-namespace Hathora.Scripts.Common.Models
+namespace Hathora.Core.Scripts.Common.Models
 {
     /// <summary>
     /// This is a wrapper for Hathora SDK's `ApplicationWithDeployment` model.

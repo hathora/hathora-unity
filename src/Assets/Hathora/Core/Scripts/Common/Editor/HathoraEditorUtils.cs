@@ -1,18 +1,15 @@
 // Created by dylan@hathora.dev
 
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Common.Extensions;
+using Hathora.Core.Scripts.Common.Extensions;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
-namespace Hathora.Scripts.Common.Editor
+namespace Hathora.Core.Scripts.Common.Editor
 {
     /// <summary>
     /// Editor script to add the Hathora banner to an editor window

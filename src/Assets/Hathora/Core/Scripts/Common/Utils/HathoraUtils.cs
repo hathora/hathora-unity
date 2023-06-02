@@ -2,11 +2,10 @@
 
 using System;
 using System.IO;
-using Hathora.Cloud.Sdk.Client;
 using UnityEngine;
 using Application = UnityEngine.Application;
 
-namespace Hathora.Scripts.Common.Utils
+namespace Hathora.Core.Scripts.Common.Utils
 {
     public static class HathoraUtils
     {

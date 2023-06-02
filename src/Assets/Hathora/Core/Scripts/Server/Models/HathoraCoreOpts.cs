@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Common.Models;
-using Hathora.Scripts.Common.Utils;
+using Hathora.Core.Scripts.Common.Models;
+using Hathora.Core.Scripts.Common.Utils;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Models
+namespace Hathora.Core.Scripts.Server.Models
 {
     [Serializable]
     public class HathoraCoreOpts

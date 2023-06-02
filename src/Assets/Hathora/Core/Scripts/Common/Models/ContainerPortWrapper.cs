@@ -5,7 +5,7 @@ using Hathora.Cloud.Sdk.Model;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Hathora.Scripts.Common.Models
+namespace Hathora.Core.Scripts.Common.Models
 {
     /// <summary>
     /// Set transpport configurations for where the server will listen.

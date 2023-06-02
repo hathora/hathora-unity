@@ -3,14 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hathora.Scripts.Common.Editor;
-using Hathora.Scripts.Common.Extensions;
+using Hathora.Core.Scripts.Common.Editor;
+using Hathora.Core.Scripts.Common.Extensions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.TestTools.Constraints;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
 {
     public abstract class HathoraConfigUIBase
     {

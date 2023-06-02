@@ -3,7 +3,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Hathora.Scripts.Server.Editor.Auth0.Models
+namespace Hathora.Core.Scripts.Server.Editor.Auth0.Models
 {
     [Serializable]
     public class Auth0TokenRequest

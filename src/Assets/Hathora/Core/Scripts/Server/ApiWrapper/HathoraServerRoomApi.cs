@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Server.Models;
+using Hathora.Core.Scripts.Server.Models;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.ApiWrapper
+namespace Hathora.Core.Scripts.Server.ApiWrapper
 {
     public class HathoraServerRoomApi : HathoraServerApiBase
     {

@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Models
+namespace Hathora.Core.Scripts.Server.Models
 {
     [Serializable]
     public class HathoraDevAuthTokenOpts

@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine.Assertions;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyBuildUI : HathoraConfigUIBase
     {

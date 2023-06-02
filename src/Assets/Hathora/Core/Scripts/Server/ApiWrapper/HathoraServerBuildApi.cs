@@ -8,7 +8,7 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.ApiWrapper
+namespace Hathora.Core.Scripts.Server.ApiWrapper
 {
     public class HathoraServerBuildApi : HathoraServerApiBase
     {

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hathora.Scripts.Common.Extensions
+namespace Hathora.Core.Scripts.Common.Extensions
 {
     public static class ProcessExtensions
     {

@@ -2,9 +2,9 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
-using Hathora.Scripts.Common.Utils;
+using Hathora.Core.Scripts.Common.Utils;
 
-namespace Hathora.Scripts.Server.Models
+namespace Hathora.Core.Scripts.Server.Models
 {
    /// <summary>
     /// Container for all the many paths to prep/upload/deploy a Hathora server build.

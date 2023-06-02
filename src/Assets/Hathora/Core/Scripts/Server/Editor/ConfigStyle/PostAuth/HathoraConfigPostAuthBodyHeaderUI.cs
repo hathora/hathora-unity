@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Common.Editor;
-using Hathora.Scripts.Server.ApiWrapper;
+using Hathora.Core.Scripts.Common.Editor;
+using Hathora.Core.Scripts.Server.ApiWrapper;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyHeaderUI : HathoraConfigUIBase
     {

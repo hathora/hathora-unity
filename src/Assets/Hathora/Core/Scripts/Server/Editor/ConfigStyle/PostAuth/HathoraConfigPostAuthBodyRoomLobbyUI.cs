@@ -2,7 +2,7 @@
 
 using UnityEditor;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyRoomLobbyUI : HathoraConfigUIBase
     {

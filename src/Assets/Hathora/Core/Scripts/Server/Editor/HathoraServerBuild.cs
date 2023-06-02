@@ -2,12 +2,12 @@
 
 using System.IO;
 using System.Linq;
-using Hathora.Scripts.Common.Utils;
+using Hathora.Core.Scripts.Common.Utils;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Editor
+namespace Hathora.Core.Scripts.Server.Editor
 {
     /// <summary>
     /// Contains build + deploy methods for Hathora Server.

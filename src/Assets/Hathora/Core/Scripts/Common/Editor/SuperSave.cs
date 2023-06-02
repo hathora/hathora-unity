@@ -3,7 +3,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Common.Editor
+namespace Hathora.Core.Scripts.Common.Editor
 {
     /// <summary>
     /// ABOUT:

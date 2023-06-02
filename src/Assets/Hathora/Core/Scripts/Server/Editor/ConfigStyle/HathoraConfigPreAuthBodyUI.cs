@@ -2,12 +2,12 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Common.Editor;
-using Hathora.Scripts.Server.Editor.Auth0;
+using Hathora.Core.Scripts.Common.Editor;
+using Hathora.Core.Scripts.Server.Editor.Auth0;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
 {
     public class HathoraConfigPreAuthBodyUI : HathoraConfigUIBase
     {

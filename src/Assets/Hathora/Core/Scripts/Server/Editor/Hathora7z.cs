@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Scripts.Common.Editor;
-using Hathora.Scripts.Server.Models;
+using Hathora.Core.Scripts.Common.Editor;
+using Hathora.Core.Scripts.Server.Models;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Hathora.Scripts.Server.Editor
+namespace Hathora.Core.Scripts.Server.Editor
 {
     /// <summary>
     /// 7z archive/zipping/tarball static utils

@@ -1,9 +1,9 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth;
+using Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
 {
     /// <summary>
     /// The main editor for HathoraServerConfig, including all the button clicks and extra UI.

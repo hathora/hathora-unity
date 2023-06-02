@@ -3,7 +3,7 @@
 using System.Linq;
 using UnityEditor;
 
-namespace Hathora.Scripts.Server.Editor
+namespace Hathora.Core.Scripts.Server.Editor
 {
     public class HathoraServerAssetPostprocessor : AssetPostprocessor
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Hathora.Scripts.Common.Extensions
+namespace Hathora.Core.Scripts.Common.Extensions
 {
     public static class ListExtensions
     {

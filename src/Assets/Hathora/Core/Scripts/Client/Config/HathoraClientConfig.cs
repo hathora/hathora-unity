@@ -2,9 +2,8 @@
 
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Hathora.Scripts.Client.Config
+namespace Hathora.Core.Scripts.Client.Config
 {
     /// <summary>Hathora Client Config ScriptableObject.</summary>
     [CreateAssetMenu(fileName = nameof(HathoraClientConfig), menuName = "Hathora/Client Config File")]

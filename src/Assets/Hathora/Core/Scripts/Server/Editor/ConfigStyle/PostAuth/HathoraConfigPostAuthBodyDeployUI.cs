@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Common.Utils;
+using Hathora.Core.Scripts.Common.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
 {
     public class HathoraConfigPostAuthBodyDeployUI : HathoraConfigUIBase
     {

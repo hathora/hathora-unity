@@ -6,13 +6,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Server.ApiWrapper;
-using Hathora.Scripts.Server.Models;
+using Hathora.Core.Scripts.Server.ApiWrapper;
+using Hathora.Core.Scripts.Server.Models;
 using UnityEngine.Assertions;
-using UnityEngine.TestTools.Constraints;
 using Debug = UnityEngine.Debug;
 
-namespace Hathora.Scripts.Server.Editor
+namespace Hathora.Core.Scripts.Server.Editor
 {
     public delegate void ZipCompleteHandler();
     public delegate void OnBuildReqComplete(Build _buildInfo);

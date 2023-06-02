@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Hathora.Scripts.Common.Models
+namespace Hathora.Core.Scripts.Common.Models
 {
     /// <summary>
     /// Set transpport configurations for where the server will listen.

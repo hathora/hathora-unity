@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace Hathora.Demos.Scripts.Client.Models
+namespace Hathora.Demo.Scripts.Client.Models
 {
     /// <summary>Arbitrary example/demo for how to use `InitialConfig`.</summary>
     public class InitConfigExample

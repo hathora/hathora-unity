@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Common.Extensions;
-using Hathora.Scripts.Common.Models;
+using Hathora.Core.Scripts.Common.Extensions;
+using Hathora.Core.Scripts.Common.Models;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Hathora.Scripts.Server.Models
+namespace Hathora.Core.Scripts.Server.Models
 {
     [Serializable]
     public class HathoraDeployAdvancedOpts

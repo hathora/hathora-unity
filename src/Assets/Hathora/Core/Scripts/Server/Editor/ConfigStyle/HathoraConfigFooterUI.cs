@@ -2,14 +2,14 @@
 
 using System.Text;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Scripts.Common.Editor;
-using Hathora.Scripts.Server.Editor.ConfigStyle.PostAuth;
+using Hathora.Core.Scripts.Common.Editor;
+using Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Task = System.Threading.Tasks.Task;
 
-namespace Hathora.Scripts.Server.Editor.ConfigStyle
+namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
 {
     public class HathoraConfigFooterUI : HathoraConfigUIBase
     {

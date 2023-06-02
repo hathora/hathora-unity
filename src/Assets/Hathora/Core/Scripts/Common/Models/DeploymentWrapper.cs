@@ -7,7 +7,7 @@ using Hathora.Cloud.Sdk.Model;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Hathora.Scripts.Common.Models
+namespace Hathora.Core.Scripts.Common.Models
 {
     /// <summary>
     /// This is a wrapper for Hathora SDK's `Deployment` model.

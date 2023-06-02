@@ -3,7 +3,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Hathora.Scripts.Common.Utils
+namespace Hathora.Core.Scripts.Common.Utils
 {
     [Serializable]
     public struct HathoraEnvVars
