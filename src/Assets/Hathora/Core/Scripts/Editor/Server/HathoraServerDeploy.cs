@@ -293,9 +293,11 @@ namespace Hathora.Core.Scripts.Editor.Server
 
 FROM ubuntu
 
-COPY ./Build-Server .
+# Copy the server build files into the container
+COPY ./{_serverDeployPaths.ExeBuildDir} .
 
-CMD ./{_serverDeployPaths.ExeBuildName}.tar.gz -mode server -batchmode -nographics
+# Run the Linux server in headless mode as a dedicated server
+CMD ./{_serverDeployPaths.ExeBuildName} -mode server -batchmode -nographics
 ";
         }
         #endregion // Dockerfile

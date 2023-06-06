@@ -28,7 +28,6 @@ namespace Hathora.Core.Scripts.Editor.Common
         /// Generally appended with the appId: "https://console.hathora.dev/application/{appId}"
         /// </summary>
         public const string HATHORA_CONSOLE_APP_BASE_URL = HATHORA_CONSOLE_BASE_URL + "/application"; 
-        public const string HATHORA_CONSOLE_ROOM_BASE_URL = HATHORA_CONSOLE_APP_BASE_URL + "/room"; 
         
         public const string HATHORA_DOCS_URL = "https://docs.hathora.dev";
         public const string HATHORA_DOCS_DEMO_PROJECTS_URL = "https://github.com/hathora";
