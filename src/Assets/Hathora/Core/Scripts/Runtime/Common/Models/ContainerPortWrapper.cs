@@ -37,12 +37,24 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
         }
 
         
-        // Public utils
-
         public ContainerPortWrapper()
         {
         }
+
+        /// <summary>Handle "Host" in child.</summary>
+        /// <param name="_exposedPort"></param>
+        public ContainerPortWrapper(ExposedPort _exposedPort)
+        {
+            if (_exposedPort == null)
+                return;
+            
+            this._transportType = _exposedPort.TransportType;
+            this._portNumber = (int)_exposedPort.Port;
+            // this.Nickname = _exposedPort.Name; // Always "default": See GetTransportNickname()
+        }
         
+        /// <summary>Handle Nickname in child.</summary>
+        /// <param name="_containerPort"></param>
         public ContainerPortWrapper(ContainerPort _containerPort)
         {
             if (_containerPort == null)
@@ -65,7 +77,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             
             try
             {
-                containerPort = new(
+                containerPort = new ContainerPort(
                     this.TransportType,
                     this.PortNumber,
                     containerName
