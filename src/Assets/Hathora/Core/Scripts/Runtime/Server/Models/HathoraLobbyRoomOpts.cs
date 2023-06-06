@@ -2,6 +2,7 @@
 
 using System;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Runtime.Common.Models;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
@@ -43,17 +44,28 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             get => _regionSelectedIndex;
             set => _regionSelectedIndex = value;
         }
+        
 
         [SerializeField]
-        private Room _lastCreatedRoomInfo;
+        private RoomWrapper _lastCreatedRoomInfo;
         public Room LastCreatedRoomInfo
         {
-            get => _lastCreatedRoomInfo;
-            set => _lastCreatedRoomInfo = value;
+            get => _lastCreatedRoomInfo.ToRoomType();
+            set => _lastCreatedRoomInfo = new RoomWrapper(value);
         }
         
         public bool HasLastCreatedRoomInfo => _lastCreatedRoomInfo != null;
         
+        
+        [SerializeField]
+        private ConnectionInfoV2Wrapper _lastCreatedRoomConnectionInfo;
+        public ConnectionInfoV2 LastCreatedRoomConnectionInfo
+        {
+            get => _lastCreatedRoomConnectionInfo.ToConnectionInfoV2Type();
+            set => _lastCreatedRoomConnectionInfo = new ConnectionInfoV2Wrapper(value);
+        }
+        
+        public bool HasLastCreatedRoomConnectionInfo => _lastCreatedRoomConnectionInfo != null;
         #endregion // Hathora Region
     }
 }
