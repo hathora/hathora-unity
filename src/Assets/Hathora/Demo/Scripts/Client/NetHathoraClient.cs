@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Core.Scripts.Client;
-using Hathora.Core.Scripts.Client.Config;
-using Hathora.Core.Scripts.Client.Models;
+using Hathora.Core.Scripts.Runtime.Client;
+using Hathora.Core.Scripts.Runtime.Client.Config;
+using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demo.Scripts.Client.Models;
 using UnityEngine;
 

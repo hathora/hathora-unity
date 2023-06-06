@@ -2,9 +2,9 @@
 
 using System;
 using Hathora.Cloud.Sdk.Client;
-using Hathora.Core.Scripts.Client;
-using Hathora.Core.Scripts.Client.ApiWrapper;
-using Hathora.Core.Scripts.Client.Config;
+using Hathora.Core.Scripts.Runtime.Client;
+using Hathora.Core.Scripts.Runtime.Client.ApiWrapper;
+using Hathora.Core.Scripts.Runtime.Client.Config;
 using UnityEngine;
 using UnityEngine.Serialization;
 
