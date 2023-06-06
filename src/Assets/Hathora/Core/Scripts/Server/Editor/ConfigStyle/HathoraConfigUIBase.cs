@@ -384,13 +384,15 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
         /// <returns>bool clicked</returns>
         protected bool InsertLeftGeneralBtn(string _content) =>
             GUILayout.Button(_content, GeneralButtonStyle);
-        
+
         /// <summary>
         /// {label} {tooltip} {input}
         /// </summary>
         /// <param name="_labelStr"></param>
         /// <param name="_tooltip"></param>
         /// <param name="_val"></param>
+        /// <param name="_alignTextField"></param>
+        /// <param name="isTextArea"></param>
         /// <returns>inputStr</returns>
         protected string InsertHorizLabeledTextField(
             string _labelStr,

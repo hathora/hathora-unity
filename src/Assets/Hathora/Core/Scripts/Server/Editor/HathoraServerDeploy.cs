@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Common.Editor;
 using Hathora.Core.Scripts.Server.ApiWrapper;
 using Hathora.Core.Scripts.Server.Models;
 using UnityEngine.Assertions;
@@ -19,9 +20,35 @@ namespace Hathora.Core.Scripts.Server.Editor
     
     public static class HathoraServerDeploy
     {
+        public static bool IsDeploying => 
+            DeploymentStep != DeploymentSteps.Done;
+        public enum DeploymentSteps
+        {
+            Done, // Same as not deployment
+            Init,
+            Zipping,
+            RequestingUploadPerm,
+            Uploading,
+            Deploying,
+        }
+        
+        public static DeploymentSteps DeploymentStep { get; private set; }
+        
         public static event ZipCompleteHandler OnZipComplete;
         public static event OnBuildReqComplete OnBuildReqComplete;
         public static event OnUploadComplete OnUploadComplete;
+
+        private const int maxDeploySteps = 5;
+        public static string GetDeployFriendlyStatus() => DeploymentStep switch
+        {
+            DeploymentSteps.Done => "Done",
+            DeploymentSteps.Init => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(1/{maxDeploySteps})</color> Initializing...",
+            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(2/{maxDeploySteps})</color> Zipping...",
+            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(3/{maxDeploySteps})</color> Requesting Upload Permission...",
+            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(4/{maxDeploySteps})</color> Uploading Build...",
+            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(5/{maxDeploySteps})</color> Deploying Build...",
+            _ => throw new ArgumentOutOfRangeException(),
+        };
 
         /// <summary>
         /// Deploys with HathoraServerConfig opts. Optionally sub to events:
@@ -36,6 +63,8 @@ namespace Hathora.Core.Scripts.Server.Editor
             HathoraServerConfig _serverConfig,
             CancellationToken _cancelToken = default)
         {
+            DeploymentStep = DeploymentSteps.Init;
+            
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
                 "<color=yellow>Starting...</color>");
             
@@ -47,6 +76,9 @@ namespace Hathora.Core.Scripts.Server.Editor
 
             
             #region Dockerfile >> Compress to .tar.gz
+            // ----------------------------------------------
+            DeploymentStep = DeploymentSteps.Zipping;
+                
             // Generate the Dockerfile: Paths will be different for each collaborator
             string dockerFileContent = generateDockerFileStr(serverDeployPaths);
             await writeDockerFileAsync(
@@ -71,6 +103,9 @@ namespace Hathora.Core.Scripts.Server.Editor
 
 
             #region Request to build
+            // ----------------------------------------------
+            DeploymentStep = DeploymentSteps.RequestingUploadPerm;
+
             // Get a buildId from Hathora
             HathoraServerBuildApi buildApi = new(_serverConfig);
 
@@ -94,6 +129,8 @@ namespace Hathora.Core.Scripts.Server.Editor
             
             #region Upload Build
             // ----------------------------------------------
+            DeploymentStep = DeploymentSteps.Uploading;
+
             // Upload the build to Hathora
             byte[] buildBytes = null;
             try
@@ -116,6 +153,7 @@ namespace Hathora.Core.Scripts.Server.Editor
             #region Deploy Build
             // ----------------------------------------------
             // Deploy the build
+            DeploymentStep = DeploymentSteps.Deploying;
             HathoraServerDeployApi deployApi = new(_serverConfig);
 
             Deployment deployment = null;
@@ -130,9 +168,11 @@ namespace Hathora.Core.Scripts.Server.Editor
 
             Assert.IsTrue(deployment?.BuildId > 0,  
                 "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
-            
-            return deployment;
             #endregion // Deploy Build
+            
+
+            DeploymentStep = DeploymentSteps.Done;
+            return deployment;
         }
 
         private static async Task<Deployment> deployBuildAsync(

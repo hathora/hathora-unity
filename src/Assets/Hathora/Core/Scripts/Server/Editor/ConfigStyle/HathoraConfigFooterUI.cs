@@ -62,12 +62,13 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
         {
-            MessageType helpMsgType = _enabled 
+            bool isEnabledNotDeploying = _enabled && !HathoraServerDeploy.IsDeploying; 
+            MessageType helpMsgType =  isEnabledNotDeploying
                 ? MessageType.Info 
                 : MessageType.Error;
             
             string helpMsg;
-            if (_enabled)
+            if (isEnabledNotDeploying)
             {
                 helpMsg = "This action will create a new server build, upload to Hathora, " +
                     "and create a new development version of your application.";
@@ -85,7 +86,6 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
                 helpMsg = helpMsgStrb.ToString();
             }
             
-            
             // Post the help box *before* we disable the button so it's easier to see
             EditorGUILayout.HelpBox(helpMsg, helpMsgType);
         }
@@ -100,24 +100,28 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle
 
         private async Task insertBuildUploadDeployBtn(bool _enabled)
         {
-            GUI.enabled = _enabled;
-                
+            EditorGUI.BeginDisabledGroup(disabled: !_enabled);
+
+            string btnLabelStr = HathoraServerDeploy.IsDeploying 
+                ? HathoraServerDeploy.GetDeployFriendlyStatus()
+                : "Build, Upload & Deploy New Version";
+
             // USER INPUT >>
             bool clickedBuildUploadDeployBtn = GUILayout.Button(
-                "Build, Upload & Deploy New Version",
+                btnLabelStr,
                 GeneralButtonStyle);
             
-            if (clickedBuildUploadDeployBtn)
-            {
-                BuildReport buildReport = postAuthBodyBuildUI.GenerateServerBuild();
-                if (buildReport.summary.result != BuildResult.Succeeded)
-                    return;
-                
-                // TODO: Check for cancel token @ postAuthBodyDeployUI.DeployingCancelTokenSrc   
-                Deployment deployment = await postAuthBodyDeployUI.DeployApp();
-            }
+            EditorGUI.EndDisabledGroup();
+
+            if (!clickedBuildUploadDeployBtn)
+                return;
             
-            GUI.enabled = true;
+            BuildReport buildReport = postAuthBodyBuildUI.GenerateServerBuild();
+            if (buildReport.summary.result != BuildResult.Succeeded)
+                return;
+            
+            // TODO: Check for cancel token @ postAuthBodyDeployUI.DeployingCancelTokenSrc   
+            Deployment deployment = await postAuthBodyDeployUI.DeployApp();
         }
         
         #region Status Callbacks

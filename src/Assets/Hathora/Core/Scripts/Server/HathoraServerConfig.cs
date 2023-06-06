@@ -2,6 +2,7 @@
 
 using System.IO;
 using Hathora.Core.Scripts.Common.Utils;
+using Hathora.Core.Scripts.Server.Editor;
 using Hathora.Core.Scripts.Server.Models;
 using UnityEngine;
 
@@ -57,7 +58,8 @@ namespace Hathora.Core.Scripts.Server
 
         public bool MeetsBuildBtnReqs() =>
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
-            !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName);
+            !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName) && 
+            !HathoraServerDeploy.IsDeploying;
                                                           
         public bool MeetsDeployBtnReqs() =>
             !string.IsNullOrEmpty(_hathoraCoreOpts.AppId) &&

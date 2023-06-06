@@ -66,7 +66,7 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
             InsertSpace2x();
             
             bool enableBuildBtn = ServerConfig.MeetsBuildAndDeployBtnReqs();
-            if (!enableBuildBtn)
+            if (!enableBuildBtn && !HathoraServerDeploy.IsDeploying)
                 insertGenerateServerBuildBtnHelpboxOnMissingReqs();
             
             insertGenerateServerBuildBtn(enableBuildBtn); // !await
@@ -111,7 +111,7 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
         }
 
-        private async Task insertGenerateServerBuildBtn(bool _enableBuildBtn)
+        private void insertGenerateServerBuildBtn(bool _enableBuildBtn)
         {
             EditorGUI.BeginDisabledGroup(disabled: !_enableBuildBtn);
             

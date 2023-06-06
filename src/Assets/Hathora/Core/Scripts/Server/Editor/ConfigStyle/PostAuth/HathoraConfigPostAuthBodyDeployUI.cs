@@ -20,9 +20,6 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
 
         // Foldouts
         private bool isDeploymentFoldout;
-        
-        // Flags
-        private bool isDeploying; 
         #endregion // Vars
 
 
@@ -91,7 +88,7 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
             _advancedDeployUI.Draw();
 
             bool enableDeployBtn = checkIsReadyToEnableToDeployBtn(); 
-            if (enableDeployBtn || isDeploying)
+            if (enableDeployBtn || HathoraServerDeploy.IsDeploying)
                 insertDeployAppHelpbox();
             else
                 insertDeployAppHelpboxErr();
@@ -248,8 +245,8 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
         /// </summary>
         private async Task insertDeployAppBtn()
         {
-            string btnLabelStr = isDeploying 
-                ? "Deploying: This may take some time..." 
+            string btnLabelStr = HathoraServerDeploy.IsDeploying 
+                ? HathoraServerDeploy.GetDeployFriendlyStatus()
                 : "Deploy Application";
             
             bool clickedDeployBtn = InsertLeftGeneralBtn(btnLabelStr);
@@ -308,21 +305,18 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
         /// <returns></returns>
         public async Task<Deployment> DeployApp()
         {
-            isDeploying = true;
             DeployingCancelTokenSrc = new CancellationTokenSource();
 
             Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
                 ServerConfig,
                 DeployingCancelTokenSrc.Token);
-            
-            
+
             bool isSuccess = deployment?.DeploymentId > 0;
             if (isSuccess)
                 onDeployAppSuccess();
             else
                 onDeployAppFail();
             
-            isDeploying = false;
             return deployment;
         }
 
@@ -336,7 +330,6 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
         {
             Debug.Log("[HathoraConfigPostAuthBodyDeployUI] <color=yellow>" +
                 "onDeployAppStatus_1ZipComplete</color>");
-            // TODO
         }
         
         /// <summary>Step 2 of 4</summary>
@@ -357,7 +350,7 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
 
         private void onDeployAppSuccess()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("TODO: Cache LastDeployInfo in Config");
         }
         #endregion // Event Logic
         
@@ -368,7 +361,7 @@ namespace Hathora.Core.Scripts.Server.Editor.ConfigStyle.PostAuth
         /// </summary>
         /// <returns></returns>
         private bool checkIsReadyToEnableToDeployBtn() =>
-            !isDeploying &&
+            !HathoraServerDeploy.IsDeploying &&
             ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX &&
             ServerConfig.HathoraDeployOpts.RoomsPerProcess > 0 &&
             ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber > 0 &&
