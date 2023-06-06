@@ -11,6 +11,7 @@ using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
+using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -108,23 +109,50 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             else
                 insertCreateRoomLobbyBtn(enableCreateRoomBtn);
 
-            // bool hasLastRoomInfo = ServerConfig.HathoraLobbyRoomOpts.HasLastCreatedRoomInfo;
-            // if (hasLastRoomInfo)
-            insertLastCreatedRoomInfoGroup(); // TODO ^
+            bool hasLastRoomInfo = ServerConfig.HathoraLobbyRoomOpts.HasLastCreatedRoomConnection;
+            if (hasLastRoomInfo)
+                insertLastCreatedRoomInfoGroup();
             
             insertViewLogsMetricsLinkLbl();
         }
 
         private void insertLastCreatedRoomInfoGroup()
         {
-            EditorGUILayout.BeginVertical(GUI.skin.box);
+            GUIStyle style = new(GUI.skin.box)
             {
-                InsertLabel("Last Created Room");
-                InsertLabel("{roomId}");
-                InsertLabel("{<color=gray>{hathoraRegion}");
-                // InsertLinkLabel("View room in Hathora Console", HathoraEditorUtils.HATHORA_DOCS_URL);
-            }
+                padding = new RectOffset(10, 10, 10, 10),
+            };
+
+            EditorGUILayout.BeginVertical(style, GUILayout.ExpandWidth(true));
+
+            // GUI >>
+            InsertLabel("Last Created Room:", _fontSize: 14);
+            InsertLabel(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.RoomId ?? "{RoomId}");
+            InsertLabel("{Region}"); // TODO: Missing Region from LastCreatedRoomConnection - where to find this? We don't want to assume from ServerConfig
+            InsertLabel(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToLongDateString());
+            insertViewRoomInConsoleLinkLbl();
+            insertCopyRoomConnectionInfoBtn();
+
             EditorGUILayout.EndVertical();
+        }
+
+        private void insertCopyRoomConnectionInfoBtn()
+        {
+            // USER INPUT >>
+            bool clickedRoomCopyConnInfoBtn = InsertLeftGeneralBtn("Copy connection info");
+            if (clickedRoomCopyConnInfoBtn)
+                onCopyRoomConnectionInfoBtnClick();
+        }
+
+        private void insertViewRoomInConsoleLinkLbl()
+        {
+            string appId = ServerConfig.HathoraCoreOpts?.AppId ?? "APP_ID_MISSING"; 
+            string consoleAppUrl = $"{HathoraEditorUtils.HATHORA_CONSOLE_APP_BASE_URL}/{appId}";
+            string processId = ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection.Room?
+                    .CurrentAllocation?.ProcessId ?? "PROCESS_ID_MISSING"; 
+            string appUrl = $"{consoleAppUrl}/process/{processId}";
+            
+            InsertLinkLabel("View room in Hathora Console", appUrl, _centerAlign:false);
         }
 
         private void insertCreateRoomLobbyCancelBtn(CancellationTokenSource _cancelTokenSrc)
@@ -276,7 +304,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             createNewCreateRoomCancelToken();
             HathoraServerRoomApi serverRoomApi = new(ServerConfig);
             
-            
+
             ConnectionInfoV2 connectionInfo = null;
             try
             {
@@ -289,8 +317,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 onCreateRoomDone();
                 return;
             }
-            
 
+            
             Room room = null;
             try
             {
@@ -310,17 +338,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             Assert.IsNotNull(connectionInfo?.RoomId,
                 "Failed to create room: See console");
 
-            onCreateRoomSuccess(room);
+            onCreateRoomSuccess(room, connectionInfo);
         }
 
-        private void onCreateRoomSuccess(Room _room)
+        private void onCreateRoomSuccess(Room _room, ConnectionInfoV2 _connectionInfo)
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomSuccess");
 
-            ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomInfo = _room;
+            HathoraCachedRoomConnection roomConnInfo = new(_room, _connectionInfo);
+            ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection = roomConnInfo;
+            
             SaveConfigChange(
-                nameof(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomInfo), 
-                _room?.RoomId);
+                nameof(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection), 
+                $"RoomId={_room?.RoomId} | ProcessId={_room?.CurrentAllocation.ProcessId}");
         }
 
         private void onCreateRoomCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
@@ -334,6 +364,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
             CreateRoomCancelTokenSrc?.Cancel();
             isCreatingRoom = false;
+        }
+        
+        
+        private void onCopyRoomConnectionInfoBtnClick()
+        {
+            string connectionInfoStr = ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.GetConnInfoStr();
+            GUIUtility.systemCopyBuffer = connectionInfoStr; // Copy to clipboard
+            
+            Debug.Log($"Copied connection info to clipboard: `{connectionInfoStr}`");
         }
         #endregion // Event Logic
 

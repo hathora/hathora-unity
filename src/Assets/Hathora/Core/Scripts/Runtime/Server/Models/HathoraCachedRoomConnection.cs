@@ -1,6 +1,7 @@
 // dylan@hathora.dev
 
 using System;
+using System.Globalization;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using UnityEngine;
@@ -36,6 +37,27 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         {
             this.Room = _room;
             this.ConnectionInfoV2 = _connectionInfoV2;
+        }
+
+        /// <summary>
+        /// Returns a prettified "host:port".
+        /// </summary>
+        /// <returns></returns>
+        public string GetConnInfoStr()
+        {
+            string hostStr = _connectionInfoV2Wrapper == null
+                ? "<MissingHost>"
+                : _connectionInfoV2Wrapper?.ExposedPort?.Host ?? "<MissingHost>";
+
+            double portDbl = _connectionInfoV2Wrapper == null
+                ? 0
+                : _connectionInfoV2Wrapper?.ExposedPort?.Port ?? 0;
+            
+            string portStr = portDbl > 0 
+                ? portDbl.ToString(CultureInfo.InvariantCulture)
+                : "<MissingPort>";
+
+            return $"{hostStr}:{portStr}";
         }
     }
 }

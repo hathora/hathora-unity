@@ -55,7 +55,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _lastCreatedRoomConnection = value;
         }
 
-        public bool HasLastCreatedRoomConnection => LastCreatedRoomConnection != null;
+        public bool HasLastCreatedRoomConnection => _lastCreatedRoomConnection != null;
         #endregion // Hathora Region
     }
 }
