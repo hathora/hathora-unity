@@ -1,13 +1,12 @@
 {
   "dependencies": {
     "com.hathora.hathora-sdk": {
-      "version": "1.0.0",
+      "version": "file:Hathora.Cloud.Sdk",
       "depth": 0,
-      "source": "registry",
+      "source": "embedded",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.2.1"
-      },
-      "url": "https://package.openupm.com"
+      }
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",

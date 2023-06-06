@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.hathora.hathora-sdk": "1.0.7",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.feature.development": "1.0.1",
     "com.unity.ide.rider": "3.0.22",
@@ -42,8 +43,7 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0",
-	"com.hathora.hathora-sdk": "1.0.0"
+    "com.unity.modules.xr": "1.0.0"
   },
   "scopedRegistries": [
     {
