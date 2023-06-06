@@ -72,7 +72,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             if (isEnabledNotDeploying)
             {
                 helpMsg = "This action will create a new server build, upload to Hathora, " +
-                    "and create a new development version of your application.";
+                    "and create a new deployment version of your application.";
             }
             else
             {

@@ -42,8 +42,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                 GUILayout.ExpandWidth(true),
             };
             
-            if (GUILayout.Button("Get Started", GeneralButtonStyle, buttonOptions))
-                Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_GETTING_STARTED_URL);
+
+            if (GUILayout.Button("Console", GeneralButtonStyle, buttonOptions))
+                Application.OpenURL(HathoraEditorUtils.HATHORA_CONSOLE_BASE_URL);
 
             InsertSpace1x();
 
@@ -52,13 +53,13 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
             InsertSpace1x();
 
-            if (GUILayout.Button("Discord", GeneralButtonStyle, buttonOptions))
-                Application.OpenURL(HathoraEditorUtils.HATHORA_DISCORD_URL);
+            if (GUILayout.Button("Docs", GeneralButtonStyle, buttonOptions))
+                Application.OpenURL(HathoraEditorUtils.HATHORA_DOCS_GETTING_STARTED_URL);
 
             InsertSpace1x();
 
-            if (GUILayout.Button("Website", GeneralButtonStyle, buttonOptions))
-                Application.OpenURL(HathoraEditorUtils.HATHORA_HOME_URL);
+            if (GUILayout.Button("Discord", GeneralButtonStyle, buttonOptions))
+                Application.OpenURL(HathoraEditorUtils.HATHORA_DISCORD_URL);
 
             EndCenterHorizAlign();
         }

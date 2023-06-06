@@ -262,7 +262,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             // Load and display the _tooltip icon
             Texture2D infoIcon = Resources.Load<Texture2D>("Icons/infoIcon");
             GUIContent iconContent = new(infoIcon, _tooltipStr);
-            GUILayout.Label(iconContent, GUILayout.ExpandWidth(false));
+            GUILayout.Label(iconContent, GUILayout.ExpandWidth(false), GUILayout.MaxHeight(13));
         }
         
         protected void InsertLeftSelectableLabel(

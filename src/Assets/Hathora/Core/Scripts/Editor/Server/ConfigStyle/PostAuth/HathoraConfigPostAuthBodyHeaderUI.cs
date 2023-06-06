@@ -237,8 +237,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void insertTargetAppLabelWithTooltip()
         {
             InsertLabel(_labelStr: "Target Application",
-                _tooltip: "Defines which app to use for this project. " +
-                "Create a new one in the Hathora console.");
+                _tooltip: "Specifies which Hathora application to use for this project.\n\n" +
+                "Create a new app in Hathora Console (https://console.hathora.dev).");
         }
         #endregion // UI Draw
 

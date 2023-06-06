@@ -86,7 +86,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             insertRoomsPerProcessHorizSliderGroup();
             insertContainerPortNumberHorizSliderGroup();
             insertTransportTypeHorizRadioBtnGroup();
-            _advancedDeployUI.Draw();
+            // _advancedDeployUI.Draw();
 
             bool enableDeployBtn = checkIsReadyToEnableToDeployBtn(); 
             if (enableDeployBtn || HathoraServerDeploy.IsDeploying)
@@ -103,7 +103,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             int inputInt = base.InsertHorizLabeledConstrainedIntField(
                 _labelStr: "Rooms per process",
-                _tooltip: null, // "Default: 1",
+                _tooltip: "For some lightweight servers, a single server instance (process) can handle multiple rooms/matches. If your server is built to support this, you can specify the number of rooms to fit on a process before spinning up a fresh instance.\n\n" +
+                "Default: 1",
                 _val: ServerConfig.HathoraDeployOpts.RoomsPerProcess,
                 _minVal: 1,
                 _maxVal: 10000,
@@ -120,7 +121,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             int inputInt = base.InsertHorizLabeledConstrainedIntField(
                 _labelStr: "Container port number",
-                _tooltip: "Default: 7777 (<1024 is generally reserved by system)",
+                _tooltip: "This is the port your server code is listening on, Hathora will bind to this.\n" +
+                "(NOTE: this will be different from the port players/clients connect to - see \"Create Room\")\n\n" +
+                "Default: 7777 (<1024 is generally reserved by system)",
                 _val: ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
                 _minVal: 1024,
                 _maxVal: 49151,
@@ -189,7 +192,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Plan Size",
-                _tooltip: "Default: `Tiny` (Most affordable for pre-production)",
+                _tooltip: "Determines amount of resources your server instances has access to\n\n" +
+                "Tiny - Shared Core, 1GB Memory\n" +
+                "Small - 1 Core, 2GB Memory\n" +
+                "Medium - 2 Cores, 4GB Memory\n" +
+                "Large - 4 Cores, 8GB Memory\n\n" +
+                "Default: `Tiny`",
                 _displayOptsStrArr: displayOptsStrArr.ToArray(),
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
@@ -201,6 +209,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (isNewValidIndex)
                 onSelectedPlanNamePopupIndexChanged(newSelectedIndex);
             
+            string appUrl = "https://hathora.dev/docs/pricing-billing";
+            InsertLinkLabel("See pricing details", appUrl, _centerAlign:false);
+            
             InsertSpace2x();
         }
         
@@ -210,7 +221,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             const MessageType helpMsgType = MessageType.Info;
             const string helpMsg = "This action will create a new deployment version of your application. " +
-                "New rooms will be created with this version of your server.";
+                "New rooms will be created with this version of your server, existing rooms will be unaffected.";
 
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpMsg, helpMsgType);

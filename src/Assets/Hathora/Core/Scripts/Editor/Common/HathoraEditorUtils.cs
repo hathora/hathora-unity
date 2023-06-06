@@ -48,12 +48,12 @@ namespace Hathora.Core.Scripts.Editor.Common
         // 100%: FF (fully opaque)
         // ##########################################
         
-        public const string HATHORA_GREEN_COLOR_HEX = "#76FDBA";
-        public const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
-        public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#20124D";
-        public const string HATHORA_PINK_CANCEL_COLOR_HEX = "#ee72ff";
+        public const string HATHORA_GREEN_COLOR_HEX = "#66B9A0";
+        public const string HATHORA_VIOLET_COLOR_HEX = "#AF64EE";
+        public const string HATHORA_DARK_INDIGO_COLOR_HEX = "#0E0E1B";
+        public const string HATHORA_PINK_CANCEL_COLOR_HEX = "#ff4265";
         public const string HATHORA_GRAY_TRANSPARENT_COLOR_HEX = "#919191CC"; // 60% opacity
-        public const string HATHORA_LINK_COLOR_HEX = "#0000EE";
+        public const string HATHORA_LINK_COLOR_HEX = "#02FE57";
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
         public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);
@@ -208,8 +208,8 @@ namespace Hathora.Core.Scripts.Editor.Common
             }
 
             // Calculate the banner's position and size
-            const float bannerBgPaddingTop = 5f;
-            const float bannerBgPaddingBottom = 7f;
+            const float bannerBgPaddingTop = 12f;
+            const float bannerBgPaddingBottom = 5f;
 
             float bannerX = (windowWidth - bannerWidth) * 0.5f; // center
             float bannerY = bannerBgPaddingTop;
