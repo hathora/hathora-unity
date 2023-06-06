@@ -298,6 +298,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         /// <param name="_selectable">Want to select some text for copying?</param>
         /// <param name="_wrap">Should the label text be wrapped? Good for short header labels</param>
         /// <param name="_vertCenter"></param>
+        /// <param name="_fontSize">Default = 13</param>
         /// <param name="_horizAlign"></param>
         protected void InsertLabel(
             string _labelStr,
@@ -305,6 +306,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             bool _selectable = false,
             bool _wrap = true,
             bool _vertCenter = false,
+            int _fontSize = 13,
             AlignType _horizAlign = AlignType.Left)
         {
             GUIContent labelContent = new() { text = _labelStr };
@@ -318,25 +320,30 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             
             GUIStyle alignGuiStyle = null;
 
+            // Create a GUI style initially from a template, then override as needed
             if (_horizAlign == AlignType.Left)
             {
-                alignGuiStyle =_wrap 
-                    ? LeftAlignNoWrapLabelStyle
-                    : LeftAlignLabelStyle;
+                alignGuiStyle = new GUIStyle(LeftAlignLabelStyle)
+                {
+                    fontSize = _fontSize,
+                    wordWrap = _wrap,
+                };
             }
             else if (_horizAlign == AlignType.Center)
             {
-                alignGuiStyle = CenterAlignLabelStyle;
-                // alignGuiStyle = _wrap // TODO
-                //     ? CenterAlignNoWrapLabelStyle
-                //     : CenterAlignLabelStyle;
+                alignGuiStyle = new GUIStyle(CenterAlignLabelStyle)
+                {
+                    fontSize = _fontSize, 
+                    wordWrap = _wrap,
+                };
             }
             else if (_horizAlign == AlignType.Right)
             {
-                alignGuiStyle = RightAlignLabelStyle;
-                // alignGuiStyle = _wrap // TODO 
-                //     ? RightAlignNoWrapLabelStyle
-                //     : RightAlignLabelStyle;
+                alignGuiStyle = new GUIStyle(RightAlignLabelStyle)
+                {
+                    fontSize = _fontSize,
+                    wordWrap = _wrap,
+                };
             }
 
             if (_selectable)
