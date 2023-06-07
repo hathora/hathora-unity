@@ -101,7 +101,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             int inputInt = base.InsertHorizLabeledConstrainedIntField(
                 _labelStr: "Rooms per process",
-                _tooltip: "For some lightweight servers, a single server instance (process) can handle multiple rooms/matches. If your server is built to support this, you can specify the number of rooms to fit on a process before spinning up a fresh instance.\n\n" +
+                _tooltip: "For most Unity multiplayer games, this should be left as 1\n\n" +
+                "For some lightweight servers, a single server instance (process) can handle multiple rooms/matches. If your server is built to support this, you can specify the number of rooms to fit on a process before spinning up a fresh instance.\n\n" +
                 "Default: 1",
                 _val: ServerConfig.HathoraDeployOpts.RoomsPerProcess,
                 _minVal: 1,

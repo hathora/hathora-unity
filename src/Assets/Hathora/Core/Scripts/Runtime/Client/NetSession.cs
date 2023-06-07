@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Hathora.Core.Scripts.Runtime.Client
 {
     /// <summary>
-    /// Cached net session. Eg: Auth token, last room/lobby joined.
+    /// Cached net session. Eg: Auth token, last room joined.
     /// API wrappers will cache here on success.
     /// TODO: Move NetSession to Demo. This would require detaching cache saving from API wrappers.
     /// </summary>
