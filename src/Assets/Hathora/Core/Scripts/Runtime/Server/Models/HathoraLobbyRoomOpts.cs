@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
-    [Serializable]
+    [Serializable] 
     public class HathoraLobbyRoomOpts
     {
         #region Hathora Region
