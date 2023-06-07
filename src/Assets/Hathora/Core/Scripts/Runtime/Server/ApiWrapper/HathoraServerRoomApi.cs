@@ -137,6 +137,56 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             return getRoomInfoResult;
         }
 
+        /// <summary>
+        /// (!) If the Room you created has a Status if !Active, the
+        /// Result `ExposedPort` prop here will be null.
+        /// </summary>
+        /// <param name="_roomId"></param>
+        /// <param name="_cancelToken"></param>
+        /// <returns></returns>
+        public async Task<ConnectionInfoV2> GetConnectionInfoAsync(
+            string _roomId, 
+            CancellationToken _cancelToken = default)
+        {
+            ConnectionInfoV2 getConnectionInfoResult;
+
+            try
+            {
+                getConnectionInfoResult = await roomApi.GetConnectionInfoAsync(
+                    AppId,
+                    _roomId,
+                    _cancelToken);
+            }
+            catch (TaskCanceledException)
+            {
+                // The user explicitly cancelled, or the Task timed out
+                Debug.Log("[HathoraServerRoomApi.GetConnectionInfoAsync] Task cancelled");
+                return null;
+            }
+            catch (ApiException apiErr)
+            {
+                // HTTP err from Hathora Cloud
+                HandleServerApiException(
+                    nameof(HathoraServerRoomApi),
+                    nameof(GetConnectionInfoAsync), 
+                    apiErr);
+                return null;
+            }
+            
+            bool isActiveWithExposedPort = 
+                getConnectionInfoResult.Status == ConnectionInfoV2.StatusEnum.Active && 
+                getConnectionInfoResult.ExposedPort != null;
+
+            Debug.Log($"[HathoraServerRoomApi] Success " +
+                $"(isActiveWithExposedPort? {isActiveWithExposedPort}): " +
+                $"<color=yellow>{getConnectionInfoResult.ToJson()}</color>");
+
+            return getConnectionInfoResult;
+        }
+
+        // ------------------------------------------
+        // Utils >>
+        
         /// <summary>This shouldn't take long, so we poll once per second.</summary>
         /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
