@@ -71,10 +71,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
+            InsertSpace2x();
             // -----------------------------
             insertAppIdHorizHeader();
             insertAppsListPopupListHorizGroup();
             insertAppIdDisplayCopyGroup();
+            string appUrl = "https://console.hathora.dev/application/create";
+            InsertLinkLabel("Create new application", appUrl, _centerAlign:false);
+            
+            InsertSpace2x();
             
             // -----------------------------
             EditorGUILayout.EndVertical();

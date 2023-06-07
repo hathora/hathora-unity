@@ -52,6 +52,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
         private void insertAuthHeaderLbl()
         {
+            InsertSpace3x();   
             const string labelStr = "Create an account or log in to Hathora Cloud's Console to get started";
             GUILayout.Label(labelStr, 
                 CenterAlignLabelStyle);
@@ -120,7 +121,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                     onLoginWithTokenCacheBtnClick();
                 });  
 
-            InsertSpace2x();
+            InsertSpace3x();
         }
 
         private async Task insertRegisterLinkLbl()
@@ -136,6 +137,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                 {
                     onRegisterBtnClick(); // !await
                 });  
+
+            InsertSpace3x();
         }
 
         private async Task insertDevAuthLoginBtn()

@@ -79,10 +79,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                 StringBuilder helpMsgStrb = new StringBuilder("Missing required fields: ")
                     .Append(HathoraConfigPostAuthBodyBuildUI.GetCreateBuildMissingReqsStrb(
                         ServerConfig,
-                        _includeMissingReqsFieldsPrefixStr: false))
-                    .Append(HathoraConfigPostAuthBodyRoomUI.GetCreateRoomMissingReqsStrb(
-                        ServerConfig,
                         _includeMissingReqsFieldsPrefixStr: false));
+                // TODO: add validation for deploy fields (i tried, but currently private)
 
                 helpMsg = helpMsgStrb.ToString();
             }

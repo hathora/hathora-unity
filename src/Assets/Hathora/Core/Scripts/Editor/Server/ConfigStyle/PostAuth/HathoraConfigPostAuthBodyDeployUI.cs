@@ -232,19 +232,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // (!) Hathora SDK Enums start at index 1 (not 0)
             StringBuilder helpboxLabelStrb = new("Missing required fields: ");
             if (!ServerConfig.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("AppId, ");
+                helpboxLabelStrb.Append("`AppId` ");
             
             if (ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex < 1)
-                helpboxLabelStrb.Append("Plan Size, ");
+                helpboxLabelStrb.Append("`Plan Size` ");
             
             if (ServerConfig.HathoraDeployOpts.RoomsPerProcess < 1)
-                helpboxLabelStrb.Append("Rooms per Process, ");
+                helpboxLabelStrb.Append("`Rooms per Process`,");
             
             if (ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber < 1)
-                helpboxLabelStrb.Append("Container Port Number, ");
+                helpboxLabelStrb.Append("`Container Port Number` ");
             
             if (ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex < 1)
-                helpboxLabelStrb.Append("Transport Type");
+                helpboxLabelStrb.Append("`Transport Type`");
 
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);

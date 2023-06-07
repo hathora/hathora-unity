@@ -89,13 +89,13 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("AppId, ");
+                helpboxLabelStrb.Append("`AppId` ");
             
             if (!_serverConfig.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
-                helpboxLabelStrb.Append("Server Build Dir Name, ");
+                helpboxLabelStrb.Append("`Server Build Dir Name` ");
                 
             if (!_serverConfig.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
-                helpboxLabelStrb.Append("Server Build Exe Name");
+                helpboxLabelStrb.Append("`Server Build Exe Name`");
 
             return helpboxLabelStrb;
         }
