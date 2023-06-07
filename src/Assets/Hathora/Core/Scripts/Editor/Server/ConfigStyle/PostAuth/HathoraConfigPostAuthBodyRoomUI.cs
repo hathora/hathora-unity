@@ -121,10 +121,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             base.BeginPaddedBox();
 
             // GUI >>
-            insertRoomLastCreatedHeaderLbl();
-            insertRoomIdDateHorizGroup();
-            insertRoomConnectionInfoBtnGroup();
-            insertViewRoomInConsoleLinkLbl();
+            try
+            {
+                insertRoomLastCreatedHeaderLbl();
+                insertRoomIdDateHorizGroup();
+                insertRoomConnectionInfoBtnGroup();
+                insertViewRoomInConsoleLinkLbl();   
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraConfigPostAuthBodyRoomUI.insertLastCreatedRoomInfoGroup] " +
+                    $"Error (skipping this group so UI can continue to load): {e}");
+                throw;
+            }
 
             EndPaddedBox();
         }
