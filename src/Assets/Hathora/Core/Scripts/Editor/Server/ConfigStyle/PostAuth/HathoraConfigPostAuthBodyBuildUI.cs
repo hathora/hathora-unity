@@ -129,7 +129,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Build directory",
-                _tooltip: "Default: `Build-Linux-Server`",
+                _tooltip: "Parent directory to generate build into.\n\n" +
+                "Default: `Build-Linux-Server`",
                 _val: ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName,
                 _alignTextField: GuiAlign.SmallRight);
 
@@ -144,7 +145,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Build file name", 
-                _tooltip: "Default: `Unity-LinuxServer.x86_64",
+                _tooltip: "Name for generated build.\n\n" +
+                "Default: `Hathora-Unity-LinuxServer.x86_64`",
                 _val: ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildExeName,
                 _alignTextField: GuiAlign.SmallRight);
             
