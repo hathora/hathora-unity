@@ -253,7 +253,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
                 helpboxLabelStrb.Append("`AppId, `");
             
-            if (_serverConfig.HathoraLobbyRoomOpts.RegionSelectedIndex < 1)
+            // (!) This is 0-indexed
+            if (_serverConfig.HathoraLobbyRoomOpts.RegionSelectedIndex < 0)
                 helpboxLabelStrb.Append("`Region, `");
 
             return helpboxLabelStrb;
