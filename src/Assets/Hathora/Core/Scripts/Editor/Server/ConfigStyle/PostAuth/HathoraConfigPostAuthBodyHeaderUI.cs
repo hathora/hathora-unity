@@ -112,7 +112,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             GUILayout.BeginHorizontal(); // AppIdDisplayCopyGroup 
             
             InsertLabel(
-                "<b>AppId:</b>", 
+                "<color=white><b>AppId:</b></color>", 
                 _wrap:false, 
                 _vertCenter:true);
 

@@ -1,10 +1,8 @@
 // dylan@hathora.dev
 
-using System;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Core.Scripts.Runtime.Common.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
+using System;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
@@ -47,7 +45,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         }
 
 
-        [SerializeField]
+        // [SerializeField] // While Rooms last only 5m, don't actually persist this
         private HathoraCachedRoomConnection _lastCreatedRoomConnection;
         public HathoraCachedRoomConnection LastCreatedRoomConnection
         {
@@ -55,7 +53,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _lastCreatedRoomConnection = value;
         }
 
-        public bool HasLastCreatedRoomConnection => _lastCreatedRoomConnection != null;
+        /// <summary>
+        /// We check if there's a RoomId, and null checking leading up to it.
+        /// </summary>
+        public bool HasLastCreatedRoomConnection => 
+            !string.IsNullOrEmpty(_lastCreatedRoomConnection?.Room?.RoomId);
         #endregion // Hathora Region
     }
 }

@@ -35,8 +35,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         
         #region Server Room Async Hathora SDK Calls
         /// <summary>
-        /// Wrapper for `CreateRoomAsync` to upload and room a cloud room to Hathora.
-        /// You generally want to call once to get the roomId, then poll GetRoomInfoAsync() 
+        /// Wrapper for `CreateRoomAsync` to create a new room in Hathora.
+        /// This takes a few seconds and will poll until status is Active.
+        /// 
+        /// This creates the room once to get the roomId, then polls GetRoomInfoAsync() 
         /// (with that roomId) until status is Active.
         /// </summary>
         /// <param name="roomId"></param>
@@ -84,6 +86,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     apiErr);
                 return null;
             }
+            
+            // (!) Connection info isn't ready until room is active - poll until Active
+            await PollGetRoomUntilActiveAsync(createRoomResult.RoomId, _cancelToken);
+            
 
             Debug.Log($"[HathoraServerRoomApi] Success: " +
                 $"<color=yellow>{createRoomResult.ToJson()}</color>");

@@ -118,32 +118,58 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertLastCreatedRoomInfoGroup()
         {
-            GUIStyle style = new(GUI.skin.box)
-            {
-                padding = new RectOffset(10, 10, 10, 10),
-            };
-
-            EditorGUILayout.BeginVertical(style, GUILayout.ExpandWidth(true));
+            base.BeginPaddedBox();
 
             // GUI >>
-            InsertLabel("Last Created Room:", _fontSize: 12);
-            InsertLabel("Room ID: " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.RoomId ?? "{RoomId}", _fontSize: 10);
-            
-            // TODO: this was causing exceptions, not sure why, but would be great to make connection info viewable when present
-            // InsertLabel("Connection Info: " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.GetConnInfoStr(), _fontSize: 10);
-            
-            // TODO: Missing Region from LastCreatedRoomConnection - We don't want to assume from ServerConfig
-            // InsertLabel("{Region}");
-            
-            InsertLabel(
-                ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToShortDateString() + " " + 
-                ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToShortTimeString(), 
-                _fontSize: 10);
-            
+            insertRoomLastCreatedLbl();
+            insertRoomIdLbl();
+            // insertRoomConnectionInfoLbl(); // TODO
+            // insertRoomRegionLbl(); // Delayed
+            insertRoomCreateDateLbl();
+
             insertViewRoomInConsoleLinkLbl();
             insertCopyRoomConnectionInfoBtn();
 
-            EditorGUILayout.EndVertical();
+            EndPaddedBox();
+        }
+
+        private void insertRoomCreateDateLbl()
+        {
+            DateTime? createdDateTime = ServerConfig.HathoraLobbyRoomOpts
+                .LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt;
+
+            string createdDateStr = createdDateTime.HasValue
+                ? $"{createdDateTime.Value.ToShortDateString()} {createdDateTime.Value.ToShortTimeString()}"
+                : "{Unknown DateTime}"; 
+            
+            InsertLabel(createdDateStr, _fontSize: 10);
+        }
+
+        private void insertRoomRegionLbl()
+        {
+            // TODO: Missing Region from LastCreatedRoomConnection - We don't want to assume from ServerConfig
+            // InsertLabel("{Region}");
+        }
+
+        private void insertRoomConnectionInfoLbl()
+        {
+            string connInfoStr = ServerConfig.HathoraLobbyRoomOpts
+                .LastCreatedRoomConnection?.GetConnInfoStr();
+            
+            InsertLabel($"Connection Info: {connInfoStr}", _fontSize: 10);
+        }
+
+        private void insertRoomIdLbl()
+        {
+            InsertLabel("<b>Room ID:</b> " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?
+                .Room?.RoomId, _fontSize: 10);
+            InsertSpace1x();
+        }
+
+        private void insertRoomLastCreatedLbl()
+        {
+            InsertLabel("<color=white><b>Last Created Room:</b></color>");
+            InsertSpace1x();
         }
 
         private void insertCopyRoomConnectionInfoBtn()
@@ -355,12 +381,14 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomSuccess");
 
+            // Save to this session ONLY - restarting Unity will reset this
             HathoraCachedRoomConnection roomConnInfo = new(_room, _connectionInfo);
             ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection = roomConnInfo;
             
-            SaveConfigChange(
-                nameof(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection), 
-                $"RoomId={_room?.RoomId} | ProcessId={_room?.CurrentAllocation.ProcessId}");
+            //// (!) While Rooms last only 5m, don't actually persist this
+            // SaveConfigChange(
+            //     nameof(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection), 
+            //     $"RoomId={_room?.RoomId} | ProcessId={_room?.CurrentAllocation.ProcessId}");
         }
 
         private void onCreateRoomCancelBtnClick(CancellationTokenSource _cancelTokenSrc)

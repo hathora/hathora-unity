@@ -49,6 +49,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         protected GUIStyle BigButtonStyle { get; private set; }
         protected GUIStyle BigButtonSideMarginsStyle { get; private set; }
         protected GUIStyle BtnsFoldoutStyle { get; private set; }
+        protected GUIStyle PaddedBoxStyle { get; private set; }
 
         public event Action RequestRepaint;
 
@@ -80,6 +81,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             initButtonStyles();
             initBtnFoldoutStyles();
             initLabelStyles();
+            initLayoutStyles();
+        }
+
+        private void initLayoutStyles()
+        {
+            PaddedBoxStyle = new GUIStyle(GUI.skin.box)
+            {
+                padding = new RectOffset(10, 10, 10, 10),
+            };
         }
 
         /// <summary>
@@ -753,6 +763,21 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         protected void EndFieldIndent()
         {
             EditorGUILayout.EndHorizontal();
+        }
+
+        /// <summary>(!) Don't forget to EndPaddedBox()</summary>
+        protected void BeginPaddedBox()
+        {
+            // TODO: Find a way to indent children (indentLevel++ !works)
+            EditorGUILayout.BeginVertical(
+                PaddedBoxStyle, 
+                GUILayout.ExpandWidth(true));
+        }
+
+        protected void EndPaddedBox()
+        {
+            // TODO: End indent to match BeginPaddedBox(), once indent is implemented
+            EditorGUILayout.EndVertical();   
         }
     }
 }
