@@ -179,7 +179,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 $"<b>Connection Info:</b> {connInfoStr}", 
                 _fontSize: 10,
                 _vertCenter: true,
-                _selectable: true);
+                _selectable: false); // BUG: If true, there's a random indent
         }
 
         private void insertRoomIdLbl()

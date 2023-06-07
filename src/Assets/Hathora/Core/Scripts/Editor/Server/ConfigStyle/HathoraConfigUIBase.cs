@@ -321,7 +321,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         /// </summary>
         /// <param name="_labelStr"></param>
         /// <param name="_tooltip"></param>
-        /// <param name="_selectable">Want to select some text for copying?</param>
+        /// <param name="_selectable">
+        /// Want to select some text for copying?
+        /// BUG: If you indent, there's sometimes a random indent
+        /// </param>
         /// <param name="_wrap">Should the label text be wrapped? Good for short header labels</param>
         /// <param name="_vertCenter"></param>
         /// <param name="_fontSize">Default = 13</param>
@@ -343,37 +346,31 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                 GUILayout.BeginVertical();
                 InsertFlexSpace();
             }
-            
-            GUIStyle alignGuiStyle = null;
 
-            // Create a GUI style initially from a template, then override as needed
-            if (_horizAlign == AlignType.Left)
+            GUIStyle alignGuiStyle = _horizAlign switch
             {
-                alignGuiStyle = new GUIStyle(LeftAlignLabelStyle)
+                // Create a GUI style initially from a template, then override as needed
+                AlignType.Left => new GUIStyle(LeftAlignLabelStyle)
                 {
                     fontSize = _fontSize,
                     wordWrap = _wrap,
-                };
-            }
-            else if (_horizAlign == AlignType.Center)
-            {
-                alignGuiStyle = new GUIStyle(CenterAlignLabelStyle)
-                {
-                    fontSize = _fontSize, 
-                    wordWrap = _wrap,
-                };
-            }
-            else if (_horizAlign == AlignType.Right)
-            {
-                alignGuiStyle = new GUIStyle(RightAlignLabelStyle)
+                },
+                AlignType.Center => new GUIStyle(CenterAlignLabelStyle)
                 {
                     fontSize = _fontSize,
                     wordWrap = _wrap,
-                };
-            }
+                },
+                AlignType.Right => new GUIStyle(RightAlignLabelStyle)
+                {
+                    fontSize = _fontSize,
+                    wordWrap = _wrap,
+                },
+                _ => null,
+            };
 
             if (_selectable)
             {
+                // BUG: If you indent, there's sometimes a random indent
                 EditorGUILayout.SelectableLabel(
                     _labelStr,
                     alignGuiStyle,

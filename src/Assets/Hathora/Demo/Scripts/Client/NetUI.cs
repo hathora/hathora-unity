@@ -8,6 +8,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Hathora.Demo.Scripts.Client
@@ -20,10 +21,14 @@ namespace Hathora.Demo.Scripts.Client
     public class NetUI : MonoBehaviour
     {
         #region Serialized Fields
+        [FormerlySerializedAs("InvalidConfigPnl")]
         [Header("Help")]
         [SerializeField]
+        private GameObject InvalidConfigTemplatePnl;
+        
+        [SerializeField]
         private GameObject InvalidConfigPnl;
-
+        
         [Header("CLI")]
         [SerializeField]
         private TextMeshProUGUI debugMemoTxt;
@@ -360,21 +365,42 @@ namespace Hathora.Demo.Scripts.Client
             fadeTxt.color = originalColor;
         }
         
-        public void SetInvalidConfig(string _configName)
+        public void SetInvalidConfig(HathoraClientConfig _config)
         {
-            if (_configName == null)
+            authBtn.gameObject.SetActive(false); // Prevent UI overlap
+            
+            // Core issue
+            string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
+                $"{nameof(NetHathoraClient)} component";
+            
+            if (_config == null)
             {
                 Debug.LogError($"[{nameof(NetHathoraClient)}] !{nameof(HathoraClientConfig)} - " +
-                    $"Serialize one at HathoraManager (GameObject)'s {nameof(NetHathoraClient)} component");
-            }
-            else if (_configName.Contains(".template"))
-            {
-                Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
-                    "Using template Config! Create a new one via top menu `Hathora/Config Finder`");    
+                    $"Serialize one at {netComponentPathFriendlyStr}");
+                
+                InvalidConfigPnl.SetActive(true);
+                return;
             }
             
-            authBtn.gameObject.SetActive(false);
-            InvalidConfigPnl.SetActive(true);
+            if (!_config.HasAppId)
+            {
+                Debug.LogError($"[{nameof(NetHathoraClient)}] !AppId - " +
+                    $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
+                    $"ServerConfig's AppId should match your ClientConfig's AppId)");
+                
+                InvalidConfigPnl.SetActive(true);
+                return;
+            }
+            
+            bool isTemplate = _config.name.Contains(".template"); 
+            if (isTemplate)
+            {
+                Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
+                    "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
+                
+                authBtn.gameObject.SetActive(false);
+                InvalidConfigTemplatePnl.SetActive(true);
+            }
         }
         #endregion /Dynamic UI
     }
