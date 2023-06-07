@@ -21,9 +21,11 @@ namespace Hathora.Demo.Scripts.Client
     /// </summary>
     public class NetHathoraClient : MonoBehaviour
     {
-        [SerializeField]
+        [Header("(!) Get from Hathora dir; see hover tooltip")]
+        [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         private HathoraClientConfig netHathoraConfig;
         
+        [Header("Session, APIs")]
         [SerializeField]
         private NetSession netSession;
         
