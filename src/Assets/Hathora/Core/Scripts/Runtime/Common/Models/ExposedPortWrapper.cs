@@ -44,6 +44,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
                 exposedPort = new ExposedPort(
                     this.TransportType,
                     this.PortNumber,
+                    this.Host,
                     containerName
                 );
             }
