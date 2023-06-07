@@ -34,7 +34,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         {
             this.UserConfig = userConfig;
             this.UnityProjRootPath = HathoraUtils.GetNormalizedPathToProjRoot(); // Path slashes normalized
-            this.TempDirPath = HathoraUtils.NormalizePath(Path.Combine(UnityProjRootPath, ".hathora"));
+            this.TempDirPath = HathoraUtils.NormalizePath(Path.Combine(UnityProjRootPath, "Assets/Hathora/Core/.hathora"));
             this.PathToBuildExe = UserConfig.GetNormalizedPathToBuildExe();
             
             // Determine the correct 7z executable to use based on the platform
