@@ -128,9 +128,18 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // GUI >>
             InsertLabel("Last Created Room:", _fontSize: 12);
             InsertLabel("Room ID: " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.RoomId ?? "{RoomId}", _fontSize: 10);
-            // InsertLabel("Connection Info: " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.GetConnInfoStr(), _fontSize: 10); // TODO: this was causing exceptions, not sure why, but would be great to make connection info viewable when present
-            // InsertLabel("{Region}"); // TODO: Missing Region from LastCreatedRoomConnection - where to find this? We don't want to assume from ServerConfig
-            InsertLabel(ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToShortDateString() + " " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToShortTimeString(), _fontSize: 10);
+            
+            // TODO: this was causing exceptions, not sure why, but would be great to make connection info viewable when present
+            // InsertLabel("Connection Info: " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.GetConnInfoStr(), _fontSize: 10);
+            
+            // TODO: Missing Region from LastCreatedRoomConnection - We don't want to assume from ServerConfig
+            // InsertLabel("{Region}");
+            
+            InsertLabel(
+                ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToShortDateString() + " " + 
+                ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt.ToShortTimeString(), 
+                _fontSize: 10);
+            
             insertViewRoomInConsoleLinkLbl();
             insertCopyRoomConnectionInfoBtn();
 
