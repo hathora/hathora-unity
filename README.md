@@ -1,6 +1,6 @@
 # Hathora-Unity Guide
 
-This guide helps you set up and test a simple 3rd-person 3D Unity project using [FishNet](https://github.com/FirstGearGames/FishNet) as an example. You can replace the net code with others like Mirror or Unity NGO.
+This guide helps you set up and test a simple 3rd-person 3D Unity project using [Hathora's Unity Plugin](https://assetstore.unity.com/packages/slug/256651) and [FishNet](https://github.com/FirstGearGames/FishNet) as an example. You can replace the net code with others like Mirror or Unity NGO.
 
 # Quickstart
 

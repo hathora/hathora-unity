@@ -251,11 +251,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("`AppId, `");
+                helpboxLabelStrb.Append("`AppId` ");
             
             // (!) This is 0-indexed
             if (_serverConfig.HathoraLobbyRoomOpts.RegionSelectedIndex < 0)
-                helpboxLabelStrb.Append("`Region, `");
+                helpboxLabelStrb.Append("`Region` ");
 
             return helpboxLabelStrb;
         }

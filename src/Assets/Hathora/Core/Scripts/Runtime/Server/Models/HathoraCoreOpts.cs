@@ -17,15 +17,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         [SerializeField]
         private string _appId;
 
+        [SerializeField]
+        private int _existingAppsSelectedIndex = -1;
+
         /// <summary>Get from your Hathora dashboard</summary>
-        public string AppId => _existingAppsSelectedIndex < 0
-            ? null
-            : ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId;
+        public string AppId => ExistingAppsWithDeployment != null && ExistingAppsWithDeployment.Count > 0 && _existingAppsSelectedIndex > 0
+            ? ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId
+            : null;
         
         public bool HasAppId => !string.IsNullOrEmpty(AppId);
         
-        [SerializeField]
-        private int _existingAppsSelectedIndex = -1;
         public int ExistingAppsSelectedIndex
         {
             get => _existingAppsSelectedIndex;
