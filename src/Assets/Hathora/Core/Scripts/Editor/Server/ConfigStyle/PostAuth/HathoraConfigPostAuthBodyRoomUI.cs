@@ -336,15 +336,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private async Task onCreateRoomLobbyBtnClick()
         {
             isCreatingRoom = true;
+            resetLastCreatedRoom(); // Both UI + ServerConfig
 
             createNewCreateRoomCancelToken();
             HathoraServerRoomApi serverRoomApi = new(ServerConfig);
-            
 
-            ConnectionInfoV2 connectionInfo = null;
+            (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
             try
             {
-                connectionInfo = await serverRoomApi.CreateRoomAsync(
+                roomConnInfoTuple = await serverRoomApi.CreateRoomAwaitActiveAsync(
                     _cancelToken: CreateRoomCancelTokenSrc.Token);
             }
             catch (Exception e)
@@ -353,37 +353,32 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 onCreateRoomDone();
                 return;
             }
+            
+            // Parse to helper class containing extra parsing
+            // We can also save to ServerConfig as this type
+            HathoraCachedRoomConnection roomConnInfo = new(
+                roomConnInfoTuple.room, roomConnInfoTuple.connInfo);
 
-            
-            Room room = null;
-            try
-            {
-                room = await serverRoomApi.PollGetRoomUntilActiveAsync(
-                    connectionInfo?.RoomId,
-                    CreateRoomCancelTokenSrc.Token);
-            }
-            catch (Exception e)
-            {
-                // Could be a TaskCanceledException
-                onCreateRoomDone();
-                return;
-            }
-            
             onCreateRoomDone();
 
-            Assert.IsNotNull(connectionInfo?.RoomId,
-                "Failed to create room: See console");
+            Assert.IsNotNull(roomConnInfo.Room?.RoomId,
+                "!RoomId");
 
-            onCreateRoomSuccess(room, connectionInfo);
+            onCreateRoomSuccess(roomConnInfo);
         }
 
-        private void onCreateRoomSuccess(Room _room, ConnectionInfoV2 _connectionInfo)
+        /// <summary>
+        /// This being null should trigger the UI to auto-hide the info box
+        /// </summary>
+        private void resetLastCreatedRoom() =>
+            ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection = null;
+
+        private void onCreateRoomSuccess(HathoraCachedRoomConnection _roomConnInfo)
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomSuccess");
 
             // Save to this session ONLY - restarting Unity will reset this
-            HathoraCachedRoomConnection roomConnInfo = new(_room, _connectionInfo);
-            ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection = roomConnInfo;
+            ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection = _roomConnInfo;
             
             //// (!) While Rooms last only 5m, don't actually persist this
             // SaveConfigChange(
@@ -394,13 +389,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void onCreateRoomCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomCancelBtnClick");
-            onCreateRoomDone(_cancelTokenSrc);
+            onCreateRoomDone();
         }
 
-        private void onCreateRoomDone(CancellationTokenSource _cancelTokenSource = null)
+        private void onCreateRoomDone()
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
-            CreateRoomCancelTokenSrc?.Cancel();
             isCreatingRoom = false;
         }
         

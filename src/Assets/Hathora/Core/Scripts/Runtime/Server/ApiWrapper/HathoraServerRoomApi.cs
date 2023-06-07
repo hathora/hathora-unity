@@ -8,6 +8,7 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
@@ -15,7 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     {
         private readonly RoomV2Api roomApi;
         private HathoraLobbyRoomOpts roomOpts => HathoraServerConfig.HathoraLobbyRoomOpts;
-
+        public bool IsPollingForActiveRoom { get; private set; }
         
         /// <summary>
         /// </summary>
@@ -35,25 +36,58 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         
         #region Server Room Async Hathora SDK Calls
         /// <summary>
-        /// Wrapper for `CreateRoomAsync` to create a new room in Hathora.
-        /// This takes a few seconds and will poll until status is Active.
-        /// 
-        /// This creates the room once to get the roomId, then polls GetRoomInfoAsync() 
-        /// (with that roomId) until status is Active.
+        /// This is a HIGH-LEVEL func that does multiple things:
         /// </summary>
-        /// <param name="roomId"></param>
+        /// 
+        /// <list type="number">
+        /// <item>Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora</item>
+        /// <item>Poll GetRoomInfoAsync(_customCreateRoomId): takes 5~10s, until Status is Active</item>
+        /// <item>Once Active Status, get new ConnectionInfoV2 to get ExposedPort (connection info)</item>
+        /// </list>
+        /// 
+        /// <param name="_customCreateRoomId"></param>
         /// <param name="_cancelToken"></param>
-        /// <returns>Returns Room on success</returns>
-        public async Task<ConnectionInfoV2> CreateRoomAsync(
-            string roomId = null,
+        /// <returns>both Room + [ACTIVE]ConnectionInfoV2 (ValueTuple) on success</returns>
+        public async Task<(Room room, ConnectionInfoV2 connInfo)> CreateRoomAwaitActiveAsync(
+            string _customCreateRoomId = null,
             CancellationToken _cancelToken = default)
         {
+            string createdRoomId = await CreateRoomAsync(_customCreateRoomId, _cancelToken);
+
+            // Once Room Status is Active, we can refresh the ConnectionInfo with ExposedPort
+            Room activeRoom = await PollGetRoomUntilActiveAsync(
+                createdRoomId, 
+                _cancelToken);
+            
+            Assert.IsNotNull(activeRoom, "!activeRoom");
+            
+            ConnectionInfoV2 activeConnectionInfo = await GetConnectionInfoAsync(
+                activeRoom.RoomId,
+                _cancelToken);
+
+            Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
+                $"<color=yellow>ConnInfo: {activeConnectionInfo.ToJson()}</color>");
+
+            return (activeRoom, activeConnectionInfo);
+        }
+
+        /// <summary>
+        /// Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora.
+        /// </summary>
+        /// <param name="_customCreateRoomId"></param>
+        /// <param name="_cancelToken"></param>
+        /// <returns></returns>
+        private async Task<string> CreateRoomAsync(
+            string _customCreateRoomId = null,
+            CancellationToken _cancelToken = default)
+        {
+            // Prep request data
             CreateRoomRequest createRoomReq = null;
             try
             {
                 createRoomReq = new CreateRoomRequest(roomOpts.HathoraRegion);
                 
-                Debug.Log("[HathoraServerRoom.CreateRoomAsync] " +
+                Debug.Log("[HathoraServerRoom.CreateRoomAwaitActiveAsync] " +
                     $"roomConfig == <color=yellow>{createRoomReq.ToJson()}</color>");
             }
             catch (Exception e)
@@ -62,19 +96,22 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 throw;
             }
 
-            ConnectionInfoV2 createRoomResult;
+            // Request call async =>
+            ConnectionInfoV2 createRoomResultWithNullPort;
             try
             {
-                createRoomResult = await roomApi.CreateRoomAsync(
+                // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
+                // To get the ExposedPort, we need to poll until Room Status is Active
+                createRoomResultWithNullPort = await roomApi.CreateRoomAsync(
                     AppId,
                     createRoomReq,
-                    roomId,
+                    _customCreateRoomId,
                     _cancelToken);
             }
             catch (TaskCanceledException)
             {
                 // The user explicitly cancelled, or the Task timed out
-                Debug.Log("[HathoraServerRoomApi.GetRoomInfoAsync] Task cancelled");
+                Debug.Log("[HathoraServerRoomApi.CreateRoomAsync] Task cancelled");
                 return null;
             }
             catch (ApiException apiErr)
@@ -82,22 +119,21 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // HTTP err from Hathora Cloud
                 HandleServerApiException(
                     nameof(HathoraServerRoomApi),
-                    nameof(CreateRoomAsync), 
+                    nameof(CreateRoomAwaitActiveAsync), 
                     apiErr);
                 return null;
             }
             
-            // (!) Connection info isn't ready until room is active - poll until Active
-            await PollGetRoomUntilActiveAsync(createRoomResult.RoomId, _cancelToken);
-            
+            Debug.Log($"[HathoraServerRoomApi.CreateRoomAsync] Success: <color=yellow>" +
+                $"{createRoomResultWithNullPort.ToJson()}</color>");
 
-            Debug.Log($"[HathoraServerRoomApi] Success: " +
-                $"<color=yellow>{createRoomResult.ToJson()}</color>");
-
-            return createRoomResult;
+            // Everything else in this result object is currently irrelevant except the RoomId
+            return createRoomResultWithNullPort.RoomId;
         }
         
         /// <summary>
+        /// When you get the result, check Status for Active.
+        /// (!) If !Active, getting the ConnectionInfoV2 will result in !ExposedPort.
         /// </summary>
         /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
@@ -197,30 +233,39 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             Room room = null;
             int attemptNum = 0;
+            IsPollingForActiveRoom = true;
             
             while (room is not { Status: RoomStatus.Active })
             {
                 // Validate
-                _cancelToken.ThrowIfCancellationRequested();
+                if (_cancelToken.IsCancellationRequested)
+                {
+                    IsPollingForActiveRoom = false;
+                    _cancelToken.ThrowIfCancellationRequested();
+                }
 
                 if (room?.Status == RoomStatus.Destroyed)
                 {
-                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.pollUntilCreatedRoom] " +
+                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
                         "Room was destroyed.");
+                    
+                    IsPollingForActiveRoom = false;
                     return null;
                 }
                 
                 if (room?.Status == RoomStatus.Suspended)
                 {
-                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.pollUntilCreatedRoom] " +
+                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
                         "Room was suspended.");
+
+                    IsPollingForActiveRoom = false;
                     return null;
                 }
                 
                 // Try again
                 attemptNum++;
 
-                Debug.Log("[HathoraConfigPostAuthBodyRoomUI.pollUntilCreatedRoom] " +
+                Debug.Log("[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
                     $"Attempt #{attemptNum} ...");
                 
                 room = await GetRoomInfoAsync(
@@ -229,7 +274,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 
                 await Task.Delay(TimeSpan.FromSeconds(1), _cancelToken);
             }
+            
+            Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
+                $"Success: <color=yellow>{room.ToJson()}</color>");
 
+            IsPollingForActiveRoom = false;
             return room;
         }
         #endregion // Server Room Async Hathora SDK Calls
