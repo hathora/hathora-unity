@@ -71,12 +71,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 return;
             }
     
-            EditorGUI.indentLevel++;
             InsertSpace2x();
 
             insertDeploymentSettingsFoldoutComponents();
 
-            EditorGUI.indentLevel--;
             EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
