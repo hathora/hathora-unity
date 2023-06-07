@@ -121,16 +121,34 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             base.BeginPaddedBox();
 
             // GUI >>
-            insertRoomLastCreatedLbl();
-            insertRoomIdLbl();
-            // insertRoomConnectionInfoLbl(); // TODO
-            // insertRoomRegionLbl(); // Delayed
-            insertRoomCreateDateLbl();
-
+            insertRoomLastCreatedHeaderLbl();
+            insertRoomIdDateHorizGroup();
+            insertRoomConnectionInfoBtnGroup();
             insertViewRoomInConsoleLinkLbl();
-            insertCopyRoomConnectionInfoBtn();
 
             EndPaddedBox();
+        }
+
+        private void insertRoomConnectionInfoBtnGroup()
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            insertRoomConnectionInfoSelectableLbl();
+            insertCopyRoomConnectionInfoBtn();
+            
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void insertRoomIdDateHorizGroup()
+        {
+            EditorGUILayout.BeginHorizontal();
+            
+            insertRoomIdLbl();
+            // insertRoomRegionLbl(); // Delayed
+            insertRoomCreateDateLbl();
+            
+            EditorGUILayout.EndHorizontal();
+            InsertSpace2x();
         }
 
         private void insertRoomCreateDateLbl()
@@ -140,9 +158,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             string createdDateStr = createdDateTime.HasValue
                 ? $"{createdDateTime.Value.ToShortDateString()} {createdDateTime.Value.ToShortTimeString()}"
-                : "{Unknown DateTime}"; 
-            
-            InsertLabel(createdDateStr, _fontSize: 10);
+                : "{Unknown DateTime}";
+
+            string labelStr = $"<b>Created:</b> {createdDateStr}";
+            InsertLabel(labelStr, _fontSize: 10);
         }
 
         private void insertRoomRegionLbl()
@@ -151,12 +170,16 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // InsertLabel("{Region}");
         }
 
-        private void insertRoomConnectionInfoLbl()
+        private void insertRoomConnectionInfoSelectableLbl()
         {
             string connInfoStr = ServerConfig.HathoraLobbyRoomOpts
                 .LastCreatedRoomConnection?.GetConnInfoStr();
             
-            InsertLabel($"Connection Info: {connInfoStr}", _fontSize: 10);
+            InsertLabel(
+                $"<b>Connection Info:</b> {connInfoStr}", 
+                _fontSize: 10,
+                _vertCenter: true,
+                _selectable: true);
         }
 
         private void insertRoomIdLbl()
@@ -166,7 +189,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             InsertSpace1x();
         }
 
-        private void insertRoomLastCreatedLbl()
+        private void insertRoomLastCreatedHeaderLbl()
         {
             InsertLabel("<color=white><b>Last Created Room:</b></color>");
             InsertSpace1x();
@@ -175,7 +198,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void insertCopyRoomConnectionInfoBtn()
         {
             // USER INPUT >>
-            bool clickedRoomCopyConnInfoBtn = InsertLeftGeneralBtn("Copy connection info");
+            bool clickedRoomCopyConnInfoBtn = InsertLeftGeneralBtn("Copy Connection Info");
             if (clickedRoomCopyConnInfoBtn)
                 onCopyRoomConnectionInfoBtnClick();
         }
