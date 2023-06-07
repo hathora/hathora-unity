@@ -226,7 +226,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void insertCreateRoomLobbyCancelBtn(CancellationTokenSource _cancelTokenSrc)
         {
             string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
-                "<b>Cancel</b> (Creating Room/Lobby...)</color>";
+                "<b>Cancel</b> (Creating Room...)</color>";
 
             // USER INPUT >>
             bool clickedCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
@@ -293,7 +293,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             string btnLabelStr = isCreatingRoom 
                 ? "Creating Room..." 
-                : "Create Room/Lobby";
+                : "Create Room";
 
             EditorGUI.BeginDisabledGroup(disabled: !_enable);
             

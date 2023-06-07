@@ -21,7 +21,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         private int _existingAppsSelectedIndex = -1;
 
         /// <summary>Get from your Hathora dashboard</summary>
-        public string AppId => ExistingAppsWithDeployment != null && ExistingAppsWithDeployment.Count > 0 && _existingAppsSelectedIndex > 0
+        public string AppId => ExistingAppsWithDeployment != null && ExistingAppsWithDeployment.Count > 0 && _existingAppsSelectedIndex > -1 && _existingAppsSelectedIndex < ExistingAppsWithDeployment.Count
             ? ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId
             : null;
         
