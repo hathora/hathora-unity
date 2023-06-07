@@ -257,12 +257,28 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             return currentProperty;
         }
 
-        protected void InsertTooltipIcon(string _tooltipStr)
+        protected static void InsertTooltipIcon(string _tooltipStr)
         {
-            // Load and display the _tooltip icon
             Texture2D infoIcon = Resources.Load<Texture2D>("Icons/infoIcon");
-            GUIContent iconContent = new(infoIcon, _tooltipStr);
-            GUILayout.Label(iconContent, GUILayout.ExpandWidth(false), GUILayout.MaxHeight(13));
+            insertIconLabel(infoIcon, _tooltipStr);
+        }
+
+        /// <summary>
+        /// Display a circular tooltip icon with hover str
+        /// </summary>
+        /// <param name="_infoIcon"></param>
+        /// <param name="_tooltipStr"></param>
+        /// <param name="_maxHeight"></param>
+        private static void insertIconLabel(
+            Texture _infoIcon, 
+            string _tooltipStr,
+            int _maxHeight = 16)
+        {
+            GUIContent iconContent = new(_infoIcon, _tooltipStr);
+            GUILayout.Label(
+                iconContent, 
+                GUILayout.ExpandWidth(false), 
+                GUILayout.MaxHeight(_maxHeight));
         }
         
         protected void InsertLeftSelectableLabel(
@@ -360,15 +376,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                     alignGuiStyle,
                     expandWidthOpt);
             }
+
+            if (!string.IsNullOrEmpty(_tooltip))
+                InsertTooltipIcon(_tooltip);
             
             if (_vertCenter)
             {
                 InsertFlexSpace();
                 GUILayout.EndVertical();
             }
-            
-            if (!string.IsNullOrEmpty(_tooltip))
-                InsertTooltipIcon(_tooltip);
         }
 
         protected void InsertCenterLabel(string labelStr)
