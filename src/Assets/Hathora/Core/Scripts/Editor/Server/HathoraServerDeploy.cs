@@ -27,24 +27,24 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             Done, // Same as not deployment
             Init,
-            Zipping,
             RequestingUploadPerm,
             Uploading,
             Deploying,
         }
         
+        private static int maxDeploySteps => 
+            Enum.GetValues(typeof(DeploymentSteps)).Length;
+        
         public static DeploymentSteps DeploymentStep { get; private set; }
         
-        public static event ZipCompleteHandler OnZipComplete;
         public static event OnBuildReqComplete OnBuildReqComplete;
         public static event OnUploadComplete OnUploadComplete;
 
-        private const int maxDeploySteps = 5;
+        
         public static string GetDeployFriendlyStatus() => DeploymentStep switch
         {
             DeploymentSteps.Done => "Done",
             DeploymentSteps.Init => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(1/{maxDeploySteps})</color> Initializing...",
-            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(2/{maxDeploySteps})</color> Zipping...",
             DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(3/{maxDeploySteps})</color> Requesting Upload Permission...",
             DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(4/{maxDeploySteps})</color> Uploading Build...",
             DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(5/{maxDeploySteps})</color> Deploying Build...",
@@ -75,19 +75,6 @@ namespace Hathora.Core.Scripts.Editor.Server
             // Prepare paths and file names that we didn't get from UserConfig
             HathoraServerPaths serverPaths = new(_serverConfig);
 
-            
-            #region Dockerfile >> Compress to .tar.gz
-            // ----------------------------------------------
-            DeploymentStep = DeploymentSteps.Zipping;
-
-            // Compress build into .tar.gz (gzipped tarball)
-            await HathoraTar.ArchiveFilesAsTarGz(
-                serverPaths, 
-                _cancelToken);
-            
-            OnZipComplete?.Invoke();
-            #endregion // Dockerfile >> Compress to .tar.gz
-
 
             #region Request to build
             // ----------------------------------------------
@@ -111,6 +98,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraServerConfigFinder.ShowWindowOnly();
             
             OnBuildReqComplete?.Invoke(buildInfo);
+            _cancelToken.ThrowIfCancellationRequested();
             #endregion // Request to build
 
             
@@ -134,6 +122,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
             
             OnUploadComplete?.Invoke();
+            _cancelToken.ThrowIfCancellationRequested();
             #endregion // Upload Build
 
             
@@ -192,7 +181,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
-                $"{_serverPaths.TempDirPath}/{_serverPaths.ExeBuildName}.tar.gz");
+                $"{_serverPaths.DotHathoraDir}/{_serverPaths.ExeBuildName}.tar.gz");
             
             byte[] runBuildResult;
             await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))

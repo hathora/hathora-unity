@@ -35,7 +35,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             this.postAuthBodyBuildUI = _postAuthBodyBuildUI;
             this.postAuthBodyDeployUI = _postAuthBodyDeployUI;
             
-            HathoraServerDeploy.OnZipComplete += onDeployAppStatus_1ZipComplete;
             HathoraServerDeploy.OnBuildReqComplete += onDeployAppStatus_2BuildReqComplete;
             HathoraServerDeploy.OnUploadComplete += onDeployAppStatus_3UploadComplete;
         }
@@ -115,7 +114,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             if (!clickedBuildUploadDeployBtn)
                 return;
             
-            BuildReport buildReport = postAuthBodyBuildUI.GenerateServerBuild();
+            BuildReport buildReport = await postAuthBodyBuildUI.GenerateServerBuildAsync();
             if (buildReport.summary.result != BuildResult.Succeeded)
                 return;
             

@@ -86,10 +86,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// </summary>
         /// <returns></returns>
         public string GetNormalizedPathToBuildExe() => Path.GetFullPath(Path.Combine(
-            HathoraUtils.GetNormalizedPathToProjRoot(), 
-            _linuxHathoraAutoBuildOpts.ServerBuildDirName, 
+            GetNormalizedPathToBuildDir(), 
             _linuxHathoraAutoBuildOpts.ServerBuildExeName));
-        
 
+        public string GetNormalizedPathToBuildDir() => Path.GetFullPath(Path.Combine(
+            HathoraUtils.GetNormalizedPathToProjRoot(), 
+            _linuxHathoraAutoBuildOpts.ServerBuildDirName));
     }
 }

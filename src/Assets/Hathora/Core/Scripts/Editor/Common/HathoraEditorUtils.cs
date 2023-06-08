@@ -2,10 +2,12 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -291,6 +293,16 @@ namespace Hathora.Core.Scripts.Editor.Common
             string resultLog = outputLog + errorLog;
 
             return (process, resultLog);
+        }
+
+        public static void ValidateCreateDotHathoraDir()
+        {
+            const string dotHathoraDirName = ".hathora";
+            string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
+            string pathToDotHathoraDir = $"{projRoot}/{dotHathoraDirName}";
+            
+            if (!Directory.Exists(pathToDotHathoraDir))
+                Directory.CreateDirectory(pathToDotHathoraDir);
         }
     }
 }

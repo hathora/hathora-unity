@@ -2,7 +2,8 @@
 
 using System.IO;
 using System.Linq;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
+using System.Threading;
+using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
@@ -21,36 +22,58 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// Builds with HathoraServerConfig opts.
         /// </summary>
         /// <param name="_serverConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
+        /// <param name="_overwriteExistingDockerfile">
+        /// Some devs have a custom Dockerfile and don't want a new autogen
+        /// </param>
+        /// <param name="_cancelToken">This won't cancel the build itself, but things around it.</param>
         /// <returns>isSuccess</returns>
-        public static BuildReport BuildHathoraLinuxServer(HathoraServerConfig _serverConfig)
+        public static async Task<BuildReport> BuildHathoraLinuxServer(
+            HathoraServerConfig _serverConfig,
+            bool _overwriteExistingDockerfile,
+            CancellationToken _cancelToken = default)
         {
             // Set your build options
-            string projRoot = HathoraUtils.GetNormalizedPathToProjRoot();
-            string serverBuildDirPath = Path.Combine(projRoot, _serverConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName);
-            string serverBuildExeName = _serverConfig.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
-            string serverBuildExeFullPath = Path.Combine(serverBuildDirPath, serverBuildExeName);
+            HathoraServerPaths configPaths = new(_serverConfig);
 
             // Create the build directory if it does not exist
-            cleanCreateBuildDir(_serverConfig, serverBuildDirPath);
+            cleanCreateBuildDir(_serverConfig, configPaths.PathToBuildDir);
+            _cancelToken.ThrowIfCancellationRequested();
 
             BuildPlayerOptions buildPlayerOptions = generateBuildPlayerOptions(
                 _serverConfig,
-                serverBuildExeFullPath);
+                configPaths.PathToBuildExe);
 
             // Build the server
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
+            _cancelToken.ThrowIfCancellationRequested();
             
-            // Generate the Dockerfile: Paths will be different for each collaborator
-            HathoraServerPaths
-            string dockerFileContent = HathoraDocker.GenerateDockerFileStr(_serverPaths:);
-            await writeDockerFileAsync(
-                serverDeployPaths.PathToDockerfile,
-                dockerFileContent,
-                _cancelToken);
+            // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
+            bool genDockerfile = _overwriteExistingDockerfile || !File.Exists(configPaths.PathToDotHathoraDockerfile); 
+            if (genDockerfile)
+            {
+                Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
+                    "Generating new Dockerfile (if exists: overwriting)...");
+                string dockerFileContent = HathoraDocker.GenerateDockerFileStr(configPaths);
+                await HathoraDocker.WriteDockerFileAsync(
+                    configPaths.PathToDotHathoraDockerfile,
+                    dockerFileContent,
+                    _cancelToken);    
+            }
+            
+            // Copy the ./hathora/Dockerfile to build dir
+            File.Copy(
+                configPaths.PathToDotHathoraDockerfile,
+                $"{configPaths.PathToBuildDir}/Dockerfile",
+                overwrite: true);
             
             // Open the build directory
             if (buildReport.summary.result == BuildResult.Succeeded)
-                EditorUtility.RevealInFinder(serverBuildExeFullPath);
+            {
+                // TODO: Play a small, subtle chime sfx?
+                Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
+                    $"Build succeeded @ path: `{configPaths.PathToBuildDir}`");
+                EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
+            }
 
             return buildReport;
         }

@@ -1,9 +1,13 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
@@ -177,12 +181,35 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 _inputStr);
         }
 
-        private void OnGenerateServerBuildBtnClick() => 
-            GenerateServerBuild();
+        private void OnGenerateServerBuildBtnClick() =>
+            GenerateServerBuildAsync(); // !await
 
-        public BuildReport GenerateServerBuild()
+        public async Task<BuildReport> GenerateServerBuildAsync()
         {
-            BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(ServerConfig);
+            CancellationTokenSource cancelTokenSrc = new();
+            BuildReport buildReport = null;
+            
+            // TODO: Get from ServerConfig (for devs that have a custom Dockerfile they don't want overwritten each build)
+            const bool overwriteExistingDockerfile = true;
+
+            try
+            {
+                buildReport = await HathoraServerBuild.BuildHathoraLinuxServer(
+                    ServerConfig,
+                    overwriteExistingDockerfile, // TODO: 
+                    cancelTokenSrc.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                Debug.Log("Server build cancelled.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error: {e}");
+                throw;
+            }
+
             
             Assert.AreEqual(buildReport.summary.result, BuildResult.Succeeded,
                 "Server build failed. Check console for details.");
