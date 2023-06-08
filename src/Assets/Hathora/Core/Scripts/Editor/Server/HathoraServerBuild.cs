@@ -62,15 +62,20 @@ namespace Hathora.Core.Scripts.Editor.Server
             EditorBuildSettingsScene[] scenesInBuildSettings = EditorBuildSettings.scenes; // From build settings
             string[] scenePaths = scenesInBuildSettings?.Select(scene => scene.path).ToArray();
             
-            return new BuildPlayerOptions
+            BuildPlayerOptions buildPlayerOpts = new()
             {
-                // For demo purposes, we're only assuming one scene
                 scenes = scenePaths,
                 locationPathName = _serverBuildExeFullPath,
                 target = BuildTarget.StandaloneLinux64,
-                options = BuildOptions.EnableHeadlessMode | // Adds `-batchmode -nographics` 
-                    (_serverConfig.LinuxHathoraAutoBuildOpts.IsDevBuild ? BuildOptions.Development : 0),
+                options = _serverConfig.LinuxHathoraAutoBuildOpts.IsDevBuild 
+                    ? BuildOptions.Development 
+                    : BuildOptions.None,
             };
+            
+            // Ensure build is a headless Linux server (formerly set via `options = BuildOptions.EnableHeadlessMode`)
+            EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Server;
+
+            return buildPlayerOpts;
         }
 
         private static void cleanCreateBuildDir(
