@@ -41,8 +41,8 @@ namespace Hathora.Core.Scripts.Editor.Server
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
             
             // Generate the Dockerfile: Paths will be different for each collaborator
-            HathoraServerDeployPaths
-            string dockerFileContent = HathoraDocker.GenerateDockerFileStr(_serverDeployPaths:);
+            HathoraServerPaths
+            string dockerFileContent = HathoraDocker.GenerateDockerFileStr(_serverPaths:);
             await writeDockerFileAsync(
                 serverDeployPaths.PathToDockerfile,
                 dockerFileContent,

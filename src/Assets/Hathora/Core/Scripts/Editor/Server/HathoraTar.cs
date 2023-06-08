@@ -18,17 +18,17 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// - Excludes "*_DoNotShip" dirs.
         /// - Eg: "tar -czvf archive.tar.gz --exclude='*_DoNotShip' -C /path/to/dir ."
         /// </summary>
-        /// <param name="_deployPaths"></param>
+        /// <param name="_paths"></param>
         /// <param name="_cancelToken"></param>
         private static async Task ArchiveFilesAsTarGz(
-            HathoraServerDeployPaths _deployPaths, 
+            HathoraServerPaths _paths, 
             CancellationToken _cancelToken)
         {
             // TODO: Create verbose logs options in UserConfig
             const string cmd = "tar";
-            string serverBuildDir = _deployPaths.UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
+            string serverBuildDir = _paths.UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
             string shortDateTimeStr = DateTime.UtcNow.ToString("utc-yyyy-MM-dd_HH-mm-ss");
-            string archiveNameWithoutExt = $"{_deployPaths.ExeBuildName}-{shortDateTimeStr}";
+            string archiveNameWithoutExt = $"{_paths.ExeBuildName}-{shortDateTimeStr}";
             string args = $"-czvf {archiveNameWithoutExt}.tar.gz --exclude='*_DoNotShip' -C {serverBuildDir} .";
 
             (Process process, string resultLog) output = await HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync(

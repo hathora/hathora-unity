@@ -9,7 +9,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
    /// <summary>
     /// Container for all the many paths to prep/upload/deploy a Hathora server build.
     /// </summary>
-    public class HathoraServerDeployPaths
+    public class HathoraServerPaths
     {
         public const string hathoraConsoleAppBaseUrl = "https://console.hathora.dev/application/";
 
@@ -31,9 +31,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         private string pathTo7zForMac => HathoraUtils.NormalizePath($"{pathTo7z64bitDir}/7zz-mac");
         private string pathTo7zForLinux => HathoraUtils.NormalizePath($"{pathTo7z64bitDir}/7zz-linux");
 
-        private HathoraServerDeployPaths() { }
+        private HathoraServerPaths() { }
 
-        public HathoraServerDeployPaths(HathoraServerConfig userConfig)
+        public HathoraServerPaths(HathoraServerConfig userConfig)
         {
             this.UserConfig = userConfig;
             this.UnityProjRootPath = HathoraUtils.GetNormalizedPathToProjRoot(); // Path slashes normalized

@@ -73,7 +73,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 "Cannot find HathoraServerConfig ScriptableObject");
             
             // Prepare paths and file names that we didn't get from UserConfig
-            HathoraServerDeployPaths serverDeployPaths = new(_serverConfig);
+            HathoraServerPaths serverPaths = new(_serverConfig);
 
             
             #region Dockerfile >> Compress to .tar.gz
@@ -82,7 +82,7 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             // Compress build into .tar.gz (gzipped tarball)
             await HathoraTar.ArchiveFilesAsTarGz(
-                serverDeployPaths, 
+                serverPaths, 
                 _cancelToken);
             
             OnZipComplete?.Invoke();
@@ -125,7 +125,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 buildBytes = await uploadBuildAsync(
                     buildApi, 
                     buildInfo.BuildId, 
-                    serverDeployPaths);
+                    serverPaths);
             }
             catch (Exception e)
             {
@@ -185,14 +185,14 @@ namespace Hathora.Core.Scripts.Editor.Server
         private static async Task<byte[]> uploadBuildAsync(
             HathoraServerBuildApi _buildApi,
             double buildId,
-            HathoraServerDeployPaths _serverDeployPaths)
+            HathoraServerPaths _serverPaths)
         {
             Debug.Log("[HathoraServerDeploy.uploadBuildAsync] " +
                 "Uploading the local build to Hathora...");
             
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
-                $"{_serverDeployPaths.TempDirPath}/{_serverDeployPaths.ExeBuildName}.tar.gz");
+                $"{_serverPaths.TempDirPath}/{_serverPaths.ExeBuildName}.tar.gz");
             
             byte[] runBuildResult;
             await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
