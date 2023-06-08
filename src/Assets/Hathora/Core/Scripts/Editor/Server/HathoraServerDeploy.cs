@@ -88,8 +88,6 @@ namespace Hathora.Core.Scripts.Editor.Server
                 _cancelToken);
             
             OnZipComplete?.Invoke();
-
-            return null; // TODO: DELETE ME
             #endregion // Dockerfile >> Compress to .tar.gz
             
 

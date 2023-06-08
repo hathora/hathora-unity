@@ -261,17 +261,17 @@ namespace Hathora.Core.Scripts.Editor.Common
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string shell = isWindows ? "cmd.exe" : "/bin/bash";
             
-            // pwd 1st so the logs show where our working dir started
             string escapedArgs = isWindows 
-                ? $"/c pwd && {_cmdWithArgs}" 
-                : $"-c pwd && \"{_cmdWithArgs}\"";
+                ? $"/c {_cmdWithArgs}" 
+                : $"-c \"{_cmdWithArgs}\"";
             
             Debug.Log($"[HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync] " +
-                $"shell: {shell}, workingDir: {_workingDirPath}, " +
-                $"cmd+args: <color=yellow>`{_cmdWithArgs}`</color>");
+                $"\nshell: <color=yellow>{shell}</color>, " +
+                $"\nworkingDir: <color=yellow>{_workingDirPath}</color>, " +
+                $"\ncmd+args: <color=yellow>`{_cmdWithArgs}`</color>");
 
             Process process = new()
-            {
+            { 
                 StartInfo = new ProcessStartInfo
                 {
                     WorkingDirectory = _workingDirPath,
@@ -329,7 +329,7 @@ namespace Hathora.Core.Scripts.Editor.Common
                 if (File.Exists(_pathToFile))
                     File.Delete(_pathToFile);    
             }
-            catch (Exception e)
+            catch (Exception e) 
             {
                 Debug.LogError($"[HathoraEditorUtils.DeleteFileIfExists] Error: {e}");
                 throw;

@@ -42,34 +42,39 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraServerPaths _paths, 
             CancellationToken _cancelToken)
         {
-            const string cmd = "pwd && tar";
             string outputArchiveNameTarGz = $"{_paths.ExeBuildName}.tar.gz";
+            string initWorkingDir = _paths.PathToDotHathoraDir; // .tar.gz will appear here
+            string pathToOutputTarGz = $"{initWorkingDir}/{outputArchiveNameTarGz}";
             
             HathoraEditorUtils.ValidateCreateDotHathoraDir();
-            HathoraEditorUtils.DeleteFileIfExists(_paths.PathToDotHathoraTarGz);
+            HathoraEditorUtils.DeleteFileIfExists(pathToOutputTarGz);
             
             copyDockerfileFromDotHathoraToBuildDir(_paths);
             
-            // #################################################################################### 
+            // ####################################################################################
+            // Start from .hathora as working dir; use relative paths
             // -czvf:
             // c: Create a new archive.
-            // z: Compress the archive with gzip.
+            // z: Compress the archive with gzip. 
             // v: Verbosely list the files processed.
             // f: Use archive file or device archive; eg: "{archiveNameWithoutExt}.tar.gz"
+            // -C: Change to the specified directory before performing any operations.
             // ####################################################################################
-            string args = $"-czvf {outputArchiveNameTarGz} " +
-                $"--exclude='*_DoNotShip' " +
-                $"--exclude='{outputArchiveNameTarGz}' " +
-                $"-C {_paths.PathToBuildDir} *";
+            // pwd 1st so the logs show where our working dir started
+            const string cmd = "tar";
             
-            string cmdWithArgs = $"{cmd} {args}";
+            string tarArgs = $"-czvf {outputArchiveNameTarGz} " +
+                "--exclude \"*_DoNotShip\" " +
+                $"-C ../{_paths.ExeBuildDir}/ *";
+            
+            string cmdWithArgs = $"{cmd} {tarArgs}";
             (Process process, string resultLog) output = default;
 
             try
             {
                 // Create a barebones .tar.gz
                 output = await HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync(
-                    _workingDirPath: _paths.PathToBuildDir,
+                    _workingDirPath: initWorkingDir,
                     cmdWithArgs,
                     _printLogs: true,
                     _cancelToken);
@@ -82,7 +87,8 @@ namespace Hathora.Core.Scripts.Editor.Server
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir] Error " +
-                    $"awaiting {nameof(HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync)}: {e}");
+                    $"awaiting {nameof(HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync)}: " +
+                    $"<color=yellow>{e}</color>");
                 throw;
             }
             
