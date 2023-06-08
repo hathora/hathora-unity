@@ -25,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
          /// <summary>Default: Hathora-Unity-LinuxServer.x86_64</summary>
          [SerializeField]
-         private string _serverBuildExeName = "Hathora-Unity-LinuxServer.x86_64";
+         private string _serverBuildExeName = "Hathora-Unity_LinuxServer.x86_64";
          
          /// <summary>Default: Hathora-Unity-LinuxServer.x86_64</summary>
          public string ServerBuildExeName
