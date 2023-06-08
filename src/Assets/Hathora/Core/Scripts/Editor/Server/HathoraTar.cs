@@ -44,7 +44,6 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             const string cmd = "pwd && tar";
             string outputArchiveNameTarGz = $"{_paths.ExeBuildName}.tar.gz";
-            string workingPathToDotHathoraDir = _paths.PathToDotHathoraDir;
             
             HathoraEditorUtils.ValidateCreateDotHathoraDir();
             HathoraEditorUtils.DeleteFileIfExists(_paths.PathToDotHathoraTarGz);
@@ -70,7 +69,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             {
                 // Create a barebones .tar.gz
                 output = await HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync(
-                    _paths.PathToBuildDir,
+                    _workingDirPath: _paths.PathToBuildDir,
                     cmdWithArgs,
                     _printLogs: true,
                     _cancelToken);
