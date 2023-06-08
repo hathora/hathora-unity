@@ -197,12 +197,14 @@ namespace Hathora.Core.Scripts.Editor.Server
             double buildId,
             HathoraServerPaths _serverPaths)
         {
-            Debug.Log("[HathoraServerDeploy.uploadBuildAsync] " +
-                "Uploading the local build to Hathora...");
+            string tarGzFileName = $"{_serverPaths.ExeBuildName}.tar.gz";
+
+            Debug.Log($"[HathoraServerDeploy.UploadBuildAsync] " +
+                $"Uploading local '{tarGzFileName}' build to Hathora...");
             
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
-                $"{_serverPaths.PathToDotHathoraDir}/{_serverPaths.ExeBuildName}.tar.gz");
+                $"{_serverPaths.PathToDotHathoraDir}/{tarGzFileName}");
             
             byte[] runBuildResult;
             await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
