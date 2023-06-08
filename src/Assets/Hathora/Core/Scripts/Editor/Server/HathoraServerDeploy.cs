@@ -177,7 +177,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             double _buildInfoBuildId)
         {
             Debug.Log("[HathoraServerDeploy.deployBuildAsync] " +
-                "Deploying the uploaded build...");
+                $"Deploying the uploaded build (buildId #{_buildInfoBuildId} ...");
             
             Deployment createDeploymentResult = null;
             try
