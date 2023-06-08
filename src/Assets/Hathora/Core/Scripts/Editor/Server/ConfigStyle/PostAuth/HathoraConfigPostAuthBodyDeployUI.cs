@@ -308,7 +308,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         /// <summary>
         /// Optionally sub to events:
-        /// - OnZipComplete
         /// - OnBuildReqComplete
         /// - OnUploadComplete
         /// </summary>
@@ -316,10 +315,26 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         public async Task<Deployment> DeployApp()
         {
             DeployingCancelTokenSrc = new CancellationTokenSource();
+            Deployment deployment = null;
 
-            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
-                ServerConfig,
-                DeployingCancelTokenSrc.Token);
+            try
+            {
+                deployment = await HathoraServerDeploy.DeployToHathoraAsync(
+                    ServerConfig,
+                    DeployingCancelTokenSrc.Token);
+            }
+            catch (TaskCanceledException e)
+            {
+                Debug.Log($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] " +
+                    $"TaskCanceledException: {e.Message}");
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] " +
+                    $"Error: {e.Message}");
+                throw;
+            }
 
             bool isSuccess = deployment?.DeploymentId > 0;
             if (isSuccess)
