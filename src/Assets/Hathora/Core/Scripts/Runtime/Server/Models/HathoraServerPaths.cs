@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using System.IO;
-using System.Runtime.InteropServices;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
@@ -15,11 +14,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public const string DotHathoraDirName = ".hathora";
 
         public readonly HathoraServerConfig UserConfig;
-        public readonly string UnityProjRootPath;
-        public readonly string DotHathoraDir;
+        public readonly string PathToUnityProjRoot;
+        public readonly string PathToDotHathoraDir;
         public readonly string PathToBuildExe;
         public readonly string PathToBuildDir;
         public readonly string PathToDotHathoraDockerfile;
+        public readonly string PathToDotHathoraTarGz;
 
         public string ExeBuildName => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
         public string ExeBuildDir => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
@@ -27,12 +27,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public HathoraServerPaths(HathoraServerConfig userConfig)
         {
             this.UserConfig = userConfig;
-            this.UnityProjRootPath = HathoraUtils.GetNormalizedPathToProjRoot(); // Path slashes normalized
-            this.DotHathoraDir = HathoraUtils.NormalizePath(Path.Combine(UnityProjRootPath, DotHathoraDirName));
+            this.PathToUnityProjRoot = HathoraUtils.GetNormalizedPathToProjRoot(); // Path slashes normalized
+            this.PathToDotHathoraDir = HathoraUtils.NormalizePath(Path.Combine(PathToUnityProjRoot, DotHathoraDirName));
             this.PathToBuildExe = UserConfig.GetNormalizedPathToBuildExe();
             this.PathToBuildDir = UserConfig.GetNormalizedPathToBuildDir();
-            this.PathToDotHathoraDockerfile = HathoraUtils.NormalizePath(
-                Path.Join(DotHathoraDir, "Dockerfile"));
+            
+            this.PathToDotHathoraDockerfile = HathoraUtils.NormalizePath(Path.Join(
+                PathToDotHathoraDir, 
+                "Dockerfile"));
+            
+            PathToDotHathoraTarGz = HathoraUtils.NormalizePath(Path.Join(
+                PathToDotHathoraDir,
+                $"{ExeBuildName}.tar.gz"));
         }
     }
 }

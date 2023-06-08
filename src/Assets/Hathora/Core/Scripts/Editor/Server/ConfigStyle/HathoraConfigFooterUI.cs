@@ -35,6 +35,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             this.postAuthBodyBuildUI = _postAuthBodyBuildUI;
             this.postAuthBodyDeployUI = _postAuthBodyDeployUI;
             
+            HathoraServerDeploy.OnZipComplete += onDeployAppStatus_1ZipComplete;
             HathoraServerDeploy.OnBuildReqComplete += onDeployAppStatus_2BuildReqComplete;
             HathoraServerDeploy.OnUploadComplete += onDeployAppStatus_3UploadComplete;
         }
@@ -125,17 +126,17 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         #region Status Callbacks
         private void onDeployAppStatus_1ZipComplete()
         {
-            
+            // TODO
         }
 
         private void onDeployAppStatus_2BuildReqComplete(Build __buildinfo)
         {
-            
+            // TODO
         }
 
         private void onDeployAppStatus_3UploadComplete()
         {
-            
+            // TODO
         }
         #endregion Status Callbacks
     }

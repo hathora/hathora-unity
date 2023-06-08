@@ -43,6 +43,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             _advancedDeployUI = new HathoraConfigPostAuthBodyDeployAdvUI(ServerConfig, SerializedConfig);
             
+            HathoraServerDeploy.OnZipComplete += onDeployAppStatus_1ZipComplete;
             HathoraServerDeploy.OnBuildReqComplete += onDeployAppStatus_2BuildReqComplete;
             HathoraServerDeploy.OnUploadComplete += onDeployAppStatus_3UploadComplete;
         }
@@ -266,7 +267,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 return;
 
             onClickedDeployAppBtnClick(); // !await
-        }
+        } 
         #endregion // UI Draw
 
         
@@ -308,6 +309,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         /// <summary>
         /// Optionally sub to events:
+        /// - OnZipComplete
         /// - OnBuildReqComplete
         /// - OnUploadComplete
         /// </summary>
@@ -315,26 +317,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         public async Task<Deployment> DeployApp()
         {
             DeployingCancelTokenSrc = new CancellationTokenSource();
-            Deployment deployment = null;
 
-            try
-            {
-                deployment = await HathoraServerDeploy.DeployToHathoraAsync(
-                    ServerConfig,
-                    DeployingCancelTokenSrc.Token);
-            }
-            catch (TaskCanceledException e)
-            {
-                Debug.Log($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] " +
-                    $"TaskCanceledException: {e.Message}");
-                throw;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] " +
-                    $"Error: {e.Message}");
-                throw;
-            }
+            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
+                ServerConfig,
+                DeployingCancelTokenSrc.Token);
 
             bool isSuccess = deployment?.DeploymentId > 0;
             if (isSuccess)

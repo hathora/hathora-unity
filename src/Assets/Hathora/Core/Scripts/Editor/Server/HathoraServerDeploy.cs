@@ -27,6 +27,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             Done, // Same as not deployment
             Init,
+            Zipping,
             RequestingUploadPerm,
             Uploading,
             Deploying,
@@ -37,6 +38,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         
         public static DeploymentSteps DeploymentStep { get; private set; }
         
+        public static event ZipCompleteHandler OnZipComplete;
         public static event OnBuildReqComplete OnBuildReqComplete;
         public static event OnUploadComplete OnUploadComplete;
 
@@ -45,6 +47,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             DeploymentSteps.Done => "Done",
             DeploymentSteps.Init => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(1/{maxDeploySteps})</color> Initializing...",
+            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(2/{maxDeploySteps})</color> Zipping...",
             DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(3/{maxDeploySteps})</color> Requesting Upload Permission...",
             DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(4/{maxDeploySteps})</color> Uploading Build...",
             DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(5/{maxDeploySteps})</color> Deploying Build...",
@@ -56,7 +59,6 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// - OnZipComplete
         /// - OnBuildReqComplete
         /// - OnUploadComplete
-        /// TODO: Support cancel token.
         /// </summary>
         /// <param name="_serverConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
         /// <param name="_cancelToken"></param>
@@ -72,9 +74,24 @@ namespace Hathora.Core.Scripts.Editor.Server
             Assert.IsNotNull(_serverConfig, "[HathoraServerBuild.DeployToHathoraAsync] " +
                 "Cannot find HathoraServerConfig ScriptableObject");
             
-            // Prepare paths and file names that we didn't get from UserConfig
+            // Prepare paths and file names that we didn't get from UserConfig  
             HathoraServerPaths serverPaths = new(_serverConfig);
+            
+                        
+            #region Dockerfile >> Compress to .tar.gz
+            // ----------------------------------------------
+            DeploymentStep = DeploymentSteps.Zipping;
 
+            // Compress build into .tar.gz (gzipped tarball)
+            await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
+                serverPaths, 
+                _cancelToken);
+            
+            OnZipComplete?.Invoke();
+
+            return null; // TODO: DELETE ME
+            #endregion // Dockerfile >> Compress to .tar.gz
+            
 
             #region Request to build
             // ----------------------------------------------
@@ -181,7 +198,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
-                $"{_serverPaths.DotHathoraDir}/{_serverPaths.ExeBuildName}.tar.gz");
+                $"{_serverPaths.PathToDotHathoraDir}/{_serverPaths.ExeBuildName}.tar.gz");
             
             byte[] runBuildResult;
             await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))

@@ -247,28 +247,34 @@ namespace Hathora.Core.Scripts.Editor.Common
         }
 
         /// <summary>Useful for 7z compression handling.</summary>
-        /// <param name="_cmd"></param>
-        /// <param name="_args"></param>
+        /// <param name="_workingDirPath">Which starting dir to start issuing these cmds?</param>
+        /// <param name="_cmdWithArgs"></param>
+        /// <param name="_printLogs">This could get spammy</param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
         public static async Task<(Process process, string resultLog)> ExecuteCrossPlatformShellCmdAsync(
-            string _cmd, 
-            string _args,
+            string _workingDirPath,
+            string _cmdWithArgs, 
+            bool _printLogs = true,
             CancellationToken _cancelToken = default)
         {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string shell = isWindows ? "cmd.exe" : "/bin/bash";
+            
+            // pwd 1st so the logs show where our working dir started
             string escapedArgs = isWindows 
-                ? $"/c {_cmd} {_args}" 
-                : $"-c \"{_cmd} {_args}\"";
+                ? $"/c pwd && {_cmdWithArgs}" 
+                : $"-c pwd && \"{_cmdWithArgs}\"";
             
             Debug.Log($"[HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync] " +
-                $"shell: {shell}, cmd args: <color=yellow>`{_cmd} {_args}`</color>");
+                $"shell: {shell}, workingDir: {_workingDirPath}, " +
+                $"cmd+args: <color=yellow>`{_cmdWithArgs}`</color>");
 
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
+                    WorkingDirectory = _workingDirPath,
                     FileName = shell,
                     Arguments = escapedArgs,
                     RedirectStandardOutput = true,
@@ -292,6 +298,12 @@ namespace Hathora.Core.Scripts.Editor.Common
             string errorLog = await errorTask;
             string resultLog = outputLog + errorLog;
 
+            if (_printLogs)
+            {
+                Debug.Log("[HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync] " +
+                    $"resultLog (including errs, if any): <color=yellow>{resultLog}</color>");
+            }
+
             return (process, resultLog);
         }
 
@@ -303,6 +315,31 @@ namespace Hathora.Core.Scripts.Editor.Common
             
             if (!Directory.Exists(pathToDotHathoraDir))
                 Directory.CreateDirectory(pathToDotHathoraDir);
+        }
+
+        public static string GetFileFriendlyDateTime(DateTime _now) => 
+            DateTime.Now.ToString("s")
+                .Replace(":", "")
+                .Replace("T", "_");
+
+        public static void DeleteFileIfExists(string _pathToFile) 
+        {
+            try
+            {
+                if (File.Exists(_pathToFile))
+                    File.Delete(_pathToFile);    
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraEditorUtils.DeleteFileIfExists] Error: {e}");
+                throw;
+            }
+        }
+
+        public static void FileMoveOverwrite(string _pathToSrc, string _pathToDest)
+        {
+            DeleteFileIfExists(_pathToDest);
+            File.Move(_pathToSrc, _pathToDest);
         }
     }
 }

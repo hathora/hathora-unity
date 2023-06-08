@@ -59,21 +59,15 @@ namespace Hathora.Core.Scripts.Editor.Server
                     dockerFileContent,
                     _cancelToken);    
             }
-            
-            // Copy the ./hathora/Dockerfile to build dir
-            File.Copy(
-                configPaths.PathToDotHathoraDockerfile,
-                $"{configPaths.PathToBuildDir}/Dockerfile",
-                overwrite: true);
-            
+
             // Open the build directory
-            if (buildReport.summary.result == BuildResult.Succeeded)
-            {
-                // TODO: Play a small, subtle chime sfx?
-                Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
-                    $"Build succeeded @ path: `{configPaths.PathToBuildDir}`");
-                EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
-            }
+            if (buildReport.summary.result != BuildResult.Succeeded)
+                return buildReport; // fail
+
+            // TODO: Play a small, subtle chime sfx?
+            Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
+                $"Build succeeded @ path: `{configPaths.PathToBuildDir}`");
+            EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
 
             return buildReport;
         }
