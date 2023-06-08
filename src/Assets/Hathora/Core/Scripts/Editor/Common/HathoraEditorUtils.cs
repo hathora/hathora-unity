@@ -249,7 +249,7 @@ namespace Hathora.Core.Scripts.Editor.Common
         /// <param name="_args"></param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public static async Task<string> ExecuteCrossPlatformShellCmdAsync(
+        public static async Task<(Process process, string resultLog)> ExecuteCrossPlatformShellCmdAsync(
             string _cmd, 
             string _args,
             CancellationToken _cancelToken = default)
@@ -286,11 +286,11 @@ namespace Hathora.Core.Scripts.Editor.Common
             await process.WaitForExitAsync(_cancelToken);
 
             // Combine output and error
-            string output = await outputTask;
-            string error = await errorTask;
-            string result = output + error;
+            string outputLog = await outputTask;
+            string errorLog = await errorTask;
+            string resultLog = outputLog + errorLog;
 
-            return result;
+            return (process, resultLog);
         }
     }
 }

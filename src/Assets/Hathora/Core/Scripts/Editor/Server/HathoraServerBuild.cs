@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
+using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -38,6 +39,14 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             // Build the server
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
+            
+            // Generate the Dockerfile: Paths will be different for each collaborator
+            HathoraServerDeployPaths
+            string dockerFileContent = HathoraDocker.GenerateDockerFileStr(_serverDeployPaths:);
+            await writeDockerFileAsync(
+                serverDeployPaths.PathToDockerfile,
+                dockerFileContent,
+                _cancelToken);
             
             // Open the build directory
             if (buildReport.summary.result == BuildResult.Succeeded)

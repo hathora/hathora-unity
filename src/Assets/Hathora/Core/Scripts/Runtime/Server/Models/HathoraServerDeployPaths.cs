@@ -22,6 +22,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public string PathToDockerfile => HathoraUtils.NormalizePath($"{TempDirPath}/Dockerfile");
         public string ExeBuildName => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
         public string ExeBuildDir => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
+
+        public string PathToExeBuildDir =>
+            $"{UnityProjRootPath} {UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName}";
         
         private string pathTo7z64bitDir => HathoraUtils.NormalizePath($"{TempDirPath}/7zip/x64");
         private string pathTo7zForWindows => HathoraUtils.NormalizePath($"{pathTo7z64bitDir}/7za.exe");
