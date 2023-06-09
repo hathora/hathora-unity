@@ -57,6 +57,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 _initConfigJsonStr, 
                 _region);
 
+            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
+                $"<color=yellow>request: {request.ToJson()}</color>");
+
             Lobby lobby;
             try
             {
@@ -75,7 +78,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
+                $"<color=yellow>lobby: {lobby.ToJson()}</color>");
+            
             NetSession.Lobby = lobby;
             
             return lobby;
@@ -92,6 +97,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string roomId,
             CancellationToken _cancelToken = default)
         {
+            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
+                $"<color=yellow>roomId:{roomId}</color>");
+            
             Lobby lobby;
             try
             {
@@ -109,7 +117,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientGetLobbyInfoAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientAuthApi.ClientGetLobbyInfoAsync] Success: " +
+                $"<color=yellow>lobby: {lobby.ToJson()}</color>");            
+            
             NetSession.Lobby = lobby;
             
             return lobby;

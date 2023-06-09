@@ -110,13 +110,13 @@ namespace Hathora.Demo.Scripts.Client
         public void OnAuthLoginBtnClick()
         {
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            hathoraClient.AuthLoginAsync(); // !await
+            _ = hathoraClient.AuthLoginAsync(); // !await
         }
 
         public void OnCreateLobbyBtnClick()
         {
             SetShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
-            hathoraClient.CreateLobbyAsync(); // !await // public lobby
+            _ = hathoraClient.CreateLobbyAsync(); // !await // public lobby
         }
 
         /// <summary>
@@ -134,14 +134,28 @@ namespace Hathora.Demo.Scripts.Client
                 return;
             }
             
-            hathoraClient.GetLobbyInfoAsync(roomIdInputStr);
+            _ = hathoraClient.GetLobbyInfoAsync(roomIdInputStr); // !await
         }
 
-        public void OnViewLobbiesBtnClick()
+        /// <summary>
+        /// Btn disabled OnClick via inspector: Restore on done
+        /// </summary>
+        public async void OnViewLobbiesBtnClick()
         {
             viewLobbiesSeeLogsFadeTxt.text = "<color=yellow>Getting Lobbies...</color>";
-            ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt);
-            hathoraClient.ViewPublicLobbies();
+            _ = ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt); // !await
+
+            // TODO: Get region from UI // TODO: Confirm null region returns ALL regions?
+            Region? region = null;
+            
+            try
+            {
+                await hathoraClient.ViewPublicLobbies(region);
+            }
+            catch (Exception e)
+            {
+                viewLobbiesBtn.interactable = true;
+            }
         }
         
         public void OnCopyLobbyRoomIdBtnClick()
@@ -149,7 +163,7 @@ namespace Hathora.Demo.Scripts.Client
             GUIUtility.systemCopyBuffer = netSession.RoomId; // Copy to clipboard
             
             // Show + Fade
-            ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt);
+            _ = ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt); // !await
         }
 
         /// <summary>
@@ -160,7 +174,7 @@ namespace Hathora.Demo.Scripts.Client
             SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
             // The ServerInfo should already be cached
-            hathoraClient.GetActiveConnectionInfo(netSession.RoomId);
+            _ = hathoraClient.GetActiveConnectionInfo(netSession.RoomId); // !await
         }
         
         /// <summary>
@@ -172,7 +186,7 @@ namespace Hathora.Demo.Scripts.Client
             GUIUtility.systemCopyBuffer = serverInfo; // Copy to clipboard
             
             // Show + Fade
-            ShowFadeTxtThenFadeAsync(copiedServerInfoFadeTxt);
+            _ = ShowFadeTxtThenFadeAsync(copiedServerInfoFadeTxt); // !await
         }
 
         public void OnJoinLobbyAsClientBtnClick()
@@ -333,7 +347,7 @@ namespace Hathora.Demo.Scripts.Client
         public void OnViewLobbies(List<Lobby> lobbies)
         {
             viewLobbiesSeeLogsFadeTxt.text = "See Logs";
-            ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt);
+            _ = ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt); // !await
             
             foreach (Lobby lobby in lobbies)
             {

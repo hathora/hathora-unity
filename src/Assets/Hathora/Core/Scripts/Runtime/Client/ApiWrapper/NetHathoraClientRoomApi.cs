@@ -92,8 +92,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
 
             // Success
-            Debug.Log($"[NetHathoraClientRoomApi] ClientGetConnectionInfoAsync => " +
-                $"status: {connectionInfoResponse.Status}, duration: {pollTimerTickedSecs}s");
+            Debug.Log($"[NetHathoraClientRoomApi.ClientGetConnectionInfoAsync] Success " +
+                $"(after {pollTimerTickedSecs}s polling): <color=yellow>" +
+                $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
 
             NetSession.ServerInfo = connectionInfoResponse;
             return connectionInfoResponse;

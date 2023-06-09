@@ -66,7 +66,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 _cancelToken);
 
             Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
-                $"<color=yellow>ConnInfo: {activeConnectionInfo.ToJson()}</color>");
+                $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
 
             return (activeRoom, activeConnectionInfo);
         }
@@ -125,7 +125,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             Debug.Log($"[HathoraServerRoomApi.CreateRoomAsync] Success: <color=yellow>" +
-                $"{createRoomResultWithNullPort.ToJson()}</color>");
+                $"createRoomResultWithNullPort: {createRoomResultWithNullPort.ToJson()}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             return createRoomResultWithNullPort.RoomId;
@@ -168,7 +168,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"[HathoraServerRoomApi] Success: " +
-                $"<color=yellow>{getRoomInfoResult.ToJson()}</color>");
+                $"<color=yellow>getRoomInfoResult: {getRoomInfoResult.ToJson()}</color>");
 
             return getRoomInfoResult;
         }
@@ -213,9 +213,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 getConnectionInfoResult.Status == ConnectionInfoV2.StatusEnum.Active && 
                 getConnectionInfoResult.ExposedPort != null;
 
-            Debug.Log($"[HathoraServerRoomApi] Success " +
-                $"(isActiveWithExposedPort? {isActiveWithExposedPort}): " +
-                $"<color=yellow>{getConnectionInfoResult.ToJson()}</color>");
+            Debug.Log($"[HathoraServerRoomApi] Success: " +
+                $"isActiveWithExposedPort? {isActiveWithExposedPort}, " +
+                $"<color=yellow>getConnectionInfoResult: {getConnectionInfoResult.ToJson()}</color>");
 
             return getConnectionInfoResult;
         }
@@ -276,7 +276,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
-                $"Success: <color=yellow>{room.ToJson()}</color>");
+                $"Success: <color=yellow>room: {room.ToJson()}</color>");
 
             IsPollingForActiveRoom = false;
             return room;
