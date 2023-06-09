@@ -97,16 +97,18 @@ namespace Hathora.Demo.Scripts.Client
         /// <summary>
         /// Creates lobby => caches Lobby info @ netSession
         /// </summary>
+        /// <param name="_region"></param>
         /// <param name="_visibility"></param>
-        public async Task CreateLobbyAsync(CreateLobbyRequest.VisibilityEnum _visibility = 
-            CreateLobbyRequest.VisibilityEnum.Public)
+        public async Task CreateLobbyAsync(
+            Region _region,
+            CreateLobbyRequest.VisibilityEnum _visibility = CreateLobbyRequest.VisibilityEnum.Public)
         {
             Lobby lobby = null;
             try
             {
                 lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(
                     _visibility,
-                    netHathoraConfig.FallbackRegion); // TODO: Get Region from User Input
+                    _region);
             }
             catch (Exception e)
             {
@@ -140,7 +142,10 @@ namespace Hathora.Demo.Scripts.Client
         }
         
         /// <summary>Public lobbies only.</summary>
-        public async Task ViewPublicLobbies()
+        /// <param name="_region">
+        /// TODO (to confirm): null region returns *all* region lobbies?
+        /// </param>
+        public async Task ViewPublicLobbies(Region? _region = null)
         {
             List<Lobby> lobbies = null;
             try

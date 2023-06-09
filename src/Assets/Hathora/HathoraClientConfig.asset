@@ -13,4 +13,3 @@ MonoBehaviour:
   m_Name: HathoraClientConfig
   m_EditorClassIdentifier: 
   _appId: 
-  fallbackRegion: 1
