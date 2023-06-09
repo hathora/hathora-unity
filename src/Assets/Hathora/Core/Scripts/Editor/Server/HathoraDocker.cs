@@ -59,7 +59,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <returns>"path/to/DockerFile"</returns>
         public static string GenerateDockerFileStr(HathoraServerPaths _serverPaths)
         {
-            string relativePathToBuildDir = $".src/{_serverPaths.ExeBuildDirName}"; 
+            string relativePathToBuildDir = $"./{_serverPaths.ExeBuildDirName}"; 
             string fileFriendlyShortDateTime = HathoraEditorUtils.GetFileFriendlyDateTime(DateTime.Now);
 
             string dockerStr = $@"############################################################################
