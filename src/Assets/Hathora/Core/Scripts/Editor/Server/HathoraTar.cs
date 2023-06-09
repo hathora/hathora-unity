@@ -16,12 +16,12 @@ namespace Hathora.Core.Scripts.Editor.Server
 {
     public static class HathoraTar
     {
-        /// /// <summary>Overwrites any existing</summary>
+        /// <summary>Overwrites any existing</summary>
         /// <param name="_paths"></param>
-        /// <returns>pathToBuildDirDockerfile</returns>
-        private static string copyDockerfileFromDotHathoraToBuildDir(HathoraServerPaths _paths)
+        /// <returns>pathToCopiedDockerfile</returns>
+        private static string copyDockerfileTo(HathoraServerPaths _paths, string _destPath)
         {
-            string pathToBuildDirDockerfile = $"{_paths.PathToBuildDir}/Dockerfile"; 
+            string pathToBuildDirDockerfile = $"{_destPath}/Dockerfile"; 
             
             File.Copy(
                 _paths.PathToDotHathoraDockerfile,
@@ -49,7 +49,9 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraEditorUtils.ValidateCreateDotHathoraDir();
             HathoraEditorUtils.DeleteFileIfExists(pathToOutputTarGz);
             
-            copyDockerfileFromDotHathoraToBuildDir(_paths);
+            // (!) We temporarily copy the Dockerfile to project root so it's included at top-level of archive
+            // This is due to the way the `tar` cmd literally handles the exact structure for things you add.
+            string pathToCopiedDockerfile = copyDockerfileTo(_paths, _destPath: _paths.PathToUnityProjRoot);
             
             // ####################################################################################
             // Start from .hathora as working dir; use relative paths
@@ -64,10 +66,13 @@ namespace Hathora.Core.Scripts.Editor.Server
             // pwd 1st so the logs show where our working dir started
             const string cmd = "tar";
             
-            string tarArgs = $"-czvf {outputArchiveNameTarGz} " +
+            // We don't use -v since it's too spammy; logs get truncated and you don't see the result
+            string tarArgs = $"-czf {outputArchiveNameTarGz} " +
                 "--exclude \"*_DoNotShip\" " +
-                $"-C .. {_paths.ExeBuildDirName}";
-            
+                "-C .. " + // Set working dir at parent of .hathora (unity proj root)
+                $"{_paths.ExeBuildDirName} " + // Add build dir from proj root
+                "Dockerfile"; // Add copied Dockerfile from proj root
+
             string cmdWithArgs = $"{cmd} {tarArgs}";
             (Process process, string resultLog) output = default;
 
@@ -92,6 +97,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                     $"<color=yellow>{e}</color>");
                 throw;
             }
+            
+            // Delete the Dockerfile we copied to project root
+            HathoraEditorUtils.DeleteFileIfExists(pathToCopiedDockerfile);
             
             // Assert success
             Assert.AreEqual(0, output.process.ExitCode, 

@@ -96,9 +96,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 DeploymentStep = DeploymentSteps.Zipping;
 
                 // Compress build into .tar.gz (gzipped tarball)
-                    await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
-                        serverPaths,
-                        _cancelToken);
+                await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
+                    serverPaths,
+                    _cancelToken);
                 
                 OnZipComplete?.Invoke();
                 #endregion // Dockerfile >> Compress to .tar.gz

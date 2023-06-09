@@ -11,9 +11,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     public class HathoraServerPaths
     {
         public const string HathoraConsoleAppBaseUrl = "https://console.hathora.dev/application/";
-        public const string DotHathoraDirName = ".hathora";
-
+        
         public readonly HathoraServerConfig UserConfig;
+        public readonly string DotHathoraDirName;
         public readonly string PathToUnityProjRoot;
         public readonly string PathToDotHathoraDir;
         public readonly string PathToBuildExe;
@@ -27,6 +27,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public HathoraServerPaths(HathoraServerConfig userConfig)
         {
             this.UserConfig = userConfig;
+            this.DotHathoraDirName = ".hathora";
             this.PathToUnityProjRoot = HathoraUtils.GetNormalizedPathToProjRoot(); // Path slashes normalized
             this.PathToDotHathoraDir = HathoraUtils.NormalizePath(Path.Combine(PathToUnityProjRoot, DotHathoraDirName));
             this.PathToBuildExe = UserConfig.GetNormalizedPathToBuildExe();
