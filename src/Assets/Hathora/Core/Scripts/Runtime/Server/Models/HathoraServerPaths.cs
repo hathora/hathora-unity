@@ -22,7 +22,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public readonly string PathToDotHathoraTarGz;
 
         public string ExeBuildName => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildExeName;
-        public string ExeBuildDir => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
+        public string ExeBuildDirName => UserConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName;
 
         public HathoraServerPaths(HathoraServerConfig userConfig)
         {

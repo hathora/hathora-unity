@@ -65,7 +65,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             string tarArgs = $"-czvf {outputArchiveNameTarGz} " +
                 "--exclude \"*_DoNotShip\" " +
-                $"-C ../{_paths.ExeBuildDir}/ *";
+                $"-C ../{_paths.ExeBuildDirName}/ *";
             
             string cmdWithArgs = $"{cmd} {tarArgs}";
             (Process process, string resultLog) output = default;
