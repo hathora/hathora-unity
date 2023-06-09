@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -96,7 +97,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // ----------------------------------------------
                 DeploymentStep = DeploymentSteps.RequestingUploadPerm;
 
-                // Get a buildId from Hathora
+                // Get a _buildId from Hathora
                 HathoraServerBuildApi buildApi = new(_serverConfig);
 
                 Build buildInfo = null;
@@ -123,19 +124,23 @@ namespace Hathora.Core.Scripts.Editor.Server
                 DeploymentStep = DeploymentSteps.Uploading;
 
                 // Upload the build to Hathora
-                byte[] buildBytes = null;
+                (Build build, string logs) buildWithLogs = default;
                 try
                 {
-                    buildBytes = await uploadBuildAsync(
+                    buildWithLogs = await uploadAndVerifyBuildAsync(
+                        _serverConfig,
                         buildApi, 
                         buildInfo.BuildId, 
-                        serverPaths);
+                        serverPaths,
+                        _cancelToken);
                 }
                 catch (Exception e)
                 {
                     return null;
                 }
-                Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
+                
+                Assert.AreEqual(buildWithLogs.build?.Status, Build.StatusEnum.Succeeded,
+                    "[HathoraServerBuild.DeployToHathoraAsync] buildWithLogs.build?.Status != Succeeded");
                 
                 OnUploadComplete?.Invoke();
                 _cancelToken.ThrowIfCancellationRequested();
@@ -177,7 +182,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             double _buildInfoBuildId)
         {
             Debug.Log("[HathoraServerDeploy.deployBuildAsync] " +
-                $"Deploying the uploaded build (buildId #{_buildInfoBuildId} ...");
+                $"Deploying the uploaded build (_buildId #{_buildInfoBuildId} ...");
             
             Deployment createDeploymentResult = null;
             try
@@ -192,32 +197,53 @@ namespace Hathora.Core.Scripts.Editor.Server
             return createDeploymentResult;
         }
 
-        private static async Task<byte[]> uploadBuildAsync(
+        /// <summary>
+        /// High-level func, running 2 Tasks:
+        /// 1. RunCloudBuildAsync
+        /// 2. getBuildInfo (since File streaming may have failed)
+        /// </summary>
+        /// <param name="_serverConfig"></param>
+        /// <param name="_buildApi"></param>
+        /// <param name="_buildId"></param>
+        /// <param name="_serverPaths"></param>
+        /// <param name="_cancelToken">Optional</param>
+        /// <returns>streamingLogs</returns>
+        private static async Task<(Build build, string logs)> uploadAndVerifyBuildAsync(
+            HathoraServerConfig _serverConfig,
             HathoraServerBuildApi _buildApi,
-            double buildId,
-            HathoraServerPaths _serverPaths)
+            double _buildId,
+            HathoraServerPaths _serverPaths,
+            CancellationToken _cancelToken = default)
         {
             string tarGzFileName = $"{_serverPaths.ExeBuildName}.tar.gz";
 
-            Debug.Log($"[HathoraServerDeploy.UploadBuildAsync] " +
+            Debug.Log($"[HathoraServerDeploy.uploadAndVerifyBuildAsync] " +
                 $"Uploading local '{tarGzFileName}' build to Hathora...");
             
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
                 $"{_serverPaths.PathToDotHathoraDir}/{tarGzFileName}");
-            
-            byte[] runBuildResult;
-            await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
-            {
-                runBuildResult = await _buildApi.RunCloudBuildAsync(
-                    buildId, 
-                    fileStream);
-            }
 
-            string successStr = runBuildResult.Length > 0 ? "Success" : "Failed";
-            Debug.Log($"runBuildResult=={successStr}");
+            Build build = null;
+            string streamingLogs = null;
+                
+            try
+            {
+                streamingLogs = await _buildApi.RunCloudBuildAsync(
+                    _buildId, 
+                    normalizedPathToTarball,
+                    _cancelToken);
+
+                HathoraServerBuildApi buildApi = new(_serverConfig);
+                build = await buildApi.GetBuildInfoAsync(_buildId, _cancelToken);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerDeploy.uploadAndVerifyBuildAsync] Error: {e}");
+                throw;
+            }
             
-            return runBuildResult;
+            return (build, streamingLogs);
         }
 
         private static async Task<Build> getBuildInfoAsync(
@@ -225,7 +251,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             CancellationToken _cancelToken = default)
         {
             Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] " +
-                "Getting build info (notably for buildId)...");
+                "Getting build info (notably for _buildId)...");
             
             Build createBuildResult = null;
             try

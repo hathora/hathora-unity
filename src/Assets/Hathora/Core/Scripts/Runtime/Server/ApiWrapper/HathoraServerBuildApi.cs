@@ -1,6 +1,10 @@
 // Created by dylan@hathora.dev
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
@@ -57,33 +61,35 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] result == " +
-                $"BuildId: '{createCloudBuildResult.BuildId}, " +
-                $"Status: {createCloudBuildResult.Status}");
+            Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
+                $"<color=yellow>createCloudBuildResult: {createCloudBuildResult.ToJson()}</color>");
 
             return createCloudBuildResult;
         }
 
         /// <summary>
-        /// Wrapper for `RunBuildAsync` to upload the _tarball after calling 
+        /// Wrapper for `RunBuildAsync` to upload the _tarball after calling CreateBuildAsync().
+        /// (!) After this is done
         /// </summary>
         /// <param name="_buildId"></param>
-        /// <param name="_tarball"></param>
+        /// <param name="_pathToTarGzBuildFile">Ensure path is normalized</param>
         /// <param name="_cancelToken"></param>
-        /// <returns>Returns byte[] on success</returns>
-        public async Task<byte[]> RunCloudBuildAsync(
+        /// <returns>Returns streamLogs on success</returns>
+        public async Task<string> RunCloudBuildAsync(
             double _buildId, 
-            Stream _tarball,
+            string _pathToTarGzBuildFile,
             CancellationToken _cancelToken = default)
         {
-            byte[] cloudRunBuildResultByteArr;
-            
+            byte[] cloudRunBuildResultLogsStream;
+                
             try
             {
-                cloudRunBuildResultByteArr = await buildApi.RunBuildAsync(
+                await using FileStream fileStream = new(_pathToTarGzBuildFile, FileMode.Open, FileAccess.Read);
+                
+                cloudRunBuildResultLogsStream = await buildApi.RunBuildAsync(
                     HathoraServerConfig.HathoraCoreOpts.AppId,
                     _buildId,
-                    _tarball,
+                    fileStream,
                     _cancelToken);
             }
             catch (ApiException apiException)
@@ -95,10 +101,71 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] result == " +
-                $"isSuccess? '{cloudRunBuildResultByteArr is { Length: > 0 }}");
+            Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] Done - " +
+                "to know if success, call buildApi.RunBuild");
 
-            return cloudRunBuildResultByteArr;
+            // (!) Unity, by default, truncates logs to 1k chars (including callstack).
+            string cloudRunBuildResultLogsStr = Encoding.UTF8.GetString(cloudRunBuildResultLogsStream);
+            onRunCloudBuildDone(cloudRunBuildResultLogsStr);
+            
+            return cloudRunBuildResultLogsStr;  // streamLogs 
+        }
+
+        /// <summary>
+        /// DONE - not necessarily success. Log stream every 500 lines
+        /// (!) Unity, by default, truncates logs to 1k chars (including callstack).
+        /// </summary>
+        /// <param name="_cloudRunBuildResultLogsStr"></param>
+        private static void onRunCloudBuildDone(string _cloudRunBuildResultLogsStr)
+        {
+            // Split string into lines
+            string[] lines = _cloudRunBuildResultLogsStr.Split(new[] 
+                { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            // Group lines into chunks of 500
+            const int chunkSize = 500;
+            for (int i = 0; i < lines.Length; i += chunkSize)
+            {
+                IEnumerable<string> chunk = lines.Skip(i).Take(chunkSize);
+                string chunkStr = string.Join("\n", chunk);
+                Debug.Log($"[HathoraServerBuildApi.onRunCloudBuildDone] result == chunk starting at line {i}: " +
+                    $"\n<color=yellow>{chunkStr}</color>");
+            }
+        }
+
+        /// <summary>
+        /// Wrapper for `RunBuildAsync` to upload the _tarball after calling 
+        /// </summary>
+        /// <param name="_buildId"></param>
+        /// <param name="_cancelToken"></param>
+        /// <returns>Returns byte[] on success</returns>
+        public async Task<Build> GetBuildInfoAsync(
+            double _buildId,
+            CancellationToken _cancelToken)
+        {
+            Build getBuildInfoResult;
+            
+            try
+            {
+                getBuildInfoResult = await buildApi.GetBuildInfoAsync(
+                    HathoraServerConfig.HathoraCoreOpts.AppId,
+                    _buildId,
+                    _cancelToken);
+            }
+            catch (ApiException apiException)
+            {
+                HandleServerApiException(
+                    nameof(HathoraServerBuildApi),
+                    nameof(GetBuildInfoAsync), 
+                    apiException);
+                return null;
+            }
+
+            bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
+            Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success? {isSuccess}, " +
+                $"<color=yellow>createCloudBuildResult: {getBuildInfoResult.ToJson()}</color>");
+
+            return getBuildInfoResult;
         }
         #endregion // Server Build Async Hathora SDK Calls
     }
