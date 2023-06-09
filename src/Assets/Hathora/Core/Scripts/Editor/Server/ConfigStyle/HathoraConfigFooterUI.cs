@@ -64,12 +64,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
         {
-            MessageType helpMsgType =  _enabled
+            MessageType helpMsgType = _enabled || HathoraServerDeploy.IsDeploying
                 ? MessageType.Info 
                 : MessageType.Error;
             
             string helpMsg;
-            if (_enabled)
+            if (_enabled || HathoraServerDeploy.IsDeploying) 
             {
                 helpMsg = "This action will create a new server build, upload to Hathora, " +
                     "and create a new deployment version of your application.";
