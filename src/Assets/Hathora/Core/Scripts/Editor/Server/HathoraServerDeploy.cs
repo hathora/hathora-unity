@@ -26,7 +26,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         public enum DeploymentSteps
         {
             Done, // Same as not deployment
-            Init,
+            // Init, // Too fast to track
             Zipping,
             RequestingUploadPerm,
             Uploading,
@@ -43,14 +43,27 @@ namespace Hathora.Core.Scripts.Editor.Server
         public static event OnUploadComplete OnUploadComplete;
 
         
+        /// <summary>
+        /// eg: "(1/4) Zipping...", where (1/4) would be colored.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static string GetDeployFriendlyStatus() => DeploymentStep switch
         {
             DeploymentSteps.Done => "Done",
-            DeploymentSteps.Init => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(1/{maxDeploySteps})</color> Initializing...",
-            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(2/{maxDeploySteps})</color> Zipping...",
-            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(3/{maxDeploySteps})</color> Requesting Upload Permission...",
-            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(4/{maxDeploySteps})</color> Uploading Build...",
-            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(5/{maxDeploySteps})</color> Deploying Build...",
+            
+            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.Zipping}/{maxDeploySteps})</color> Zipping...",
+            
+            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.RequestingUploadPerm}/{maxDeploySteps})</color> Requesting Upload Permission...",
+            
+            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.Uploading}/{maxDeploySteps})</color> Uploading Build...",
+            
+            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.Deploying}/{maxDeploySteps})</color> Deploying Build...",
+            
             _ => throw new ArgumentOutOfRangeException(),
         };
 
@@ -66,8 +79,6 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraServerConfig _serverConfig,
             CancellationToken _cancelToken = default)
         {
-            DeploymentStep = DeploymentSteps.Init;
-            
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
                 "<color=yellow>Starting...</color>");
             
