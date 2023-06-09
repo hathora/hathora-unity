@@ -48,7 +48,7 @@ namespace Hathora.Demo.Scripts.Client
         private void assertUsingValidNetConfig()
         {
             // Are we using any Client Config at all?
-            if (netHathoraConfig != null || !netHathoraConfig.HasAppId)
+            if (netHathoraConfig == null || !netHathoraConfig.HasAppId)
                 NetUI.Singleton.SetInvalidConfig(netHathoraConfig);
         }
 
