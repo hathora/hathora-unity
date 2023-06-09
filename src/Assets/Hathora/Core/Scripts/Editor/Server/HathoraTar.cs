@@ -59,20 +59,21 @@ namespace Hathora.Core.Scripts.Editor.Server
             // v: Verbosely list the files processed.
             // f: Use archive file or device archive; eg: "{archiveNameWithoutExt}.tar.gz"
             // -C: Change to the specified directory before performing any operations.
+            // -transform 's,^: Wraps the contents of the archive in a subdir
             // ####################################################################################
             // pwd 1st so the logs show where our working dir started
             const string cmd = "tar";
             
             string tarArgs = $"-czvf {outputArchiveNameTarGz} " +
                 "--exclude \"*_DoNotShip\" " +
-                $"-C ../{_paths.ExeBuildDirName}/ *";
+                $"-C .. {_paths.ExeBuildDirName}";
             
             string cmdWithArgs = $"{cmd} {tarArgs}";
             (Process process, string resultLog) output = default;
 
             try
             {
-                // Create a barebones .tar.gz
+                // Archive the build dir + Dockerfile together, excluding "*_DoNotShip"
                 output = await HathoraEditorUtils.ExecuteCrossPlatformShellCmdAsync(
                     _workingDirPath: initWorkingDir,
                     cmdWithArgs,
