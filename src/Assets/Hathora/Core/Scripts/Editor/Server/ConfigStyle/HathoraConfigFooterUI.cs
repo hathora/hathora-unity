@@ -53,6 +53,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         private void insertPostAuthFooter()
         {
             bool enableBuildUploadDeployBtn = 
+                !HathoraServerDeploy.IsDeploying &&
                 ServerConfig.MeetsBuildBtnReqs() && 
                 ServerConfig.MeetsDeployBtnReqs(); 
             
@@ -63,13 +64,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
         {
-            bool isEnabledNotDeploying = _enabled && !HathoraServerDeploy.IsDeploying; 
-            MessageType helpMsgType =  isEnabledNotDeploying
+            MessageType helpMsgType =  _enabled
                 ? MessageType.Info 
                 : MessageType.Error;
             
             string helpMsg;
-            if (isEnabledNotDeploying)
+            if (_enabled)
             {
                 helpMsg = "This action will create a new server build, upload to Hathora, " +
                     "and create a new deployment version of your application.";
@@ -97,6 +97,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             InsertLinkLabel("Demo Projects", HathoraEditorUtils.HATHORA_DOCS_DEMO_PROJECTS_URL, _centerAlign: true);
         }
 
+        /// <summary>AKA "The Do-All Button"</summary>
+        /// <param name="_enabled"></param>
         private async Task insertBuildUploadDeployBtn(bool _enabled)
         {
             EditorGUI.BeginDisabledGroup(disabled: !_enabled);
