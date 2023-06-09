@@ -67,7 +67,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             const string cmd = "tar";
             
             // We don't use -v since it's too spammy; logs get truncated and you don't see the result
-            string tarArgs = $"-czf {outputArchiveNameTarGz} " +
+            string tarArgs = $"-czpf {outputArchiveNameTarGz} " +
                 "--exclude \"*_DoNotShip\" " +
                 "-C .. " + // Set working dir at parent of .hathora (unity proj root)
                 $"{_paths.ExeBuildDirName} " + // Add build dir from proj root
