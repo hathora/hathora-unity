@@ -71,9 +71,26 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         {
             string configTemplateName = $"{nameof(HathoraServerConfig)}.template";
             bool isDefaultName = ServerConfig.name == configTemplateName;
-            if (!isDefaultName)
-                return;
+
+            if (isDefaultName)
+                insertEditingTemplateWarnHelpbox();
+            // else            
+            //     insertGitIgnoreThisWarnHelpbox(); // TODO: Do we want this?
+        }
+
+        private void insertGitIgnoreThisWarnHelpbox()
+        {
+            string helpText = "(.gitignore this file)";
+            GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
+            centeredStyle.alignment = TextAnchor.MiddleCenter;
+
+            EditorGUILayout.LabelField(helpText, centeredStyle);
             
+            InsertSpace2x();
+        }
+
+        private void insertEditingTemplateWarnHelpbox()
+        {
             EditorGUILayout.HelpBox("You are editing a template!\n" +
                 "1. Duplicate this (CTRL+D)\n" +
                 "2. Add dupe to .gitignore >> treat as an .env file", 
