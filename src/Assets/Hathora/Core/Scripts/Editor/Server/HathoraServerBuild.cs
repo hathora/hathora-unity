@@ -21,7 +21,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <summary>
         /// Builds with HathoraServerConfig opts.
         /// </summary>
-        /// <param name="_serverConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
+        /// <param name="_serverConfig">Find via menu `Hathora/Find Server Config(s)`</param>
         /// <param name="_overwriteExistingDockerfile">
         /// Some devs have a custom Dockerfile and don't want a new autogen
         /// </param>
