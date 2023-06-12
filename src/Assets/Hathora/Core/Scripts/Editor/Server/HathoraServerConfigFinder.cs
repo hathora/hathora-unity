@@ -116,7 +116,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         public static void ShowWindowOnly()
         {
             HathoraServerConfigFinder window = GetWindow<HathoraServerConfigFinder>(
-                "Hathora Server UserConfig Finder");
+                "Hathora Server Config Finder");
             
             window.minSize = new Vector2(x: 350, y: 255);
             window.maxSize = new Vector2(x: 600, y: 500);
@@ -146,7 +146,8 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             HathoraEditorUtils.InsertBanner(
                 _includeVerticalGroup: false,
-                _wrapperExtension: 20f); // Place banner @ top
+                _wrapperExtension: 24f); // Place banner @ top
+            EditorGUILayout.Space(4f);
             HathoraEditorUtils.InsertHathoraSloganLbl();
             EditorGUILayout.EndVertical();
             
