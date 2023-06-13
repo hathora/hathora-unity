@@ -61,21 +61,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.RoomId = _connectionInfoV2.RoomId;
         }
 
-        /// <summary>This work around SDK throwing on null values</summary>
-        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
-        private void setMissingDefaults()
-        {
-            Debug.LogWarning(
-                "[ConnectionInfoV2Wrapper] setMissingDefaults: TODO? " +
-                "(!) Hathora SDK throws Exception on missing requirement. " +
-                "Set this if you get parsing errs when creating a new `ConnectionInfoV2` " +
-                "type via `ToConnectionInfoV2Type()`. See `ApplicationWithDeploymentWrapper.cs` " +
-                "for example.");
-        }
-        
         public ConnectionInfoV2 ToConnectionInfoV2Type()
         {
-            setMissingDefaults();
+            // (!) SDK constructor throws on req'd val == null
             
             ConnectionInfoV2 room = null;
             try

@@ -159,22 +159,10 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.AppId = _deployment.AppId;
             // Env = _deployment.Env;
         }
-        
-        /// <summary>This work around SDK throwing on null values</summary>
-        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
-        private void setMissingDefaults()
-        {
-            Debug.LogWarning(
-                "[DeploymentWrapper] setMissingDefaults: TODO? " +
-                "(!) Hathora SDK throws Exception on missing requirement. " +
-                "Set this if you get parsing errs when creating a new `ConnectionInfoV2` " +
-                "type via `ToConnectionInfoV2Type()`. See `ApplicationWithDeploymentWrapper.cs` " +
-                "for example.");
-        }
 
         public Deployment ToDeploymentType()
         {
-            setMissingDefaults(); // (!) Works around SDK constructor throws on req'd val == null
+            // (!) SDK constructor throws on req'd val == null
             
             Deployment deployment = null;
             try
