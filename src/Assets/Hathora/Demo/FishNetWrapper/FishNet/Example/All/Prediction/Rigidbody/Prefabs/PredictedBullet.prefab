@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -6246116784124330627}
   - component: {fileID: 7850526870340082268}
   m_Layer: 0
-  m_Name: PredictedSphereSorta
+  m_Name: PredictedBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,17 +78,17 @@ MonoBehaviour:
   _rigidbody2d: {fileID: 0}
   _spectatorSmoothPosition: 1
   _spectatorSmoothRotation: 1
-  _spectatorSmoothingType: 1
+  _spectatorSmoothingType: 2
   _customSmoothingData:
     InterpolationPercent: 1
     CollisionInterpolationPercent: 0.1
     InterpolationDecreaseStep: 1
     InterpolationIncreaseStep: 3
   _preconfiguredSmoothingDataPreview:
-    InterpolationPercent: 1
-    CollisionInterpolationPercent: 0.1
+    InterpolationPercent: 1.5
+    CollisionInterpolationPercent: 0.2
     InterpolationDecreaseStep: 1
-    InterpolationIncreaseStep: 3
+    InterpolationIncreaseStep: 5
   _maintainedVelocity: 0
   _resendType: 0
   _resendInterval: 30
@@ -119,11 +119,11 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 4
+  <PrefabId>k__BackingField: 3
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 2281302723
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 15440705915664323220
+  <AssetPathHash>k__BackingField: 39503611988522285
   _sceneNetworkObjects:
   - {fileID: 3624261834906416601}
 --- !u!54 &3624261834906416602
@@ -141,7 +141,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!114 &-6246116784124330627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,7 +158,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 3624261834906416601}
   _networkObjectCache: {fileID: 3624261834906416601}
   SyncVarScale: {x: 1, y: 1, z: 1}
-  Force: 20
+  Force: 0
 --- !u!114 &7850526870340082268
 MonoBehaviour:
   m_ObjectHideFlags: 0
