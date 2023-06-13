@@ -23,9 +23,19 @@ namespace Hathora.Core.Scripts.Runtime.Client
         public Lobby Lobby { get; set; }
         public string RoomId => Lobby?.RoomId;
 
-        public ConnectionInfoV2 ServerInfo { get; set; }
+        /// <summary>
+        /// - Unity ClientAddress == ExposedPort.Host 
+        /// </summary>
+        public ConnectionInfoV2 ServerConnectionInfo { get; set; }
+
+        /// <summary>Validates host + port</summary>
+        /// <returns></returns>
+        public bool CheckIsValidServerConnectionInfo() => 
+            !string.IsNullOrEmpty(ServerConnectionInfo?.ExposedPort?.Host) && 
+            ServerConnectionInfo?.ExposedPort?.Port > 0;
+        
         public string GetServerInfoIpPort() => 
-            $"{ServerInfo?.ExposedPort.Host}:{ServerInfo?.ExposedPort.Port}";
+            $"{ServerConnectionInfo?.ExposedPort.Host}:{ServerConnectionInfo?.ExposedPort.Port}";
 
         
         #region Init

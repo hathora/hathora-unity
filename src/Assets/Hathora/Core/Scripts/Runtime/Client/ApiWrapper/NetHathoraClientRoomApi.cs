@@ -96,7 +96,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 $"(after {pollTimerTickedSecs}s polling): <color=yellow>" +
                 $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
 
-            NetSession.ServerInfo = connectionInfoResponse;
+            NetSession.ServerConnectionInfo = connectionInfoResponse;
             return connectionInfoResponse;
         }
         #endregion // Client Room Async Hathora SDK Calls

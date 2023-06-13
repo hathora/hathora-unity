@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FishNet;
+using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
@@ -11,6 +13,7 @@ using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demo.Scripts.Client.Models;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demo.Scripts.Client
 {
@@ -74,6 +77,39 @@ namespace Hathora.Demo.Scripts.Client
         
         
         #region Interactions from UI
+        /// <summary>
+        /// Connect to the Server as a Client via net code. Uses cached vals. 
+        /// </summary>
+        /// <returns>isSuccess</returns>
+        public bool JoinLobbyAsync()
+        {
+            Debug.Log("[NetHathoraClient] JoinLobbyAsync");
+            
+            // Validate
+            if (!netSession.CheckIsValidServerConnectionInfo())
+            {
+                Debug.LogError("[NetHathoraClient]**ERR @ JoinLobbyAsync: " +
+                    "Invalid ServerConnectionInfo");
+                
+                NetUI.Singleton.OnJoinLobbyFailed();
+                return false; // !isStarted
+            }
+            
+            Debug.Log($"[NetHathoraClient.JoinLobbyAsync] Connecting to: " + 
+                netSession.GetServerInfoIpPort());
+            
+            Transport transport = InstanceFinder.TransportManager.Transport;
+            ExposedPort connectInfo = netSession.ServerConnectionInfo.ExposedPort;
+            
+            transport.SetClientAddress(connectInfo.Host);
+            transport.SetPort((ushort)connectInfo.Port);
+
+            bool isSuccess = transport.StartConnection(server: false);
+            Assert.IsTrue(isSuccess, "[JoinLobbyAsync] StartConnection: !isSuccess");
+
+            return true; // isSuccess
+        }
+        
         /// <summary>
         /// Auths anonymously => Creates new netSession.
         /// </summary>

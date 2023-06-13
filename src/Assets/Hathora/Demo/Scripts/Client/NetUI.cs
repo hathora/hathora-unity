@@ -126,7 +126,7 @@ namespace Hathora.Demo.Scripts.Client
         }
 
         /// <summary>
-        /// The player pressed ENTER || unfocused the ServerInfo input.
+        /// The player pressed ENTER || unfocused the ServerConnectionInfo input.
         /// </summary>
         public void OnGetLobbyInfoInputEnd()
         {
@@ -173,13 +173,13 @@ namespace Hathora.Demo.Scripts.Client
         }
 
         /// <summary>
-        /// We should only call this if we already have the lobby info (ServerInfo).
+        /// We should only call this if we already have the lobby info (ServerConnectionInfo).
         /// </summary>
         public void OnGetServerInfoBtnClick()
         {
             SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
-            // The ServerInfo should already be cached
+            // The ServerConnectionInfo should already be cached
             _ = hathoraClient.GetActiveConnectionInfo(netSession.RoomId); // !await
         }
         
@@ -197,7 +197,13 @@ namespace Hathora.Demo.Scripts.Client
 
         public void OnJoinLobbyAsClientBtnClick()
         {
-            throw new NotImplementedException("TODO");
+            _ = hathoraClient.JoinLobbyAsync();
+        }
+
+        public void OnJoinLobbyFailed()
+        {
+            joinLobbyAsClientBtn.gameObject.SetActive(true);
+            // TODO: Show err
         }
         #endregion // UI Interactions
         
@@ -319,7 +325,7 @@ namespace Hathora.Demo.Scripts.Client
             showInitLobbyUi(false);
             SetShowLobbyTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>RoomId</color></b>:\n{roomId}");
 
-            // We can now show the lobbies and ServerInfo copy btn
+            // We can now show the lobbies and ServerConnectionInfo copy btn
             copyLobbyRoomIdBtn.gameObject.SetActive(true);
             viewLobbiesBtn.gameObject.SetActive(true);
             getServerInfoBtn.gameObject.SetActive(true);
