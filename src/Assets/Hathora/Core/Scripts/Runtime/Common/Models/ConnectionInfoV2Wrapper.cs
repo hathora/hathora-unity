@@ -61,6 +61,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.RoomId = _connectionInfoV2.RoomId;
         }
 
+        /// <summary>This work around SDK throwing on null values</summary>
+        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
         private void setMissingDefaults()
         {
             Debug.LogWarning(

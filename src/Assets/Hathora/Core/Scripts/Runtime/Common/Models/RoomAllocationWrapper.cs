@@ -68,6 +68,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.RoomAllocationId = _roomAllocation.RoomAllocationId;
         }
         
+        /// <summary>This work around SDK throwing on null values</summary>
+        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
         private void setMissingDefaults()
         {
             Debug.LogWarning(
@@ -80,8 +82,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
 
         public RoomAllocation ToRoomAllocationType()
         {
-            // (!) Throws on req'd val == null
-            setMissingDefaults();
+            setMissingDefaults(); // (!) Works around SDK constructor throws on req'd val == null
             
             RoomAllocation roomAllocation = null;
             try

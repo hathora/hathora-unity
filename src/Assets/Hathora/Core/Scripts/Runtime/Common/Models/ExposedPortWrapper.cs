@@ -24,6 +24,14 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             set => _host = value;
         }
         
+
+        /// <summary>This work around SDK throwing on null values</summary>
+        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
+        private void setMissingDefaults()
+        {
+            // containerName default already handled outside
+            this.Host ??= "";
+        }
         
         public ExposedPortWrapper(ExposedPort _exposedPort)
             : base(_exposedPort)
@@ -39,6 +47,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             ExposedPort exposedPort = null;
             string containerName = this.GetTransportNickname(); // Should be "default"
             
+            setMissingDefaults(); // (!) Works around SDK constructor throws on req'd val == null
+
             try
             {
                 exposedPort = new ExposedPort(
