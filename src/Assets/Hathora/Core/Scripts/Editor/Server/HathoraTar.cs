@@ -59,6 +59,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             // c: Create a new archive.
             // z: Compress the archive with gzip. 
             // v: Verbosely list the files processed.
+            // p: Permissions
             // f: Use archive file or device archive; eg: "{archiveNameWithoutExt}.tar.gz"
             // -C: Change to the specified directory before performing any operations.
             // -transform 's,^: Wraps the contents of the archive in a subdir

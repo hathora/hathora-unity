@@ -55,15 +55,37 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string createdRoomId = await CreateRoomAsync(_customCreateRoomId, _cancelToken);
 
             // Once Room Status is Active, we can refresh the ConnectionInfo with ExposedPort
-            Room activeRoom = await PollGetRoomUntilActiveAsync(
-                createdRoomId, 
-                _cancelToken);
-            
-            Assert.IsNotNull(activeRoom, "!activeRoom");
-            
-            ConnectionInfoV2 activeConnectionInfo = await GetConnectionInfoAsync(
-                activeRoom.RoomId,
-                _cancelToken);
+            Room activeRoom = null;
+            try
+            {
+                activeRoom = await PollGetRoomUntilActiveAsync(
+                    createdRoomId, 
+                    _cancelToken);
+                
+                Assert.IsTrue(activeRoom?.Status == RoomStatus.Active, 
+                    "activeRoom !Active status");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
+                    $"{e.Message} (Check console.hathora.dev logs for +info)");
+                throw;
+            }
+
+
+            ConnectionInfoV2 activeConnectionInfo = null;
+            try
+            {
+                activeConnectionInfo = await GetConnectionInfoAsync(
+                    activeRoom.RoomId,
+                    _cancelToken);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
+                    $"{e.Message} (Check console.hathora.dev logs for +info)");
+                throw;
+            }
 
             Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
                 $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
@@ -88,7 +110,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 createRoomReq = new CreateRoomRequest(roomOpts.HathoraRegion);
                 
                 Debug.Log("[HathoraServerRoom.CreateRoomAwaitActiveAsync] " +
-                    $"roomConfig == <color=yellow>{createRoomReq.ToJson()}</color>");
+                    $"<color=yellow>roomConfig: {createRoomReq.ToJson()}</color>");
             }
             catch (Exception e)
             {
@@ -276,7 +298,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
-                $"Success: <color=yellow>room: {room.ToJson()}</color>");
+                $"Done: <color=yellow>room: {room.ToJson()}</color>");
 
             IsPollingForActiveRoom = false;
             return room;

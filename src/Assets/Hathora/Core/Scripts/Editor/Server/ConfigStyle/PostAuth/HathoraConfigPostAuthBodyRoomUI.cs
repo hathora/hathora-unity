@@ -394,8 +394,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             onCreateRoomDone();
 
-            Assert.IsNotNull(roomConnInfo.Room?.RoomId,
-                "!RoomId");
+            Assert.IsNotNull(roomConnInfo.Room?.RoomId, "!RoomId");
+            
+            Assert.AreEqual(roomConnInfo.ConnectionInfoV2?.Status, 
+                ConnectionInfoV2.StatusEnum.Active,  "Status !Active");
 
             onCreateRoomSuccess(roomConnInfo);
         }
