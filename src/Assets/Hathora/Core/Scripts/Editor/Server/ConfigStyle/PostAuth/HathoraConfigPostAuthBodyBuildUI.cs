@@ -134,7 +134,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Build directory",
                 _tooltip: "Parent directory to generate build into.\n\n" +
-                "Default: `Build-Linux-Server`",
+                "Default: `Build-Server`",
                 _val: ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName,
                 _alignTextField: GuiAlign.SmallRight);
 
