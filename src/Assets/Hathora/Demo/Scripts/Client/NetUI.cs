@@ -291,10 +291,13 @@ namespace Hathora.Demo.Scripts.Client
 
         public void OnGetServerInfoSuccess(ConnectionInfoV2 connectionInfo)
         {
+            Debug.Log(
+                $"[NetUI] OnGetServerInfoSuccess: {netSession.GetServerInfoIpPort()} " +
+                $"({connectionInfo.ExposedPort.TransportType})");
+            
             // ####################
             // ServerInfo:
-            // 127.0.0.1:7777
-            // (UDP)
+            // 127.0.0.1:7777 (UDP)
             // ####################
             SetServerInfoTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>ServerInfo</color></b>:\n" +
                 $"{connectionInfo.ExposedPort.Host}<color=yellow><b>:</b></color>{connectionInfo.ExposedPort.Port}\n" +
@@ -303,34 +306,9 @@ namespace Hathora.Demo.Scripts.Client
             copyServerInfoBtn.gameObject.SetActive(true);
             joinLobbyAsClientBtn.gameObject.SetActive(true);
         }
-
-        [Obsolete("TODO: Delete once SDK bug is resolved")]
-        private void mockGetServerInfoSuccess()
-        {
-            Debug.Log("[NetUI]<color=yellow>**MOCKING SUCCESS**</color>");
-
-            ConnectionInfoV2 serverInfo = new()
-            {
-                ExposedPort = new ExposedPort
-                {
-                    TransportType = TransportType.Udp,
-                    Host = "127.0.0.1",
-                    Port = 7777,
-                    // ContainerName = "default",
-                },
-                RoomId = netSession.RoomId,
-                Status = ConnectionInfoV2.StatusEnum.Active,
-            };
-
-            netSession.ServerInfo = serverInfo; // We still need to set session for copy btn
-            OnGetServerInfoSuccess(serverInfo);
-        }
         
         public void OnGetServerInfoFail()
         {
-            mockGetServerInfoSuccess();
-            return;
-            
             getServerInfoBtn.gameObject.SetActive(true);
             SetGetServerInfoErrTxt("<color=orange>Failed to Get Server Info - see logs</color>");
         }
