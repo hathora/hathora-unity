@@ -8,6 +8,7 @@ This guide helps you setup:
    * Unity's 3rd-person 3D template 
    * [Hathora's Unity Plugin](https://assetstore.unity.com/packages/slug/256651) for implementation example
    * [FishNet](https://github.com/FirstGearGames/FishNet) for arbitrary Unity net code example
+     * [Tugboat](https://fish-networking.gitbook.io/docs/manual/components/transports/tugboat) for arbitrary FishNet Transport example
      * Optionally, replace the net code with others like Mirror or Unity NGO
 
 # 1. Server Config
