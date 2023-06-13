@@ -1,89 +1,100 @@
+![image](https://assetstorev1-prd-cdn.unity3d.com/key-image/4023f2ed-1dc4-4ca6-a7ae-2987fb1a2272.webp)
+
 # Hathora-Unity Guide
 
-This guide helps you set up and test a simple 3rd-person 3D Unity project using [Hathora's Unity Plugin](https://assetstore.unity.com/packages/slug/256651) and [FishNet](https://github.com/FirstGearGames/FishNet) as an example. You can replace the net code with others like Mirror or Unity NGO.
+This guide helps you setup:
+1. Low-level Hathora SDK and high-level SDK wrapper.
+3. Implementation demo, including:
+   * Unity's 3rd-person 3D template 
+   * [Hathora's Unity Plugin](https://assetstore.unity.com/packages/slug/256651) for implementation example
+   * [FishNet](https://github.com/FirstGearGames/FishNet) for arbitrary Unity net code example
+     * Optionally, replace the net code with others like Mirror or Unity NGO
 
-# Quickstart
+# 1. Server Config
 
-1. Open "Playground" scene >> Set NetworkManager's 'Tugboat' component Server port + Client IP.
-   * Use `localhost` IP + arbitrary port for local testing or a Hathora room's server:ip.
-2. Build a *Linux Dedicated Server* to `/Build-Server/Build-Server.x86_64` in Unity root.
-3. Deploy using `/utils/DeployToHathora.ps1` PowerShell script in repo root >> web console launches.
-4. Create a room near your region >> Copy the room's server:port (via the 'details' button) back to **Server** port + **Client** IP.
+1. Find the top menu **Hathora/Configuration (Server)** window -> Create new.
 
-![image](https://user-images.githubusercontent.com/8840024/233578161-630e86bf-0bcd-4c43-9d97-0470367d1cfc.png)
-![image](https://i.imgur.com/cENnBNn.png)
-![image](https://i.imgur.com/cM32Vqq.png)
+2. Selecting your *HathoraServerConfig*, click *Register* -> opens a browser tab.
 
-5. Run local editor with "Client" button >> you spawn only if the Server is found! Press `[R]` for ping/pong RPC tests.
+3. After logging in; jump back to Unity *HathoraServerConfig* -> click **Create new application**.
 
-![image](https://i.imgur.com/amil9K4.png)
+# 2. Server Deployment (+Room)
 
-__________________________
+1. Complete `1. Server Config` above, still inspecting the *HathoraServerConfig*.
 
-# Verbose Guide
+2. Click the bottom **Build, Upload & Deploy New Version** button.
 
-## Prerequisites
+3. On success, go to the *Create Room* section -> Choose a Region -> click **Create Room**.
 
-Ensure you have:
+4. Click the "Copy Connection Info" for  host (IP) and port info; use this to connect as a client to a net code server!
 
-1. Unity 2021 LTS installed.
-2. Linux dedicated server build support (available in Unity Hub).
+![image](https://i.imgur.com/dwXw4bx.png)
 
-![image](https://user-images.githubusercontent.com/8840024/233582785-3755eb9c-584f-4cd0-b798-6f29eccacf4a.png)
+# 3. Client Demos
 
-## Project Setup
+**Included are two demos:**
+1. Hello World
+2. Hathora SDK
 
-1. Open the project in Unity 2021 LTS.
-2. Open the `Playground` scene.
+![image](https://i.imgur.com/iuxQ7Sg.png)
 
-## Local Testing
+## Client Demo #1:  *Hello World*
 
-1. Open `PlayGround` scene's `NetworkManager` from the hierarchy.
-2. Set **Server** port arbitrarily and **Client** IP to `localhost`.
+### About
 
-![image](https://i.imgur.com/ZEbjEsO.png)
+This demo skips the Hathora SDK and simply uses Hathora as a Unity net code dedicated game server host: Upload any Unity net code solution to Hathora Cloud.
 
-3. Build to the project root's `/Build` and run.
-4. Player1 clicks "Server" and "Client" (both).
-5. Player2 clicks "Client".
+![image](https://i.imgur.com/oT1vQtQ.png)
 
-Both players should spawn; see each other move!
+### Quickstart
 
-![image](https://user-images.githubusercontent.com/8840024/233584587-56352006-9103-4d3c-a817-fbedd21f0fe0.png)
+1. Finish the "Quickstart (Server)" above to deploy a server -> create a room -> copy the `host:ip` connection info.
 
-![image](https://i.imgur.com/dMXjRGy.png)
+2.  Finding the scene component *Tugboat* at HathoraSceneDemo.**NetworkManager**:
+      ![image](https://camo.githubusercontent.com/52693cc7bbaec2ea16acf6331451af806be06fa78cdd8f892b54089cec700666/68747470733a2f2f692e696d6775722e636f6d2f6661576d67634f2e706e67)
+    1. Paste the connection info *host* info to Togboat's **Client Address**.
+    2. Paste the connection info *port* info to Tugboat's **Port**.
 
-* **Optional:** To simulate a dedicated server, run the build from the console with `-mode server` args, optionally with `-batchmode` and `-nographics` to run headless (may need to manually kill the process). Append `-logFile` to log in a local file.
+3. Run the `HathoraDemoScene` -> click **Hello World** -> Click **Client** to connect to the Room:
 
-## Hathora Dedicated Server
+    ![image](https://i.imgur.com/Jm06HvI.png)
 
-### Prerequisites
+5. You are now connected to the server -> If other clients were connected, you would see them, too. Press **[R]** to send a ping/pong RPC to/from the server:
+    ![image](https://i.imgur.com/CMLDJnY.png)
 
-1. Register or login: https://console.hathora.dev/
-2. Create an app: Click `Create an Application` >> Use `UDP` and port `7777` for this demo >> Choose `Tiny` plan with 1 room-per-process.
-3. See Quickstart below for the `Upload server build` page.
+## Client Demo #2: *Hathora SDK*
 
-### Deploy via scripts
+### About 
+This demo is more-programmatic, using an example implementation wrapper of the Hathora SDK to, as a Client:
 
-Follow these naming conventions to use deployment scripts:
+1. Login
+2. Create/join a Room (called *Lobby* as a client). 
+3. Dynamically get the connection info from Hathora Cloud (opposed to setting it manually).
 
-1. Create `Build-Server` dir at Unity project root >> Build here via Dedicated Server (Linux).
-2. Run the repo root's `utils/DeployToHathora.ps1` PowerShell script to automatically deploy your app and launch the web console.
-3. At the top-right of the web console, choose your closest region and create a room (normally done programmatically) that will appear under "Active Processes".
+![image](https://i.imgur.com/NRPaXC2.png) 
 
-![image](https://user-images.githubusercontent.com/8840024/233578161-630e86bf-0bcd-4c43-9d97-0470367d1cfc.png)
+### Quickstart
 
-4. Click the room "Details" on the right.
+1. Finish the "Quickstart (Server)" and stop after Step #4 -> Click the **Copy AppId** button at the top.
 
-![image](https://i.imgur.com/qhaTYFq.png)
+2. Paste the AppId to Assets/Hathora/**HathoraClientConfig**:
 
-5. In the NetworkManager's `Tugboat` component (from `NetworkManager` GameObject), paste the **Server** `Port` and **Client** Ipv4 (probably a host name, like `1.proxy.hathora.dev`). (!) Note you should leave **Server** IP empty:
+    ![enter image description here](https://i.imgur.com/fhuv7VM.png)
 
-![image](https://i.imgur.com/faWmgcO.png)
+4. Run the `HathoraDemoScene` -> click **Hathora SDK** -> Click **Client Auth** to start:
 
-6. Press Play within the Unity editor >> "Client" button >> You should spawn in (you _only_ spawn in if the Server is found)! Try pressing `[R]` to RPC the server for a ping/pong.
+    ![image](https://i.imgur.com/PcNUHMq.png)
 
-You have now successfully set up and tested your Hathora Unity project! If you encounter any issues or need further assistance, please consult the documentation or reach out to the community for support. Happy coding!
+5. Click **Create Lobby** to create a room (or "Get" if you have a RoomId).
+    💡 Lobby is the client-side method for telling the server to create a *Room*.
+    
+6. You now have a **RoomId** -> From here, list public lobbies or get the server info to connect:
+
+    ![image](https://i.imgur.com/H1g8djV.png)
+
+7. You may now either list public lobbies or get the connection info to connect to the lobby, such as host (ip) and port:
+
+    ![image](https://i.imgur.com/tV7EzBn.png)
 
 # Troubleshooting
 
@@ -115,14 +126,14 @@ You have now successfully set up and tested your Hathora Unity project! If you e
 
 * This seems to be a Unity NGO bug: The server appears to take ownership a few moments *after* the client spawns. You can async/await for !IsOwner. This is likely because clients can join *before* a server kicks in.
 
-> I tried swapping Fishnet for Unity NGO, but experiencing oddities.
+> I tried swapping FishNet for Unity NGO, but experiencing oddities.
 
 * Remember that Unity NGO is in very early access: We recommend you use a production-ready service, for now.
 
 # TODO
 
 1. Add a license to this repo.
-2. Launch the Hathora Deployment tool at post-build (within Unity editor), prompting if you wish to deploy now.
+2. Implement the "Join Lobby" button in the *Hathora SDK* demo.
 
 # License
 
