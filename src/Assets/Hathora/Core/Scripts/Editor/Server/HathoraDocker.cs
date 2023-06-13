@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,6 +52,26 @@ namespace Hathora.Core.Scripts.Editor.Server
             }
         }
 
+        /// <returns>isSuccess</returns>
+        public static bool OpenDockerfile(HathoraServerPaths _paths)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(_paths.PathToDotHathoraDockerfile)
+                {
+                    // tell the system to use its file association info to open file
+                    UseShellExecute = true,
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraDocker.OpenDockerfile] Error: {e.Message}");
+                return false; // !isSuccess
+            }
+
+            return true; // isSuccess
+        }
+        
         /// <summary>
         /// Writes dynamic paths
         /// TODO: Add opts to customize the Dockerfile without editing directly.

@@ -1,5 +1,7 @@
 // Created by dylan@hathora.dev
 
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,7 +10,7 @@ using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Editor.Server
 {
@@ -48,7 +50,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             _cancelToken.ThrowIfCancellationRequested();
             
             // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
-            bool genDockerfile = _overwriteExistingDockerfile || !File.Exists(configPaths.PathToDotHathoraDockerfile); 
+            bool genDockerfile = _overwriteExistingDockerfile || !CheckIfDockerfileExists(configPaths); 
             if (genDockerfile)
             {
                 Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
@@ -71,6 +73,11 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             return buildReport;
         }
+
+        /// <summary></summary>
+        /// <param name="_paths">Create this from a ServerConfig</param>
+        public static bool CheckIfDockerfileExists(HathoraServerPaths _paths) => 
+            File.Exists(_paths.PathToDotHathoraDockerfile);
 
         private static BuildPlayerOptions generateBuildPlayerOptions(
             HathoraServerConfig _serverConfig, 

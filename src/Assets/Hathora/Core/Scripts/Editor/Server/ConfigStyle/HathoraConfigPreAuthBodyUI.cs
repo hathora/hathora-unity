@@ -116,10 +116,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                 "Log in with token",
                 _url: null,
                 _centerAlign: true,
-                onClick: () =>
-                {
-                    onLoginWithTokenCacheBtnClick();
-                });  
+                onClick: onLoginWithTokenCacheBtnClick);  
 
             InsertSpace3x();
         }
@@ -133,10 +130,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                 "Register Here",
                 _url: null,
                 _centerAlign: true,
-                onClick: () =>
-                {
-                    onRegisterBtnClick(); // !await
-                });  
+                onClick: onRegisterBtnClick);  
 
             InsertSpace3x();
         }

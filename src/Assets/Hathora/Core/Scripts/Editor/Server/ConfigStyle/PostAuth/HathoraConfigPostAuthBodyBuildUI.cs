@@ -1,10 +1,15 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Core.Scripts.Editor.Common;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
+using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -72,10 +77,26 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             bool enableBuildBtn = ServerConfig.MeetsBuildAndDeployBtnReqs();
             if (!enableBuildBtn && !HathoraServerDeploy.IsDeploying)
                 insertGenerateServerBuildBtnHelpboxOnMissingReqs();
-            
+            else
+                insertGenerateServerBuildBtnInfoHelpbox();
+
             insertGenerateServerBuildBtn(enableBuildBtn); // !await
+            insertOpenGeneratedDockerfileLinkLabel();
         }
-        
+
+        /// <summary>Only if exists. (!) RESOURCE INTENSIVE</summary>
+        private void insertOpenGeneratedDockerfileLinkLabel()
+        {
+            // USER INPUT >> Calls back onClick
+            InsertLinkLabel(
+                "Open Dockerfile",
+                _url: null,
+                _centerAlign: true,
+                onClick: onOpenDockerfileBtnClick);
+            
+            InsertSpace1x();
+        }
+
         /// <summary>
         /// Generally used for helpboxes to explain why a button is disabled.
         /// </summary>
@@ -103,10 +124,17 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             return helpboxLabelStrb;
         }
+        
+        private static void insertGenerateServerBuildBtnInfoHelpbox()
+        {
+            // Post the help box *before* we disable the button so it's easier to see (if toggleable)
+            const string labelStr = "This will generate a Linux Server Build for your game. " +
+                "It will also generate the Dockerfile for that build " +
+                "(located in <project>/.hathora directory)";
+            
+            EditorGUILayout.HelpBox(labelStr, MessageType.Info);
+        }
 
-        /// <summary>
-        /// </summary>
-        /// <returns>enableBuildBtn</returns>
         private void insertGenerateServerBuildBtnHelpboxOnMissingReqs()
         {
             StringBuilder helpboxLabelStrb = GetCreateBuildMissingReqsStrb(ServerConfig);
@@ -164,6 +192,22 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         
         #region Event Logic
+        private void onOpenDockerfileBtnClick()
+        {
+            HathoraServerPaths paths = new(ServerConfig);
+            
+            generateDockerfileIfNotExists(paths);
+            HathoraDocker.OpenDockerfile(paths);
+        }
+
+        private void generateDockerfileIfNotExists(HathoraServerPaths _paths)
+        {
+            bool dockerfileExists = HathoraServerBuild.CheckIfDockerfileExists(_paths);
+            
+            if (!dockerfileExists)
+                HathoraDocker.GenerateDockerFileStr(_paths);
+        }
+        
         private void onServerBuildDirChanged(string _inputStr)
         {
             ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName = _inputStr;
