@@ -50,7 +50,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         public async Task<ConnectionInfoV2> ClientGetConnectionInfoAsync(
             string roomId, 
             float initPollTimerSecs = 0.1f, 
-            float pollTimeoutSecs = 10f,
+            float pollTimeoutSecs = 15f,
             CancellationToken _cancelToken = default)
         {
             float pollTimerTickedSecs = 0;
