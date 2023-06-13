@@ -1,4 +1,4 @@
-![image](https://assetstorev1-prd-cdn.unity3d.com/key-image/4023f2ed-1dc4-4ca6-a7ae-2987fb1a2272.webp)
+![image](https://assetstorev1-prd-cdn.unity3d.com/key-image/44946285-5088-4f57-b51b-a996184da940.webp)
 
 # Hathora-Unity Guide
 
