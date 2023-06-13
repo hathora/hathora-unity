@@ -42,13 +42,12 @@ namespace Hathora.Demo.Scripts.Client
         private void Awake()
         {
             setSingleton();
-            assertUsingValidNetConfig();
         }
 
-        private void assertUsingValidNetConfig()
+        public void AssertUsingValidNetConfig()
         {
             // Are we using any Client Config at all?
-            if (netHathoraConfig == null || !netHathoraConfig.HasAppId)
+            if (netHathoraConfig == null || !netHathoraConfig.HasAppId && NetUI.Singleton != null)
                 NetUI.Singleton.SetInvalidConfig(netHathoraConfig);
         }
 

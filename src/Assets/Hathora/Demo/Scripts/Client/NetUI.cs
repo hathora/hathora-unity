@@ -109,6 +109,8 @@ namespace Hathora.Demo.Scripts.Client
         #region UI Interactions
         public void OnAuthLoginBtnClick()
         {
+            hathoraClient.AssertUsingValidNetConfig();
+                
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
             _ = hathoraClient.AuthLoginAsync(); // !await
         }
@@ -385,7 +387,8 @@ namespace Hathora.Demo.Scripts.Client
         
         public void SetInvalidConfig(HathoraClientConfig _config)
         {
-            authBtn.gameObject.SetActive(false); // Prevent UI overlap
+            if (authBtn != null)
+                authBtn.gameObject.SetActive(false); // Prevent UI overlap
             
             // Core issue
             string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
@@ -393,32 +396,30 @@ namespace Hathora.Demo.Scripts.Client
             
             if (_config == null)
             {
-                Debug.LogError($"[{nameof(NetHathoraClient)}] !{nameof(HathoraClientConfig)} - " +
-                    $"Serialize one at {netComponentPathFriendlyStr}");
-                
                 InvalidConfigPnl.SetActive(true);
-                return;
+
+                throw new Exception($"[{nameof(NetHathoraClient)}] !{nameof(HathoraClientConfig)} - " +
+                    $"Serialize one at {netComponentPathFriendlyStr}");
             }
             
             if (!_config.HasAppId)
             {
-                Debug.LogError($"[{nameof(NetHathoraClient)}] !AppId - " +
-                    $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
-                    $"ServerConfig's AppId should match your ClientConfig's AppId)");
-                
                 InvalidConfigPnl.SetActive(true);
-                return;
+
+                throw new Exception($"[{nameof(NetHathoraClient)}] !AppId - " +
+                    $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
+                    "ServerConfig's AppId should match your ClientConfig's AppId)");
             }
             
-            bool isTemplate = _config.name.Contains(".template"); 
-            if (isTemplate)
-            {
-                Debug.LogError("[NetUI.SetInvalidConfig] Error: " +
-                    "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
+            bool isTemplate = _config.name.Contains(".template");
+            if (!isTemplate)
+                return;
+            
+            authBtn.gameObject.SetActive(false);
+            InvalidConfigTemplatePnl.SetActive(true);
                 
-                authBtn.gameObject.SetActive(false);
-                InvalidConfigTemplatePnl.SetActive(true);
-            }
+            throw new Exception("[NetUI.SetInvalidConfig] Error: " +
+                "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
         }
         #endregion /Dynamic UI
     }
