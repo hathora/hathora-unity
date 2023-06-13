@@ -90,7 +90,9 @@ namespace Hathora.Core.Scripts.Editor.Server
 FROM ubuntu
 
 # Copy the server build files into the container, if Dockerfile is @ parent
-COPY --chmod=0755 {relativePathToBuildDir} .
+COPY {relativePathToBuildDir} .
+
+RUN chmod +x ./{_serverPaths.ExeBuildName}
 
 # Run the Linux server in headless mode as a dedicated server
 CMD ./{_serverPaths.ExeBuildName} -mode server -batchmode -nographics
