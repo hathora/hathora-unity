@@ -6,12 +6,10 @@
 # Unity Build config
 $sourceDir = "../src/"
 $serverBuildDir = "$sourceDir/Build-Server/"
-$serverExecutable = "Hathora-Unity-LinuxServer.x86_64""
-$dockerfilePath = "$sourceDir/Dockerfile"
-$archiveName = "Build-Server.tar"
-$compressedArchiveName = "Build-Server.tar.gz"
-$outputPath = "./uploadToHathora/"
-$tempPath = "./_uploadToHathora/"
+$serverExecutable = "Hathora-Unity-LinuxServer.x86_64"
+$tempDirName = ".hathora"
+$dockerfilePath = "$sourceDir/$tempDirName/Dockerfile"
+$archivedNameTar = "Build-Server.tar"
 
 # Hathora Deploy Config
 $appId = "TODO"
@@ -20,7 +18,13 @@ $planName = "tiny"
 $transportType = "udp"
 $containerPort = 7777
 $envJsonArr = "[]"
+
+# Autogen
+$outputPath = "./$tempDirName"
+$tempPath = "./_$tempDirName"
+$archivedNameTarGz = "$archivedNameTar.gz"
 $hathoraConsoleAppBaseUrl = "https://console.hathora.dev/application/"
+
 
 function GenerateDockerfile {
     $dockerfileContent = @"
@@ -45,7 +49,7 @@ function UploadToHathora {
 	
 	# Use the Hathora CLI to upload the build
 	Write-Host "Uploading to Hathora..."
-    $tarballPath = "$outputPath$compressedArchiveName"
+    $tarballPath = "$outputPath/$archivedNameTarGz"
     hathora-cloud deploy --file $tarballPath --appId $appId --roomsPerProcess $roomsPerProcess --planName $planName --transportType $transportType --containerPort $containerPort --env $envJsonArr
 	
 	# Prompt the user to view the app in the Hathora console
@@ -78,23 +82,23 @@ GenerateDockerfile
 
 # Wipe the old, if any - just to be safe
 Write-Host "Deleting old archives, if any..."
-del ./uploadToHathora/*
+del $outputPath/*
 
 # Create a tar archive in the temporary path
 Write-Host "Creating tar archive..."
-7z.exe a -ttar "$tempPath$archiveName" $serverBuildDir $dockerfilePath
+7z.exe a -ttar "$tempPath/$archivedNameTar" $serverBuildDir $dockerfilePath
 
 # Compress the tar archive in the temporary path
 Write-Host "Compressing tar archive..."
-7z.exe a -tgzip "$tempPath$compressedArchiveName" "$tempPath$archiveName"
+7z.exe a -tgzip "$tempPath/$archivedNameTarGz" "$tempPath/$archivedNameTar"
 
 # Remove the intermediate tar file in the temporary path
 Write-Host "Removing intermediate tar file..."
-Remove-Item "$tempPath$archiveName"
+Remove-Item "$tempPath/$archivedNameTar"
 
 # Move the final tarball from the temporary path to the output path
 Write-Host "Moving final tarball to the output path..."
-Move-Item -Path "$tempPath$compressedArchiveName" -Destination $outputPath
+Move-Item -Path "$tempPath/$archivedNameTarGz" -Destination $outputPath
 
 # Clean up the temporary directory
 Write-Host "Cleaning up the temporary directory..."
