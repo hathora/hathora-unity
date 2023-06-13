@@ -122,7 +122,7 @@ namespace FishNet.Object
         public void ClearBuffedRpcs()
         {
             foreach ((PooledWriter writer, Channel _) in _bufferedRpcs.Values)
-                writer.Dispose();
+                writer.Store();
             _bufferedRpcs.Clear();
         }
 
@@ -196,14 +196,14 @@ namespace FishNet.Object
         /// <param name="channel"></param>
         [CodegenMakePublic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SendServerRpc_Internal(uint hash, PooledWriter methodWriter, Channel channel)
+        protected internal void SendServerRpc_Internal(uint hash, PooledWriter methodWriter, Channel channel)
         {
             if (!IsSpawnedWithWarning())
                 return;
 
             PooledWriter writer = CreateRpc(hash, methodWriter, PacketId.ServerRpc, channel);
             _networkObjectCache.NetworkManager.TransportManager.SendToServer((byte)channel, writer.GetArraySegment());
-            writer.DisposeLength();
+            writer.StoreLength();
         }
         
         /// <summary>
@@ -215,7 +215,7 @@ namespace FishNet.Object
         [APIExclude]
         [CodegenMakePublic] //Make internal.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SendObserversRpc_Internal(uint hash, PooledWriter methodWriter, Channel channel, bool buffered, bool excludeServer, bool excludeOwner)
+        protected internal void SendObserversRpc_Internal(uint hash, PooledWriter methodWriter, Channel channel, bool buffered, bool excludeServer, bool excludeOwner)
         {
             if (!IsSpawnedWithWarning())
                 return;
@@ -240,13 +240,13 @@ namespace FishNet.Object
             if (buffered)
             {
                 if (_bufferedRpcs.TryGetValueIL2CPP(hash, out (PooledWriter pw, Channel ch) result))
-                    result.pw.DisposeLength();
+                    result.pw.StoreLength();
                 _bufferedRpcs[hash] = (writer, channel);
             }
             //If not buffered then dispose immediately.
             else
             {
-                writer.DisposeLength();
+                writer.StoreLength();
             }
         }
 
@@ -255,7 +255,7 @@ namespace FishNet.Object
         /// </summary>
         [CodegenMakePublic] //Make internal.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SendTargetRpc_Internal(uint hash, PooledWriter methodWriter, Channel channel, NetworkConnection target, bool excludeServer, bool validateTarget = true)
+        protected internal void SendTargetRpc_Internal(uint hash, PooledWriter methodWriter, Channel channel, NetworkConnection target, bool excludeServer, bool validateTarget = true)
         {
             if (!IsSpawnedWithWarning())
                 return;
@@ -294,7 +294,7 @@ namespace FishNet.Object
                 writer = CreateRpc(hash, methodWriter, PacketId.TargetRpc, channel);
 
             _networkObjectCache.NetworkManager.TransportManager.SendToClient((byte)channel, writer.GetArraySegment(), target);
-            writer.DisposeLength();
+            writer.Store();
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace FishNet.Object
             int rpcHeaderBufferLength = GetEstimatedRpcHeaderLength();
             int methodWriterLength = methodWriter.Length;
             //Writer containing full packet.
-            PooledWriter writer = WriterPool.GetWriter(rpcHeaderBufferLength + methodWriterLength);
+            PooledWriter writer = WriterPool.Retrieve(rpcHeaderBufferLength + methodWriterLength);
             writer.WritePacketId(packetId);
             writer.WriteNetworkBehaviour(this);
             //Only write length if reliable.

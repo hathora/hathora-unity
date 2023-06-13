@@ -8,13 +8,13 @@ namespace FishNet.Connection
     /// <summary>
     /// A container for a connected client used to perform actions on and gather information for the declared client.
     /// </summary>
-    public partial class NetworkConnection : IEquatable<NetworkConnection>
+    public partial class NetworkConnection
     {
         /// <summary>
         /// Level of detail for each NetworkObject.
         /// Since this is called frequently this field is intentionally not an accessor to increase performance.
         /// </summary>
-        public Dictionary<NetworkObject, byte> LevelOfDetails = new Dictionary<NetworkObject, byte>();
+        public Dictionary<NetworkObject, byte> LevelOfDetails = new Dictionary<NetworkObject, byte>(new NetworkObjectIdComparer());
         /// <summary>
         /// Number oftimes this connection may send a forced LOD update.
         /// </summary>
@@ -35,7 +35,8 @@ namespace FishNet.Connection
             if (IsLocalClient)
                 return false;
 
-            return ((LastPacketTick - LastLevelOfDetailUpdate) > expectedInterval);
+            uint lastPacketTick = PacketTick.RemoteTick;
+            return ((lastPacketTick - LastLevelOfDetailUpdate) > expectedInterval);
         }
         
         /// <summary>

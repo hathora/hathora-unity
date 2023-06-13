@@ -199,6 +199,7 @@ namespace FishNet.Managing
         /// <summary>
         /// Object pool to use for this NetworkManager. Value may be null.
         /// </summary>
+        public ObjectPool ObjectPool => _objectPool;
         [Tooltip("Object pool to use for this NetworkManager. Value may be null.")]
         [SerializeField]
         private ObjectPool _objectPool;
@@ -465,18 +466,52 @@ namespace FishNet.Managing
         /// Clears a client collection after disposing of the NetworkConnections.
         /// </summary>
         /// <param name="clients"></param>
-        internal void ClearClientsCollection(Dictionary<int, NetworkConnection> clients)
+        internal void ClearClientsCollection(Dictionary<int, NetworkConnection> clients, int transportIndex = -1)
         {
-            foreach (NetworkConnection conn in clients.Values)
-                conn.Dispose();
+            //True to dispose all connections.
+            bool disposeAll = (transportIndex < 0);
+            List<int> cache = CollectionCaches<int>.RetrieveList();
 
-            clients.Clear();
+
+            foreach (KeyValuePair<int, NetworkConnection> kvp in clients)
+            {
+                NetworkConnection value = kvp.Value;
+                //If to check transport index.
+                if (!disposeAll)
+                {
+                    if (value.TransportIndex == transportIndex)
+                    {
+                        cache.Add(kvp.Key);
+                        value.Dispose();
+                    }
+                }
+                //Not using transport index, no check required.
+                else
+                {
+                    value.Dispose();
+                }
+            }
+
+            //If all are being disposed the collection can be cleared.
+            if (disposeAll)
+            {
+                clients.Clear();
+            }
+            //Otherwise, only remove those which were disposed.
+            else
+            {
+                foreach (int item in cache)
+                    clients.Remove(item);
+            }
+
+            CollectionCaches<int>.Store(cache);
         }
 
         #region Object pool.
         /// <summary>
         /// Returns an instantiated copy of prefab.
         /// </summary>
+        [Obsolete("Use GetPooledInstantiated(NetworkObject, ushort, bool).")] //Remove on 2024/01/01.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NetworkObject GetPooledInstantiated(NetworkObject prefab, bool asServer)
         {
@@ -493,6 +528,7 @@ namespace FishNet.Managing
         /// <summary>
         /// Returns an instantiated copy of prefab.
         /// </summary>
+        [Obsolete("Use GetPooledInstantiated(GameObject, ushort, bool).")] //Remove on 2024/01/01.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NetworkObject GetPooledInstantiated(GameObject prefab, bool asServer)
         {
@@ -517,6 +553,7 @@ namespace FishNet.Managing
         /// <summary>
         /// Returns an instantiated object that has prefabId.
         /// </summary>
+        [Obsolete("Use GetPooledInstantiated(int, ushort, bool).")] //Remove on 2024/01/01.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NetworkObject GetPooledInstantiated(int prefabId, bool asServer)
         {
@@ -548,6 +585,16 @@ namespace FishNet.Managing
         public void StorePooledInstantiated(NetworkObject instantiated, bool asServer)
         {
             _objectPool.StoreObject(instantiated, asServer);
+        }
+        /// <summary>
+        /// Instantiates a number of objects and adds them to the pool.
+        /// </summary>
+        /// <param name="prefab">Prefab to cache.</param>
+        /// <param name="count">Quantity to spawn.</param>
+        /// <param name="asServer">True if storing prefabs for the server collection. This is only applicable when using DualPrefabObjects.</param>
+        public void CacheObjects(NetworkObject prefab, int count, bool asServer)
+        {
+            _objectPool.CacheObjects(prefab, count, asServer);
         }
         #endregion
 

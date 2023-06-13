@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 2155251397865338026}
   - component: {fileID: 6670251115109007609}
   m_Layer: 2
-  m_Name: Capsule
+  m_Name: UrpCapsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 181022890959971896}
   - component: {fileID: 360929489047336484}
   m_Layer: 0
-  m_Name: Player
+  m_Name: HathoraPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -815,6 +815,10 @@ MonoBehaviour:
   - {fileID: 360929489047336484}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 5, y: 0, z: -10}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
   _isGlobal: 0
   _initializeOrder: 0
@@ -824,7 +828,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 3868013519905911289
+  <AssetPathHash>k__BackingField: 15794458545587658224
   _sceneNetworkObjects:
   - {fileID: 611616139817875448}
 --- !u!114 &6420552185407096997
@@ -869,6 +873,8 @@ MonoBehaviour:
   _teleportThreshold: 1
   _clientAuthoritative: 1
   _sendToOwner: 1
+  _useNetworkLod: 1
+  _interval: 1
   _synchronizePosition: 1
   _positionSnapping:
     X: 0

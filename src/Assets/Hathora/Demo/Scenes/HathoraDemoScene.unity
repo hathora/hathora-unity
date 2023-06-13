@@ -3045,7 +3045,7 @@ MonoBehaviour:
   _objectPool: {fileID: 0}
   _persistence: 0
   _logging: {fileID: 11400000, guid: ad9ba7ffb816e4b4b8d4079a2c06433e, type: 2}
-  _spawnablePrefabs: {fileID: 11400000, guid: b93995cd6d018f9458688a111b8f9a6a, type: 2}
+  _spawnablePrefabs: {fileID: 11400000, guid: 87e03fd4278869c4c8f0a506e7382a1c, type: 2}
 --- !u!4 &1194941214106636806
 Transform:
   m_ObjectHideFlags: 0
@@ -3073,7 +3073,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 211a9f6ec51ddc14f908f5acc0cd0423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 611616139817875448, guid: bf5f023b4017a5e41a9815ec5745df3d,
+  _playerPrefab: {fileID: 611616139817875448, guid: 6bb365439fe9747498cfafdea5f1d002,
     type: 3}
   _addToDefaultScene: 1
   Spawns:

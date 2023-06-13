@@ -12,6 +12,7 @@ namespace FishNet.Object
     /// </summary>
     public abstract partial class NetworkBehaviour : MonoBehaviour
     {
+        #region Public.
         /// <summary>
         /// True if this NetworkBehaviour is initialized for the network.
         /// </summary>
@@ -45,18 +46,78 @@ namespace FishNet.Object
         /// NetworkObject this behaviour is for.
         /// </summary>
         public NetworkObject NetworkObject => _networkObjectCache;
+        #endregion
 
+        #region Private.
         /// <summary>
-        /// Initializes this script. This will only run once even as host.
+        /// True if initialized at some point asServer.
         /// </summary>
-        /// <param name="networkObject"></param>
-        /// <param name="componentIndex"></param>
-        internal void InitializeOnce_Internal()
+        private bool _initializedOnceServer;
+#pragma warning disable CS0414
+        /// <summary>
+        /// True if initialized at some point not asServer.
+        /// </summary>
+        private bool _initializedOnceClient;
+#pragma warning restore CS0414
+        #endregion
+
+#if !PREDICTION_V2
+        /// <summary>
+        /// Preinitializes this script for the network.
+        /// </summary>
+        internal void Preinitialize_Internal(NetworkObject nob, bool asServer)
         {
-            InitializeOnceSyncTypes();
-            InitializeOnceRpcLinks();
+            InitializeOnceSyncTypes(asServer);
+            if (asServer)
+            {                
+                InitializeRpcLinks();
+                _initializedOnceServer = true;
+            }
+            else
+            {
+                _initializedOnceClient = true;
+            }
+        }
+#else
+        /// <summary>
+        /// Preinitializes this script for the network.
+        /// </summary>
+        internal void Preinitialize_Internal(NetworkObject nob, bool asServer)
+        {
+            /* Guestimate the last replicate tick 
+             * based on latency and last packet tick.
+             * Going to try and send last input with spawn
+             * packet which will have definitive tick. //todo
+             */
+            if (!asServer && !nob.IsServer && !IsOwner)
+            {
+                long estimatedTickDelay = (TimeManager.Tick - TimeManager.LastPacketTick);
+                if (estimatedTickDelay < 0)
+                    estimatedTickDelay = 0;
+                //todo also update this with the value from packet.
+                _networkObjectCache.ReplicateTick.Update(nob.TimeManager, nob.TimeManager.LastPacketTick - (uint)estimatedTickDelay);
+            }
+
+            InitializeOnceSyncTypes(asServer);
+            if (asServer)
+            {
+                InitializeRpcLinks();
+                _initializedOnceServer = true;
+            }
+            else
+            {
+                if (!_initializedOnceClient && nob.UsePrediction)
+                    nob.RegisterPredictionBehaviourOnce(this);
+
+                _initializedOnceClient = true;
+            }
         }
 
+#endif
+        internal void Deinitialize(bool asServer)
+        {
+
+        }
 
         /// <summary>
         /// Serializes information for network components.
@@ -99,7 +160,7 @@ namespace FishNet.Object
         {
 #if UNITY_EDITOR
             if (Application.isPlaying)
-                return; 
+                return;
 
             TryAddNetworkObject();
 #endif
@@ -165,10 +226,10 @@ namespace FishNet.Object
                 NetworkObject[] nobs = t.GetComponents<NetworkObject>();
                 //This shouldn't be possible but does occur sometimes; maybe a unity bug?
                 if (nobs.Length > 1)
-                { 
+                {
                     //Update added to first entryt.
                     _addedNetworkObject = nobs[0];
- 
+
                     string useMenu = " You may also use the Fish-Networking menu to automatically remove duplicate NetworkObjects.";
                     string sceneName = t.gameObject.scene.name;
                     if (string.IsNullOrEmpty(sceneName))
@@ -177,7 +238,7 @@ namespace FishNet.Object
                         Debug.LogError($"Object {t.name} in scene {sceneName} has multiple NetworkObject components. Please remove the extra component(s) to prevent errors.{useMenu}");
                 }
 
-            } 
+            }
 #else
             return null;
 #endif
