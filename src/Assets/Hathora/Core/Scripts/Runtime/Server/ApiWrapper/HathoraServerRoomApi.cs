@@ -79,6 +79,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 activeConnectionInfo = await GetConnectionInfoAsync(
                     activeRoom.RoomId,
                     _cancelToken);
+                
+                Assert.IsTrue(activeConnectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active, 
+                    "activeConnectionInfo !Active status (expected Active since room is Active");
             }
             catch (Exception e)
             {
@@ -86,6 +89,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     $"{e.Message} (Check console.hathora.dev logs for +info)");
                 throw;
             }
+            
+            
 
             Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
                 $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
