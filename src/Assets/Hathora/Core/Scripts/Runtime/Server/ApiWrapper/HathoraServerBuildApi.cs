@@ -61,7 +61,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
+            Debug.Log($"[HathoraServerRoomApi.CreateBuildAsync] Success: " +
                 $"<color=yellow>createCloudBuildResult: {createCloudBuildResult.ToJson()}</color>");
 
             return createCloudBuildResult;
@@ -162,7 +162,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
-            Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success? {isSuccess}, " +
+            Debug.Log($"[HathoraServerRoomApi.GetBuildInfoAsync] Success? {isSuccess}, " +
                 $"<color=yellow>createCloudBuildResult: {getBuildInfoResult.ToJson()}</color>");
 
             return getBuildInfoResult;
