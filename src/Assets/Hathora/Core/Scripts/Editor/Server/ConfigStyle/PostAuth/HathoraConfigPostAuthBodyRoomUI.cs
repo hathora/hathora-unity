@@ -424,6 +424,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void onCreateRoomCancelBtnClick(CancellationTokenSource _cancelTokenSrc)
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI] onCreateRoomCancelBtnClick");
+            _cancelTokenSrc?.Cancel();
             onCreateRoomDone();
         }
 
