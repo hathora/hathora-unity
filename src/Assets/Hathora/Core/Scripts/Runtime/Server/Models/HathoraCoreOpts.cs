@@ -94,9 +94,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
  #pragma warning restore CS0162 // Don't spam logs for `Unreachable code detected`
                 
                 enumerable = enumerable.Prepend(_prependDummyIndex0Str);
-            }      
+            }
 
-            return enumerable.ToList();
+            return enumerable?.ToList();
         }
         
         
