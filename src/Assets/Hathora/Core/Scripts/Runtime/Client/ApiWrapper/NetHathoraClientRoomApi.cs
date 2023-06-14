@@ -7,6 +7,7 @@ using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -43,23 +44,24 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// (!) We'll poll until we have an `Active` Status: Be sure to await!
         /// </summary>
         /// <param name="roomId">Get this from NetHathoraClientLobbyApi join/create</param>
-        /// <param name="initPollTimerSecs"></param>
+        /// <param name="pollIntervalSecs"></param>
         /// <param name="pollTimeoutSecs"></param>
         /// <param name="_cancelToken"></param>
         /// <returns>Room on success</returns>
         public async Task<ConnectionInfoV2> ClientGetConnectionInfoAsync(
             string roomId, 
-            float initPollTimerSecs = 0.1f, 
-            float pollTimeoutSecs = 15f,
+            int pollIntervalSecs = 1, 
+            int pollTimeoutSecs = 15,
             CancellationToken _cancelToken = default)
         {
-            float pollTimerTickedSecs = 0;
-            
             // Poll until we get the `Active` status.
+            int pollSecondsTicked; // Duration to be logged later
             ConnectionInfoV2 connectionInfoResponse = null;
-
-            for (pollTimerTickedSecs = 0; pollTimerTickedSecs < pollTimeoutSecs; pollTimerTickedSecs++)
+            
+            for (pollSecondsTicked = 0; pollSecondsTicked < pollTimeoutSecs; pollSecondsTicked++)
             {
+                _cancelToken.ThrowIfCancellationRequested();
+                
                 try
                 {
                     connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
@@ -80,20 +82,21 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
                     break;
                 
-                await Task.Delay(TimeSpan.FromSeconds(initPollTimerSecs), _cancelToken);
+                await Task.Delay(TimeSpan.FromSeconds(pollIntervalSecs), _cancelToken);
             }
 
             // -----------------------------------------
             // We're done polling -- sucess or timeout?
             if (connectionInfoResponse?.Status != ConnectionInfoV2.StatusEnum.Active)
             {
-                Debug.LogError("[NetHathoraClientAuthApi]**ERR @ ClientGetConnectionInfoAsync: Timed out");
+                Debug.LogError("[NetHathoraClientAuthApi.ClientGetConnectionInfoAsync] " +
+                    "Error: Timed out");
                 return null;
             }
 
             // Success
             Debug.Log($"[NetHathoraClientRoomApi.ClientGetConnectionInfoAsync] Success " +
-                $"(after {pollTimerTickedSecs}s polling): <color=yellow>" +
+                $"(after {pollSecondsTicked}s polling): <color=yellow>" +
                 $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
 
             NetSession.ServerConnectionInfo = connectionInfoResponse;
