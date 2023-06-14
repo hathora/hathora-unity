@@ -64,7 +64,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: {e}");
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] " +
+                    $"Error => CreateRoomAsync: {e}");
                 throw;
             }
             
@@ -88,8 +89,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
-                    $"{e.Message} (Check console.hathora.dev logs for +info)");
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] " +
+                    $"Error => PollConnectionInfoUntilActiveAsync: {e.Message} " +
+                    "(Check console.hathora.dev logs for +info)");
                 throw;
             }
             
@@ -111,8 +113,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
-                    $"{e.Message} (Check console.hathora.dev logs for +info)");
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] " +
+                    $"Error => GetRoomInfoAsync: {e.Message} " +
+                    "(Check console.hathora.dev logs for +info)");
                 throw;
             }
 

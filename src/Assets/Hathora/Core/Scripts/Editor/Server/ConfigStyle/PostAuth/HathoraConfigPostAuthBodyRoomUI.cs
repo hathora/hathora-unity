@@ -24,7 +24,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private HathoraConfigPostAuthBodyRoomLobbyUI roomLobbyUI { get; set; }
         public static CancellationTokenSource CreateRoomCancelTokenSrc { get; set; } // TODO
         private const int CREATE_ROOM_TIMEOUT_SECONDS = 30;
-        private bool isCreatingRoom { get; set; }
+        private bool isCreatingRoomAwaitingActiveStatus { get; set; }
         
         // Region lists
         private readonly List<string> displayOptsStrList;
@@ -103,7 +103,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             bool enableCreateRoomBtn = ServerConfig.MeetsCreateRoomBtnReqs();
             insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
 
-            bool showCancelBtn = isCreatingRoom && CreateRoomCancelTokenSrc.Token.CanBeCanceled; 
+            bool showCancelBtn = isCreatingRoomAwaitingActiveStatus && CreateRoomCancelTokenSrc.Token.CanBeCanceled; 
             if (showCancelBtn)
                 insertCreateRoomLobbyCancelBtn(CreateRoomCancelTokenSrc);
             else
@@ -291,7 +291,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertCreateRoomLobbyBtn(bool _enable)
         {
-            string btnLabelStr = isCreatingRoom 
+            string btnLabelStr = isCreatingRoomAwaitingActiveStatus 
                 ? "Creating Room..." 
                 : "Create Room";
 
@@ -364,11 +364,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         }
         
         /// <summary>
-        /// On cancel, we'll set !isCreatingRoom so we can try again.
+        /// On cancel, we'll set !isCreatingRoomAwaitingActiveStatus so we can try again.
         /// </summary>
         private async Task onCreateRoomLobbyBtnClick()
         {
-            isCreatingRoom = true;
+            isCreatingRoomAwaitingActiveStatus = true;
             resetLastCreatedRoom(); // Both UI + ServerConfig
 
             createNewCreateRoomCancelToken();
@@ -431,7 +431,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void onCreateRoomDone()
         {
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
-            isCreatingRoom = false;
+            isCreatingRoomAwaitingActiveStatus = false;
         }
         
         
