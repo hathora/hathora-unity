@@ -73,9 +73,15 @@ namespace Hathora.Demo.Scripts.Client
         [SerializeField]
         private TextMeshProUGUI getServerInfoErrTxt;
         
-        [Header("Transport (Fishnet): Join Lobby as Client")]
+        [Header("Transport (Fishnet): Join Lobby [as Client]")]
         [SerializeField]
         private Button joinLobbyAsClientBtn;
+        
+        [SerializeField]
+        private TextMeshProUGUI joiningLobbyStatusTxt;
+        
+        [SerializeField]
+        private TextMeshProUGUI joinedLobbyResultTxt;
         #endregion // Serialized Fields
 
         public static NetUI Singleton { get; private set; }
@@ -195,15 +201,30 @@ namespace Hathora.Demo.Scripts.Client
             _ = ShowFadeTxtThenFadeAsync(copiedServerInfoFadeTxt); // !await
         }
 
+        /// <summary>Component OnClick hides joinLobbyAsClientBtn</summary>
         public void OnJoinLobbyAsClientBtnClick()
         {
-            _ = hathoraClient.JoinLobbyAsync();
+            Debug.Log("[NetHathoraClient] OnJoinLobbyAsClientBtnClick");
+
+            joinLobbyAsClientBtn.gameObject.SetActive(false);
+            joinedLobbyResultTxt.gameObject.SetActive(false);
+            joiningLobbyStatusTxt.gameObject.SetActive(true);
+            
+            _ = hathoraClient.ConnectAsync();
         }
 
-        public void OnJoinLobbyFailed()
+        public void OnJoinLobbyFailed(string _friendlyErr)
         {
+            Debug.Log($"[NetHathoraClient] OnJoinLobbyFailed: {_friendlyErr}");
+
+            joiningLobbyStatusTxt.gameObject.SetActive(false);
             joinLobbyAsClientBtn.gameObject.SetActive(true);
-            // TODO: Show err
+
+            if (string.IsNullOrEmpty(_friendlyErr))
+                return;
+            
+            joinedLobbyResultTxt.text = $"<color=orange>{_friendlyErr}</color>";
+            joinedLobbyResultTxt.gameObject.SetActive(true);
         }
         #endregion // UI Interactions
         

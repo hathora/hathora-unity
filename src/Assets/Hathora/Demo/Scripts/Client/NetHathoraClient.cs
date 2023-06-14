@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FishNet;
+using FishNet.Managing.Client;
+using FishNet.Object;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
@@ -12,6 +14,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demo.Scripts.Client.Models;
+using LiteNetLib;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -24,6 +27,8 @@ namespace Hathora.Demo.Scripts.Client
     /// </summary>
     public class NetHathoraClient : MonoBehaviour
     {
+        private bool isConnecting;
+        
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         private HathoraClientConfig netHathoraConfig;
@@ -72,44 +77,102 @@ namespace Hathora.Demo.Scripts.Client
                 netHathoraConfig, 
                 netSession, 
                 _hathoraSdkConfig: null); // Base will create this
+            
+            // This is a Client manager script; listen for relative events
+            InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
         }
         #endregion // Init
         
         
         #region Interactions from UI
         /// <summary>
-        /// Connect to the Server as a Client via net code. Uses cached vals. 
+        /// Connect to the Server as a Client via net code. Uses cached vals.
+        /// Currently uses FishNet.Tugboat (UDP) transport.
+        /// This will trigger `OnClientConnectionState(state)`
         /// </summary>
         /// <returns>isSuccess</returns>
-        public bool JoinLobbyAsync()
+        public bool ConnectAsync()
         {
-            Debug.Log("[NetHathoraClient] JoinLobbyAsync");
-            
-            // Validate
-            if (!netSession.CheckIsValidServerConnectionInfo())
+            Debug.Log("[NetHathoraClient] ConnectAsync");
+
+            isConnecting = true;
+            Transport transport = InstanceFinder.TransportManager.Transport;
+            ClientManager clientMgr = InstanceFinder.ClientManager;
+
+            // -----------------
+            // Validate; UI and err handling is handled within
+            bool isReadyToConnect = preConnectCheck(clientMgr, transport);
+            if (!isReadyToConnect)
+                return false; // !isSuccess
+
+            // -----------------
+            // Connect
+            Debug.Log("[NetHathoraClient.ConnectAsync] Connecting to: " + 
+                $"{netSession.GetServerInfoIpPort()} via FishNet.{transport.name} transport");
+
+            ExposedPort connectInfo = netSession.ServerConnectionInfo.ExposedPort;
+            bool isSuccess = InstanceFinder.ClientManager.StartConnection(
+                connectInfo.Host, 
+                (ushort)connectInfo.Port);
+
+            if (!isSuccess)
             {
-                Debug.LogError("[NetHathoraClient]**ERR @ JoinLobbyAsync: " +
-                    "Invalid ServerConnectionInfo");
-                
-                NetUI.Singleton.OnJoinLobbyFailed();
-                return false; // !isStarted
+                onConnectFailed("StartConnection !isSuccess");
+                return false;
             }
             
-            Debug.Log($"[NetHathoraClient.JoinLobbyAsync] Connecting to: " + 
-                netSession.GetServerInfoIpPort());
-            
-            Transport transport = InstanceFinder.TransportManager.Transport;
-            ExposedPort connectInfo = netSession.ServerConnectionInfo.ExposedPort;
-            
-            transport.SetClientAddress(connectInfo.Host);
-            transport.SetPort((ushort)connectInfo.Port);
-
-            bool isSuccess = transport.StartConnection(server: false);
-            Assert.IsTrue(isSuccess, "[JoinLobbyAsync] StartConnection: !isSuccess");
-
             return true; // isSuccess
         }
-        
+
+        private bool preConnectCheck(
+            ClientManager _clientMgr, 
+            Transport _transport)
+        {
+            // Validate host:port connection info
+            if (!netSession.CheckIsValidServerConnectionInfo())
+            {
+                onConnectFailed("Invalid ServerConnectionInfo");
+                return false; // !isStarted
+            }
+
+            if (InstanceFinder.NetworkManager == null)
+            {
+                onConnectFailed("!NetworkManager");
+                return false; // !isSuccess
+            }
+
+            // Validate state
+            LocalConnectionState currentState = _transport.GetConnectionState(server: false);
+            if (currentState != LocalConnectionState.Stopped)
+            {
+                _clientMgr.StopConnection();
+                onConnectFailed("Prior connection !stopped: Try again soon");
+                return false; // !isSuccess
+            }
+            
+            // Success - ready to connect
+            return true;
+        }
+
+        private void onConnectFailed(string _friendlyReason)
+        {
+            isConnecting = false;
+            NetUI.Singleton.OnJoinLobbyFailed(_friendlyReason);
+        }
+
+        private void OnClientConnectionState(ClientConnectionStateArgs _state)
+        {
+            Debug.Log($"[NetHathoraClient.OnClientConnectionState] " +
+                $"New state: {_state.ConnectionState}");
+
+            bool stopped = _state.ConnectionState == LocalConnectionState.Stopped; 
+            bool stoppedConnecting = stopped && isConnecting;
+            if (!stoppedConnecting)
+                return;
+            
+            onConnectFailed("Connection stopped");
+        }
+
         /// <summary>
         /// Auths anonymously => Creates new netSession.
         /// </summary>
