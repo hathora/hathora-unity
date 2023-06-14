@@ -16,7 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     {
         private readonly RoomV2Api roomApi;
         private HathoraLobbyRoomOpts roomOpts => HathoraServerConfig.HathoraLobbyRoomOpts;
-        public bool IsPollingForActiveRoom { get; private set; }
+        public bool IsPollingForActiveConnInfo { get; private set; }
         
         /// <summary>
         /// </summary>
@@ -41,8 +41,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// 
         /// <list type="number">
         /// <item>Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora</item>
-        /// <item>Poll GetRoomInfoAsync(_customCreateRoomId): takes 5~10s, until Status is Active</item>
-        /// <item>Once Active Status, get new ConnectionInfoV2 to get ExposedPort (connection info)</item>
+        /// <item>Poll GetConnectionInfoV2Async(roomId): takes ~5s, until Status is `Active`</item>
+        /// <item>Once Active Status, get Room info</item>
         /// </list>
         /// 
         /// <param name="_customCreateRoomId"></param>
@@ -52,19 +52,63 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _customCreateRoomId = null,
             CancellationToken _cancelToken = default)
         {
-            string createdRoomId = await CreateRoomAsync(_customCreateRoomId, _cancelToken);
+            // (1/3) Create Room
+            string newlyCreatedRoomId = null;
+            try
+            {
+                newlyCreatedRoomId = await CreateRoomAsync(_customCreateRoomId, _cancelToken);
+            }
+            catch (TaskCanceledException e)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: {e}");
+                throw;
+            }
+            
+            // ----------
+            // (2/3) Poll until `Active` connection Status (or timeout)
+            ConnectionInfoV2 activeConnectionInfo = null;
 
-            // Once Room Status is Active, we can refresh the ConnectionInfo with ExposedPort
+            try
+            {
+                activeConnectionInfo = await PollConnectionInfoUntilActiveAsync(
+                    newlyCreatedRoomId,
+                    _cancelToken);
+
+                Assert.IsTrue(
+                    activeConnectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active,
+                    "activeConnectionInfo !Active status (expected Active since room is Active");
+            }
+            catch (TaskCanceledException e)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
+                    $"{e.Message} (Check console.hathora.dev logs for +info)");
+                throw;
+            }
+            
+            // ----------
+            // (3/3) Once Connection Status is `Active`, get Room info
             Room activeRoom = null;
             try
             {
-                activeRoom = await PollGetRoomUntilActiveAsync(
-                    createdRoomId, 
+                activeRoom = await GetRoomInfoAsync(
+                    newlyCreatedRoomId, 
                     _cancelToken);
                 
                 Assert.IsTrue(activeRoom?.Status == RoomStatus.Active, 
                     "activeRoom !Active status");
             }
+            catch (TaskCanceledException e)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
@@ -72,26 +116,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 throw;
             }
 
-
-            ConnectionInfoV2 activeConnectionInfo = null;
-            try
-            {
-                activeConnectionInfo = await GetConnectionInfoAsync(
-                    activeRoom.RoomId,
-                    _cancelToken);
-                
-                Assert.IsTrue(activeConnectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active, 
-                    "activeConnectionInfo !Active status (expected Active since room is Active");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync]: " +
-                    $"{e.Message} (Check console.hathora.dev logs for +info)");
-                throw;
-            }
-            
-            
-
+            // ----------
+            // Success
             Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
                 $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
 
@@ -250,63 +276,55 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         // ------------------------------------------
         // Utils >>
         
-        /// <summary>This shouldn't take long, so we poll once per second.</summary>
+        /// <summary>ETA 5 seconds; poll once/second.</summary>
         /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<Room> PollGetRoomUntilActiveAsync(
+        public async Task<ConnectionInfoV2> PollConnectionInfoUntilActiveAsync(
             string _roomId,
             CancellationToken _cancelToken = default)
         {
-            Room room = null;
+            ConnectionInfoV2 connectionInfo = null;
             int attemptNum = 0;
-            IsPollingForActiveRoom = true;
+            IsPollingForActiveConnInfo = true;
             
-            while (room is not { Status: RoomStatus.Active })
+            while (connectionInfo is not { Status: ConnectionInfoV2.StatusEnum.Active })
             {
-                // Validate
+                // Check for cancel + await 1s
                 if (_cancelToken.IsCancellationRequested)
                 {
-                    IsPollingForActiveRoom = false;
+                    IsPollingForActiveConnInfo = false;
                     _cancelToken.ThrowIfCancellationRequested();
                 }
-
-                if (room?.Status == RoomStatus.Destroyed)
-                {
-                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
-                        "Room was destroyed.");
-                    
-                    IsPollingForActiveRoom = false;
-                    return null;
-                }
                 
-                if (room?.Status == RoomStatus.Suspended)
-                {
-                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
-                        "Room was suspended.");
+                await Task.Delay(TimeSpan.FromSeconds(1), _cancelToken);
 
-                    IsPollingForActiveRoom = false;
-                    return null;
-                }
-                
+                // ---------------
                 // Try again
                 attemptNum++;
-
-                Debug.Log("[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
+                Debug.Log("[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
                     $"Attempt #{attemptNum} ...");
                 
-                room = await GetRoomInfoAsync(
+                connectionInfo = await GetConnectionInfoAsync(
                     _roomId,
                     _cancelToken: _cancelToken);
                 
-                await Task.Delay(TimeSpan.FromSeconds(1), _cancelToken);
+                // ---------------
+                if (connectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active)
+                    break; // Success
+                
+                // ---------------
+                // Still !Active -- log, then try again
+                Debug.LogWarning("[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
+                    "Room !Active (yet) - attempting to poll again ...");
             }
             
-            Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollGetRoomUntilActiveAsync] " +
-                $"Done: <color=yellow>room: {room.ToJson()}</color>");
+            
+            Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
+                $"Success: <color=yellow>{nameof(connectionInfo)}: {connectionInfo.ToJson()}</color>");
 
-            IsPollingForActiveRoom = false;
-            return room;
+            IsPollingForActiveConnInfo = false;
+            return connectionInfo;
         }
         #endregion // Server Room Async Hathora SDK Calls
     }
