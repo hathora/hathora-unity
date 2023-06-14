@@ -146,7 +146,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Transport Type",
-                _tooltip: "Default: `UDP` (Fastest; although less reliable)",
+                _tooltip: 
+                    "Default: `UDP` (Fastest; although less reliable) " +
+                    "(!) For now, all transports override to UDP",
                 _displayOptsStrArr: displayOptsStrList.ToArray(),
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
