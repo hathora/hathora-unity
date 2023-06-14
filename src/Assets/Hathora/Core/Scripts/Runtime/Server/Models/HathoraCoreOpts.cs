@@ -86,10 +86,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             if (!string.IsNullOrEmpty(_prependDummyIndex0Str))
             {
                 if (HathoraUtils.SDK_ENUM_STARTING_INDEX == 0)
+ #pragma warning disable CS0162 // Don't spam logs for `Unreachable code detected`
                 {
                     Debug.LogWarning("HathoraUtils.SDK_ENUM_STARTING_INDEX == 0, " +
                         "but you are using a _prependDummyIndex0Str: Intentional?");
                 }    
+ #pragma warning restore CS0162 // Don't spam logs for `Unreachable code detected`
                 
                 enumerable = enumerable.Prepend(_prependDummyIndex0Str);
             }      
