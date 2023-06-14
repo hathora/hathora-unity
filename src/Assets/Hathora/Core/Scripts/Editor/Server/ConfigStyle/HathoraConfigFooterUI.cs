@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Text;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Editor.Common;
@@ -23,8 +24,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         /// For the combo build+deploy btn, we want to use the same build func
         /// </summary>
         private readonly HathoraConfigPostAuthBodyBuildUI postAuthBodyBuildUI;
-
         
+        // Scrollable logs
+        private Vector2 logsScrollPos = Vector2.zero;
+
+
         public HathoraConfigFooterUI(
             HathoraServerConfig _serverConfig, 
             SerializedObject _serializedConfig,
@@ -35,9 +39,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             this.postAuthBodyBuildUI = _postAuthBodyBuildUI;
             this.postAuthBodyDeployUI = _postAuthBodyDeployUI;
             
-            HathoraServerDeploy.OnZipComplete += onDeployAppStatus_1ZipComplete;
-            HathoraServerDeploy.OnBuildReqComplete += onDeployAppStatus_2BuildReqComplete;
-            HathoraServerDeploy.OnUploadComplete += onDeployAppStatus_3UploadComplete;
+            // HathoraServerDeploy.OnZipComplete += onDeployAppStatus_1ZipComplete;
+            // HathoraServerDeploy.OnBuildReqComplete += onDeployAppStatus_2BuildReqComplete;
+            // HathoraServerDeploy.OnUploadComplete += onDeployAppStatus_3UploadComplete;
         }
 
         public void Draw()
@@ -59,7 +63,35 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             
             insertBuildUploadDeployHelpbox(_enabled: enableBuildUploadDeployBtn);
             insertBuildUploadDeployBtn(_enabled: enableBuildUploadDeployBtn); // !await
+            insertScrollableLogs();
+        }
+
+        private void insertScrollableLogs()
+        {
+            bool hasLastbuildLogsStrb = ServerConfig.LinuxHathoraAutoBuildOpts.HasLastBuildLogsStrb;
+            bool hasLastDeployLogsStrb = ServerConfig.HathoraDeployOpts.HasLastDeployLogsStrb;
+            if (!hasLastbuildLogsStrb && !hasLastDeployLogsStrb)
+                return;
+
+            logsScrollPos = GUILayout.BeginScrollView(
+                logsScrollPos,
+                GUILayout.ExpandWidth(true),
+                GUILayout.Height(300f));
+
+            if (hasLastbuildLogsStrb)
+                insertBuildLogsBox();
+            
+            if (hasLastDeployLogsStrb)
+                InsertLabel(ServerConfig.HathoraDeployOpts.LastDeployLogsStrb.ToString());
+            
+            GUILayout.EndScrollView();
             InsertSpace1x();
+        }
+
+        private void insertBuildLogsBox()
+        {
+            InsertLabel("Build Logs");
+            InsertLabel(ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb.ToString());
         }
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
@@ -114,31 +146,46 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             
             EditorGUI.EndDisabledGroup();
 
-            if (!clickedBuildUploadDeployBtn)
+            if (clickedBuildUploadDeployBtn)
+                onBuildUploadDeployBtnClick();
+
+            InsertSpace2x();
+        }
+        
+
+        #region Status Callbacks
+        
+        private async Task onBuildUploadDeployBtnClick()
+        {
+            // TODO: Cancel token
+            BuildReport buildReport = null;
+            try
+            {
+                buildReport = await postAuthBodyBuildUI.GenerateServerBuildAsync(); // Cached @ ServerConfig
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraConfigFooterUI.onBuildUploadDeployBtnClick] " +
+                    $"GenerateServerBuildAsync => Error: {e}");
                 return;
+            }
             
-            BuildReport buildReport = await postAuthBodyBuildUI.GenerateServerBuildAsync();
             if (buildReport.summary.result != BuildResult.Succeeded)
                 return;
             
-            // TODO: Check for cancel token @ postAuthBodyDeployUI.DeployingCancelTokenSrc   
-            Deployment deployment = await postAuthBodyDeployUI.DeployApp();
-        }
-        
-        #region Status Callbacks
-        private void onDeployAppStatus_1ZipComplete()
-        {
-            // TODO
-        }
-
-        private void onDeployAppStatus_2BuildReqComplete(Build __buildinfo)
-        {
-            // TODO
-        }
-
-        private void onDeployAppStatus_3UploadComplete()
-        {
-            // TODO
+            // ------------
+            // TODO: Cancel token   
+            Deployment deployment = null;
+            try
+            {
+                deployment = await postAuthBodyDeployUI.DeployApp(); // Cached @ ServerConfig
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraConfigFooterUI.onBuildUploadDeployBtnClick] " +
+                    $"DeployApp => Error: {e}");
+                return;
+            }
         }
         #endregion Status Callbacks
     }

@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server;
@@ -34,10 +35,24 @@ namespace Hathora.Core.Scripts.Editor.Server
             bool _overwriteExistingDockerfile,
             CancellationToken _cancelToken = default)
         {
+            // Throughout this process, we'll lose focus on the config object.
+            UnityEngine.Object previousSelection = Selection.activeObject; // Preserve focus - restore at end
+            
+            // Prep logs cache
+            _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildReport = null;
+            StringBuilder strb = _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb;
+            strb.Clear();
+            strb.AppendLine("Preparing server build...");
+            strb.AppendLine($"overwriteExistingDockerfile? {_overwriteExistingDockerfile}");
+            strb.AppendLine();
+            
             // Set your build options
             HathoraServerPaths configPaths = new(_serverConfig);
 
             // Create the build directory if it does not exist
+            strb.AppendLine($"Cleaning/creating build dir @ path: `{configPaths.PathToBuildDir}` ...")
+                .AppendLine();
+            
             cleanCreateBuildDir(_serverConfig, configPaths.PathToBuildDir);
             _cancelToken.ThrowIfCancellationRequested();
 
@@ -46,32 +61,81 @@ namespace Hathora.Core.Scripts.Editor.Server
                 configPaths.PathToBuildExe);
 
             // Build the server
+            strb.AppendLine("BUILDING now (this may take a while), with opts:")
+                .AppendLine("```")
+                .AppendLine(getBuildOptsStr(buildPlayerOptions))
+                .AppendLine("```")
+                .AppendLine();
+            
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
             _cancelToken.ThrowIfCancellationRequested();
             
             // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
-            bool genDockerfile = _overwriteExistingDockerfile || !CheckIfDockerfileExists(configPaths); 
+            bool genDockerfile = _overwriteExistingDockerfile || !CheckIfDockerfileExists(configPaths);
             if (genDockerfile)
             {
+                strb.AppendLine($"Generating Dockerfile to `{configPaths.PathToDotHathoraDockerfile}` ...");
                 Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
                     "Generating new Dockerfile (if exists: overwriting)...");
+                
                 string dockerFileContent = HathoraDocker.GenerateDockerFileStr(configPaths);
+
+                strb.AppendLine("```")
+                    .AppendLine(dockerFileContent)
+                    .AppendLine("```")
+                    .AppendLine();
+
                 await HathoraDocker.WriteDockerFileAsync(
                     configPaths.PathToDotHathoraDockerfile,
                     dockerFileContent,
                     _cancelToken);    
             }
 
-            // Open the build directory
+            // Did we fail?
             if (buildReport.summary.result != BuildResult.Succeeded)
+            {
+                Selection.activeObject = previousSelection; // Restore focus
                 return buildReport; // fail
+            }
 
+            // Open the build directory - this will lose focus of the inspector
             // TODO: Play a small, subtle chime sfx?
+            strb.AppendLine("Opening build dir ...");
             Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
                 $"Build succeeded @ path: `{configPaths.PathToBuildDir}`");
+            
             EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
+            cacheFinishedBuildReportLogs(_serverConfig, buildReport);
 
+            Selection.activeObject = previousSelection; // Restore focus
             return buildReport;
+        }
+
+        private static string getBuildOptsStr(BuildPlayerOptions _buildOpts)
+        {
+            return $"scenes: `{string.Join("`, `", _buildOpts.scenes)}`\n\n" +
+                $"locationPathName: `{_buildOpts.locationPathName}`\n" +
+                $"target: `{_buildOpts.target}`\n" +
+                $"options: `{_buildOpts.options}`\n" +
+                $"standaloneBuildSubtarget `{_buildOpts.subtarget}`";
+        }
+
+        private static void cacheFinishedBuildReportLogs(
+            HathoraServerConfig _serverConfig, 
+            BuildReport _buildReport)
+        {
+            _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildReport = _buildReport;
+            
+            TimeSpan totalTime = _buildReport.summary.totalTime;
+            _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+                .AppendLine($"result: {Enum.GetName(typeof(BuildResult), _buildReport.summary.result)}")
+                .AppendLine($"totalSize: {_buildReport.summary.totalSize / (1024 * 1024)}MB")
+                .AppendLine($"totalTime: {totalTime.Minutes} mins, {totalTime.Seconds} secs")
+                .AppendLine($"totalWarnings: {_buildReport.summary.totalWarnings.ToString()}")
+                .AppendLine($"totalErrors: {_buildReport.summary.totalErrors.ToString()}")
+                .AppendLine()
+                .AppendLine("BUILD DONE.")
+                .AppendLine();
         }
 
         /// <summary></summary>

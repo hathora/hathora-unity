@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
@@ -99,5 +100,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             get => _lastDeployment;
             set => _lastDeployment = value;
         }
+        
+        private StringBuilder _lastDeployLogsStrb = new();
+        public StringBuilder LastDeployLogsStrb
+        {
+            get => _lastDeployLogsStrb; 
+            set => _lastDeployLogsStrb = value;
+        }
+        public bool HasLastDeployLogsStrb => 
+            LastDeployLogsStrb?.Length > 0;
     }
 }

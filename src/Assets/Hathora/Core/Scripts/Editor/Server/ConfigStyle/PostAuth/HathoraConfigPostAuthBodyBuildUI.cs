@@ -230,14 +230,16 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         public async Task<BuildReport> GenerateServerBuildAsync()
         {
-            CancellationTokenSource cancelTokenSrc = new();
-            BuildReport buildReport = null;
-            
             // TODO: Get from ServerConfig (for devs that have a custom Dockerfile they don't want overwritten each build)
             const bool overwriteExistingDockerfile = true;
 
+            // Build headless Linux executable
+            CancellationTokenSource cancelTokenSrc = new();
+            BuildReport buildReport = null;
+
             try
             {
+                // +Appends strb logs
                 buildReport = await HathoraServerBuild.BuildHathoraLinuxServer(
                     ServerConfig,
                     overwriteExistingDockerfile, // TODO: 
@@ -254,10 +256,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 throw;
             }
 
-            
             Assert.AreEqual(buildReport.summary.result, BuildResult.Succeeded,
                 "Server build failed. Check console for details.");
-
+            
             return buildReport;
         }
         #endregion // Event Logic
