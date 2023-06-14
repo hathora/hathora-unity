@@ -26,8 +26,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         private readonly HathoraConfigPostAuthBodyBuildUI postAuthBodyBuildUI;
         
         // Scrollable logs
-        private Vector2 logsScrollPos = Vector2.zero;
-
+        /// <summary>Useful for debugging/styling without having to build each time</summary>
+        private const bool MOCK_BUILD_LOGS = false;
+        private Vector2 buildLogsScrollPos = Vector2.zero;
+        private bool isBuildLogsFoldoutHeaderOpen = true;
+        
 
         public HathoraConfigFooterUI(
             HathoraServerConfig _serverConfig, 
@@ -70,28 +73,82 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         {
             bool hasLastbuildLogsStrb = ServerConfig.LinuxHathoraAutoBuildOpts.HasLastBuildLogsStrb;
             bool hasLastDeployLogsStrb = ServerConfig.HathoraDeployOpts.HasLastDeployLogsStrb;
-            if (!hasLastbuildLogsStrb && !hasLastDeployLogsStrb)
+            if (!hasLastbuildLogsStrb && !hasLastDeployLogsStrb && !MOCK_BUILD_LOGS)
                 return;
 
-            logsScrollPos = GUILayout.BeginScrollView(
-                logsScrollPos,
-                GUILayout.ExpandWidth(true),
-                GUILayout.Height(300f));
-
-            if (hasLastbuildLogsStrb)
-                insertBuildLogsBox();
+            if (hasLastbuildLogsStrb || MOCK_BUILD_LOGS)
+                insertBuildLogsFoldoutHeader();
             
             if (hasLastDeployLogsStrb)
                 InsertLabel(ServerConfig.HathoraDeployOpts.LastDeployLogsStrb.ToString());
+        }
+
+        private void insertBuildLogsFoldoutHeader()
+        {
+            if (!ServerConfig.LinuxHathoraAutoBuildOpts.HasLastBuildLogsStrb)
+            {
+                if (!MOCK_BUILD_LOGS)
+                    return;
+                
+                // Fake some logs
+                appendFakeLogs();
+            }
+
+            isBuildLogsFoldoutHeaderOpen = EditorGUILayout.BeginFoldoutHeaderGroup(
+                isBuildLogsFoldoutHeaderOpen, 
+                "Build Logs");
+            
+            // USER INPUT >>
+            if (!isBuildLogsFoldoutHeaderOpen)
+            {
+                EditorGUILayout.EndFoldoutHeaderGroup();
+                return;
+            }
+
+            // Content within the foldout >>
+            insertBuildLogsScrollLbl();
+            
+            EditorGUILayout.EndFoldoutHeaderGroup();
+            InsertSpace1x();
+        }
+
+        private void insertBuildLogsScrollLbl()
+        {
+            buildLogsScrollPos = GUILayout.BeginScrollView(
+                buildLogsScrollPos,
+                GUILayout.ExpandWidth(true),
+                GUILayout.Height(150f));
+            
+            // Content within the scroller >>
+            base.BeginPaddedBox();
+            InsertLabel(ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb.ToString());
+            base.EndPaddedBox();
             
             GUILayout.EndScrollView();
             InsertSpace1x();
         }
 
-        private void insertBuildLogsBox()
+        private void appendFakeLogs()
         {
-            InsertLabel("Build Logs");
-            InsertLabel(ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb.ToString());
+            // Foo 1 ~ 50
+            ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+                .AppendLine("Foo 1").AppendLine("Foo 2").AppendLine("Foo 3")
+                .AppendLine("Foo 4").AppendLine("Foo 5").AppendLine("Foo 6")
+                .AppendLine("Foo 7").AppendLine("Foo 8").AppendLine("Foo 9")
+                .AppendLine("Foo 10").AppendLine("Foo 11").AppendLine("Foo 12")
+                .AppendLine("Foo 13").AppendLine("Foo 14").AppendLine("Foo 15")
+                .AppendLine("Foo 16").AppendLine("Foo 17").AppendLine("Foo 18")
+                .AppendLine("Foo 19").AppendLine("Foo 20").AppendLine("Foo 21")
+                .AppendLine("Foo 22").AppendLine("Foo 23").AppendLine("Foo 24")
+                .AppendLine("Foo 25").AppendLine("Foo 26").AppendLine("Foo 27")
+                .AppendLine("Foo 28").AppendLine("Foo 29").AppendLine("Foo 30")
+                .AppendLine("Foo 31").AppendLine("Foo 32").AppendLine("Foo 33")
+                .AppendLine("Foo 34").AppendLine("Foo 35").AppendLine("Foo 36")
+                .AppendLine("Foo 37").AppendLine("Foo 38").AppendLine("Foo 39")
+                .AppendLine("Foo 40").AppendLine("Foo 41").AppendLine("Foo 42")
+                .AppendLine("Foo 43").AppendLine("Foo 44").AppendLine("Foo 45")
+                .AppendLine("Foo 46").AppendLine("Foo 47").AppendLine("Foo 48")
+                .AppendLine("Foo 49").AppendLine("Foo 50");
         }
 
         private void insertBuildUploadDeployHelpbox(bool _enabled)
