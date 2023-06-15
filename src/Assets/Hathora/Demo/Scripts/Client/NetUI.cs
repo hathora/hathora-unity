@@ -255,7 +255,7 @@ namespace Hathora.Demo.Scripts.Client
         {
             debugMemoTxt.text = memoStr;
             debugMemoTxt.gameObject.SetActive(true);
-            Debug.Log($"[NetCmdLine] Debug Memo: '{memoStr}'");
+            Debug.Log($"[NetUI] Debug Memo: '{memoStr}'");
         }
 
         public void SetShowAuthTxt(string authStr)

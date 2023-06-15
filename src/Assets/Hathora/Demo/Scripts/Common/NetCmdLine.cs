@@ -53,18 +53,24 @@ namespace Hathora.Demo.Scripts.Common
         {
             Dictionary<string, string> argDictionary = new();
 
-            var args = System.Environment.GetCommandLineArgs();
+            string[] args = System.Environment.GetCommandLineArgs();
 
             for (int i = 0; i < args.Length; ++i)
             {
-                var arg = args[i].ToLower();
-                if (arg.StartsWith("-"))
-                {
-                    var value = i < args.Length - 1 ? args[i + 1].ToLower() : null;
-                    value = (value?.StartsWith("-") ?? false) ? null : value;
+                string arg = args[i].ToLower();
 
-                    argDictionary.Add(arg, value);
-                }
+                if (!arg.StartsWith("-"))
+                    continue;
+                
+                string value = i < args.Length - 1 
+                    ? args[i + 1].ToLower() 
+                    : null;
+                
+                value = value?.StartsWith("-") ?? false 
+                    ? null 
+                    : value;
+
+                argDictionary.Add(arg, value);
             }
             return argDictionary;
         }
