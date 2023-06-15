@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using FishNet;
 using Hathora.Demo.Scripts.Client;
+using Hathora.Demo.Scripts.Client.ClientMgr;
 using UnityEngine;
 
 namespace Hathora.Demo.Scripts.Common

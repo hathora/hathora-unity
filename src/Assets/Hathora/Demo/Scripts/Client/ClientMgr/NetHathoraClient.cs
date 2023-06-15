@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FishNet;
 using FishNet.Managing.Client;
-using FishNet.Object;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
@@ -14,11 +13,9 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demo.Scripts.Client.Models;
-using LiteNetLib;
 using UnityEngine;
-using UnityEngine.Assertions;
 
-namespace Hathora.Demo.Scripts.Client
+namespace Hathora.Demo.Scripts.Client.ClientMgr
 {
     /// <summary>
     /// This spawns BEFORE the player, or even connected to the network.
@@ -27,6 +24,8 @@ namespace Hathora.Demo.Scripts.Client
     /// </summary>
     public class NetHathoraClient : MonoBehaviour
     {
+        /// <summary>Updates @ OnClientConnectionState</summary>
+        private LocalConnectionState localConnectionState;
         private bool isConnecting;
         
         [Header("(!) Get from Hathora dir; see hover tooltip")]
@@ -162,15 +161,26 @@ namespace Hathora.Demo.Scripts.Client
 
         private void OnClientConnectionState(ClientConnectionStateArgs _state)
         {
+            localConnectionState = _state.ConnectionState;
             Debug.Log($"[NetHathoraClient.OnClientConnectionState] " +
-                $"New state: {_state.ConnectionState}");
-
-            bool stopped = _state.ConnectionState == LocalConnectionState.Stopped; 
-            bool stoppedConnecting = stopped && isConnecting;
-            if (!stoppedConnecting)
-                return;
+                $"New state: {localConnectionState}");
             
-            onConnectFailed("Connection stopped");
+            // onConnectSuccess?
+            if (localConnectionState == LocalConnectionState.Started)
+                onConnectSuccess();
+            
+            // onConnectFailed?
+            bool stopped = localConnectionState == LocalConnectionState.Stopped; 
+            bool stoppedConnecting = stopped && isConnecting;
+            if (stoppedConnecting)
+                onConnectFailed("Connection stopped");
+        }
+
+        private void onConnectSuccess()
+        {
+            Debug.Log("[NetHathoraClient] onConnectSuccess");
+            isConnecting = false;
+            NetUI.Singleton.OnJoinLobbySuccess();
         }
 
         /// <summary>

@@ -1,11 +1,9 @@
 // Created by dylan@hathora.dev
 
-using FishNet;
 using FishNet.Object;
-using LiteNetLib;
 using UnityEngine;
 
-namespace Hathora.Demo.Scripts.Client
+namespace Hathora.Demo.Scripts.Client.Player
 {
     /// <summary>
     /// Helpers for the runtime-spawned networked Player GameObject.
@@ -13,6 +11,9 @@ namespace Hathora.Demo.Scripts.Client
     /// </summary>
     public class NetHathoraPlayer : NetworkBehaviour
     {
+        [SerializeField]
+        private NetHathoraPlayerUI playerUi;
+        
         [SerializeField]
         private GameObject ownerObjWrapper;
         
@@ -38,6 +39,10 @@ namespace Hathora.Demo.Scripts.Client
             
             ownerObjWrapper.gameObject.SetActive(true);
             NetworkSpawnLogs();
+            playerUi.OnConnected(
+                ClientManager.Connection.ClientId.ToString(),
+                ClientManager.Clients.Count, // Includes self
+                TimeManager.RoundTripTime);
         }
 
         public override void OnStopClient()

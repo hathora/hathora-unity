@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace Hathora.Demo.Scripts.Client
+namespace Hathora.Demo.Scripts.Client.ClientMgr
 {
     /// <summary>
     /// Handles the non-Player UI so we can keep the logic separate.
@@ -79,15 +79,14 @@ namespace Hathora.Demo.Scripts.Client
         
         [SerializeField]
         private TextMeshProUGUI joiningLobbyStatusTxt;
-        
-        [SerializeField]
-        private TextMeshProUGUI joinedLobbyResultTxt;
         #endregion // Serialized Fields
 
         public static NetUI Singleton { get; private set; }
 
         private const float FADE_TXT_DISPLAY_DURATION_SECS = 0.5f;
         private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
+        static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
+        const string headerBoldColorEnd = "</color></b>";
         private static NetHathoraClient hathoraClient => NetHathoraClient.Singleton;
         private static NetSession netSession => NetSession.Singleton;
 
@@ -207,10 +206,19 @@ namespace Hathora.Demo.Scripts.Client
             Debug.Log("[NetHathoraClient] OnJoinLobbyAsClientBtnClick");
 
             joinLobbyAsClientBtn.gameObject.SetActive(false);
-            joinedLobbyResultTxt.gameObject.SetActive(false);
+            
+            joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
             joiningLobbyStatusTxt.gameObject.SetActive(true);
             
             _ = hathoraClient.ConnectAsync();
+        }
+        
+        public void OnJoinLobbySuccess()
+        {
+            Debug.Log("[NetHathoraClient] OnJoinLobbySuccess");
+            
+            joiningLobbyStatusTxt.text = "<color=green>Joined Lobby</color>";
+            // Player stats should be updated via NetHathoraPlayer.OnStartClient
         }
 
         public void OnJoinLobbyFailed(string _friendlyErr)
@@ -223,8 +231,7 @@ namespace Hathora.Demo.Scripts.Client
             if (string.IsNullOrEmpty(_friendlyErr))
                 return;
             
-            joinedLobbyResultTxt.text = $"<color=orange>{_friendlyErr}</color>";
-            joinedLobbyResultTxt.gameObject.SetActive(true);
+            joiningLobbyStatusTxt.text = $"<color=orange>{_friendlyErr}</color>";
         }
         #endregion // UI Interactions
         
@@ -326,7 +333,7 @@ namespace Hathora.Demo.Scripts.Client
             // ServerInfo:
             // 127.0.0.1:7777 (UDP)
             // ####################
-            SetServerInfoTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>ServerInfo</color></b>:\n" +
+            SetServerInfoTxt($"{headerBoldColorBegin}ServerInfo{headerBoldColorEnd}:\n" +
                 $"{connectionInfo.ExposedPort.Host}<color=yellow><b>:</b></color>{connectionInfo.ExposedPort.Port}\n" +
                 $"(<color=yellow>{connectionInfo.ExposedPort.TransportType}</color>)");
             
@@ -344,7 +351,7 @@ namespace Hathora.Demo.Scripts.Client
         {
             // Hide all init lobby UI except the txt + view lobbies
             showInitLobbyUi(false);
-            SetShowLobbyTxt($"<b><color={HATHORA_VIOLET_COLOR_HEX}>RoomId</color></b>:\n{roomId}");
+            SetShowLobbyTxt($"{headerBoldColorBegin}RoomId{headerBoldColorEnd}:\n{roomId}");
 
             // We can now show the lobbies and ServerConnectionInfo copy btn
             copyLobbyRoomIdBtn.gameObject.SetActive(true);
