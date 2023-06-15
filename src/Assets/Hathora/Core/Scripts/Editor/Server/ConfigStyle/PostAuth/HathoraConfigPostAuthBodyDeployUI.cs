@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEditor;
@@ -326,7 +327,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             bool isSuccess = deployment?.DeploymentId > 0;
             if (isSuccess)
-                onDeployAppSuccess();
+                onDeployAppSuccess(deployment);
             else
                 onDeployAppFail();
             
@@ -361,9 +362,14 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // TODO
         }
 
-        private void onDeployAppSuccess()
+        /// <summary>
+        /// Cache last successful Deployment for the session
+        /// </summary>
+        /// <param name="_deployment"></param>
+        private void onDeployAppSuccess(Deployment _deployment)
         {
-            throw new NotImplementedException("TODO: Cache LastDeployInfo in Config");
+            ServerConfig.HathoraDeployOpts.LastDeployment = 
+                new DeploymentWrapper(_deployment);
         }
         #endregion // Event Logic
         
