@@ -12,6 +12,8 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
+using Hathora.Core.Scripts.Runtime.Common.Extensions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demo.Scripts.Client.Models;
 using UnityEngine;
 
@@ -343,7 +345,8 @@ namespace Hathora.Demo.Scripts.Client.ClientMgr
                 return;
             }
 
-            NetUI.Singleton.OnCreatedOrJoinedLobby(lobby.RoomId);
+            string friendlyRegion = lobby.Region.ToString().SplitPascalCase();
+            NetUI.Singleton.OnCreatedOrJoinedLobby(lobby.RoomId, friendlyRegion);
         }
         #endregion // Callbacks
     }

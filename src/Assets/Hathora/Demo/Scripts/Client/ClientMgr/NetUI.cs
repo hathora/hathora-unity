@@ -306,10 +306,10 @@ namespace Hathora.Demo.Scripts.Client.ClientMgr
             
             createLobbyBtn.gameObject.SetActive(show);
             getLobbyInfoBtn.gameObject.SetActive(show);
-            lobbyRoomIdTxt.gameObject.SetActive(show); // When showing, it's behind the btns ^
             
             // On or off: If this is resetting, we'll hide it. 
             // This also hides the cancel btn
+            lobbyRoomIdTxt.gameObject.SetActive(false); // Behind 'Create Lobby' btn
             getLobbyInfoInput.gameObject.SetActive(false);
             copyLobbyRoomIdBtn.gameObject.SetActive(false);
             createOrGetLobbyInfoErrTxt.gameObject.SetActive(false);
@@ -347,11 +347,12 @@ namespace Hathora.Demo.Scripts.Client.ClientMgr
             SetGetServerInfoErrTxt("<color=orange>Failed to Get Server Info - see logs</color>");
         }
         
-        public void OnCreatedOrJoinedLobby(string roomId)
+        public void OnCreatedOrJoinedLobby(string _roomId, string _friendlyRegionStr)
         {
             // Hide all init lobby UI except the txt + view lobbies
             showInitLobbyUi(false);
-            SetShowLobbyTxt($"{headerBoldColorBegin}RoomId{headerBoldColorEnd}:\n{roomId}");
+            SetShowLobbyTxt($"{headerBoldColorBegin}RoomId{headerBoldColorEnd}:\n{_roomId}\n\n" +
+                $"{headerBoldColorBegin}Region{headerBoldColorEnd}: {_friendlyRegionStr}");
 
             // We can now show the lobbies and ServerConnectionInfo copy btn
             copyLobbyRoomIdBtn.gameObject.SetActive(true);
