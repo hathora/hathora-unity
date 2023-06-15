@@ -248,11 +248,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             catch (TaskCanceledException)
             {
                 Debug.Log("Server build cancelled.");
+                ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+                    .AppendLine()
+                    .AppendLine("** BUILD CANCELLED BY USER **");
                 throw;
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error: {e}");
+                Debug.LogError($"[HathoraConfigPostAuthBodyBuilderUI.GenerateServerBuildAsync] " +
+                    $"Error: {e}");
+                ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+                    .AppendLine()
+                    .AppendLine("** BUILD ERROR BELOW **")
+                    .AppendLine(e.Message);
                 throw;
             }
 
