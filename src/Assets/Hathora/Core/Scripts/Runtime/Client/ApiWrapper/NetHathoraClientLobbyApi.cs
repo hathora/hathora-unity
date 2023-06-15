@@ -44,11 +44,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <param name="lobbyVisibility"></param>
         /// <param name="_initConfigJsonStr"></param>
         /// <param name="_cancelToken"></param>
-        /// <param name="_region"></param>
+        /// <param name="_region">(!) Index starts at 1 (not 0)</param>
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
             CreateLobbyRequest.VisibilityEnum lobbyVisibility,
-            Region _region,
+            Region _region = Region.WashingtonDC,
             string _initConfigJsonStr = "{}",
             CancellationToken _cancelToken = default)
         {
@@ -56,6 +56,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 lobbyVisibility, 
                 _initConfigJsonStr, 
                 _region);
+
+            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
+                $"<color=yellow>request: {request.ToJson()}</color>");
 
             Lobby lobby;
             try
@@ -75,7 +78,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientCreateLobbyAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
+                $"<color=yellow>lobby: {lobby.ToJson()}</color>");
+            
             NetSession.Lobby = lobby;
             
             return lobby;
@@ -92,6 +97,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string roomId,
             CancellationToken _cancelToken = default)
         {
+            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
+                $"<color=yellow>roomId:{roomId}</color>");
+            
             Lobby lobby;
             try
             {
@@ -109,25 +117,34 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientLobbyApi] ClientGetLobbyInfoAsync => roomId: {lobby.RoomId}");
+            Debug.Log($"[NetHathoraClientAuthApi.ClientGetLobbyInfoAsync] Success: " +
+                $"<color=yellow>lobby: {lobby.ToJson()}</color>");            
+            
             NetSession.Lobby = lobby;
             
             return lobby;
         }
-        
+
         /// <summary>
         /// </summary>
+        /// <param name="_region">
+        /// TODO (to confirm): null region returns *all* region lobbies?
+        /// </param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
         public async Task<List<Lobby>> ClientListPublicLobbiesAsync(
+            Region _region = Region.WashingtonDC,
             CancellationToken _cancelToken = default)
         {
+            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
+                $"<color=yellow>region:{_region} </color>");
+            
             List<Lobby> lobbies;
             try
             {
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
                     HathoraClientConfig.AppId,
-                    HathoraClientConfig.FallbackRegion,
+                    region: _region,
                     _cancelToken);
             }
             catch (ApiException apiException)

@@ -67,21 +67,10 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.ProcessId = _roomAllocation.ProcessId;
             this.RoomAllocationId = _roomAllocation.RoomAllocationId;
         }
-        
-        private void setMissingDefaults()
-        {
-            Debug.LogWarning(
-                "[RoomAllocationWrapper] setMissingDefaults: TODO? " +
-                "(!) Hathora SDK throws Exception on missing requirement. " +
-                "Set this if you get parsing errs when creating a new `RoomAllocation` " +
-                "type via `ToRoomAllocationType()`. See `ApplicationWithDeploymentWrapper.cs` " +
-                "for example.");
-        }
 
         public RoomAllocation ToRoomAllocationType()
         {
-            // (!) Throws on req'd val == null
-            setMissingDefaults();
+            // (!) SDK constructor throws on req'd val == null
             
             RoomAllocation roomAllocation = null;
             try

@@ -1,8 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -26,12 +26,15 @@ namespace Hathora.Core.Scripts.Editor.Server
         public enum DeploymentSteps
         {
             Done, // Same as not deployment
-            Init,
+            // Init, // Too fast to track
             Zipping,
             RequestingUploadPerm,
             Uploading,
             Deploying,
         }
+        
+        private static int maxDeploySteps => 
+            Enum.GetValues(typeof(DeploymentSteps)).Length;
         
         public static DeploymentSteps DeploymentStep { get; private set; }
         
@@ -39,15 +42,28 @@ namespace Hathora.Core.Scripts.Editor.Server
         public static event OnBuildReqComplete OnBuildReqComplete;
         public static event OnUploadComplete OnUploadComplete;
 
-        private const int maxDeploySteps = 5;
+        
+        /// <summary>
+        /// eg: "(1/4) Zipping...", where (1/4) would be colored.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static string GetDeployFriendlyStatus() => DeploymentStep switch
         {
             DeploymentSteps.Done => "Done",
-            DeploymentSteps.Init => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(1/{maxDeploySteps})</color> Initializing...",
-            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(2/{maxDeploySteps})</color> Zipping...",
-            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(3/{maxDeploySteps})</color> Requesting Upload Permission...",
-            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(4/{maxDeploySteps})</color> Uploading Build...",
-            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>(5/{maxDeploySteps})</color> Deploying Build...",
+            
+            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.Zipping}/{maxDeploySteps})</color> Zipping...",
+            
+            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.RequestingUploadPerm}/{maxDeploySteps})</color> Requesting Upload Permission...",
+            
+            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.Uploading}/{maxDeploySteps})</color> Uploading Build...",
+            
+            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+                $"({(int)DeploymentSteps.Deploying}/{maxDeploySteps})</color> Deploying Build...",
+            
             _ => throw new ArgumentOutOfRangeException(),
         };
 
@@ -56,7 +72,6 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// - OnZipComplete
         /// - OnBuildReqComplete
         /// - OnUploadComplete
-        /// TODO: Support cancel token.
         /// </summary>
         /// <param name="_serverConfig">Find via menu `Hathora/Find UserConfig(s)`</param>
         /// <param name="_cancelToken"></param>
@@ -64,116 +79,113 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraServerConfig _serverConfig,
             CancellationToken _cancelToken = default)
         {
-            DeploymentStep = DeploymentSteps.Init;
-            
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
                 "<color=yellow>Starting...</color>");
             
             Assert.IsNotNull(_serverConfig, "[HathoraServerBuild.DeployToHathoraAsync] " +
                 "Cannot find HathoraServerConfig ScriptableObject");
-            
-            // Prepare paths and file names that we didn't get from UserConfig
-            HathoraServerDeployPaths serverDeployPaths = new(_serverConfig);
 
-            
-            #region Dockerfile >> Compress to .tar.gz
-            // ----------------------------------------------
-            DeploymentStep = DeploymentSteps.Zipping;
+            try
+            {
+                // Prepare paths and file names that we didn't get from UserConfig  
+                HathoraServerPaths serverPaths = new(_serverConfig);
                 
-            // Generate the Dockerfile: Paths will be different for each collaborator
-            string dockerFileContent = generateDockerFileStr(serverDeployPaths);
-            await writeDockerFileAsync(
-                serverDeployPaths.PathToDockerfile,
-                dockerFileContent,
-                _cancelToken);
-            
-            // Compress build into .tar.gz (gzipped tarball)
-            List<string> filePathsToCompress = new()
-            {
-                serverDeployPaths.ExeBuildDir, 
-                serverDeployPaths.PathToDockerfile,
-            };
-            
-            await Hathora7z.TarballDeployFilesVia7zAsync(
-                serverDeployPaths, 
-                filePathsToCompress,
-                _cancelToken);
-            
-            OnZipComplete?.Invoke();
-            #endregion // Dockerfile >> Compress to .tar.gz
+                            
+                #region Dockerfile >> Compress to .tar.gz
+                // ----------------------------------------------
+                DeploymentStep = DeploymentSteps.Zipping;
 
+                // Compress build into .tar.gz (gzipped tarball)
+                await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
+                    serverPaths,
+                    _cancelToken);
+                
+                OnZipComplete?.Invoke();
+                #endregion // Dockerfile >> Compress to .tar.gz
+                
 
-            #region Request to build
-            // ----------------------------------------------
-            DeploymentStep = DeploymentSteps.RequestingUploadPerm;
+                #region Request to build
+                // ----------------------------------------------
+                DeploymentStep = DeploymentSteps.RequestingUploadPerm;
 
-            // Get a buildId from Hathora
-            HathoraServerBuildApi buildApi = new(_serverConfig);
+                // Get a _buildId from Hathora
+                HathoraServerBuildApi buildApi = new(_serverConfig);
 
-            Build buildInfo = null;
-            try
-            {
-                buildInfo = await getBuildInfoAsync(buildApi, _cancelToken);
+                Build buildInfo = null;
+                try
+                {
+                    buildInfo = await getBuildInfoAsync(buildApi, _cancelToken);
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+                Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
+                
+                // Building seems to unselect Hathora _serverConfig on success
+                HathoraServerConfigFinder.ShowWindowOnly();
+                
+                OnBuildReqComplete?.Invoke(buildInfo);
+                _cancelToken.ThrowIfCancellationRequested();
+                #endregion // Request to build
+
+                
+                #region Upload Build
+                // ----------------------------------------------
+                DeploymentStep = DeploymentSteps.Uploading;
+
+                // Upload the build to Hathora
+                (Build build, string logs) buildWithLogs = default;
+                try
+                {
+                    buildWithLogs = await uploadAndVerifyBuildAsync(
+                        _serverConfig,
+                        buildApi, 
+                        buildInfo.BuildId, 
+                        serverPaths,
+                        _cancelToken);
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+                
+                Assert.AreEqual(buildWithLogs.build?.Status, Build.StatusEnum.Succeeded,
+                    "[HathoraServerBuild.DeployToHathoraAsync] buildWithLogs.build?.Status != Succeeded");
+                
+                OnUploadComplete?.Invoke();
+                _cancelToken.ThrowIfCancellationRequested();
+                #endregion // Upload Build
+
+                
+                #region Deploy Build
+                // ----------------------------------------------
+                // Deploy the build
+                DeploymentStep = DeploymentSteps.Deploying;
+                HathoraServerDeployApi deployApi = new(_serverConfig);
+
+                Deployment deployment = null;
+                try
+                {
+                    deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+
+                Assert.IsTrue(deployment?.BuildId > 0,  
+                    "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
+                #endregion // Deploy Build
+
+                DeploymentStep = DeploymentSteps.Done;
+                return deployment;   
             }
             catch (Exception e)
             {
-                return null;
+                DeploymentStep = DeploymentSteps.Done;
+                throw;
             }
-            Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
-            
-            // Building seems to unselect Hathora _serverConfig on success
-            HathoraServerConfigFinder.ShowWindowOnly();
-            
-            OnBuildReqComplete?.Invoke(buildInfo);
-            #endregion // Request to build
-
-            
-            #region Upload Build
-            // ----------------------------------------------
-            DeploymentStep = DeploymentSteps.Uploading;
-
-            // Upload the build to Hathora
-            byte[] buildBytes = null;
-            try
-            {
-                buildBytes = await uploadBuildAsync(
-                    buildApi, 
-                    buildInfo.BuildId, 
-                    serverDeployPaths);
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-            Assert.IsNotNull(buildBytes, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildBytes");
-            
-            OnUploadComplete?.Invoke();
-            #endregion // Upload Build
-
-            
-            #region Deploy Build
-            // ----------------------------------------------
-            // Deploy the build
-            DeploymentStep = DeploymentSteps.Deploying;
-            HathoraServerDeployApi deployApi = new(_serverConfig);
-
-            Deployment deployment = null;
-            try
-            {
-                deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-            Assert.IsTrue(deployment?.BuildId > 0,  
-                "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
-            #endregion // Deploy Build
-            
-
-            DeploymentStep = DeploymentSteps.Done;
-            return deployment;
         }
 
         private static async Task<Deployment> deployBuildAsync(
@@ -181,7 +193,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             double _buildInfoBuildId)
         {
             Debug.Log("[HathoraServerDeploy.deployBuildAsync] " +
-                "Deploying the uploaded build...");
+                $"Deploying the uploaded build (_buildId #{_buildInfoBuildId} ...");
             
             Deployment createDeploymentResult = null;
             try
@@ -196,30 +208,53 @@ namespace Hathora.Core.Scripts.Editor.Server
             return createDeploymentResult;
         }
 
-        private static async Task<byte[]> uploadBuildAsync(
+        /// <summary>
+        /// High-level func, running 2 Tasks:
+        /// 1. RunCloudBuildAsync
+        /// 2. getBuildInfo (since File streaming may have failed)
+        /// </summary>
+        /// <param name="_serverConfig"></param>
+        /// <param name="_buildApi"></param>
+        /// <param name="_buildId"></param>
+        /// <param name="_serverPaths"></param>
+        /// <param name="_cancelToken">Optional</param>
+        /// <returns>streamingLogs</returns>
+        private static async Task<(Build build, string logs)> uploadAndVerifyBuildAsync(
+            HathoraServerConfig _serverConfig,
             HathoraServerBuildApi _buildApi,
-            double buildId,
-            HathoraServerDeployPaths _serverDeployPaths)
+            double _buildId,
+            HathoraServerPaths _serverPaths,
+            CancellationToken _cancelToken = default)
         {
-            Debug.Log("[HathoraServerDeploy.uploadBuildAsync] " +
-                "Uploading the local build to Hathora...");
+            string tarGzFileName = $"{_serverPaths.ExeBuildName}.tar.gz";
+
+            Debug.Log($"[HathoraServerDeploy.uploadAndVerifyBuildAsync] " +
+                $"Uploading local '{tarGzFileName}' build to Hathora...");
             
             // Pass BuildId and tarball (File stream) to Hathora
             string normalizedPathToTarball = Path.GetFullPath(
-                $"{_serverDeployPaths.TempDirPath}/{_serverDeployPaths.ExeBuildName}.tar.gz");
-            
-            byte[] runBuildResult;
-            await using (FileStream fileStream = new(normalizedPathToTarball, FileMode.Open, FileAccess.Read))
-            {
-                runBuildResult = await _buildApi.RunCloudBuildAsync(
-                    buildId, 
-                    fileStream);
-            }
+                $"{_serverPaths.PathToDotHathoraDir}/{tarGzFileName}");
 
-            string successStr = runBuildResult.Length > 0 ? "Success" : "Failed";
-            Debug.Log($"runBuildResult=={successStr}");
+            Build build = null;
+            string streamingLogs = null;
+                
+            try
+            {
+                streamingLogs = await _buildApi.RunCloudBuildAsync(
+                    _buildId, 
+                    normalizedPathToTarball,
+                    _cancelToken);
+
+                HathoraServerBuildApi buildApi = new(_serverConfig);
+                build = await buildApi.GetBuildInfoAsync(_buildId, _cancelToken);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraServerDeploy.uploadAndVerifyBuildAsync] Error: {e}");
+                throw;
+            }
             
-            return runBuildResult;
+            return (build, streamingLogs);
         }
 
         private static async Task<Build> getBuildInfoAsync(
@@ -227,7 +262,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             CancellationToken _cancelToken = default)
         {
             Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] " +
-                "Getting build info (notably for buildId)...");
+                "Getting build info (notably for _buildId)...");
             
             Build createBuildResult = null;
             try
@@ -241,67 +276,6 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             return createBuildResult;
         }
-
-
-        #region Dockerfile
-        /// <summary>
-        /// Deletes an old one, if exists, to ensure updated paths.
-        /// TODO: Use this to customize the Dockerfile without editing directly.
-        /// </summary>
-        /// <param name="pathToDockerfile"></param>
-        /// <param name="dockerfileContent"></param>
-        /// <param name="_cancelToken"></param>
-        /// <returns>path/to/Dockerfile</returns>
-        private static async Task writeDockerFileAsync(
-            string pathToDockerfile, 
-            string dockerfileContent,
-            CancellationToken _cancelToken = default)
-        {
-            // TODO: if (!overwriteDockerfile)
-            if (File.Exists(pathToDockerfile))
-            {
-                Debug.LogWarning("[HathoraServerDeploy.writeDockerFileAsync] " +
-                    "Deleting old Dockerfile...");
-                File.Delete(pathToDockerfile);
-            }
-
-            try
-            {
-                await File.WriteAllTextAsync(
-                    pathToDockerfile, 
-                    dockerfileContent, 
-                    _cancelToken);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("[HathoraServerDeploy.writeDockerFileAsync] " +
-                    $"Failed to write Dockerfile to {pathToDockerfile}:\n{e}");
-
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Writes dynamic paths
-        /// TODO: Use this to customize the Dockerfile without editing directly.
-        /// </summary>
-        /// <param name="_serverDeployPaths"></param>
-        /// <returns>"path/to/DockerFile"</returns>
-        private static string generateDockerFileStr(HathoraServerDeployPaths _serverDeployPaths)
-        {
-            return $@"# This Dockerfile is auto-generated by HathoraServerDeploy.cs
-
-FROM ubuntu
-
-# Copy the server build files into the container
-COPY ./{_serverDeployPaths.ExeBuildDir} .
-
-# Run the Linux server in headless mode as a dedicated server
-CMD ./{_serverDeployPaths.ExeBuildName} -mode server -batchmode -nographics
-";
-        }
-        #endregion // Dockerfile
-
 
     }
 }

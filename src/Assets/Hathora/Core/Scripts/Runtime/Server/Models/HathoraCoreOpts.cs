@@ -17,15 +17,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         [SerializeField]
         private string _appId;
 
+        [SerializeField]
+        private int _existingAppsSelectedIndex = -1;
+
         /// <summary>Get from your Hathora dashboard</summary>
-        public string AppId => _existingAppsSelectedIndex < 0
-            ? null
-            : ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId;
+        public string AppId => ExistingAppsWithDeployment != null && ExistingAppsWithDeployment.Count > 0 && _existingAppsSelectedIndex > -1 && _existingAppsSelectedIndex < ExistingAppsWithDeployment.Count
+            ? ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId
+            : null;
         
         public bool HasAppId => !string.IsNullOrEmpty(AppId);
         
-        [SerializeField]
-        private int _existingAppsSelectedIndex = -1;
         public int ExistingAppsSelectedIndex
         {
             get => _existingAppsSelectedIndex;
@@ -85,15 +86,17 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             if (!string.IsNullOrEmpty(_prependDummyIndex0Str))
             {
                 if (HathoraUtils.SDK_ENUM_STARTING_INDEX == 0)
+ #pragma warning disable CS0162 // Don't spam logs for `Unreachable code detected`
                 {
                     Debug.LogWarning("HathoraUtils.SDK_ENUM_STARTING_INDEX == 0, " +
                         "but you are using a _prependDummyIndex0Str: Intentional?");
                 }    
+ #pragma warning restore CS0162 // Don't spam logs for `Unreachable code detected`
                 
                 enumerable = enumerable.Prepend(_prependDummyIndex0Str);
-            }      
+            }
 
-            return enumerable.ToList();
+            return enumerable?.ToList();
         }
         
         

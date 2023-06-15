@@ -1,9 +1,18 @@
 // Created by dylan@hathora.dev
 
+using System;
+using System.IO;
+using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Hathora.Core.Scripts.Editor.Common;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
+using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
@@ -68,10 +77,26 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             bool enableBuildBtn = ServerConfig.MeetsBuildAndDeployBtnReqs();
             if (!enableBuildBtn && !HathoraServerDeploy.IsDeploying)
                 insertGenerateServerBuildBtnHelpboxOnMissingReqs();
-            
+            else
+                insertGenerateServerBuildBtnInfoHelpbox();
+
             insertGenerateServerBuildBtn(enableBuildBtn); // !await
+            insertOpenGeneratedDockerfileLinkLabel();
         }
-        
+
+        /// <summary>Only if exists. (!) RESOURCE INTENSIVE</summary>
+        private void insertOpenGeneratedDockerfileLinkLabel()
+        {
+            // USER INPUT >> Calls back onClick
+            InsertLinkLabel(
+                "Open Dockerfile",
+                _url: null,
+                _centerAlign: true,
+                onClick: onOpenDockerfileBtnClick);
+            
+            InsertSpace1x();
+        }
+
         /// <summary>
         /// Generally used for helpboxes to explain why a button is disabled.
         /// </summary>
@@ -89,20 +114,27 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("AppId, ");
+                helpboxLabelStrb.Append("`AppId` ");
             
             if (!_serverConfig.LinuxHathoraAutoBuildOpts.HasServerBuildDirName)
-                helpboxLabelStrb.Append("Server Build Dir Name, ");
+                helpboxLabelStrb.Append("`Server Build Dir Name` ");
                 
             if (!_serverConfig.LinuxHathoraAutoBuildOpts.HasServerBuildExeName)
-                helpboxLabelStrb.Append("Server Build Exe Name");
+                helpboxLabelStrb.Append("`Server Build Exe Name`");
 
             return helpboxLabelStrb;
         }
+        
+        private static void insertGenerateServerBuildBtnInfoHelpbox()
+        {
+            // Post the help box *before* we disable the button so it's easier to see (if toggleable)
+            const string labelStr = "This will generate a Linux Server Build for your game. " +
+                "It will also generate the Dockerfile for that build " +
+                "(located in <project>/.hathora directory)";
+            
+            EditorGUILayout.HelpBox(labelStr, MessageType.Info);
+        }
 
-        /// <summary>
-        /// </summary>
-        /// <returns>enableBuildBtn</returns>
         private void insertGenerateServerBuildBtnHelpboxOnMissingReqs()
         {
             StringBuilder helpboxLabelStrb = GetCreateBuildMissingReqsStrb(ServerConfig);
@@ -130,7 +162,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             string inputStr = base.InsertHorizLabeledTextField(
                 _labelStr: "Build directory",
                 _tooltip: "Parent directory to generate build into.\n\n" +
-                "Default: `Build-Linux-Server`",
+                "Default: `Build-Server`",
                 _val: ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName,
                 _alignTextField: GuiAlign.SmallRight);
 
@@ -160,6 +192,22 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         
         #region Event Logic
+        private void onOpenDockerfileBtnClick()
+        {
+            HathoraServerPaths paths = new(ServerConfig);
+            
+            generateDockerfileIfNotExists(paths);
+            HathoraDocker.OpenDockerfile(paths);
+        }
+
+        private void generateDockerfileIfNotExists(HathoraServerPaths _paths)
+        {
+            bool dockerfileExists = HathoraServerBuild.CheckIfDockerfileExists(_paths);
+            
+            if (!dockerfileExists)
+                HathoraDocker.GenerateDockerFileStr(_paths);
+        }
+        
         private void onServerBuildDirChanged(string _inputStr)
         {
             ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildDirName = _inputStr;
@@ -177,16 +225,48 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 _inputStr);
         }
 
-        private void OnGenerateServerBuildBtnClick() => 
-            GenerateServerBuild();
+        private void OnGenerateServerBuildBtnClick() =>
+            GenerateServerBuildAsync(); // !await
 
-        public BuildReport GenerateServerBuild()
+        public async Task<BuildReport> GenerateServerBuildAsync()
         {
-            BuildReport buildReport = HathoraServerBuild.BuildHathoraLinuxServer(ServerConfig);
-            
+            // TODO: Get from ServerConfig (for devs that have a custom Dockerfile they don't want overwritten each build)
+            const bool overwriteExistingDockerfile = true;
+
+            // Build headless Linux executable
+            CancellationTokenSource cancelTokenSrc = new();
+            BuildReport buildReport = null;
+
+            try
+            {
+                // +Appends strb logs
+                buildReport = await HathoraServerBuild.BuildHathoraLinuxServer(
+                    ServerConfig,
+                    overwriteExistingDockerfile, // TODO: 
+                    cancelTokenSrc.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                Debug.Log("Server build cancelled.");
+                ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+                    .AppendLine()
+                    .AppendLine("** BUILD CANCELLED BY USER **");
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraConfigPostAuthBodyBuilderUI.GenerateServerBuildAsync] " +
+                    $"Error: {e}");
+                ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+                    .AppendLine()
+                    .AppendLine("** BUILD ERROR BELOW **")
+                    .AppendLine(e.Message);
+                throw;
+            }
+
             Assert.AreEqual(buildReport.summary.result, BuildResult.Succeeded,
                 "Server build failed. Check console for details.");
-
+            
             return buildReport;
         }
         #endregion // Event Logic

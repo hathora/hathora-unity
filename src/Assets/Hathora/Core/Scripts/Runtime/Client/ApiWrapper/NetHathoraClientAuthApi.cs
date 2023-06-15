@@ -60,7 +60,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
 
             bool isAuthed = !string.IsNullOrEmpty(anonLoginResult?.Token); 
-            Debug.Log($"[NetHathoraClientAuthApi] isAuthed: {isAuthed}");
+            Debug.Log($"[NetHathoraClientAuthApi] isAuthed: {isAuthed}, " +
+                $"<color=yellow>anonLoginResult: {anonLoginResult.ToJson()}</color>");
 
             if (!isAuthed)
                 return null;

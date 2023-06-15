@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEditor;
@@ -101,7 +102,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             int inputInt = base.InsertHorizLabeledConstrainedIntField(
                 _labelStr: "Rooms per process",
-                _tooltip: "For some lightweight servers, a single server instance (process) can handle multiple rooms/matches. If your server is built to support this, you can specify the number of rooms to fit on a process before spinning up a fresh instance.\n\n" +
+                _tooltip: "For most Unity multiplayer games, this should be left as 1\n\n" +
+                "For some lightweight servers, a single server instance (process) can handle multiple rooms/matches. If your server is built to support this, you can specify the number of rooms to fit on a process before spinning up a fresh instance.\n\n" +
                 "Default: 1",
                 _val: ServerConfig.HathoraDeployOpts.RoomsPerProcess,
                 _minVal: 1,
@@ -145,7 +147,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Transport Type",
-                _tooltip: "Default: `UDP` (Fastest; although less reliable)",
+                _tooltip: 
+                    "Default: `UDP` (Fastest; although less reliable) " +
+                    "(!) For now, all transports override to UDP",
                 _displayOptsStrArr: displayOptsStrList.ToArray(),
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
@@ -232,19 +236,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // (!) Hathora SDK Enums start at index 1 (not 0)
             StringBuilder helpboxLabelStrb = new("Missing required fields: ");
             if (!ServerConfig.HathoraCoreOpts.HasAppId)
-                helpboxLabelStrb.Append("AppId, ");
+                helpboxLabelStrb.Append("`AppId` ");
             
             if (ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex < 1)
-                helpboxLabelStrb.Append("Plan Size, ");
+                helpboxLabelStrb.Append("`Plan Size` ");
             
             if (ServerConfig.HathoraDeployOpts.RoomsPerProcess < 1)
-                helpboxLabelStrb.Append("Rooms per Process, ");
+                helpboxLabelStrb.Append("`Rooms per Process`,");
             
             if (ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber < 1)
-                helpboxLabelStrb.Append("Container Port Number, ");
+                helpboxLabelStrb.Append("`Container Port Number` ");
             
             if (ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex < 1)
-                helpboxLabelStrb.Append("Transport Type");
+                helpboxLabelStrb.Append("`Transport Type`");
 
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
@@ -266,7 +270,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 return;
 
             onClickedDeployAppBtnClick(); // !await
-        }
+        } 
         #endregion // UI Draw
 
         
@@ -323,7 +327,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             bool isSuccess = deployment?.DeploymentId > 0;
             if (isSuccess)
-                onDeployAppSuccess();
+                onDeployAppSuccess(deployment);
             else
                 onDeployAppFail();
             
@@ -358,9 +362,14 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // TODO
         }
 
-        private void onDeployAppSuccess()
+        /// <summary>
+        /// Cache last successful Deployment for the session
+        /// </summary>
+        /// <param name="_deployment"></param>
+        private void onDeployAppSuccess(Deployment _deployment)
         {
-            throw new NotImplementedException("TODO: Cache LastDeployInfo in Config");
+            ServerConfig.HathoraDeployOpts.LastDeployment = 
+                new DeploymentWrapper(_deployment);
         }
         #endregion // Event Logic
         

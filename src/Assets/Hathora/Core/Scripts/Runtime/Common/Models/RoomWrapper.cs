@@ -69,19 +69,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.RoomId = _room.RoomId;
         }
 
-        private void setMissingDefaults()
-        {
-            Debug.LogWarning(
-                "[RoomWrapper] setMissingDefaults: TODO? " +
-                "(!) Hathora SDK throws Exception on missing requirement. " +
-                "Set this if you get parsing errs when creating a new `Room` " +
-                "type via `ToRoomType()`. See `ApplicationWithDeploymentWrapper.cs` " +
-                "for example.");
-        }
-        
         public Room ToRoomType()
         {
-            setMissingDefaults();
+            // (!) SDK constructor throws on req'd val == null
             
             Room room = null;
             try

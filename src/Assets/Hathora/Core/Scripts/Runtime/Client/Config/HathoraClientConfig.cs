@@ -26,17 +26,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.Config
         }
         
         public bool HasAppId => !string.IsNullOrEmpty(_appId);
-
-        [System.Obsolete("The user should be prompted instead of hard-coding")]
-        [SerializeField, Tooltip("You likely want to get user input instead of use this")]
-        private Region fallbackRegion = Region.Seattle;
-
-        [System.Obsolete("The user should be prompted instead of hard-coding")]
-        public Region FallbackRegion
-        {
-            get => fallbackRegion;
-            set => fallbackRegion = value;
-        }
         #endregion // Vars
 
 

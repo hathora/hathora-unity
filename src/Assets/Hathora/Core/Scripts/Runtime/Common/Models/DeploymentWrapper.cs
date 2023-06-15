@@ -138,13 +138,13 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             get => _appId;
             set => _appId = value;
         }
-
+        
         
         public DeploymentWrapper(Deployment _deployment)
         {
             if (_deployment == null)
                 return;
-            
+
             this.PlanName = _deployment.PlanName;
             this.TransportType = _deployment.TransportType;
             this.RoomsPerProcess = _deployment.RoomsPerProcess;
@@ -162,7 +162,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
 
         public Deployment ToDeploymentType()
         {
-            // (!) Throws on missing req'd arg
+            // (!) SDK constructor throws on req'd val == null
+            
             Deployment deployment = null;
             try
             {
@@ -189,10 +190,6 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             }
 
             return deployment;
-        }
-
-        private void setMissingDefaults()
-        {
         }
     }
 }

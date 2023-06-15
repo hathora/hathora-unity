@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
@@ -71,10 +72,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
+            InsertSpace2x();
             // -----------------------------
             insertAppIdHorizHeader();
             insertAppsListPopupListHorizGroup();
             insertAppIdDisplayCopyGroup();
+            string appUrl = "https://console.hathora.dev/application/create";
+            InsertLinkLabel("Create new application", appUrl, _centerAlign:false);
+            
+            InsertSpace2x();
             
             // -----------------------------
             EditorGUILayout.EndVertical();
@@ -292,11 +298,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 throw;
             }
               
-            // If selected app is -1 and apps count is > 0, select the first app
-            bool hasSelectedApp = ServerConfig.HathoraCoreOpts.ExistingAppsSelectedIndex != -1;
+            // If selected app is -1 or invalid and apps count is > 0, select the first app
+            bool hasSelectedApp = ServerConfig.HathoraCoreOpts.ExistingAppsSelectedIndex != -1 &&
+                ServerConfig.HathoraCoreOpts.ExistingAppsSelectedIndex < apps.Count;
+
             if (!hasSelectedApp && apps.Count > 0)
-                setSelectedApp(_newSelectedIndex: 0); 
-            
+            {
+                setSelectedApp(0);
+            }
+
             isRefreshingExistingApps = false;
         }
         

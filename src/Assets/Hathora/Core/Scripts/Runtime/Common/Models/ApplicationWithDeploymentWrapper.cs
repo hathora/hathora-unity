@@ -136,6 +136,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
             this.AuthConfiguration = _appWithDeployment.AuthConfiguration;
         }
 
+        /// <summary>This work around SDK throwing on null values</summary>
+        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
         private void setMissingDefaults()
         {
             this.CreatedBy ??= "";
@@ -150,8 +152,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
         /// <returns></returns>
         public ApplicationWithDeployment ToApplicationWithDeploymentType()
         {
-            // (!) Throws on req'd val == null
-            setMissingDefaults();
+            setMissingDefaults(); // (!) Works around SDK constructor throws on req'd val == null
 
             ApplicationWithDeployment appWithDeploy = null;
             try

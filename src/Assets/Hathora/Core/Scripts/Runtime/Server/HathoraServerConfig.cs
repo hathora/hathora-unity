@@ -78,7 +78,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <returns></returns>
         public bool MeetsCreateRoomBtnReqs() =>
             HathoraCoreOpts.HasAppId &&
-            HathoraLobbyRoomOpts.RegionSelectedIndex > 0 &&
+            HathoraLobbyRoomOpts.RegionSelectedIndex > -1 &&
             HathoraLobbyRoomOpts.HathoraRegion > 0;
 
         /// <summary>
@@ -86,10 +86,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// </summary>
         /// <returns></returns>
         public string GetNormalizedPathToBuildExe() => Path.GetFullPath(Path.Combine(
-            HathoraUtils.GetNormalizedPathToProjRoot(), 
-            _linuxHathoraAutoBuildOpts.ServerBuildDirName, 
+            GetNormalizedPathToBuildDir(), 
             _linuxHathoraAutoBuildOpts.ServerBuildExeName));
-        
 
+        public string GetNormalizedPathToBuildDir() => Path.GetFullPath(Path.Combine(
+            HathoraUtils.GetNormalizedPathToProjRoot(), 
+            _linuxHathoraAutoBuildOpts.ServerBuildDirName));
     }
 }

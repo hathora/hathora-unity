@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Hathora.Core.Scripts.Runtime.Client
 {
     /// <summary>
-    /// Cached net session. Eg: Auth token, last room/lobby joined.
+    /// Cached net session. Eg: Auth token, last room joined.
     /// API wrappers will cache here on success.
     /// TODO: Move NetSession to Demo. This would require detaching cache saving from API wrappers.
     /// </summary>
@@ -23,9 +23,19 @@ namespace Hathora.Core.Scripts.Runtime.Client
         public Lobby Lobby { get; set; }
         public string RoomId => Lobby?.RoomId;
 
-        public ConnectionInfoV2 ServerInfo { get; set; }
+        /// <summary>
+        /// - Unity ClientAddress == ExposedPort.Host 
+        /// </summary>
+        public ConnectionInfoV2 ServerConnectionInfo { get; set; }
+
+        /// <summary>Validates host + port</summary>
+        /// <returns></returns>
+        public bool CheckIsValidServerConnectionInfo() => 
+            !string.IsNullOrEmpty(ServerConnectionInfo?.ExposedPort?.Host) && 
+            ServerConnectionInfo?.ExposedPort?.Port > 0;
+        
         public string GetServerInfoIpPort() => 
-            $"{ServerInfo?.ExposedPort.Host}:{ServerInfo?.ExposedPort.Port}";
+            $"{ServerConnectionInfo?.ExposedPort.Host}:{ServerConnectionInfo?.ExposedPort.Port}";
 
         
         #region Init

@@ -64,7 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 );
                 
                 Debug.Log("[HathoraServerDeploy.CreateDeploymentAsync] " +
-                    $"deployConfig == <color=yellow>{deployConfig.ToJson()}</color>");
+                    $"<color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
             }
             catch (Exception e)
             {
@@ -90,9 +90,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerDeployApi] Success - " +
-                $"BuildId: '{createDeploymentResult?.BuildId}', " +
-                $"DeployId: '{createDeploymentResult?.DeploymentId}");
+            Debug.Log("[HathoraServerDeploy.CreateDeploymentAsync] <color=yellow>" +
+                $"createDeploymentResult: {createDeploymentResult.ToJson()}</color>");
 
             return createDeploymentResult;
         }
@@ -119,7 +118,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerDeployApi] num: '{getDeploymentsResult?.Count}'");
+            Debug.Log($"[HathoraServerDeployApi.GetDeploymentsAsync] " +
+                $"<color=yellow>num: '{getDeploymentsResult?.Count}'</color>");
 
             return getDeploymentsResult;
         }
