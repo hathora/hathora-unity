@@ -98,7 +98,7 @@ RUN chmod +x ./{_serverPaths.ExeBuildName}
 CMD ./{_serverPaths.ExeBuildName} -mode server -batchmode -nographics
 ";
             
-            Debug.Log($"[GenerateDockerFileStr] Generated: <color=yellow>" +
+            Debug.Log($"[GenerateDockerFileStr] Generated: <color=yellow>\n" +
                 $"`{dockerStr}`</color> ...");
 
             return dockerStr;
