@@ -2,7 +2,6 @@
 using FishNet;
 using FishNet.Object;
 using FishNet.Transporting;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 #if ENABLE_INPUT_SYSTEM 
