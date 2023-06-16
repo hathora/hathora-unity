@@ -99,7 +99,7 @@ CMD ./{_serverPaths.ExeBuildName} -mode server -batchmode -nographics
 ";
             
             Debug.Log($"[GenerateDockerFileStr] Generated: <color=yellow>" +
-                $"`{relativePathToBuildDir}`</color> ...");
+                $"`{dockerStr}`</color> ...");
 
             return dockerStr;
         }
