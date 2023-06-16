@@ -34,15 +34,18 @@ namespace Hathora.Demo.Scripts.Client.Player
             base.OnStartClient();
             
             Debug.Log($"[NetHathoraPlayer] OnStartClient: IsOwner? {base.IsOwner}");
-            if (!base.IsOwner)
-                return;
-            
+            if (base.IsOwner)
+                owningClientStarted();
+        }
+
+        private void owningClientStarted()
+        {
             ownerObjWrapper.gameObject.SetActive(true);
-            NetworkSpawnLogs();
             playerUi.OnConnected(
                 ClientManager.Connection.ClientId.ToString(),
-                ClientManager.Clients.Count, // Includes self
-                TimeManager.RoundTripTime);
+                ClientManager.Clients.Count); // Includes self
+            
+            NetworkSpawnLogs();
         }
 
         public override void OnStopClient()
