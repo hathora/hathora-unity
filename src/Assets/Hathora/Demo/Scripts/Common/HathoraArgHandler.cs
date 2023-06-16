@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using FishNet;
-using Hathora.Demo.Scripts.Client;
 using Hathora.Demo.Scripts.Client.ClientMgr;
 using UnityEngine;
 
@@ -12,14 +11,14 @@ namespace Hathora.Demo.Scripts.Common
     /// <summary>
     /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`
     /// </summary>
-    public class NetCmdLine : MonoBehaviour
+    public class HathoraArgHandler : MonoBehaviour
     {
         private void Start()
         {
             if (Application.isEditor) 
                 return;
 
-            var args = GetCommandlineArgs();
+            Dictionary<string, string> args = GetCommandlineArgs();
 
             if (args.TryGetValue("-mode", out string mode))
                 initMode(mode);
@@ -33,17 +32,17 @@ namespace Hathora.Demo.Scripts.Common
             switch (mode)
             {
                 case "server":
-                    Debug.Log("[NetCmdLine] @ initMode - Starting server ...");
+                    Debug.Log("[HathoraArgHandler] @ initMode - Starting server ...");
                     InstanceFinder.ServerManager.StartConnection();
                     break;
                 
                 case "client":
-                    Debug.Log("[NetCmdLine] @ initMode - Starting client ...");
+                    Debug.Log("[HathoraArgHandler] @ initMode - Starting client ...");
                     InstanceFinder.ClientManager.StartConnection();
                     break;
                 
                 case "host":
-                    Debug.Log("[NetCmdLine] @ initMode - starting host (server+client) ...");
+                    Debug.Log("[HathoraArgHandler] @ initMode - starting host (server+client) ...");
                     InstanceFinder.ServerManager.StartConnection();
                     InstanceFinder.ClientManager.StartConnection();
                     break;
