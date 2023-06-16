@@ -257,6 +257,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             {
                 Debug.LogError($"[HathoraConfigPostAuthBodyBuilderUI.GenerateServerBuildAsync] " +
                     $"Error: {e}");
+                
                 ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
                     .AppendLine()
                     .AppendLine("** BUILD ERROR BELOW **")
