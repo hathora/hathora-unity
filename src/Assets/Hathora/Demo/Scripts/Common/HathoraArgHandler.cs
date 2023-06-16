@@ -20,35 +20,54 @@ namespace Hathora.Demo.Scripts.Common
 
             Dictionary<string, string> args = GetCommandlineArgs();
 
+            // -mode {server|client|host} // Logs and start netcode
             if (args.TryGetValue("-mode", out string mode))
                 initMode(mode);
 
+            // -memo {string} // Show arbitrary text at bottom of screen
             if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
                 NetUI.Singleton.SetShowDebugMemoTxt(memoStr);
         }
 
+        /// <summary>
+        /// -mode {server|client|host}
+        /// </summary>
+        /// <param name="mode"></param>
         private void initMode(string mode)
         {
             switch (mode)
             {
                 case "server":
                     Debug.Log("[HathoraArgHandler] @ initMode - Starting server ...");
-                    InstanceFinder.ServerManager.StartConnection();
+
+                    if (!InstanceFinder.ServerManager.Started)
+                    {
+                        // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
+                        // start on headless checkbox is true
+                        InstanceFinder.ServerManager.StartConnection();
+                    }
                     break;
                 
                 case "client":
                     Debug.Log("[HathoraArgHandler] @ initMode - Starting client ...");
-                    InstanceFinder.ClientManager.StartConnection();
+                    if (!InstanceFinder.ClientManager.Started)
+                        InstanceFinder.ClientManager.StartConnection();
                     break;
                 
                 case "host":
                     Debug.Log("[HathoraArgHandler] @ initMode - starting host (server+client) ...");
-                    InstanceFinder.ServerManager.StartConnection();
-                    InstanceFinder.ClientManager.StartConnection();
+                    
+                    if (!InstanceFinder.ServerManager.Started)
+                        InstanceFinder.ServerManager.StartConnection();
+    
+                    if (!InstanceFinder.ClientManager.Started)
+                        InstanceFinder.ClientManager.StartConnection();
                     break;
             }
         }
 
+        
+        #region Utils
         private static Dictionary<string, string> GetCommandlineArgs()
         {
             Dictionary<string, string> argDictionary = new();
@@ -74,5 +93,6 @@ namespace Hathora.Demo.Scripts.Common
             }
             return argDictionary;
         }
+        #endregion // Utils
     }
 }

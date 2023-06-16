@@ -258,6 +258,8 @@ namespace Hathora.Demo.Scripts.Client.ClientMgr
             showInitLobbyUi(false);
         }
         
+        /// <summary>Shows arbitrary text at the bottom of the screen</summary>
+        /// <param name="memoStr"></param>
         public void SetShowDebugMemoTxt(string memoStr)
         {
             debugMemoTxt.text = memoStr;
