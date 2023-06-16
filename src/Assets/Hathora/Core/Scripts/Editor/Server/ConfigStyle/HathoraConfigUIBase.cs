@@ -699,7 +699,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         
         protected void SaveConfigChange(string _logKeyName, string _logKeyVal)
          {
-             Debug.Log($"[HathoraConfigUIBase] Set new ServerConfig vals for: `{_logKeyName}` to: `{_logKeyVal}`");
+             Debug.Log($"[HathoraConfigUIBase] Set new ServerConfig vals for: " +
+                 $"`{_logKeyName}` to: `{_logKeyVal}`");
              
              SerializedConfig.ApplyModifiedProperties();
              EditorUtility.SetDirty(ServerConfig); // Mark the object as dirty

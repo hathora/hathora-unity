@@ -3,7 +3,9 @@
 using System;
 using System.Globalization;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Core.Scripts.Runtime.Common.Models;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
@@ -14,6 +16,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     [Serializable]
     public class HathoraCachedRoomConnection
     {
+        [SerializeField]
+        private Region _hathoraRegion = Region.Seattle;
+        public Region HathoraRegion
+        {
+            get => _hathoraRegion;
+            set => _hathoraRegion = value;
+        }
+
+        /// <summary>WashingtonDC => "Washington DC"</summary>
+        public string GetFriendlyRegionStr() => 
+            Enum.GetName(typeof(Region), _hathoraRegion)?.SplitPascalCase();
+        
         [SerializeField]
         private RoomWrapper _roomWrapper;
         public Room Room
@@ -32,9 +46,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         
         
         public HathoraCachedRoomConnection(
+            Region _region,
             Room _room, 
             ConnectionInfoV2 _connectionInfoV2)
         {
+            // (!) We use `public` setters in case there are SDK wrapper workarounds
+            this.HathoraRegion = _region;
             this.Room = _room;
             this.ConnectionInfoV2 = _connectionInfoV2;
         }

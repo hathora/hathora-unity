@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
@@ -55,8 +56,25 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                     .ToDictionary(x => x.index, x => 
                         x.region.ToString().SplitPascalCase());
 
-            displayOptsStrList = regionDisplayMap.Values.OrderBy(s => s).ToList();
-            originalIndices = displayOptsStrList.Select(s => regionDisplayMap.First(kvp => kvp.Value == s).Key).ToList();
+            try
+            {
+                displayOptsStrList = regionDisplayMap.Values.OrderBy(s => s).ToList();
+
+                // (!) WORKAROUND: Note the `.Key+1`: Hathora SDK Enums starts at index 1; not 0: Care of indexes.
+                originalIndices = displayOptsStrList.Select(
+                        displayStr =>
+                            regionDisplayMap.First(
+                                    kvp =>
+                                        kvp.Value == displayStr)
+                                .Key+1)
+                    .ToList();
+                
+                Assert.AreEqual(originalIndices[0], (int)(Region)originalIndices[0]);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to init Region lists: {e}");
+            }
         }
 
         private void initDrawUtils()
@@ -90,24 +108,24 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             EditorGUI.indentLevel++;
             InsertSpace2x();
 
-            insertCreateRoomOrLobbyFoldoutComponents();
+            insertCreateRoomFoldoutComponents();
 
             EditorGUI.indentLevel--;
             EditorGUILayout.EndFoldoutHeaderGroup();
         }
         
-        private void insertCreateRoomOrLobbyFoldoutComponents()
+        private void insertCreateRoomFoldoutComponents()
         {
             insertRegionHorizPopupList();
 
             bool enableCreateRoomBtn = ServerConfig.MeetsCreateRoomBtnReqs();
-            insertCreateRoomLobbyBtnHelpboxOnErr(enableCreateRoomBtn);
+            insertCreateRoomBtnHelpboxOnErr(enableCreateRoomBtn);
 
             bool showCancelBtn = isCreatingRoomAwaitingActiveStatus && CreateRoomCancelTokenSrc.Token.CanBeCanceled; 
             if (showCancelBtn)
-                insertCreateRoomLobbyCancelBtn(CreateRoomCancelTokenSrc);
+                insertCreateRoomCancelBtn(CreateRoomCancelTokenSrc);
             else
-                insertCreateRoomLobbyBtn(enableCreateRoomBtn);
+                insertCreateRoomBtn(enableCreateRoomBtn);
 
             bool hasLastRoomInfo = ServerConfig.HathoraLobbyRoomOpts.HasLastCreatedRoomConnection;
             if (hasLastRoomInfo)
@@ -153,7 +171,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             EditorGUILayout.BeginHorizontal();
             
             insertRoomIdLbl();
-            // insertRoomRegionLbl(); // Delayed
+            insertRoomRegionLbl(); // Delayed
             insertRoomCreateDateLbl();
             
             EditorGUILayout.EndHorizontal();
@@ -175,8 +193,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertRoomRegionLbl()
         {
-            // TODO: Missing Region from LastCreatedRoomConnection - We don't want to assume from ServerConfig
-            // InsertLabel("{Region}");
+            InsertFlexSpace();
+            
+            string region = ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.GetFriendlyRegionStr();
+            InsertLabel($"<b>Region:</b> {region}", _fontSize: 10);
+
+            InsertFlexSpace();
         }
 
         private void insertRoomConnectionInfoSelectableLbl()
@@ -193,8 +215,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertRoomIdLbl()
         {
-            InsertLabel("<b>Room ID:</b> " + ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?
-                .Room?.RoomId, _fontSize: 10);
+            string roomId = ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.Room?.RoomId;
+            InsertLabel($"<b>Room ID:</b> {roomId}", _fontSize: 10);
             InsertSpace1x();
         }
 
@@ -223,7 +245,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             InsertLinkLabel("View room in Hathora Console", appUrl, _centerAlign:false);
         }
 
-        private void insertCreateRoomLobbyCancelBtn(CancellationTokenSource _cancelTokenSrc)
+        private void insertCreateRoomCancelBtn(CancellationTokenSource _cancelTokenSrc)
         {
             string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
                 "<b>Cancel</b> (Creating Room...)</color>";
@@ -254,13 +276,13 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 helpboxLabelStrb.Append("`AppId` ");
             
             // (!) This is 0-indexed
-            if (_serverConfig.HathoraLobbyRoomOpts.RegionSelectedIndex < 0)
+            if (_serverConfig.HathoraLobbyRoomOpts.SortedRegionSelectedIndexUi < 0)
                 helpboxLabelStrb.Append("`Region` ");
 
             return helpboxLabelStrb;
         }
         
-        private void insertCreateRoomLobbyBtnHelpboxOnErr(bool _enable)
+        private void insertCreateRoomBtnHelpboxOnErr(bool _enable)
         {
             if (_enable)
                 return;
@@ -289,7 +311,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             InsertSpace1x();
         }
 
-        private void insertCreateRoomLobbyBtn(bool _enable)
+        private void insertCreateRoomBtn(bool _enable)
         {
             string btnLabelStr = isCreatingRoomAwaitingActiveStatus 
                 ? "Creating Room..." 
@@ -305,7 +327,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (!clickedCreateRoomLobbyBtn)
                 return;
 
-            onCreateRoomLobbyBtnClick(); // !await
+            onCreateRoomBtnClick(); // !await
 
             // Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(ServerConfig);
             // Assert.That(deployment?.BuildId, Is.Not.Null,
@@ -316,34 +338,30 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertRegionHorizPopupList()
         {
-            int selectedIndex = ServerConfig.HathoraLobbyRoomOpts.RegionSelectedIndex;
+            int selectedIndexUi = ServerConfig.HathoraLobbyRoomOpts.SortedRegionSelectedIndexUi;
 
-            if (selectedIndex < 0 || selectedIndex >= originalIndices.Count)
+            if (selectedIndexUi < 0 || selectedIndexUi >= originalIndices.Count)
             {
                 Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.insertRegionHorizPopupList] " + 
-                    $"Invalid selected index: {selectedIndex}");
+                    $"Invalid selected index: {selectedIndexUi}");
                 return;
             }
 
-            // Get display index from original index
-            int displaySelectedIndex = originalIndices.IndexOf(selectedIndex);
-            
-            int newDisplaySelectedIndex = base.InsertHorizLabeledPopupList(
+            int newDisplaySelectedIndexUi = base.InsertHorizLabeledPopupList(
                 _labelStr: "Region",
                 _tooltip: "Default: `Seattle`",
                 _displayOptsStrArr: displayOptsStrList.ToArray(),
-                _selectedIndex: displaySelectedIndex,
+                _selectedIndex: selectedIndexUi,
                 GuiAlign.SmallRight);
 
-            bool isNewValidIndex = newDisplaySelectedIndex >= 0 &&
-                newDisplaySelectedIndex != displaySelectedIndex &&
-                newDisplaySelectedIndex < displayOptsStrList.Count;
+            bool isNewValidIndex = newDisplaySelectedIndexUi >= 0 &&
+                newDisplaySelectedIndexUi != selectedIndexUi &&
+                newDisplaySelectedIndexUi < displayOptsStrList.Count;
 
             if (isNewValidIndex)
             {
                 // Get the original index from display index
-                int originalIndex = originalIndices[newDisplaySelectedIndex];
-                onSelectedRegionPopupIndexChanged(originalIndex);
+                onSelectedRegionPopupIndexChanged(newDisplaySelectedIndexUi);
             }
 
             InsertSpace2x();
@@ -352,25 +370,31 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         
         
         #region Event Logic
-        private void onSelectedRegionPopupIndexChanged(int _newSelectedIndex)
+        private void onSelectedRegionPopupIndexChanged(int _newSelectedIndexUi)
         {
-            ServerConfig.HathoraLobbyRoomOpts.RegionSelectedIndex = _newSelectedIndex;
+            // Sorted list (order, names and index) will be different from the original list
+            ServerConfig.HathoraLobbyRoomOpts.SortedRegionSelectedIndexUi = _newSelectedIndexUi;
+            
+            // Save the original Region from index. (!) SDK Enums are 1-index-based, instead of 0
+            ServerConfig.HathoraLobbyRoomOpts.HathoraRegion =  (Region)originalIndices[_newSelectedIndexUi];
+            
             SaveConfigChange(
-                nameof(ServerConfig.HathoraLobbyRoomOpts.RegionSelectedIndex), 
-                _newSelectedIndex.ToString());
+                nameof(ServerConfig.HathoraLobbyRoomOpts.SortedRegionSelectedIndexUi), 
+                _newSelectedIndexUi.ToString());
             Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onSelectedRegionPopupIndexChanged] " +
-                $"Selected Region: {(Region)ServerConfig.HathoraLobbyRoomOpts.RegionSelectedIndex}" +
-                $" (index {_newSelectedIndex})]");
+                $"SortedRegionSelectedIndexUi: {ServerConfig.HathoraLobbyRoomOpts.HathoraRegion}" +
+                $" (index {_newSelectedIndexUi})]");
         }
         
         /// <summary>
         /// On cancel, we'll set !isCreatingRoomAwaitingActiveStatus so we can try again.
         /// </summary>
-        private async Task onCreateRoomLobbyBtnClick()
+        private async Task onCreateRoomBtnClick()
         {
             isCreatingRoomAwaitingActiveStatus = true;
             resetLastCreatedRoom(); // Both UI + ServerConfig
 
+            Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.HathoraRegion;
             createNewCreateRoomCancelToken();
             HathoraServerRoomApi serverRoomApi = new(ServerConfig);
 
@@ -390,7 +414,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // Parse to helper class containing extra parsing
             // We can also save to ServerConfig as this type
             HathoraCachedRoomConnection roomConnInfo = new(
-                roomConnInfoTuple.room, roomConnInfoTuple.connInfo);
+                lastRegion,
+                roomConnInfoTuple.room, 
+                roomConnInfoTuple.connInfo);
 
             onCreateRoomDone();
 
