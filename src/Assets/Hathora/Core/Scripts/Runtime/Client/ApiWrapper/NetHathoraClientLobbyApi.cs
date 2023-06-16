@@ -98,7 +98,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
-                $"<color=yellow>roomId:{roomId}</color>");
+                $"<color=yellow>roomId: {roomId}</color>");
             
             Lobby lobby;
             try
@@ -127,13 +127,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
         /// <summary>
         /// </summary>
-        /// <param name="_region">
-        /// TODO (to confirm): null region returns *all* region lobbies?
-        /// </param>
+        /// <param name="_region">Leave null to return ALL Regions</param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
         public async Task<List<Lobby>> ClientListPublicLobbiesAsync(
-            Region _region = Region.WashingtonDC,
+            Region? _region = null, // null == ALL regions
             CancellationToken _cancelToken = default)
         {
             Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
