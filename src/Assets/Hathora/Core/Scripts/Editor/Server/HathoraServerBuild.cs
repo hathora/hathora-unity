@@ -59,6 +59,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 _serverConfig,
                 configPaths.PathToBuildExe);
 
+            // ----------------
             // Build the server
             strb.AppendLine("BUILDING now (this may take a while), with opts:")
                 .AppendLine("```")
@@ -69,6 +70,19 @@ namespace Hathora.Core.Scripts.Editor.Server
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
             _cancelToken.ThrowIfCancellationRequested();
             
+            // Did we fail?
+            string resultStr = Enum.GetName(typeof(BuildResult), buildReport.summary.result);
+            if (buildReport.summary.result != BuildResult.Succeeded)
+            {
+                strb.AppendLine($"**BUILD FAILED: {resultStr}**");
+                
+                Selection.activeObject = previousSelection; // Restore focus
+                return buildReport; // fail
+            }
+            
+            strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
+            
+            // ----------------
             // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
             bool genDockerfile = _overwriteExistingDockerfile || !CheckIfDockerfileExists(configPaths);
             if (genDockerfile)
@@ -90,13 +104,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                     _cancelToken);    
             }
 
-            // Did we fail?
-            if (buildReport.summary.result != BuildResult.Succeeded)
-            {
-                Selection.activeObject = previousSelection; // Restore focus
-                return buildReport; // fail
-            }
-
+            // ----------------
             // Open the build directory - this will lose focus of the inspector
             // TODO: Play a small, subtle chime sfx?
             strb.AppendLine("Opening build dir ...");
@@ -107,6 +115,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             cacheFinishedBuildReportLogs(_serverConfig, buildReport);
 
             Selection.activeObject = previousSelection; // Restore focus
+            
             return buildReport;
         }
 
