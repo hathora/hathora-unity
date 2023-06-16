@@ -13,11 +13,11 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
-using Hathora.Demo.Scripts.Client.Models;
+using Hathora.Demos.Shared.Scripts.Client;
+using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
 
-namespace Hathora.Demo.Scripts.Client.ClientMgr
+namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
 {
     /// <summary>
     /// This spawns BEFORE the player, or even connected to the network.

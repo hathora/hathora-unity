@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace Hathora.Demo.Scripts.Client.ClientMgr
+namespace Hathora.Demos.Shared.Scripts.Client
 {
     /// <summary>
     /// Handles the non-Player UI so we can keep the logic separate.

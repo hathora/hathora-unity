@@ -1,12 +1,11 @@
 // Created by dylan@hathora.dev
 
-using System.Collections.Generic;
 using FishNet;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using Hathora.Demo.Scripts.Client.ClientMgr;
+using Hathora.Demos.Shared.Scripts.Client;
 using UnityEngine;
 
-namespace Hathora.Demo.Scripts.Common
+namespace Hathora.Demos._1_FishNetDemo.Scripts.Common
 {
     /// <summary>
     /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`

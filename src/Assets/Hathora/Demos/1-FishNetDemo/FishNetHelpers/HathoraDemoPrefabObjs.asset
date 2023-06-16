@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ad70174b079c2f4ebc7931d3dd1af6f, type: 3}
-  m_Name: HathoraDemoPrefabObjects
+  m_Name: HathoraDemoPrefabObjs
   m_EditorClassIdentifier: 
   _prefabs:
   - {fileID: 611616139817875448, guid: 6bb365439fe9747498cfafdea5f1d002, type: 3}

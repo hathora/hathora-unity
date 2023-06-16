@@ -8,7 +8,7 @@ using Hathora.Core.Scripts.Runtime.Client.Config;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Hathora.Demo.Scripts.Client.Models
+namespace Hathora.Demos.Shared.Scripts.Client.Models
 {
     /// <summary>
     /// API wrapper container to serialize in HathoraPlayer.

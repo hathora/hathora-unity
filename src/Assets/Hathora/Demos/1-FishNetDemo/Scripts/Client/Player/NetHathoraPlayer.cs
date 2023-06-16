@@ -1,9 +1,10 @@
 // Created by dylan@hathora.dev
 
 using FishNet.Object;
+using Hathora.Demos.Shared.Scripts.Client;
 using UnityEngine;
 
-namespace Hathora.Demo.Scripts.Client.Player
+namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.Player
 {
     /// <summary>
     /// Helpers for the runtime-spawned networked Player GameObject.

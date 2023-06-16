@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Hathora.Demo.Scripts.Common
+namespace Hathora.Demos.Shared.Scripts.Common
 {
     public class DestroyIfUnityEditor : MonoBehaviour
     {
