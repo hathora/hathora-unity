@@ -114,6 +114,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     nameof(NetHathoraClientLobbyApi),
                     nameof(ClientGetLobbyInfoAsync), 
                     apiException);
+                
+                if (apiException.ErrorCode == 404)
+                    Debug.LogError("[404] Tip: If a server made a Room without a lobby, " +
+                        "instead use the Room api (rather than Lobby api)");
+                
                 return null; // fail
             }
 
@@ -135,7 +140,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
-                $"<color=yellow>region:{_region} </color>");
+                $"<color=yellow>region: {_region}</color> (This will exclude " +
+                $"private lobbies and server Rooms created without a lobby)");
             
             List<Lobby> lobbies;
             try
@@ -151,6 +157,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     nameof(NetHathoraClientLobbyApi),
                     nameof(ClientListPublicLobbiesAsync), 
                     apiException);
+                
+                if (apiException.ErrorCode == 404)
+                    Debug.LogError("[404] Tip: If a server made a Room without a lobby, " +
+                        "instead use the Room api (rather than Lobby api)");
+                
                 return null; // fail
             }
 

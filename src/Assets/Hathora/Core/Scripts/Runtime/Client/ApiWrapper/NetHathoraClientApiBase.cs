@@ -42,7 +42,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         {
             Debug.LogError($"[{_className}.{_funcName}] API Error: " +
                 $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
-            
+
             throw _apiException;
         }
 
