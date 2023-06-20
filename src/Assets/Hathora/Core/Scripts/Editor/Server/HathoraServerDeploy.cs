@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Editor.Common;
-using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
@@ -22,7 +21,12 @@ namespace Hathora.Core.Scripts.Editor.Server
     public delegate void OnUploadComplete();
     
     public static class HathoraServerDeploy
-    {
+    {   
+        /// <summary>
+        /// This nees to be a massive timeout, but still have a timeout to prevent mem leaks.
+        /// </summary>
+        public const int DEPLOY_TIMEOUT_MINS = 30;
+
         public static bool IsDeploying => 
             DeploymentStep != DeploymentSteps.Done;
         public enum DeploymentSteps
@@ -106,9 +110,22 @@ namespace Hathora.Core.Scripts.Editor.Server
                 strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Compress build into .tar.gz (gzipped tarball)
-                await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
-                    serverPaths,
-                    _cancelToken);
+                try
+                {
+                    await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
+                        serverPaths,
+                        _cancelToken);
+                }
+                catch (TaskCanceledException e)
+                {
+                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] ArchiveFilesAsTarGzToDotHathoraDir => Task Cancelled");
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error: {e}");
+                    throw;
+                }
                 
                 OnZipComplete?.Invoke();
                 #endregion // Dockerfile >> Compress to .tar.gz
@@ -119,13 +136,18 @@ namespace Hathora.Core.Scripts.Editor.Server
                 DeploymentStep = DeploymentSteps.RequestingUploadPerm;
                 strb.AppendLine(GetDeployFriendlyStatus());
 
-                // Get a _buildId from Hathora
+                // Get a buildId from Hathora
                 HathoraServerBuildApi buildApi = new(_serverConfig);
 
                 Build buildInfo = null;
                 try
                 {
                     buildInfo = await getBuildInfoAsync(buildApi, _cancelToken);
+                }
+                catch (TaskCanceledException e)
+                {
+                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] getBuildInfoAsync => Task Cancelled");
+                    throw;
                 }
                 catch (Exception e)
                 {
@@ -157,6 +179,11 @@ namespace Hathora.Core.Scripts.Editor.Server
                         serverPaths,
                         _cancelToken);
                 }
+                catch (TaskCanceledException e)
+                {
+                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] uploadAndVerifyBuildAsync => Task Cancelled");
+                    throw;
+                }
                 catch (Exception e)
                 {
                     return null;
@@ -183,6 +210,11 @@ namespace Hathora.Core.Scripts.Editor.Server
                 {
                     deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
                 }
+                catch (TaskCanceledException e)
+                {
+                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] deployBuildAsync => Task Cancelled");
+                    throw;
+                }
                 catch (Exception e)
                 {
                     return null;
@@ -197,6 +229,11 @@ namespace Hathora.Core.Scripts.Editor.Server
                     .AppendLine();
                 
                 return deployment;   
+            }
+            catch (TaskCanceledException e)
+            {
+                Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] Task Cancelled");
+                throw;
             }
             catch (Exception e)
             {
@@ -254,16 +291,21 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             Build build = null;
             string streamingLogs = null;
-                
+
             try
             {
                 streamingLogs = await _buildApi.RunCloudBuildAsync(
-                    _buildId, 
+                    _buildId,
                     normalizedPathToTarball,
                     _cancelToken);
 
                 HathoraServerBuildApi buildApi = new(_serverConfig);
                 build = await buildApi.GetBuildInfoAsync(_buildId, _cancelToken);
+            }
+            catch (TaskCanceledException e)
+            {
+                Debug.Log("[HathoraServerDeploy.uploadAndVerifyBuildAsync] Task Cancelled");
+                throw;
             }
             catch (Exception e)
             {
@@ -286,6 +328,11 @@ namespace Hathora.Core.Scripts.Editor.Server
             {
                 createBuildResult = await _buildApi.CreateBuildAsync(_cancelToken);
             }
+            catch (TaskCanceledException e)
+            {
+                Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] Task Cancelled");
+                throw;
+            }
             catch (Exception e)
             {
                 return null;
@@ -293,6 +340,5 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             return createBuildResult;
         }
-
     }
 }

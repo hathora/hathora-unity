@@ -319,7 +319,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// <returns></returns>
         public async Task<Deployment> DeployApp()
         {
-            DeployingCancelTokenSrc = new CancellationTokenSource();
+            DeployingCancelTokenSrc = new CancellationTokenSource(TimeSpan.FromMinutes(
+                HathoraServerDeploy.DEPLOY_TIMEOUT_MINS));
 
             Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
                 ServerConfig,

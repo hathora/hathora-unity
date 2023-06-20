@@ -1,13 +1,9 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.IO;
-using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Core.Scripts.Editor.Common;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
@@ -226,7 +222,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         }
 
         private void OnGenerateServerBuildBtnClick() =>
-            GenerateServerBuildAsync(); // !await
+            _ = GenerateServerBuildAsync(); // !await
 
         public async Task<BuildReport> GenerateServerBuildAsync()
         {
@@ -234,7 +230,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             const bool overwriteExistingDockerfile = true;
 
             // Build headless Linux executable
-            CancellationTokenSource cancelTokenSrc = new();
+            CancellationTokenSource cancelTokenSrc = new(TimeSpan.FromMinutes(
+                HathoraServerBuild.DEPLOY_TIMEOUT_MINS));
+            
             BuildReport buildReport = null;
 
             try

@@ -22,6 +22,12 @@ namespace Hathora.Core.Scripts.Editor.Server
     public static class HathoraServerBuild
     {
         /// <summary>
+        /// This needs to be a massive timeout range since some builds will be huge. 
+        /// However, we still do need *a* timeout to prevent mem leaks from Unity weirdness.
+        /// </summary>
+        public const int DEPLOY_TIMEOUT_MINS = 60 * 3; // 3 hrs 
+        
+        /// <summary>
         /// Builds with HathoraServerConfig opts.
         /// </summary>
         /// <param name="_serverConfig">Find via menu `Hathora/Find Server Config(s)`</param>
