@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -170,7 +171,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Upload the build to Hathora
-                (Build build, string logs) buildWithLogs = default;
+                (Build build, List<string> logChunks) buildWithLogs = default;
                 try
                 {
                     buildWithLogs = await uploadAndVerifyBuildAsync(
@@ -192,7 +193,15 @@ namespace Hathora.Core.Scripts.Editor.Server
                 
                 Assert.AreEqual(buildWithLogs.build?.Status, Build.StatusEnum.Succeeded,
                     "[HathoraServerBuild.DeployToHathoraAsync] buildWithLogs.build?.Status != Succeeded");
-                
+
+                // Logs from server
+                strb.AppendLine("<color=white>");
+                strb.AppendLine("``` From Server");
+                buildWithLogs.logChunks.ForEach(log => 
+                    strb.AppendLine(log));
+                strb.AppendLine("``` // From Server")
+                    .AppendLine("</color>");
+
                 OnUploadComplete?.Invoke();
                 _cancelToken.ThrowIfCancellationRequested();
                 #endregion // Upload Build
@@ -278,7 +287,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <param name="_serverPaths"></param>
         /// <param name="_cancelToken">Optional</param>
         /// <returns>streamingLogs</returns>
-        private static async Task<(Build build, string logs)> uploadAndVerifyBuildAsync(
+        private static async Task<(Build build, List<string> logChunks)> uploadAndVerifyBuildAsync(
             HathoraServerConfig _serverConfig,
             HathoraServerBuildApi _buildApi,
             double _buildId,
@@ -295,11 +304,11 @@ namespace Hathora.Core.Scripts.Editor.Server
                 $"{_serverPaths.PathToDotHathoraDir}/{tarGzFileName}");
 
             Build build = null;
-            string streamingLogs = null;
+            List<string> logChunks = null;
 
             try
             {
-                streamingLogs = await _buildApi.RunCloudBuildAsync(
+                logChunks = await _buildApi.RunCloudBuildAsync(
                     _buildId,
                     normalizedPathToTarball,
                     _cancelToken);
@@ -318,7 +327,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 throw;
             }
             
-            return (build, streamingLogs);
+            return (build, logChunks);
         }
 
         private static async Task<Build> getBuildInfoAsync(
