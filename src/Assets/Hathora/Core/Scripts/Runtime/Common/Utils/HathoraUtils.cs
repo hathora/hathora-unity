@@ -46,5 +46,14 @@ namespace Hathora.Core.Scripts.Runtime.Common.Utils
                 ? null 
                 : NormalizePath(dirtyPathToUnityProjRoot);
         }
+
+        /// <summary>Returns null on null || MinValue</summary>
+        public static string GetFriendlyDateTimeShortStr(DateTime? _dateTime)
+        {
+            if (_dateTime == null || _dateTime == DateTime.MinValue)
+                return null;
+
+            return $"{_dateTime.Value.ToShortDateString()} {_dateTime.Value.ToShortTimeString()}";
+        }
     }
 }

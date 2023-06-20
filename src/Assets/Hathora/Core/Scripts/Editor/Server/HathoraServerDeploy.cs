@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Editor.Common;
+using Hathora.Core.Scripts.Runtime.Common.Extensions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
@@ -79,21 +81,29 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraServerConfig _serverConfig,
             CancellationToken _cancelToken = default)
         {
+            // Prep logs cache
             Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
                 "<color=yellow>Starting...</color>");
             
             Assert.IsNotNull(_serverConfig, "[HathoraServerBuild.DeployToHathoraAsync] " +
                 "Cannot find HathoraServerConfig ScriptableObject");
+            
+            StringBuilder strb = _serverConfig.HathoraDeployOpts.LastDeployLogsStrb;
+            strb.Clear()
+                .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now))
+                .AppendLine("Preparing remote application deployment...")
+                .AppendLine();
 
             try
             {
                 // Prepare paths and file names that we didn't get from UserConfig  
                 HathoraServerPaths serverPaths = new(_serverConfig);
                 
-                            
+                
                 #region Dockerfile >> Compress to .tar.gz
                 // ----------------------------------------------
                 DeploymentStep = DeploymentSteps.Zipping;
+                strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Compress build into .tar.gz (gzipped tarball)
                 await HathoraTar.ArchiveFilesAsTarGzToDotHathoraDir(
@@ -107,6 +117,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 #region Request to build
                 // ----------------------------------------------
                 DeploymentStep = DeploymentSteps.RequestingUploadPerm;
+                strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Get a _buildId from Hathora
                 HathoraServerBuildApi buildApi = new(_serverConfig);
@@ -133,6 +144,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 #region Upload Build
                 // ----------------------------------------------
                 DeploymentStep = DeploymentSteps.Uploading;
+                strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Upload the build to Hathora
                 (Build build, string logs) buildWithLogs = default;
@@ -162,6 +174,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // ----------------------------------------------
                 // Deploy the build
                 DeploymentStep = DeploymentSteps.Deploying;
+                strb.AppendLine(GetDeployFriendlyStatus());
+
                 HathoraServerDeployApi deployApi = new(_serverConfig);
 
                 Deployment deployment = null;
@@ -179,6 +193,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 #endregion // Deploy Build
 
                 DeploymentStep = DeploymentSteps.Done;
+                strb.AppendLine($"DEPLOYMENT DONE {HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)}")
+                    .AppendLine();
+                
                 return deployment;   
             }
             catch (Exception e)

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
@@ -40,10 +41,11 @@ namespace Hathora.Core.Scripts.Editor.Server
             // Prep logs cache
             _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildReport = null;
             StringBuilder strb = _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb;
-            strb.Clear();
-            strb.AppendLine("Preparing server build...");
-            strb.AppendLine($"overwriteExistingDockerfile? {_overwriteExistingDockerfile}");
-            strb.AppendLine();
+            strb.Clear()
+                .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now))
+                .AppendLine("Preparing local server build...")
+                .AppendLine($"overwriteExistingDockerfile? {_overwriteExistingDockerfile}")
+                .AppendLine();
             
             // Set your build options
             HathoraServerPaths configPaths = new(_serverConfig);
@@ -70,7 +72,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
             _cancelToken.ThrowIfCancellationRequested();
             
-            // Did we fail?
+            // Did we fail? 
             string resultStr = Enum.GetName(typeof(BuildResult), buildReport.summary.result);
             if (buildReport.summary.result != BuildResult.Succeeded)
             {
@@ -142,7 +144,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 .AppendLine($"totalWarnings: {_buildReport.summary.totalWarnings.ToString()}")
                 .AppendLine($"totalErrors: {_buildReport.summary.totalErrors.ToString()}")
                 .AppendLine()
-                .AppendLine("BUILD DONE.")
+                .AppendLine($"BUILD DONE {HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)}")
                 .AppendLine();
         }
 

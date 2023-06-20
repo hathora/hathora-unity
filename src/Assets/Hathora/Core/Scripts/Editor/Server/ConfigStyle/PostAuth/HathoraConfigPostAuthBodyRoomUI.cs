@@ -183,9 +183,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             DateTime? createdDateTime = ServerConfig.HathoraLobbyRoomOpts
                 .LastCreatedRoomConnection?.Room?.CurrentAllocation?.ScheduledAt;
 
-            string createdDateStr = createdDateTime.HasValue
-                ? $"{createdDateTime.Value.ToShortDateString()} {createdDateTime.Value.ToShortTimeString()}"
-                : "{Unknown DateTime}";
+            string createdDateStr = HathoraUtils.GetFriendlyDateTimeShortStr(createdDateTime)
+                ?? "{Unknown DateTime}";
 
             string labelStr = $"<b>Created:</b> {createdDateStr}";
             InsertLabel(labelStr, _fontSize: 10);

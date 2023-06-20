@@ -257,7 +257,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// <summary>
         /// TODO: Add cancel btn
         /// </summary>
-        private async Task insertDeployAppBtn()
+        private void insertDeployAppBtn()
         {
             string btnLabelStr = HathoraServerDeploy.IsDeploying 
                 ? HathoraServerDeploy.GetDeployFriendlyStatus()
@@ -269,7 +269,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (!clickedDeployBtn)
                 return;
 
-            onClickedDeployAppBtnClick(); // !await
+            _ = onClickedDeployAppBtnClick(); // !await
         } 
         #endregion // UI Draw
 

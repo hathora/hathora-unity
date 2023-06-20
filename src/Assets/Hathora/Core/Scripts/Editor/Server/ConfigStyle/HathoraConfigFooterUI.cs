@@ -29,7 +29,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         /// <summary>Useful for debugging/styling without having to build each time</summary>
         private const bool MOCK_BUILD_LOGS = false;
         private Vector2 buildLogsScrollPos = Vector2.zero;
+        private Vector2 deployLogsScrollPos = Vector2.zero;
         private bool isBuildLogsFoldoutHeaderOpen = true;
+        private bool isDeployLogsFoldoutHeaderOpen = true;
         
 
         public HathoraConfigFooterUI(
@@ -78,9 +80,38 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
             if (hasLastbuildLogsStrb || MOCK_BUILD_LOGS)
                 insertBuildLogsFoldoutHeader();
-            
+
             if (hasLastDeployLogsStrb)
-                InsertLabel(ServerConfig.HathoraDeployOpts.LastDeployLogsStrb.ToString());
+                insertDeployLogsFoldoutHeader();
+        }
+
+        private void insertDeployLogsFoldoutHeader()
+        {
+            if (!ServerConfig.HathoraDeployOpts.HasLastDeployLogsStrb)
+            {
+                if (!MOCK_BUILD_LOGS)
+                    return;
+                
+                // Fake some logs
+                appendFakeLogs();
+            }
+
+            isDeployLogsFoldoutHeaderOpen = EditorGUILayout.BeginFoldoutHeaderGroup(
+                isDeployLogsFoldoutHeaderOpen, 
+                "Deploy Logs");
+            
+            // USER INPUT >>
+            if (!isDeployLogsFoldoutHeaderOpen)
+            {
+                EditorGUILayout.EndFoldoutHeaderGroup();
+                return;
+            }
+
+            // Content within the foldout >>
+            insertDeployLogsScrollLbl();
+            
+            EditorGUILayout.EndFoldoutHeaderGroup();
+            InsertSpace1x();
         }
 
         private void insertBuildLogsFoldoutHeader()
@@ -111,13 +142,39 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             EditorGUILayout.EndFoldoutHeaderGroup();
             InsertSpace1x();
         }
+        
+        private void insertDeployLogsScrollLbl()
+        {
+            // If we have both logs, we want 1/2 the size
+            float height = ServerConfig.LinuxHathoraAutoBuildOpts.HasLastBuildLogsStrb
+                ? 150f // Also has build logs 
+                : 300f;
+            
+            deployLogsScrollPos = GUILayout.BeginScrollView(
+                deployLogsScrollPos,
+                GUILayout.ExpandWidth(true),
+                GUILayout.Height(height));
+            
+            // Content within the scroller >>
+            base.BeginPaddedBox();
+            InsertLabel(ServerConfig.HathoraDeployOpts.LastDeployLogsStrb.ToString());
+            base.EndPaddedBox();
+            
+            GUILayout.EndScrollView();
+            InsertSpace1x();
+        }
 
         private void insertBuildLogsScrollLbl()
         {
+            // If we have both logs, we want 1/2 the size
+            float height = ServerConfig.HathoraDeployOpts.HasLastDeployLogsStrb
+                ? 150f // Also has build logs 
+                : 300f;
+            
             buildLogsScrollPos = GUILayout.BeginScrollView(
                 buildLogsScrollPos,
                 GUILayout.ExpandWidth(true),
-                GUILayout.Height(150f));
+                GUILayout.Height(height));
             
             // Content within the scroller >>
             base.BeginPaddedBox();
@@ -232,7 +289,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             
             // ------------
             // TODO: Cancel token   
-            Deployment deployment = null;
+            Deployment deployment = null; // Already cached at this point by the inner Deploy group
             try
             {
                 deployment = await postAuthBodyDeployUI.DeployApp(); // Cached @ ServerConfig
