@@ -86,11 +86,12 @@ namespace Hathora.Core.Scripts.Editor.Server
             HathoraServerConfig _serverConfig,
             CancellationToken _cancelToken = default)
         {
-            // Prep logs cache
-            Debug.Log("[HathoraServerBuild.DeployToHathoraAsync] " +
-                "<color=yellow>Starting...</color>");
+            string logPrefix = $"[{nameof(HathoraServerDeploy)}.{nameof(HathoraServerDeploy)}]";
             
-            Assert.IsNotNull(_serverConfig, "[HathoraServerBuild.DeployToHathoraAsync] " +
+            // Prep logs cache
+            Debug.Log($"{logPrefix} <color=yellow>Starting...</color>");
+            
+            Assert.IsNotNull(_serverConfig, $"{logPrefix} " +
                 "Cannot find HathoraServerConfig ScriptableObject");
             
             StringBuilder strb = _serverConfig.HathoraDeployOpts.LastDeployLogsStrb;
@@ -104,8 +105,8 @@ namespace Hathora.Core.Scripts.Editor.Server
             {
                 // Prepare paths and file names that we didn't get from UserConfig  
                 HathoraServerPaths serverPaths = new(_serverConfig);
-                
-                
+
+
                 #region Dockerfile >> Compress to .tar.gz
                 // ----------------------------------------------
                 DeploymentStep = DeploymentSteps.Zipping;
@@ -120,18 +121,18 @@ namespace Hathora.Core.Scripts.Editor.Server
                 }
                 catch (TaskCanceledException e)
                 {
-                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] ArchiveFilesAsTarGzToDotHathoraDir => Task Cancelled");
+                    Debug.Log($"{logPrefix} ArchiveFilesAsTarGzToDotHathoraDir => Task Cancelled");
                     throw;
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Error: {e}");
+                    Debug.LogError($"{logPrefix} Error: {e}");
                     throw;
                 }
-                
+
                 OnZipComplete?.Invoke();
                 #endregion // Dockerfile >> Compress to .tar.gz
-                
+
 
                 #region Request to build
                 // ----------------------------------------------
@@ -142,29 +143,25 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerBuildApi buildApi = new(_serverConfig);
 
                 Build buildInfo = null;
-                try
-                {
-                    buildInfo = await getBuildInfoAsync(buildApi, _cancelToken);
-                }
+
+                try { buildInfo = await getBuildInfoAsync(buildApi, _cancelToken); }
                 catch (TaskCanceledException e)
                 {
-                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] getBuildInfoAsync => Task Cancelled");
+                    Debug.Log($"{logPrefix} getBuildInfoAsync => Task Cancelled");
                     throw;
                 }
-                catch (Exception e)
-                {
-                    return null;
-                }
-                Assert.IsNotNull(buildInfo, "[HathoraServerBuild.DeployToHathoraAsync] Expected buildInfo");
-                
+                catch (Exception e) { return null; }
+
+                Assert.IsNotNull(buildInfo, $"{logPrefix} Expected buildInfo");
+
                 // Building seems to unselect Hathora _serverConfig on success
                 HathoraServerConfigFinder.ShowWindowOnly();
-                
+
                 OnBuildReqComplete?.Invoke(buildInfo);
                 _cancelToken.ThrowIfCancellationRequested();
                 #endregion // Request to build
 
-                
+
                 #region Upload Build
                 // ----------------------------------------------
                 DeploymentStep = DeploymentSteps.Uploading;
@@ -172,33 +169,37 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                 // Upload the build to Hathora
                 (Build build, List<string> logChunks) buildWithLogs = default;
+
                 try
                 {
                     buildWithLogs = await uploadAndVerifyBuildAsync(
                         _serverConfig,
-                        buildApi, 
-                        buildInfo.BuildId, 
+                        buildApi,
+                        buildInfo.BuildId,
                         serverPaths,
                         _cancelToken);
                 }
                 catch (TaskCanceledException e)
                 {
-                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] uploadAndVerifyBuildAsync => Task Cancelled");
+                    Debug.Log($"{logPrefix} uploadAndVerifyBuildAsync => Task Cancelled");
                     throw;
                 }
                 catch (Exception e)
                 {
                     return null;
                 }
-                
-                Assert.AreEqual(buildWithLogs.build?.Status, Build.StatusEnum.Succeeded,
-                    "[HathoraServerBuild.DeployToHathoraAsync] buildWithLogs.build?.Status != Succeeded");
+
+                Assert.AreEqual(
+                    buildWithLogs.build?.Status,
+                    Build.StatusEnum.Succeeded,
+                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
 
                 // Logs from server
                 strb.AppendLine("<color=white>");
                 strb.AppendLine("``` From Server");
-                buildWithLogs.logChunks.ForEach(log => 
-                    strb.AppendLine(log));
+                buildWithLogs.logChunks.ForEach(
+                    log =>
+                        strb.AppendLine(log));
                 strb.AppendLine("``` // From Server")
                     .AppendLine("</color>");
 
@@ -206,7 +207,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 _cancelToken.ThrowIfCancellationRequested();
                 #endregion // Upload Build
 
-                
+
                 #region Deploy Build
                 // ----------------------------------------------
                 // Deploy the build
@@ -216,23 +217,20 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerDeployApi deployApi = new(_serverConfig);
 
                 Deployment deployment = null;
-                try
-                {
-                    deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
-                }
+
+                try { deployment = await deployBuildAsync(deployApi, buildInfo.BuildId); }
                 catch (TaskCanceledException e)
                 {
-                    Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] deployBuildAsync => Task Cancelled");
+                    Debug.Log($"{logPrefix} deployBuildAsync => Task Cancelled");
                     throw;
                 }
-                catch (Exception e)
-                {
-                    return null;
-                }
+                catch (Exception e) { return null; }
 
-                Assert.IsTrue(deployment?.BuildId > 0,  
+                Assert.IsTrue(
+                    deployment?.BuildId > 0,
                     "[HathoraServerBuild.DeployToHathoraAsync] Expected deployment");
                 #endregion // Deploy Build
+
 
                 DeploymentStep = DeploymentSteps.Done;
                 DateTime endTime = DateTime.Now;
@@ -241,18 +239,25 @@ namespace Hathora.Core.Scripts.Editor.Server
                     .AppendLine(
                         $"({HathoraUtils.GetFriendlyDateTimeDiff(startTime, endTime, exclude0: true)})") // ({hh}h:{mm}m:{ss}s)
                     .AppendLine("DEPLOYMENT DONE");
-                
-                return deployment;   
+
+                return deployment;
             }
             catch (TaskCanceledException e)
             {
-                Debug.Log("[HathoraServerDeploy.DeployToHathoraAsync] Task Cancelled");
+                Debug.Log($"{logPrefix} Task Cancelled");
+                strb.AppendLine().AppendLine($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                    $"(!) Cancelled by user</color>");
                 throw;
             }
             catch (Exception e)
             {
-                DeploymentStep = DeploymentSteps.Done;
+                Debug.Log($"{logPrefix} {e.Message}");
                 throw;
+            }
+            finally
+            {
+                Debug.Log($"{logPrefix} Done");
+                DeploymentStep = DeploymentSteps.Done;
             }
         }
 

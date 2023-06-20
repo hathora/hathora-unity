@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
@@ -17,9 +18,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
     public class HathoraConfigPostAuthBodyDeployUI : HathoraConfigUIBase
     {
         #region Vars
-        private HathoraConfigPostAuthBodyDeployAdvUI _advancedDeployUI;
-        public static CancellationTokenSource DeployingCancelTokenSrc;
-
+        private CancellationTokenSource cancelBuildTokenSrc;
+        private bool isCancelling;
+        
         // Foldouts
         private bool isDeploymentFoldout;
         #endregion // Vars
@@ -42,8 +43,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// </summary>
         private void initDrawUtils()
         {
-            _advancedDeployUI = new HathoraConfigPostAuthBodyDeployAdvUI(ServerConfig, SerializedConfig);
-            
+            // _advancedDeployUI = new HathoraConfigPostAuthBodyDeployAdvUI(ServerConfig, SerializedConfig);
             HathoraServerDeploy.OnZipComplete += onDeployAppStatus_1ZipComplete;
             HathoraServerDeploy.OnBuildReqComplete += onDeployAppStatus_2BuildReqComplete;
             HathoraServerDeploy.OnUploadComplete += onDeployAppStatus_3UploadComplete;
@@ -87,15 +87,57 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             insertTransportTypeHorizRadioBtnGroup();
             // _advancedDeployUI.Draw();
 
-            bool enableDeployBtn = checkIsReadyToEnableToDeployBtn(); 
-            if (enableDeployBtn || HathoraServerDeploy.IsDeploying)
+            bool enableDeployBtn = checkIsReadyToEnableToDeployBtn();
+            insertDeployBtnHelpbox(enableDeployBtn);
+            insertDeployOrCancelBtn();
+        }
+
+        private void insertDeployOrCancelBtn()
+        {
+            // Deploy || cancel btn
+            if (HathoraServerDeploy.IsDeploying || isCancelling)
+                insertDeployAppCancelBtn();
+            else
+                insertDeployAppBtn();
+        }
+        
+        private void insertDeployAppBtn()
+        {
+            bool clickedDeployBtn = InsertLeftGeneralBtn("Deploy Application");
+            InsertSpace1x();
+            
+            if (!clickedDeployBtn)
+                return;
+
+            _ = onClickedDeployAppBtnClick(); // !await
+        } 
+
+        private void insertDeployAppCancelBtn()
+        {
+            string friendlyStatus = HathoraServerDeploy.GetDeployFriendlyStatus();
+            string btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                $"<b>Cancel Deploying:</b></color> {friendlyStatus}";
+
+            // This cancel can take longer than usual: Add a cancelling verb, if need, so it !looks laggy
+            if (cancelBuildTokenSrc.IsCancellationRequested || !cancelBuildTokenSrc.Token.CanBeCanceled)
+                btnLabelStr = $"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                    $"<b>Cancelling...</b></color>";
+            
+            // USER INPUT >>
+            EditorGUI.BeginDisabledGroup(disabled: isCancelling);
+            bool clickedCancelBtn = GUILayout.Button(btnLabelStr, GeneralButtonStyle);
+            EditorGUI.EndDisabledGroup();
+            
+            if (clickedCancelBtn)
+                onDeployAppCancelBtnClick();
+        }
+        
+        private void insertDeployBtnHelpbox(bool _enableDeployBtn)
+        {
+            if (_enableDeployBtn || HathoraServerDeploy.IsDeploying)
                 insertDeployAppHelpbox();
             else
                 insertDeployAppHelpboxErr();
-
-            EditorGUI.BeginDisabledGroup(disabled: !enableDeployBtn);
-            insertDeployAppBtn(); // !await
-            EditorGUI.EndDisabledGroup();
         }
 
         private void insertRoomsPerProcessHorizSliderGroup()
@@ -253,24 +295,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             EditorGUILayout.HelpBox(helpboxLabelStrb.ToString(), MessageType.Error);
         }
-
-        /// <summary>
-        /// TODO: Add cancel btn
-        /// </summary>
-        private void insertDeployAppBtn()
-        {
-            string btnLabelStr = HathoraServerDeploy.IsDeploying 
-                ? HathoraServerDeploy.GetDeployFriendlyStatus()
-                : "Deploy Application";
-            
-            bool clickedDeployBtn = InsertLeftGeneralBtn(btnLabelStr);
-            InsertSpace1x();
-            
-            if (!clickedDeployBtn)
-                return;
-
-            _ = onClickedDeployAppBtnClick(); // !await
-        } 
         #endregion // UI Draw
 
         
@@ -306,6 +330,16 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 nameof(ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
                 _inputInt.ToString());
         }
+        
+        private async Task onDeployAppCancelBtnClick()
+        {
+            isCancelling = true;
+            cancelBuildTokenSrc.Cancel();
+            
+            // 2s cooldown: Using this btn immediately after causes issues
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            isCancelling = false;
+        }
 
         private async Task onClickedDeployAppBtnClick() => 
             await DeployApp();
@@ -317,22 +351,20 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// - OnUploadComplete
         /// </summary>
         /// <returns></returns>
-        public async Task<Deployment> DeployApp()
+        public async Task DeployApp()
         {
-            DeployingCancelTokenSrc = new CancellationTokenSource(TimeSpan.FromMinutes(
+            cancelBuildTokenSrc = new CancellationTokenSource(TimeSpan.FromMinutes(
                 HathoraServerDeploy.DEPLOY_TIMEOUT_MINS));
 
             Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
                 ServerConfig,
-                DeployingCancelTokenSrc.Token);
+                cancelBuildTokenSrc.Token);
 
             bool isSuccess = deployment?.DeploymentId > 0;
             if (isSuccess)
                 onDeployAppSuccess(deployment);
             else
                 onDeployAppFail();
-            
-            return deployment;
         }
 
         private void onDeployAppFail()

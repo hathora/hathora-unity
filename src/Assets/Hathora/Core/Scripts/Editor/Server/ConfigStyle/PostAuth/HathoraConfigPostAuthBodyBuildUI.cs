@@ -18,6 +18,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         #region Vars
         // Foldouts
         private bool isServerBuildFoldout;
+        private CancellationTokenSource cancelBuildTokenSrc;
         #endregion // Vars
 
 
@@ -222,15 +223,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         }
 
         private void OnGenerateServerBuildBtnClick() =>
-            _ = GenerateServerBuildAsync(); // !await
+            _ = generateServerBuildAsync(); // !await
 
-        public async Task<BuildReport> GenerateServerBuildAsync()
+        private async Task<BuildReport> generateServerBuildAsync()
         {
             // TODO: Get from ServerConfig (for devs that have a custom Dockerfile they don't want overwritten each build)
             const bool overwriteExistingDockerfile = true;
 
             // Build headless Linux executable
-            CancellationTokenSource cancelTokenSrc = new(TimeSpan.FromMinutes(
+            cancelBuildTokenSrc = new CancellationTokenSource(TimeSpan.FromMinutes(
                 HathoraServerBuild.DEPLOY_TIMEOUT_MINS));
             
             BuildReport buildReport = null;
@@ -241,7 +242,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 buildReport = await HathoraServerBuild.BuildHathoraLinuxServer(
                     ServerConfig,
                     overwriteExistingDockerfile, // TODO: 
-                    cancelTokenSrc.Token);
+                    cancelBuildTokenSrc.Token);
             }
             catch (TaskCanceledException)
             {
@@ -253,7 +254,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraConfigPostAuthBodyBuilderUI.GenerateServerBuildAsync] " +
+                Debug.LogError($"[HathoraConfigPostAuthBodyBuilderUI.generateServerBuildAsync] " +
                     $"Error: {e}");
                 
                 ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
