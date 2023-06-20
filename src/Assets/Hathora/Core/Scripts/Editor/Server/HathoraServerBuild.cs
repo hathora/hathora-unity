@@ -150,8 +150,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 .AppendLine($"totalWarnings: {_buildReport.summary.totalWarnings.ToString()}")
                 .AppendLine($"totalErrors: {_buildReport.summary.totalErrors.ToString()}")
                 .AppendLine()
-                .AppendLine($"BUILD DONE {HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)}")
-                .AppendLine();
+                .AppendLine($"BUILD DONE {HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)}");
         }
 
         /// <summary></summary>

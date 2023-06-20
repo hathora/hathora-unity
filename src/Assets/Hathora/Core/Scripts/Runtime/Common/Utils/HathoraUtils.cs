@@ -55,5 +55,29 @@ namespace Hathora.Core.Scripts.Runtime.Common.Utils
 
             return $"{_dateTime.Value.ToShortDateString()} {_dateTime.Value.ToShortTimeString()}";
         }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="_startTime"></param>
+        /// <param name="_endTime"></param>
+        /// <param name="exclude0">If 0, </param>
+        /// <returns>hh:mm:ss</returns>
+        public static string GetFriendlyDateTimeDiff(
+            DateTime _startTime, 
+            DateTime _endTime,
+            bool exclude0)
+        {
+            TimeSpan duration = _endTime - _startTime;
+            int totalHours = (int)duration.TotalHours;
+            int totalMinutes = (int)duration.TotalMinutes % 60;
+            int totalSeconds = (int)duration.TotalSeconds % 60;
+            
+            if (totalHours > 0 || !exclude0)
+                return $"{totalHours}h:{totalMinutes}m:{totalSeconds}s";
+            
+            return totalMinutes > 0 
+                ? $"{totalMinutes}m:{totalSeconds}s" 
+                : $"{totalSeconds}s";
+        }
     }
 }

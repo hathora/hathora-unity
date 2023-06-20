@@ -40,7 +40,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         }
         
         private static int maxDeploySteps => 
-            Enum.GetValues(typeof(DeploymentSteps)).Length;
+            Enum.GetValues(typeof(DeploymentSteps)).Length - 1; // Exclude "Done"
         
         public static DeploymentSteps DeploymentStep { get; private set; }
         
@@ -93,8 +93,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 "Cannot find HathoraServerConfig ScriptableObject");
             
             StringBuilder strb = _serverConfig.HathoraDeployOpts.LastDeployLogsStrb;
+            DateTime startTime = DateTime.Now;
             strb.Clear()
-                .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now))
+                .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(startTime))
                 .AppendLine("Preparing remote application deployment...")
                 .AppendLine();
 
@@ -225,8 +226,12 @@ namespace Hathora.Core.Scripts.Editor.Server
                 #endregion // Deploy Build
 
                 DeploymentStep = DeploymentSteps.Done;
-                strb.AppendLine($"DEPLOYMENT DONE {HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)}")
-                    .AppendLine();
+                DateTime endTime = DateTime.Now;
+                strb.AppendLine()
+                    .Append($"Completed {HathoraUtils.GetFriendlyDateTimeShortStr(endTime)} ")
+                    .AppendLine(
+                        $"({HathoraUtils.GetFriendlyDateTimeDiff(startTime, endTime, exclude0: true)})") // ({hh}h:{mm}m:{ss}s)
+                    .AppendLine("DEPLOYMENT DONE");
                 
                 return deployment;   
             }
