@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System.Text;
 using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth;
 using Hathora.Core.Scripts.Runtime.Server;
@@ -42,12 +43,16 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
         public void Draw()
         {
-            InsertSpace4x();
-            
             if (IsAuthed)
+            {
+                InsertSpace1x();
                 insertPostAuthFooter();
+            }
             else
+            {
+                InsertSpace4x();
                 insertPreAuthFooter();
+            }
         }
 
         private void insertPostAuthFooter()
@@ -62,10 +67,13 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             if (!hasLastbuildLogsStrb && !hasLastDeployLogsStrb && !MOCK_BUILD_LOGS)
                 return;
 
+            InsertHorizontalLine();
+            InsertSpace1x();
+
             if (hasLastbuildLogsStrb || MOCK_BUILD_LOGS)
                 insertBuildLogsFoldoutHeader();
 
-            if (hasLastDeployLogsStrb)
+            if (hasLastDeployLogsStrb || MOCK_BUILD_LOGS)
                 insertDeployLogsFoldoutHeader();
         }
 
@@ -77,7 +85,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                     return;
                 
                 // Fake some logs
-                appendFakeLogs();
+                createFakeLogs(ServerConfig.HathoraDeployOpts.LastDeployLogsStrb);
             }
 
             isDeployLogsFoldoutHeaderOpen = EditorGUILayout.BeginFoldoutHeaderGroup(
@@ -106,7 +114,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
                     return;
                 
                 // Fake some logs
-                appendFakeLogs();
+                createFakeLogs(ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb);
             }
 
             isBuildLogsFoldoutHeaderOpen = EditorGUILayout.BeginFoldoutHeaderGroup(
@@ -169,10 +177,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             InsertSpace1x();
         }
 
-        private void appendFakeLogs()
+        private void createFakeLogs(StringBuilder _strb)
         {
             // Foo 1 ~ 50
-            ServerConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
+            _strb.Clear()
                 .AppendLine("Foo 1").AppendLine("Foo 2").AppendLine("Foo 3")
                 .AppendLine("Foo 4").AppendLine("Foo 5").AppendLine("Foo 6")
                 .AppendLine("Foo 7").AppendLine("Foo 8").AppendLine("Foo 9")
