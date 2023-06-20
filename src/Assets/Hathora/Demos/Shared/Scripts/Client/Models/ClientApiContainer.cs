@@ -40,12 +40,11 @@ namespace Hathora.Demos.Shared.Scripts.Client.Models
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
         public void InitAll(
             HathoraClientConfig _netHathoraConfig, 
-            NetSession _netSession,
             Configuration _hathoraSdkConfig = null)
         {
-            clientAuthApi.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
-            clientLobbyApi.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
-            clientRoomApi.Init(_netHathoraConfig, _netSession, _hathoraSdkConfig);
+            clientAuthApi.Init(_netHathoraConfig, _hathoraSdkConfig);
+            clientLobbyApi.Init(_netHathoraConfig, _hathoraSdkConfig);
+            clientRoomApi.Init(_netHathoraConfig, _hathoraSdkConfig);
         }
     }
 }

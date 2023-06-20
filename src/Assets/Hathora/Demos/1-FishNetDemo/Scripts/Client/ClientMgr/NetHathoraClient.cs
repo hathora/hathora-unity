@@ -76,7 +76,6 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
         {
             ClientApis.InitAll(
                 netHathoraConfig, 
-                netSession, 
                 _hathoraSdkConfig: null); // Base will create this
             
             // This is a Client manager script; listen for relative events
@@ -190,7 +189,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
         /// </summary>
         public async Task AuthLoginAsync()
         {
-            AuthResult result = null;
+            AuthResult result;
             try
             {
                 result = await ClientApis.clientAuthApi.ClientAuthAsync();
@@ -201,6 +200,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
                 return;
             }
            
+            netSession.InitNetSession(result.PlayerAuthToken);
             OnAuthLoginComplete(result.IsSuccess);
         }
 
@@ -213,10 +213,11 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
             Region _region,
             CreateLobbyRequest.VisibilityEnum _visibility = CreateLobbyRequest.VisibilityEnum.Public)
         {
-            Lobby lobby = null;
+            Lobby lobby;
             try
             {
                 lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(
+                    netSession.PlayerAuthToken,
                     _visibility,
                     _region);
             }
@@ -227,6 +228,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
                 return;
             }
             
+            netSession.Lobby = lobby;
             OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
 
@@ -236,7 +238,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
         /// </summary>
         public async Task GetLobbyInfoAsync(string roomId)
         {
-            Lobby lobby = null;
+            Lobby lobby;
             try
             {
                 lobby = await ClientApis.clientLobbyApi.ClientGetLobbyInfoAsync(roomId);
@@ -248,6 +250,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
                 return;
             }
 
+            netSession.Lobby = lobby;
             OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
         
@@ -257,7 +260,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
         /// </param>
         public async Task ViewPublicLobbies(Region? _region = null)
         {
-            List<Lobby> lobbies = null;
+            List<Lobby> lobbies;
             try
             {
                 lobbies = await ClientApis.clientLobbyApi.ClientListPublicLobbiesAsync();
@@ -267,7 +270,8 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
                 Debug.LogWarning(e.Message);
                 throw new NotImplementedException("TODO: Get lobbies err handling UI");
             }
-            
+
+            netSession.Lobbies = lobbies;
             OnViewPublicLobbiesComplete(lobbies);
         }
         
@@ -289,7 +293,7 @@ namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
                 return; // fail
             }
             
-            // Success
+            netSession.ServerConnectionInfo = connectionInfo;
             OnGetActiveConnectionInfoComplete(connectionInfo);
         }
         

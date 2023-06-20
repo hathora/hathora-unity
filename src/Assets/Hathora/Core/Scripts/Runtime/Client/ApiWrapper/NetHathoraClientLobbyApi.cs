@@ -14,6 +14,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// <summary>
     /// * Call Init() to pass UserConfig/instances.
     /// * Does not handle UI.
+    /// * Does not handle Session caching.
     /// </summary>
     public class NetHathoraClientLobbyApi : NetHathoraClientApiBase
     {
@@ -22,17 +23,16 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <summary>
         /// </summary>
         /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_netSession"></param>
         /// <param name="_hathoraSdkConfig">
         /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
         /// </param>
         public override void Init(
             HathoraClientConfig _hathoraClientConfig,
-            NetSession _netSession,
             Configuration _hathoraSdkConfig = null)
         {
             Debug.Log("[NetHathoraClientLobbyApi] Initializing API...");
-            base.Init(_hathoraClientConfig, _netSession, _hathoraSdkConfig);
+            
+            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
             this.lobbyApi = new LobbyV2Api(base.HathoraSdkConfig);
         }
 
@@ -41,12 +41,14 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <summary>
         /// Create a new Player Client Lobby.
         /// </summary>
+        /// <param name="_playerAuthToken">Player Auth Token (likely from a cached session)</param>
         /// <param name="lobbyVisibility"></param>
         /// <param name="_initConfigJsonStr"></param>
         /// <param name="_cancelToken"></param>
         /// <param name="_region">(!) Index starts at 1 (not 0)</param>
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
+            string _playerAuthToken,
             CreateLobbyRequest.VisibilityEnum lobbyVisibility,
             Region _region = Region.WashingtonDC,
             string _initConfigJsonStr = "{}",
@@ -65,7 +67,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             {
                 lobby = await lobbyApi.CreateLobbyAsync(
                     HathoraClientConfig.AppId,
-                    NetSession.PlayerAuthToken, // Player token; not dev
+                    _playerAuthToken, // Player token; not dev
                     request,
                     cancellationToken: _cancelToken);
             }
@@ -81,14 +83,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
                 $"<color=yellow>lobby: {lobby.ToJson()}</color>");
             
-            NetSession.Lobby = lobby;
-            
             return lobby;
         }
 
         /// <summary>
         /// Gets Lobby info, if we already know the roomId.
-        /// (!) Creating a room will also return Lobby info; you probably want to do this if interested in *joining*.
+        /// (!) Creating a room will also return Lobby info; you probably want to
+        ///     do this if interested in *joining*.
         /// </summary>
         /// <param name="roomId"></param>
         /// <param name="_cancelToken"></param>
@@ -124,8 +125,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
             Debug.Log($"[NetHathoraClientAuthApi.ClientGetLobbyInfoAsync] Success: " +
                 $"<color=yellow>lobby: {lobby.ToJson()}</color>");            
-            
-            NetSession.Lobby = lobby;
             
             return lobby;
         }
