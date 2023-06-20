@@ -146,7 +146,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
                 .AppendLine($"result: {Enum.GetName(typeof(BuildResult), _buildReport.summary.result)}")
                 .AppendLine($"totalSize: {_buildReport.summary.totalSize / (1024 * 1024)}MB")
-                .AppendLine($"totalTime: {totalTime.Minutes} mins, {totalTime.Seconds} secs")
+                .AppendLine($"totalTime: {totalTime.Hours}h:{totalTime.Minutes}m:{totalTime.Seconds}s") // hh:mm:ss
                 .AppendLine($"totalWarnings: {_buildReport.summary.totalWarnings.ToString()}")
                 .AppendLine($"totalErrors: {_buildReport.summary.totalErrors.ToString()}")
                 .AppendLine()
