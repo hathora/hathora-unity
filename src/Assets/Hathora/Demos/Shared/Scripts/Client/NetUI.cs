@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
-using Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr;
+using Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;

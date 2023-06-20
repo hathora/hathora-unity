@@ -17,7 +17,7 @@ using Hathora.Demos.Shared.Scripts.Client;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
 
-namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.ClientMgr
+namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 {
     /// <summary>
     /// This spawns BEFORE the player, or even connected to the network.

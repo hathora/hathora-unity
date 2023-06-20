@@ -5,7 +5,7 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client;
 using UnityEngine;
 
-namespace Hathora.Demos._1_FishNetDemo.Scripts.Common
+namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
 {
     /// <summary>
     /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`

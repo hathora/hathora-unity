@@ -4,7 +4,7 @@ using FishNet.Object;
 using Hathora.Demos.Shared.Scripts.Client;
 using UnityEngine;
 
-namespace Hathora.Demos._1_FishNetDemo.Scripts.Client.Player
+namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
 {
     /// <summary>
     /// Helpers for the runtime-spawned networked Player GameObject.
