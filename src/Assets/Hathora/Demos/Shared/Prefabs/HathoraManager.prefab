@@ -5128,8 +5128,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6730436420827614688}
   - component: {fileID: 6730436420827614713}
-  - component: {fileID: 6730436420827614715}
-  - component: {fileID: 6730436420827614714}
   - component: {fileID: 6730436420827614693}
   - component: {fileID: 6730436420827614692}
   - component: {fileID: 6730436420827614695}
@@ -5160,8 +5158,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 310, y: 446.08682}
-  m_SizeDelta: {x: 600, y: 227.0265}
+  m_AnchoredPosition: {x: 310, y: 446}
+  m_SizeDelta: {x: 600, y: 227}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6730436420827614713
 CanvasRenderer:
@@ -5171,36 +5169,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6730436420827614691}
   m_CullTransparentMesh: 1
---- !u!114 &6730436420827614715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6730436420827614691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fa31be64a6c5034e94f8f234539d631, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6730436420827614714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6730436420827614691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4f6013a6e61c214fadd13e0bb0cf12e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  netHathoraConfig: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a, type: 2}
-  netSession: {fileID: 6730436420827614694}
-  ClientApis:
-    clientAuthApi: {fileID: 6730436420827614693}
-    clientLobbyApi: {fileID: 6730436420827614692}
-    clientRoomApi: {fileID: 6730436420827614695}
 --- !u!114 &6730436420827614693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5989,7 +5957,6 @@ MonoBehaviour:
   getServerInfoErrTxt: {fileID: 6730436420910717614}
   joinLobbyAsClientBtn: {fileID: 6730436419947261734}
   joiningLobbyStatusTxt: {fileID: 927034867}
-  joinedLobbyResultTxt: {fileID: 0}
 --- !u!1 &6730436421062696142
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,7 +2,9 @@
 
 using FishNet;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using Hathora.Demos._2_MirrorDemo.HathoraScripts.Common;
 using Hathora.Demos.Shared.Scripts.Client;
+using Hathora.Demos.Shared.Scripts.Common;
 using UnityEngine;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
@@ -10,7 +12,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
     /// <summary>
     /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`
     /// </summary>
-    public class FishNetArgHandler : HathoraArgHandlerBase
+    public class HathoraFishnetArgHandler : HathoraArgHandlerBase
     {
         private void Start() => base.Init();
 
@@ -29,7 +31,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
             
             // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
             // start on headless checkbox is true
-            Debug.Log("[FishNetArgHandler] Starting Server ...");
+            Debug.Log("[HathoraFishnetArgHandler] Starting Server ...");
             InstanceFinder.ServerManager.StartConnection();
         }
 
@@ -40,7 +42,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
             if (InstanceFinder.ClientManager.Started)
                 return;
             
-            Debug.Log("[FishNetArgHandler] Starting Client ...");
+            Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
             InstanceFinder.ClientManager.StartConnection();
         }
     }

@@ -88,7 +88,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
         const string headerBoldColorEnd = "</color></b>";
-        private static NetHathoraClient hathoraClient => NetHathoraClient.Singleton;
+        private static HathoraFishnetClient HathoraFishnetClient => HathoraFishnetClient.Singleton;
         private static NetSession netSession => NetSession.Singleton;
 
         
@@ -115,10 +115,10 @@ namespace Hathora.Demos.Shared.Scripts.Client
         #region UI Interactions
         public void OnAuthLoginBtnClick()
         {
-            hathoraClient.AssertUsingValidNetConfig();
+            HathoraFishnetClient.AssertUsingValidNetConfig();
                 
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            _ = hathoraClient.AuthLoginAsync(); // !await
+            _ = HathoraFishnetClient.AuthLoginAsync(); // !await
         }
 
         public void OnCreateLobbyBtnClick()
@@ -128,7 +128,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             // (!) Region Index starts at 1 (not 0) // TODO: Get from UI
             const Region _region = Region.WashingtonDC;
             
-            _ = hathoraClient.CreateLobbyAsync(_region); // !await // public lobby
+            _ = HathoraFishnetClient.CreateLobbyAsync(_region); // !await // public lobby
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
                 return;
             }
             
-            _ = hathoraClient.GetLobbyInfoAsync(roomIdInputStr); // !await
+            _ = HathoraFishnetClient.GetLobbyInfoAsync(roomIdInputStr); // !await
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             
             try
             {
-                await hathoraClient.ViewPublicLobbies(region);
+                await HathoraFishnetClient.ViewPublicLobbies(region);
             }
             catch (Exception e)
             {
@@ -186,7 +186,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
             // The ServerConnectionInfo should already be cached
-            _ = hathoraClient.GetActiveConnectionInfo(netSession.RoomId); // !await
+            _ = HathoraFishnetClient.GetActiveConnectionInfo(netSession.RoomId); // !await
         }
         
         /// <summary>
@@ -204,19 +204,19 @@ namespace Hathora.Demos.Shared.Scripts.Client
         /// <summary>Component OnClick hides joinLobbyAsClientBtn</summary>
         public void OnJoinLobbyAsClientBtnClick()
         {
-            Debug.Log("[NetHathoraClient] OnJoinLobbyAsClientBtnClick");
+            Debug.Log("[NetUI] OnJoinLobbyAsClientBtnClick");
 
             joinLobbyAsClientBtn.gameObject.SetActive(false);
             
             joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
             joiningLobbyStatusTxt.gameObject.SetActive(true);
             
-            _ = hathoraClient.ConnectAsync();
+            _ = HathoraFishnetClient.ConnectAsync();
         }
         
         public void OnJoinLobbySuccess()
         {
-            Debug.Log("[NetHathoraClient] OnJoinLobbySuccess");
+            Debug.Log("[NetUI] OnJoinLobbySuccess");
             
             joiningLobbyStatusTxt.text = "<color=green>Joined Lobby</color>";
             // Player stats should be updated via NetHathoraPlayer.OnStartClient
@@ -224,7 +224,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
 
         public void OnJoinLobbyFailed(string _friendlyErr)
         {
-            Debug.Log($"[NetHathoraClient] OnJoinLobbyFailed: {_friendlyErr}");
+            Debug.Log($"[NetUI] OnJoinLobbyFailed: {_friendlyErr}");
 
             joiningLobbyStatusTxt.gameObject.SetActive(false);
             joinLobbyAsClientBtn.gameObject.SetActive(true);
@@ -408,13 +408,13 @@ namespace Hathora.Demos.Shared.Scripts.Client
             
             // Core issue
             string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
-                $"{nameof(NetHathoraClient)} component";
+                $"{nameof(HathoraFishnetClient)} component";
             
             if (_config == null)
             {
                 InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(NetHathoraClient)}] !{nameof(HathoraClientConfig)} - " +
+                throw new Exception($"[{nameof(HathoraFishnetClient)}] !{nameof(HathoraClientConfig)} - " +
                     $"Serialize one at {netComponentPathFriendlyStr}");
             }
             
@@ -422,7 +422,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             {
                 InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(NetHathoraClient)}] !AppId - " +
+                throw new Exception($"[{nameof(HathoraFishnetClient)}] !AppId - " +
                     $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
                     "ServerConfig's AppId should match your ClientConfig's AppId)");
             }

@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Hathora.Core.Scripts.Runtime.Common.Utils
+namespace Hathora.Demos.Shared.Scripts.Common
 {
     /// <summary>
     /// Commandline helper - run via `-_mode {server|client|host} -memo {someStr}`.

@@ -64,7 +64,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         {
             if (Singleton != null)
             {
-                Debug.LogError("[NetHathoraClient]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraFishnetClient]**ERR @ setSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }
@@ -93,7 +93,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// <returns>isSuccess</returns>
         public bool ConnectAsync()
         {
-            Debug.Log("[NetHathoraClient] ConnectAsync");
+            Debug.Log("[HathoraFishnetClient] ConnectAsync");
 
             isConnecting = true;
             Transport transport = InstanceFinder.TransportManager.Transport;
@@ -107,7 +107,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
             // -----------------
             // Connect
-            Debug.Log("[NetHathoraClient.ConnectAsync] Connecting to: " + 
+            Debug.Log("[HathoraFishnetClient.ConnectAsync] Connecting to: " + 
                 $"{netSession.GetServerInfoIpPort()} via FishNet.{transport.name} transport");
 
             ExposedPort connectInfo = netSession.ServerConnectionInfo.ExposedPort;
@@ -163,7 +163,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         private void OnClientConnectionState(ClientConnectionStateArgs _state)
         {
             localConnectionState = _state.ConnectionState;
-            Debug.Log($"[NetHathoraClient.OnClientConnectionState] " +
+            Debug.Log($"[HathoraFishnetClient.OnClientConnectionState] " +
                 $"New state: {localConnectionState}");
             
             // onConnectSuccess?
@@ -179,7 +179,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
         private void onConnectSuccess()
         {
-            Debug.Log("[NetHathoraClient] onConnectSuccess");
+            Debug.Log("[HathoraFishnetClient] onConnectSuccess");
             isConnecting = false;
             NetUI.Singleton.OnJoinLobbySuccess();
         }
@@ -288,7 +288,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
             catch (Exception e)
             {
-                Debug.LogError($"[NetHathoraClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
+                Debug.LogError($"[HathoraFishnetClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
                 NetUI.Singleton.OnGetServerInfoFail();
                 return; // fail
             }
