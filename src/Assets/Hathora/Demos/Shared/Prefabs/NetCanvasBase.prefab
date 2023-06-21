@@ -920,7 +920,7 @@ GameObject:
   - component: {fileID: 7978815428160413868}
   - component: {fileID: 7978815428160413859}
   m_Layer: 5
-  m_Name: NetCanvas
+  m_Name: NetCanvasBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

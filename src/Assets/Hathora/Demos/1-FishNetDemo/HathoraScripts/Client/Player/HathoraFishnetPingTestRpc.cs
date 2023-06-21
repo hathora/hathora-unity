@@ -10,7 +10,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
     /// As soon as we connect to the server, we send a ping to the server.
     /// => Server will pong us back.
     /// </summary>
-    public class NetPingTestRpc : NetworkBehaviour
+    public class HathoraFishnetPingTestRpc : NetworkBehaviour
     {
         private int _numTimesRpcdToServer;
         

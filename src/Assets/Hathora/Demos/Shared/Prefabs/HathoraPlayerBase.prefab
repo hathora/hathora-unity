@@ -907,7 +907,7 @@ GameObject:
   - component: {fileID: 360929489047336484}
   - component: {fileID: 8376981043650853733}
   m_Layer: 0
-  m_Name: HathoraFishnetPlayer
+  m_Name: HathoraPlayerBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

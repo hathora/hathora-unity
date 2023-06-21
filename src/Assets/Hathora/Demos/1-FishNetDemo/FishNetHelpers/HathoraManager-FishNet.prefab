@@ -117,6 +117,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HathoraManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6730436420827614691, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
 --- !u!1 &5455464065713114488 stripped
@@ -149,8 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f6013a6e61c214fadd13e0bb0cf12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  netHathoraConfig: {fileID: 0}
-  netSession: {fileID: 0}
+  HathoraClientConfig: {fileID: 0}
+  HathoraClientSession: {fileID: 0}
   ClientApis:
     clientAuthApi: {fileID: 0}
     clientLobbyApi: {fileID: 0}

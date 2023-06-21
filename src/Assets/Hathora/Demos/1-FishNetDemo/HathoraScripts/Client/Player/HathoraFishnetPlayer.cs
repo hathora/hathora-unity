@@ -10,7 +10,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
     /// Helpers for the runtime-spawned networked Player GameObject.
     /// This example uses FishNet.
     /// </summary>
-    public class NetHathoraPlayer : NetworkBehaviour
+    public class HathoraFishnetPlayer : NetworkBehaviour
     {
         [SerializeField]
         private NetHathoraPlayerUI playerUi;
