@@ -68,6 +68,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             insertBuildDirNameHorizGroup();
             insertBuildFileExeNameHorizGroup();
+            insertOverwriteDockerfileToggleHorizGroup();
 
             InsertSpace2x();
             
@@ -79,6 +80,24 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             insertGenerateServerBuildBtn(enableBuildBtn); // !await
             insertOpenGeneratedDockerfileLinkLabel();
+        }
+
+        private void insertOverwriteDockerfileToggleHorizGroup()
+        {
+            bool overwriteDockerfile = ServerConfig.LinuxHathoraAutoBuildOpts.OverwriteDockerfile;
+            
+            bool inputBool = base.InsertHorizLabeledCheckboxField(
+                _labelStr: "Overwrite Dockerfile", 
+                _tooltip: "If you have edited the generated Dockerfile or need to use a " +
+                    "custom Dockerfile, this should be set to 'false'\n\nDefault: true",
+                _val: overwriteDockerfile,
+                _alignCheckbox: GuiAlign.SmallRight);
+            
+            bool isChanged = inputBool != overwriteDockerfile;
+            if (isChanged)
+                onOverwriteDockerfileChanged(inputBool);
+            
+            InsertSpace1x();
         }
 
         /// <summary>Only if exists. (!) RESOURCE INTENSIVE</summary>
@@ -220,6 +239,15 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             SaveConfigChange(
                 nameof(ServerConfig.LinuxHathoraAutoBuildOpts.ServerBuildExeName), 
                 _inputStr);
+        }
+        
+        private void onOverwriteDockerfileChanged(bool _inputBool)
+        {
+            ServerConfig.LinuxHathoraAutoBuildOpts.OverwriteDockerfile = _inputBool;
+            
+            SaveConfigChange(
+                nameof(ServerConfig.LinuxHathoraAutoBuildOpts.OverwriteDockerfile), 
+                _inputBool.ToString().ToLowerInvariant());
         }
 
         private void OnGenerateServerBuildBtnClick() =>
