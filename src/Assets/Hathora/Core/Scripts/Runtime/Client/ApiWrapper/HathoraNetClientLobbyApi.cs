@@ -16,7 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// * Does not handle UI.
     /// * Does not handle Session caching.
     /// </summary>
-    public class NetHathoraClientLobbyApi : NetHathoraClientApiBase
+    public class HathoraNetClientLobbyApi : HathoraNetClientApiBase
     {
         private LobbyV2Api lobbyApi;
 
@@ -74,7 +74,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientLobbyApi),
+                    nameof(HathoraNetClientLobbyApi),
                     nameof(ClientCreateLobbyAsync), 
                     apiException);
                 return null; // fail
@@ -112,7 +112,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientLobbyApi),
+                    nameof(HathoraNetClientLobbyApi),
                     nameof(ClientGetLobbyInfoAsync), 
                     apiException);
                 
@@ -153,7 +153,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleClientApiException(
-                    nameof(NetHathoraClientLobbyApi),
+                    nameof(HathoraNetClientLobbyApi),
                     nameof(ClientListPublicLobbiesAsync), 
                     apiException);
                 

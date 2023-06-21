@@ -13,7 +13,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
     public class HathoraFishnetPlayer : NetworkBehaviour
     {
         [SerializeField]
-        private NetHathoraPlayerUI playerUi;
+        private HathoraNetPlayerUI playerUi;
         
         [SerializeField]
         private GameObject ownerObjWrapper;

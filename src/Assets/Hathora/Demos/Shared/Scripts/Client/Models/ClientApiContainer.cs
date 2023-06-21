@@ -22,15 +22,15 @@ namespace Hathora.Demos.Shared.Scripts.Client.Models
     {
         [FormerlySerializedAs("authApi")]
         [SerializeField]
-        public NetHathoraClientAuthApi clientAuthApi;
+        public HathoraNetClientAuthApi clientAuthApi;
         
         [FormerlySerializedAs("lobbyApi")]
         [SerializeField]
-        public NetHathoraClientLobbyApi clientLobbyApi;
+        public HathoraNetClientLobbyApi clientLobbyApi;
 
         [FormerlySerializedAs("roomApi")]
         [SerializeField]
-        public NetHathoraClientRoomApi clientRoomApi;
+        public HathoraNetClientRoomApi clientRoomApi;
         
         
         /// <summary>

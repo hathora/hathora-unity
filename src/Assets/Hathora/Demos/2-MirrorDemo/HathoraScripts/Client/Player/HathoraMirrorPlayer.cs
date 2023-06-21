@@ -13,7 +13,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.Player
     public class NetHathoraPlayer : NetworkBehaviour
     {
         [SerializeField]
-        private NetHathoraPlayerUI playerUi;
+        private HathoraNetPlayerUI playerUi;
         
         [SerializeField]
         private GameObject ownerObjWrapper;

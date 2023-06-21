@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Hathora.Demos.Shared.Scripts.Client
 {
-    public class NetHathoraPlayerUI : MonoBehaviour
+    public class HathoraNetPlayerUI : MonoBehaviour
     {
         [SerializeField]
         private TextMeshProUGUI playerInfoTxt;

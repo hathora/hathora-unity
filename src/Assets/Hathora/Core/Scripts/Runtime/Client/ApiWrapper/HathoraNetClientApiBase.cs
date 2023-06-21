@@ -10,7 +10,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.
     /// Both Client and Server APIs can inherit from this.
     /// </summary>
-    public abstract class NetHathoraClientApiBase : MonoBehaviour
+    public abstract class HathoraNetClientApiBase : MonoBehaviour
     {
         protected Configuration HathoraSdkConfig { get; private set; }
         protected HathoraClientConfig HathoraClientConfig { get; private set; }
