@@ -9,11 +9,11 @@ namespace Hathora.Core.Scripts.Runtime.Client
     /// <summary>
     /// Cached net session. Eg: Auth token, last room joined.
     /// API wrappers will cache here on success.
-    /// TODO: Move NetSession to Demo. This would require detaching cache saving from API wrappers.
+    /// TODO: Move HathoraClientSession to Demo. This would require detaching cache saving from API wrappers.
     /// </summary>
-    public class NetSession : MonoBehaviour
+    public class HathoraClientSession : MonoBehaviour
     {
-        public static NetSession Singleton { get; private set; }
+        public static HathoraClientSession Singleton { get; private set; }
         
         /// <summary>
         /// Client: From AuthV1 via NetHathoraPlayer.
@@ -54,7 +54,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         {
             if (Singleton != null)
             {
-                Debug.LogError("[NetSession]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraClientSession]**ERR @ setSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }

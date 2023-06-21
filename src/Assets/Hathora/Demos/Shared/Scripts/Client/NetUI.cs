@@ -89,7 +89,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
         const string headerBoldColorEnd = "</color></b>";
         private static HathoraFishnetClient HathoraFishnetClient => HathoraFishnetClient.Singleton;
-        private static NetSession netSession => NetSession.Singleton;
+        private static HathoraClientSession HathoraClientSession => HathoraClientSession.Singleton;
 
         
         #region Init
@@ -172,7 +172,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         
         public void OnCopyLobbyRoomIdBtnClick()
         {
-            GUIUtility.systemCopyBuffer = netSession.RoomId; // Copy to clipboard
+            GUIUtility.systemCopyBuffer = HathoraClientSession.RoomId; // Copy to clipboard
             
             // Show + Fade
             _ = ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt); // !await
@@ -186,7 +186,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
             // The ServerConnectionInfo should already be cached
-            _ = HathoraFishnetClient.GetActiveConnectionInfo(netSession.RoomId); // !await
+            _ = HathoraFishnetClient.GetActiveConnectionInfo(HathoraClientSession.RoomId); // !await
         }
         
         /// <summary>
@@ -194,7 +194,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         /// </summary>
         public void OnCopyServerInfoBtnClick()
         {
-            string serverInfo = netSession.GetServerInfoIpPort(); // "ip:port"
+            string serverInfo = HathoraClientSession.GetServerInfoIpPort(); // "ip:port"
             GUIUtility.systemCopyBuffer = serverInfo; // Copy to clipboard
             
             // Show + Fade
@@ -329,7 +329,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         public void OnGetServerInfoSuccess(ConnectionInfoV2 connectionInfo)
         {
             Debug.Log(
-                $"[NetUI] OnGetServerInfoSuccess: {netSession.GetServerInfoIpPort()} " +
+                $"[NetUI] OnGetServerInfoSuccess: {HathoraClientSession.GetServerInfoIpPort()} " +
                 $"({connectionInfo.ExposedPort.TransportType})");
             
             // ####################

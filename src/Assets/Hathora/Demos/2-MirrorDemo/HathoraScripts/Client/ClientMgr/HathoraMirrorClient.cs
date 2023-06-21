@@ -16,6 +16,7 @@ using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -24,7 +25,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
     /// To add scripts, add to the `ClientApis` serialized field.
     /// </summary>
-    public class NetHathoraClient : MonoBehaviour
+    public class HathoraMirrorClient : MonoBehaviour
     {
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;
@@ -34,15 +35,17 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         private HathoraClientConfig netHathoraConfig;
         
+        [FormerlySerializedAs("hathoraSession")]
+        [FormerlySerializedAs("netSession")]
         [Header("Session, APIs")]
         [SerializeField]
-        private NetSession netSession;
+        private HathoraClientSession hathoraClientSession;
         
         [SerializeField]
         public ClientApiContainer ClientApis;
      
         
-        public static NetHathoraClient Singleton { get; private set; }
+        public static HathoraMirrorClient Singleton { get; private set; }
 
         private Configuration hathoraSdkConfig;
 
@@ -108,9 +111,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             // -----------------
             // Connect
             Debug.Log("[HathoraFishnetClient.ConnectAsync] Connecting to: " + 
-                $"{netSession.GetServerInfoIpPort()} via FishNet.{transport.name} transport");
+                $"{hathoraClientSession.GetServerInfoIpPort()} via FishNet.{transport.name} transport");
 
-            ExposedPort connectInfo = netSession.ServerConnectionInfo.ExposedPort;
+            ExposedPort connectInfo = hathoraClientSession.ServerConnectionInfo.ExposedPort;
             bool isSuccess = InstanceFinder.ClientManager.StartConnection(
                 connectInfo.Host, 
                 (ushort)connectInfo.Port);
@@ -129,7 +132,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             Transport _transport)
         {
             // Validate host:port connection info
-            if (!netSession.CheckIsValidServerConnectionInfo())
+            if (!hathoraClientSession.CheckIsValidServerConnectionInfo())
             {
                 onConnectFailed("Invalid ServerConnectionInfo");
                 return false; // !isStarted
@@ -185,7 +188,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         }
 
         /// <summary>
-        /// Auths anonymously => Creates new netSession.
+        /// Auths anonymously => Creates new hathoraClientSession.
         /// </summary>
         public async Task AuthLoginAsync()
         {
@@ -200,12 +203,12 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 return;
             }
            
-            netSession.InitNetSession(result.PlayerAuthToken);
+            hathoraClientSession.InitNetSession(result.PlayerAuthToken);
             OnAuthLoginComplete(result.IsSuccess);
         }
 
         /// <summary>
-        /// Creates lobby => caches Lobby info @ netSession
+        /// Creates lobby => caches Lobby info @ hathoraClientSession
         /// </summary>
         /// <param name="_region"></param>
         /// <param name="_visibility"></param>
@@ -217,7 +220,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             try
             {
                 lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(
-                    netSession.PlayerAuthToken,
+                    hathoraClientSession.PlayerAuthToken,
                     _visibility,
                     _region);
             }
@@ -228,7 +231,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 return;
             }
             
-            netSession.Lobby = lobby;
+            hathoraClientSession.Lobby = lobby;
             OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
 
@@ -250,7 +253,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 return;
             }
 
-            netSession.Lobby = lobby;
+            hathoraClientSession.Lobby = lobby;
             OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
         
@@ -271,7 +274,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 throw new NotImplementedException("TODO: Get lobbies err handling UI");
             }
 
-            netSession.Lobbies = lobbies;
+            hathoraClientSession.Lobbies = lobbies;
             OnViewPublicLobbiesComplete(lobbies);
         }
         
@@ -293,7 +296,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 return; // fail
             }
             
-            netSession.ServerConnectionInfo = connectionInfo;
+            hathoraClientSession.ServerConnectionInfo = connectionInfo;
             OnGetActiveConnectionInfoComplete(connectionInfo);
         }
         
