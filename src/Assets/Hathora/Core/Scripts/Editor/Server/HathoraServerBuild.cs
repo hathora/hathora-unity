@@ -31,26 +31,26 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// Builds with HathoraServerConfig opts.
         /// </summary>
         /// <param name="_serverConfig">Find via menu `Hathora/Find Server Config(s)`</param>
-        /// <param name="_overwriteExistingDockerfile">
-        /// Some devs have a custom Dockerfile and don't want a new autogen
-        /// </param>
         /// <param name="_cancelToken">This won't cancel the build itself, but things around it.</param>
         /// <returns>isSuccess</returns>
         public static async Task<BuildReport> BuildHathoraLinuxServer(
             HathoraServerConfig _serverConfig,
-            bool _overwriteExistingDockerfile,
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerBuild)}.{nameof(BuildHathoraLinuxServer)}]";
+            
             // Throughout this process, we'll lose focus on the config object.
             UnityEngine.Object previousSelection = Selection.activeObject; // Preserve focus - restore at end
+
+            HathoraAutoBuildOpts buildOpts = _serverConfig.LinuxHathoraAutoBuildOpts; // We'll use this a lot
             
             // Prep logs cache
-            _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildReport = null;
-            StringBuilder strb = _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb;
+            buildOpts.LastBuildReport = null;
+            StringBuilder strb = buildOpts.LastBuildLogsStrb;
             strb.Clear()
                 .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now))
                 .AppendLine("Preparing local server build...")
-                .AppendLine($"overwriteExistingDockerfile? {_overwriteExistingDockerfile}")
+                .AppendLine($"overwriteExistingDockerfile? {buildOpts.OverwriteDockerfile}")
                 .AppendLine();
             
             // Set your build options
@@ -92,12 +92,12 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             // ----------------
             // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
-            bool genDockerfile = _overwriteExistingDockerfile || !CheckIfDockerfileExists(configPaths);
+            bool existingDockerfileExists = CheckIfDockerfileExists(configPaths);
+            bool genDockerfile = buildOpts.OverwriteDockerfile || !existingDockerfileExists;
             if (genDockerfile)
             {
                 strb.AppendLine($"Generating Dockerfile to `{configPaths.PathToDotHathoraDockerfile}` ...");
-                Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
-                    "Generating new Dockerfile (if exists: overwriting)...");
+                Debug.Log($"{logPrefix} Generating new Dockerfile (if exists: overwriting)...");
                 
                 string dockerFileContent = HathoraDocker.GenerateDockerFileStr(configPaths);
 
@@ -110,6 +110,11 @@ namespace Hathora.Core.Scripts.Editor.Server
                     configPaths.PathToDotHathoraDockerfile,
                     dockerFileContent,
                     _cancelToken);    
+            }
+            else if (!buildOpts.OverwriteDockerfile)
+            {
+                Debug.LogWarning($"{logPrefix} !buildOpts.OverwriteDockerfile: Leaving Dockerfile" +
+                    "alone (to !overwrite customizations) at risk of desync, if any ServerConfig opts have changed.");
             }
 
             // ----------------

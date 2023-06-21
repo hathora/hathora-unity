@@ -269,7 +269,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 // +Appends strb logs
                 buildReport = await HathoraServerBuild.BuildHathoraLinuxServer(
                     ServerConfig,
-                    overwriteExistingDockerfile, // TODO: 
                     cancelBuildTokenSrc.Token);
             }
             catch (TaskCanceledException)
