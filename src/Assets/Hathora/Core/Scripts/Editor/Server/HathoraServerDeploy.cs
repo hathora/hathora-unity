@@ -196,11 +196,11 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                 // Logs from server
                 strb.AppendLine("<color=white>");
-                strb.AppendLine("``` From Server");
+                strb.AppendLine("<b>===== [Server response START] =====</b>");
                 buildWithLogs.logChunks.ForEach(
                     log =>
                         strb.AppendLine(log));
-                strb.AppendLine("``` // From Server")
+                strb.AppendLine("<b>===== [Server response END] =====</b>")
                     .AppendLine("</color>");
 
                 OnUploadComplete?.Invoke();
