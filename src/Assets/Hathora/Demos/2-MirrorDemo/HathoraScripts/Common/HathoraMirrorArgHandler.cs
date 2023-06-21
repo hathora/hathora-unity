@@ -11,7 +11,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
     /// <summary>
     /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`
     /// </summary>
-    public class FishNetArgHandler : HathoraArgHandlerBase
+    public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
         private void Start() => base.Init();
 
