@@ -1,10 +1,11 @@
 // Created by dylan@hathora.dev
 
-using FishNet;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
+using Mirror;
 using Hathora.Demos.Shared.Scripts.Client;
 using Hathora.Demos.Shared.Scripts.Common;
+using kcp2k;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 {
@@ -13,6 +14,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
     /// </summary>
     public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
+        [SerializeField]
+        private NetworkManager manager;
+
+        [SerializeField]
+        private KcpTransport kcpTransport;
+
+        
         private void Start() => base.Init();
 
         protected override void InitMemo(string _memoStr)
@@ -25,24 +33,26 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
         {
             base.StartServer();
 
-            if (InstanceFinder.ServerManager.Started)
+            if (!NetworkServer.active)
                 return;
             
             // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
             // start on headless checkbox is true
             Debug.Log("[HathoraFishnetArgHandler] Starting Server ...");
-            InstanceFinder.ServerManager.StartConnection();
+            manager.StartServer();
         }
 
         protected override void StartClient()
         {
             base.StartClient();
-
-            if (InstanceFinder.ClientManager.Started)
-                return;
             
-            Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
-            InstanceFinder.ClientManager.StartConnection();
+            if (!NetworkClient.active)
+                return;
+
+            
+            Debug.Log("[HathoraFishnetArgHandler] Starting Client to " +
+                $"{manager.networkAddress}:{kcpTransport.Port} (TODO_PROTOCOL) ...");
+            manager.StartClient();
         }
     }
 }
