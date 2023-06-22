@@ -247,10 +247,19 @@ namespace Hathora.Core.Scripts.Editor.Server
                 DeploymentStep = DeploymentSteps.Done;
                 DateTime endTime = DateTime.Now;
                 strb.AppendLine()
-                    .Append($"{HathoraEditorUtils.StartGreenColor}Completed {HathoraUtils.GetFriendlyDateTimeShortStr(endTime)} ")
-                    .AppendLine(
-                        $"{HathoraUtils.GetFriendlyDateTimeDiff(startTime, endTime, exclude0: true)} (Local Time)") // ({hh}h:{mm}m:{ss}s)
+                    .Append($"{HathoraEditorUtils.StartGreenColor}Completed</color> ")
+                    .Append(HathoraUtils.GetFriendlyDateTimeShortStr(endTime)) // "{date} {time}"
+                    .Append(" (in ")
+                    .Append(HathoraUtils.GetFriendlyDateTimeDiff( // "{hh}h:{mm}m:{ss}s"; strips 0
+                        startTime, 
+                        endTime, 
+                        exclude0: true))
+                    .AppendLine(")")
                     .AppendLine("DEPLOYMENT DONE");
+                // #########################################################
+                // {green}Completed{/green} {date} {time} (in {hh}h:{mm}m:{ss}s)
+                // BUILD DONE
+                // #########################################################
 
                 return deployment;
             }
