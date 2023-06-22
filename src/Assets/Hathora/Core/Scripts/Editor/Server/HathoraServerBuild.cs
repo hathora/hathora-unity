@@ -40,8 +40,9 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             string logPrefix = $"[{nameof(HathoraServerBuild)}.{nameof(BuildHathoraLinuxServer)}]";
 
-            // Wipe the Deploy logs for the session to prevent confusion
+            // Wipe the Deploy + build logs for the session to prevent confusion
             _serverConfig.HathoraDeployOpts.LastDeployLogsStrb.Clear();
+            _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb.Clear();
             
             // Throughout this process, we'll lose focus on the config object.
             UnityEngine.Object previousSelection = Selection.activeObject; // Preserve focus - restore at end

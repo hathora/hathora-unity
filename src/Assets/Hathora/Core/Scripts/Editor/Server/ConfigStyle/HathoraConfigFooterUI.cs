@@ -108,7 +108,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
         private void insertBuildLogsFoldoutHeader()
         {
-            if (!ServerConfig.LinuxHathoraAutoBuildOpts.HasLastBuildLogsStrb)
+            bool hasBuildLogs = ServerConfig.LinuxHathoraAutoBuildOpts.HasLastBuildLogsStrb;
+            bool isDeploying = HathoraServerDeploy.IsDeploying; // When deploying, only deploy logs should show
+            if (!hasBuildLogs || isDeploying)
             {
                 if (!MOCK_BUILD_LOGS)
                     return;
