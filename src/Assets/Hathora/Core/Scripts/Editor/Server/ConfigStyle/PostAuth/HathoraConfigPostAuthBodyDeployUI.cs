@@ -125,10 +125,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             EditorGUI.EndDisabledGroup();
             InsertSpace1x();
             
-            if (!clickedDeployBtn)
-                return;
-
-            _ = onClickedDeployAppBtnClick(); // !await
+            if (clickedDeployBtn)
+                _ = onClickedDeployAppBtnClick(); // !await
         } 
         
         /// <summary>
@@ -378,25 +376,48 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// - OnUploadComplete
         /// </summary>
         /// <returns></returns>
-        public async Task DeployApp()
+        private async Task DeployApp()
         {
+            // Before we begin, close this group so we can more-easily see the logs
+            isDeploymentFoldout = false;
+            
             cancelBuildTokenSrc = new CancellationTokenSource(TimeSpan.FromMinutes(
                 HathoraServerDeploy.DEPLOY_TIMEOUT_MINS));
 
-            Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
-                ServerConfig,
-                cancelBuildTokenSrc.Token);
+            // Catch errs so we can reset the UI on fail
+            try
+            {
+                Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(
+                    ServerConfig,
+                    cancelBuildTokenSrc.Token);
 
-            bool isSuccess = deployment?.DeploymentId > 0;
-            if (isSuccess)
-                onDeployAppSuccess(deployment);
-            else
+                bool isSuccess = deployment?.DeploymentId > 0;
+                if (isSuccess)
+                    onDeployAppSuccess(deployment);
+                else
+                    onDeployAppFail();
+            }
+
+            // catch (TaskCanceledException)
+            // {
+            //     onDeployAppFail();
+            //     throw;
+            // }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] Error: {e}");
                 onDeployAppFail();
+
+                throw;
+            }
+            finally
+            {
+                InvokeRequestRepaint();
+            }
         }
 
         private void onDeployAppFail()
         {
-            throw new NotImplementedException("TODO onDeployAppFail");
         }
 
         /// <summary>Step 1 of 4</summary>

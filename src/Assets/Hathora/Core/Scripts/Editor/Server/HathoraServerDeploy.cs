@@ -12,6 +12,7 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using UnityEditor;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
@@ -59,16 +60,16 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             DeploymentSteps.Done => "Done",
             
-            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.Zipping => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.Zipping}/{maxDeploySteps})</color> Zipping...",
             
-            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.RequestingUploadPerm => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.RequestingUploadPerm}/{maxDeploySteps})</color> Requesting Upload Permission...",
             
-            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.Uploading => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.Uploading}/{maxDeploySteps})</color> Uploading Build...",
             
-            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.Deploying => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.Deploying}/{maxDeploySteps})</color> Deploying Build...",
             
             _ => throw new ArgumentOutOfRangeException(),
@@ -97,7 +98,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             StringBuilder strb = _serverConfig.HathoraDeployOpts.LastDeployLogsStrb;
             DateTime startTime = DateTime.Now;
             strb.Clear()
-                .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(startTime))
+                .AppendLine($"{HathoraUtils.GetFriendlyDateTimeShortStr(startTime)} (Local Time)")
                 .AppendLine("Preparing remote application deployment...")
                 .AppendLine();
 
@@ -189,19 +190,30 @@ namespace Hathora.Core.Scripts.Editor.Server
                     return null;
                 }
 
-                Assert.AreEqual(
-                    buildWithLogs.build?.Status,
-                    Build.StatusEnum.Succeeded,
-                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
-
                 // Logs from server
                 strb.AppendLine("<color=white>");
                 strb.AppendLine("<b>===== [Server response START] =====</b>");
                 buildWithLogs.logChunks.ForEach(
                     log =>
-                        strb.AppendLine(log));
+                    {
+                        // Make an error stand out
+                        bool hasErr = log.StartsWith("Error");
+                        if (hasErr)
+                            strb.Append($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>");
+                            
+                        // No matter what, add the log here
+                        strb.AppendLine(log);
+
+                        if (hasErr)
+                            strb.Append("</color>");
+                    });
                 strb.AppendLine("<b>===== [Server response END] =====</b>")
                     .AppendLine("</color>");
+                
+                Assert.AreEqual(
+                    buildWithLogs.build?.Status,
+                    Build.StatusEnum.Succeeded,
+                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
 
                 OnUploadComplete?.Invoke();
                 _cancelToken.ThrowIfCancellationRequested();
@@ -235,10 +247,19 @@ namespace Hathora.Core.Scripts.Editor.Server
                 DeploymentStep = DeploymentSteps.Done;
                 DateTime endTime = DateTime.Now;
                 strb.AppendLine()
-                    .Append($"Completed {HathoraUtils.GetFriendlyDateTimeShortStr(endTime)} ")
-                    .AppendLine(
-                        $"({HathoraUtils.GetFriendlyDateTimeDiff(startTime, endTime, exclude0: true)})") // ({hh}h:{mm}m:{ss}s)
+                    .Append($"{HathoraEditorUtils.StartGreenColor}Completed</color> ")
+                    .Append(HathoraUtils.GetFriendlyDateTimeShortStr(endTime)) // "{date} {time}"
+                    .Append(" (in ")
+                    .Append(HathoraUtils.GetFriendlyDateTimeDiff( // "{hh}h:{mm}m:{ss}s"; strips 0
+                        startTime, 
+                        endTime, 
+                        exclude0: true))
+                    .AppendLine(")")
                     .AppendLine("DEPLOYMENT DONE");
+                // #########################################################
+                // {green}Completed{/green} {date} {time} (in {hh}h:{mm}m:{ss}s)
+                // BUILD DONE
+                // #########################################################
 
                 return deployment;
             }
@@ -246,12 +267,14 @@ namespace Hathora.Core.Scripts.Editor.Server
             {
                 Debug.Log($"{logPrefix} Task Cancelled");
                 strb.AppendLine().AppendLine($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
-                    $"(!) Cancelled by user</color>");
+                    "(!) Cancelled by user</color>");
                 throw;
             }
             catch (Exception e)
             {
-                Debug.Log($"{logPrefix} {e.Message}");
+                Debug.LogError($"{logPrefix} {e.Message}");
+                strb.AppendLine($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                    $"<b>(!) Error:</b>\n{e.Message}</color>");
                 throw;
             }
             finally

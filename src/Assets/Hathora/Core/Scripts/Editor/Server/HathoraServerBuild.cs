@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
@@ -38,6 +39,9 @@ namespace Hathora.Core.Scripts.Editor.Server
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerBuild)}.{nameof(BuildHathoraLinuxServer)}]";
+
+            // Wipe the Deploy logs for the session to prevent confusion
+            _serverConfig.HathoraDeployOpts.LastDeployLogsStrb.Clear();
             
             // Throughout this process, we'll lose focus on the config object.
             UnityEngine.Object previousSelection = Selection.activeObject; // Preserve focus - restore at end
@@ -151,11 +155,21 @@ namespace Hathora.Core.Scripts.Editor.Server
             _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb
                 .AppendLine($"result: {Enum.GetName(typeof(BuildResult), _buildReport.summary.result)}")
                 .AppendLine($"totalSize: {_buildReport.summary.totalSize / (1024 * 1024)}MB")
-                .AppendLine($"totalTime: {totalTime.Hours}h:{totalTime.Minutes}m:{totalTime.Seconds}s") // hh:mm:ss
                 .AppendLine($"totalWarnings: {_buildReport.summary.totalWarnings.ToString()}")
                 .AppendLine($"totalErrors: {_buildReport.summary.totalErrors.ToString()}")
                 .AppendLine()
-                .AppendLine($"BUILD DONE {HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)}");
+                .Append($"{HathoraEditorUtils.StartGreenColor}Completed</color> ")
+                .Append(HathoraUtils.GetFriendlyDateTimeShortStr(DateTime.Now)) // "{date} {time}"
+                .Append(" (in ")
+                .Append(HathoraUtils.GetFriendlyDateTimeDiff(totalTime, _exclude0: true)) // "{hh}h:{mm}m:{ss}s"; strips 0
+                .AppendLine(")")
+                .AppendLine("BUILD DONE");
+            // #########################################################
+            // {result list}
+            //
+            // {green}Completed{/green} {date} {time} (in {hh}h:{mm}m:{ss}s)
+            // BUILD DONE
+            // #########################################################
         }
 
         /// <summary></summary>
