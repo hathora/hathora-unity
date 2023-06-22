@@ -397,6 +397,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 else
                     onDeployAppFail();
             }
+
             // catch (TaskCanceledException)
             // {
             //     onDeployAppFail();
@@ -406,7 +407,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             {
                 Debug.LogError($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] Error: {e}");
                 onDeployAppFail();
+
                 throw;
+            }
+            finally
+            {
+                InvokeRequestRepaint();
             }
         }
 
