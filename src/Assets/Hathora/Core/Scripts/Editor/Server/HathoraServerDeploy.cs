@@ -189,19 +189,30 @@ namespace Hathora.Core.Scripts.Editor.Server
                     return null;
                 }
 
-                Assert.AreEqual(
-                    buildWithLogs.build?.Status,
-                    Build.StatusEnum.Succeeded,
-                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
-
                 // Logs from server
                 strb.AppendLine("<color=white>");
                 strb.AppendLine("<b>===== [Server response START] =====</b>");
                 buildWithLogs.logChunks.ForEach(
                     log =>
-                        strb.AppendLine(log));
+                    {
+                        // Make an error stand out
+                        bool hasErr = log.StartsWith("Error");
+                        if (hasErr)
+                            strb.Append($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>");
+                            
+                        // No matter what, add the log here
+                        strb.AppendLine(log);
+
+                        if (hasErr)
+                            strb.Append("</color>");
+                    });
                 strb.AppendLine("<b>===== [Server response END] =====</b>")
                     .AppendLine("</color>");
+                
+                Assert.AreEqual(
+                    buildWithLogs.build?.Status,
+                    Build.StatusEnum.Succeeded,
+                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
 
                 OnUploadComplete?.Invoke();
                 _cancelToken.ThrowIfCancellationRequested();
@@ -246,12 +257,14 @@ namespace Hathora.Core.Scripts.Editor.Server
             {
                 Debug.Log($"{logPrefix} Task Cancelled");
                 strb.AppendLine().AppendLine($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
-                    $"(!) Cancelled by user</color>");
+                    "(!) Cancelled by user</color>");
                 throw;
             }
             catch (Exception e)
             {
-                Debug.Log($"{logPrefix} {e.Message}");
+                Debug.LogError($"{logPrefix} {e.Message}");
+                strb.AppendLine($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>" +
+                    $"<b>(!) Error:</b>\n{e.Message}</color>");
                 throw;
             }
             finally
