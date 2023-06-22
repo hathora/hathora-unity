@@ -38,6 +38,9 @@ namespace Hathora.Core.Scripts.Editor.Server
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerBuild)}.{nameof(BuildHathoraLinuxServer)}]";
+
+            // Wipe the Deploy logs for the session to prevent confusion
+            _serverConfig.HathoraDeployOpts.LastDeployLogsStrb.Clear();
             
             // Throughout this process, we'll lose focus on the config object.
             UnityEngine.Object previousSelection = Selection.activeObject; // Preserve focus - restore at end
