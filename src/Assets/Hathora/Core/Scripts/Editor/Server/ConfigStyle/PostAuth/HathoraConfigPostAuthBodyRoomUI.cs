@@ -216,7 +216,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             string createdDateStr = HathoraUtils.GetFriendlyDateTimeShortStr(createdDateTime)
                 ?? "{Unknown DateTime}";
 
-            string labelStr = $"<b>Created:</b> {createdDateStr}";
+            string labelStr = $"<b>Created:</b> {createdDateStr} (UTC)"; // Server logs, so UTC
             InsertLabel(labelStr, _fontSize: 10);
         }
 

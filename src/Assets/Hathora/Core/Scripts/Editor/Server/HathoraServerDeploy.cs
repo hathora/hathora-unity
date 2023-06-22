@@ -60,16 +60,16 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             DeploymentSteps.Done => "Done",
             
-            DeploymentSteps.Zipping => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.Zipping => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.Zipping}/{maxDeploySteps})</color> Zipping...",
             
-            DeploymentSteps.RequestingUploadPerm => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.RequestingUploadPerm => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.RequestingUploadPerm}/{maxDeploySteps})</color> Requesting Upload Permission...",
             
-            DeploymentSteps.Uploading => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.Uploading => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.Uploading}/{maxDeploySteps})</color> Uploading Build...",
             
-            DeploymentSteps.Deploying => $"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+            DeploymentSteps.Deploying => $"{HathoraEditorUtils.StartGreenColor}" +
                 $"({(int)DeploymentSteps.Deploying}/{maxDeploySteps})</color> Deploying Build...",
             
             _ => throw new ArgumentOutOfRangeException(),
@@ -98,7 +98,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             StringBuilder strb = _serverConfig.HathoraDeployOpts.LastDeployLogsStrb;
             DateTime startTime = DateTime.Now;
             strb.Clear()
-                .AppendLine(HathoraUtils.GetFriendlyDateTimeShortStr(startTime))
+                .AppendLine($"{HathoraUtils.GetFriendlyDateTimeShortStr(startTime)} (Local Time)")
                 .AppendLine("Preparing remote application deployment...")
                 .AppendLine();
 
@@ -247,9 +247,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 DeploymentStep = DeploymentSteps.Done;
                 DateTime endTime = DateTime.Now;
                 strb.AppendLine()
-                    .Append($"Completed {HathoraUtils.GetFriendlyDateTimeShortStr(endTime)} ")
+                    .Append($"{HathoraEditorUtils.StartGreenColor}Completed {HathoraUtils.GetFriendlyDateTimeShortStr(endTime)} ")
                     .AppendLine(
-                        $"({HathoraUtils.GetFriendlyDateTimeDiff(startTime, endTime, exclude0: true)})") // ({hh}h:{mm}m:{ss}s)
+                        $"{HathoraUtils.GetFriendlyDateTimeDiff(startTime, endTime, exclude0: true)} (Local Time)") // ({hh}h:{mm}m:{ss}s)
                     .AppendLine("DEPLOYMENT DONE");
 
                 return deployment;
