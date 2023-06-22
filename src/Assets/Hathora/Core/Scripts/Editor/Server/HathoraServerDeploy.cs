@@ -12,6 +12,7 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using UnityEditor;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 

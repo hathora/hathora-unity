@@ -22,6 +22,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
     public class HathoraConfigPostAuthBodyRoomUI : HathoraConfigUIBase
     {
         #region Vars
+        /// <summary>Returns a mock err instead of the real process; reflects in RoomInfo</summary>
+        private const bool MOCK_CREATE_ROOM_ERR = false;
+        
         private HathoraConfigPostAuthBodyRoomLobbyUI roomLobbyUI { get; set; }
         public static CancellationTokenSource CreateRoomCancelTokenSrc { get; set; } // TODO
         private const int CREATE_ROOM_TIMEOUT_SECONDS = 30;
@@ -90,10 +93,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (!IsAuthed)
                 return; // You should be calling HathoraConfigPreAuthBodyUI.Draw()
 
-            insertCreateRoomOrLobbyFoldout();
+            insertCreateRoomFoldout();
         }
 
-        private void insertCreateRoomOrLobbyFoldout()
+        private void insertCreateRoomFoldout()
         {
             isCreateRoomLobbyFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isCreateRoomLobbyFoldout, 
@@ -120,23 +123,52 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             bool enableCreateRoomBtn = ServerConfig.MeetsCreateRoomBtnReqs();
             insertCreateRoomBtnHelpboxOnErr(enableCreateRoomBtn);
+            insertCreateRoomOrCancelBtnWrapper(enableCreateRoomBtn);
+            
+            insertRoomInfoOrErrGroupWrapper();
+            insertViewLogsMetricsLinkLbl();
+        }
 
+        private void insertCreateRoomOrCancelBtnWrapper(bool _enableCreateRoomBtn)
+        {
             bool showCancelBtn = isCreatingRoomAwaitingActiveStatus && CreateRoomCancelTokenSrc.Token.CanBeCanceled; 
             if (showCancelBtn)
                 insertCreateRoomCancelBtn(CreateRoomCancelTokenSrc);
             else
-                insertCreateRoomBtn(enableCreateRoomBtn);
-
-            bool hasLastRoomInfo = ServerConfig.HathoraLobbyRoomOpts.HasLastCreatedRoomConnection;
-            if (hasLastRoomInfo)
-                insertLastCreatedRoomInfoGroup();
-            
-            insertViewLogsMetricsLinkLbl();
+                insertCreateRoomBtn(_enableCreateRoomBtn);
         }
+
+        private void insertRoomInfoOrErrGroupWrapper()
+        {
+            bool hasLastRoomInfo = ServerConfig.HathoraLobbyRoomOpts.HasLastCreatedRoomConnection;
+            bool hasLastRoomErr = ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection?.IsError ?? false;
+            if (!hasLastRoomInfo && !hasLastRoomErr)
+                return;
+            
+            base.BeginPaddedBox();
+                
+            if (hasLastRoomErr)
+                insertLastCreatedRoomInfoErrGroup();
+            else
+                insertLastCreatedRoomInfoGroup();
+                
+            base.EndPaddedBox();
+        }
+
+        private void insertLastCreatedRoomInfoErrGroup()
+        {
+            insertRoomLastCreatedHeaderLbl();
+            insertRoomLastCreatedErrLbl();
+        }
+
+        private void insertRoomLastCreatedErrLbl()
+        {
+            InsertLabel($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}><b>Error:</b> " +
+                $"{ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection.ErrReason}</color>");
+            InsertSpace1x();        }
 
         private void insertLastCreatedRoomInfoGroup()
         {
-            base.BeginPaddedBox();
 
             // GUI >>
             try
@@ -152,8 +184,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                     $"Error (skipping this group so UI can continue to load): {e}");
                 throw;
             }
-
-            EndPaddedBox();
         }
 
         private void insertRoomConnectionInfoBtnGroup()
@@ -318,6 +348,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             EditorGUI.BeginDisabledGroup(disabled: !_enable);
             
+            // USER INPUT >>
             bool clickedCreateRoomLobbyBtn = InsertLeftGeneralBtn(btnLabelStr);
 
             EditorGUI.EndDisabledGroup();
@@ -326,12 +357,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (!clickedCreateRoomLobbyBtn)
                 return;
 
-            onCreateRoomBtnClick(); // !await
+            _ = onCreateRoomBtnClick(); // !await
 
-            // Deployment deployment = await HathoraServerDeploy.DeployToHathoraAsync(ServerConfig);
-            // Assert.That(deployment?.BuildId, Is.Not.Null,
-            //     "Deployment failed: Check console for details.");
-            
             EditorGUI.EndDisabledGroup();
         }
 
@@ -398,15 +425,27 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             HathoraServerRoomApi serverRoomApi = new(ServerConfig);
 
             (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
+
             try
             {
+                if (MOCK_CREATE_ROOM_ERR)
+                {
+                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomBtnClick] " +
+                        "`MOCK_CREATE_ROOM_ERR` == true; simulating error...");
+                    throw new Exception("MOCK_CREATE_ROOM_ERR (Simulated Err)");
+                }
+                
                 roomConnInfoTuple = await serverRoomApi.CreateRoomAwaitActiveAsync(
                     _cancelToken: CreateRoomCancelTokenSrc.Token);
             }
+            // catch (TaskCanceledException e)
+            // {
+            // }
             catch (Exception e)
             {
                 // Could be a TaskCanceledException
                 onCreateRoomDone();
+                onCreateRoomFail(_reason: e.Message);
                 return;
             }
             
@@ -416,15 +455,18 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 lastRegion,
                 roomConnInfoTuple.room, 
                 roomConnInfoTuple.connInfo);
-
-            onCreateRoomDone();
-
-            Assert.IsNotNull(roomConnInfo.Room?.RoomId, "!RoomId");
             
-            Assert.AreEqual(roomConnInfo.ConnectionInfoV2?.Status, 
-                ConnectionInfoV2.StatusEnum.Active,  "Status !Active");
-
+            onCreateRoomDone(roomConnInfo); // Asserts
             onCreateRoomSuccess(roomConnInfo);
+        }
+
+        private void onCreateRoomFail(string _reason)
+        {
+            ServerConfig.HathoraLobbyRoomOpts.LastCreatedRoomConnection = new HathoraCachedRoomConnection
+            {
+                IsError = true,
+                ErrReason = _reason,
+            };
         }
 
         /// <summary>
@@ -453,10 +495,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             onCreateRoomDone();
         }
 
-        private void onCreateRoomDone()
+        private void onCreateRoomDone(HathoraCachedRoomConnection _roomConnInfo = null)
         {
-            Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done (or canceled)");
+            Debug.Log("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomDone] Done || Cancelled)");
+
             isCreatingRoomAwaitingActiveStatus = false;
+
+            if (_roomConnInfo == null)
+                return;
+            
+            // Potential success >> Validate
+            Assert.IsNotNull(_roomConnInfo.Room?.RoomId, "!RoomId");
+            Assert.AreEqual(_roomConnInfo.ConnectionInfoV2?.Status, 
+                ConnectionInfoV2.StatusEnum.Active,  "Status !Active");
         }
         
         

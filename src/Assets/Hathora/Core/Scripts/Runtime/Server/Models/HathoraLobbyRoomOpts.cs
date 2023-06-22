@@ -61,7 +61,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// We check if there's a RoomId, and null checking leading up to it.
         /// </summary>
         public bool HasLastCreatedRoomConnection => 
-            !string.IsNullOrEmpty(_lastCreatedRoomConnection?.Room?.RoomId) && _lastCreatedRoomConnection?.ConnectionInfoV2?.ExposedPort != null;
+            !string.IsNullOrEmpty(_lastCreatedRoomConnection?.Room?.RoomId ?? string.Empty) && 
+            _lastCreatedRoomConnection?.ConnectionInfoV2?.ExposedPort != null;
+
+        /// <summary>
+        /// Checks if room has IsError *only*. Returns false if connection is null.
+        /// </summary>
+        public bool HasLastCreatedRoomConnectionErr => _lastCreatedRoomConnection?.IsError ?? false;
         #endregion // Hathora Region
     }
 }
