@@ -1,7 +1,7 @@
 // Created by dylan@hathora.dev
 
-using FishNet.Object;
 using Hathora.Demos.Shared.Scripts.Client;
+using Mirror;
 using UnityEngine;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.Player
@@ -10,7 +10,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.Player
     /// Helpers for the runtime-spawned networked Player GameObject.
     /// This example uses FishNet.
     /// </summary>
-    public class NetHathoraPlayer : NetworkBehaviour
+    public class HathoraMirrorPlayer : NetworkBehaviour
     {
         [SerializeField]
         private HathoraNetPlayerUI playerUi;
@@ -19,32 +19,24 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.Player
         private GameObject ownerObjWrapper;
         
         #region Init
-        /// <summary>Called BEFORE OnStartClient</summary>
-        public override void OnStartNetwork()
-        {
-            base.OnStartNetwork();
-            Debug.Log($"[NetHathoraPlayer] OnStartNetwork");
-        }
-
         /// <summary>
         /// Better to use this instead of Start, in most situations.
         /// <summary>Called AFTER OnStartNetwork</summary>
         /// </summary>
-        public override void OnStartClient()
+        public override void OnStartLocalPlayer()
         {
-            base.OnStartClient();
+            base.OnStartLocalPlayer();
             
-            Debug.Log($"[NetHathoraPlayer] OnStartClient: IsOwner? {base.IsOwner}");
-            if (base.IsOwner)
-                owningClientStarted();
+            Debug.Log($"[HathoraMirrorPlayer] OnStartClient: IsOwner? {base.isOwned}");
+            owningClientStarted();
         }
 
         private void owningClientStarted()
         {
             ownerObjWrapper.gameObject.SetActive(true);
             playerUi.OnConnected(
-                ClientManager.Connection.ClientId.ToString(),
-                ClientManager.Clients.Count); // Includes self
+                base.netId.ToString(),
+                NetworkManager.singleton.numPlayers); // Includes self
             
             NetworkSpawnLogs();
         }
@@ -52,26 +44,26 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.Player
         public override void OnStopClient()
         {
             base.OnStopClient();
-            Debug.Log("[NetHathoraPlayer] OnStopClient");
+            Debug.Log("[HathoraMirrorPlayer] OnStopClient");
         }
-        
+
         /// <summary>Called only once, AFTER OnStopClient</summary>
-        public override void OnStopNetwork()
+        public override void OnStopLocalPlayer()
         {
-            base.OnStopNetwork();
-            Debug.Log("[NetHathoraPlayer] OnStopNetwork");
+            base.OnStopLocalPlayer();
+            Debug.Log("[HathoraMirrorPlayer] OnStopNetwork");
         }
 
         private void NetworkSpawnLogs()
         {
-            Debug.Log($"[NetHathoraPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");
+            Debug.Log($"[HathoraMirrorPlayer] OnNetworkSpawn, id==={base.netId}");
             
-            if (base.IsHost)
-                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on host (server+client)");
-            else if (base.IsServerOnly)
-                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on server");
-            else if (base.IsClient)
-                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on client");
+            if (base.isClient && base.isServer)
+                Debug.Log("[HathoraMirrorPlayer] OnNetworkSpawn called on host (server+client)");
+            else if (base.isServerOnly)
+                Debug.Log("[HathoraMirrorPlayer] OnNetworkSpawn called on server");
+            else if (base.isClient)
+                Debug.Log("[HathoraMirrorPlayer] OnNetworkSpawn called on client");
         }
         #endregion // Init
         

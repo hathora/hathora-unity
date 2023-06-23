@@ -95,7 +95,14 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 181022890959971896, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
     - {fileID: 360929489047336484, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
+    - {fileID: 8376981043650853733, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
+--- !u!1 &511484313848447195 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1506763428511403601, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1436702281350762122}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3916964427634596072 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2714522102071268962, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
@@ -106,6 +113,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4589964183807688559 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3189363307118637541, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1436702281350762122}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394170684960af34d9cecc89ebb129af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6149056108794565156 stripped
@@ -228,6 +247,23 @@ MonoBehaviour:
   animRotation: 0
   velocity: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
+--- !u!114 &5392699299142832218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6149056108794565156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ed3e1aec85d294e8dee1252caacf46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  playerUi: {fileID: 4589964183807688559}
+  ownerObjWrapper: {fileID: 511484313848447195}
 --- !u!4 &6149056108794565160 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5090726670223187106, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
