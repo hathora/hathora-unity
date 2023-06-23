@@ -1,5 +1,4 @@
 // Created by dylan@hathora.dev
-// Unity NGO: Getting Started | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo
 
 using FishNet.Object;
 using UnityEngine;
@@ -7,8 +6,8 @@ using UnityEngine;
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
 {
     /// <summary>
-    /// As soon as we connect to the server, we send a ping to the server.
-    /// => Server will pong us back.
+    /// As soon as we connect to the server, we send a ping to the server => Server will pong us back.
+    /// Mirror NetworkBehaviour Doc | https://fish-networking.gitbook.io/docs/manual/guides/network-behaviour-guides 
     /// </summary>
     public class HathoraFishnetPingTestRpc : NetworkBehaviour
     {
