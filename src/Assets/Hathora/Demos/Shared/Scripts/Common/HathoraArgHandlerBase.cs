@@ -15,7 +15,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
 
         protected virtual void Init()
         {
-            Debug.Log($"[HathoraArgHandlerBase] Init");
+            Debug.Log($"[HathoraArgHandlerBase] Init @ scene: {gameObject.scene.name}");
             
             if (Application.isEditor) 
                 return;
