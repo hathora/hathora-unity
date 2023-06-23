@@ -44,7 +44,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// </summary>
         /// <param name="_sceneName"></param>
         protected virtual void InitScene(string _sceneName) =>
-            _ = HathoraNetPlatformSelector.LoadSceneAsync(_sceneName);
+            _ = HathoraNetPlatformSelector.LoadSceneOnceAsync(_sceneName);
 
         /// <summary>Override me -> Set memoStr in UI</summary>
         /// <param name="_memoStr"></param>

@@ -12,6 +12,9 @@ namespace Hathora.Demos.Shared.Scripts.Common
     /// </summary>
     public class HathoraNetPlatformSelector : MonoBehaviour
     {
+        /// <summary>We only load scene once on init</summary>
+        public static bool LoadSceneConsumed;
+        
         [Serializable]
         public enum NetPlatform
         {
@@ -37,12 +40,12 @@ namespace Hathora.Demos.Shared.Scripts.Common
             {
                 case NetPlatform.FishNet:
                     Debug.Log($"{logPrefix} FishNet");
-                    _ = LoadSceneAsync("HathoraDemoScene-FishNet");
+                    _ = LoadSceneOnceAsync("HathoraDemoScene-FishNet");
                     break;
 
                 case NetPlatform.Mirror:
                     Debug.Log($"{logPrefix} Mirror");
-                    _ = LoadSceneAsync("HathoraDemoScene-Mirror");
+                    _ = LoadSceneOnceAsync("HathoraDemoScene-Mirror");
                     break;
 
                 case NetPlatform.NGO:
@@ -56,11 +59,24 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
         }
         
-        // Load scene based on NetPlatform
-        public static async Task LoadSceneAsync(string _sceneName)
+        /// <summary>
+        /// After using this once, you won't be able to do it again
+        /// (to prevent multiple arg handling stack overflows).
+        /// 
+        /// Mostly used for args or initial scene selection.
+        /// </summary>
+        /// <param name="_sceneName"></param>
+        public static async Task LoadSceneOnceAsync(string _sceneName)
         {
-            Debug.Log($"[HathoraNetPlatformSelector.LoadSceneAsync] {_sceneName}");
+            Debug.Log($"[HathoraNetPlatformSelector.LoadSceneAsync] sceneName: {_sceneName}");
 
+            if (LoadSceneConsumed)
+            {
+                Debug.LogWarning("[HathoraNetPlatformSelector.LoadSceneAsync] " +
+                    "LoadSceneOnceAsync already consumed! Aborting.");
+                return;
+            }
+            
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(
                 _sceneName, 
                 LoadSceneMode.Single);
