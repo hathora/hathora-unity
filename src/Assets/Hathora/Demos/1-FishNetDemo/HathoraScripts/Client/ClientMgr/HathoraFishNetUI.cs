@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr;
+using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
 
 namespace Hathora.Demos.Shared.Scripts.Client

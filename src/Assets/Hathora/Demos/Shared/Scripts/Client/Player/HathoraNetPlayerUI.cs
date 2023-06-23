@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Hathora.Demos.Shared.Scripts.Client
+namespace Hathora.Demos.Shared.Scripts.Client.Player
 {
     public class HathoraNetPlayerUI : MonoBehaviour
     {

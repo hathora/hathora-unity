@@ -2,6 +2,7 @@
 
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client;
+using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using Mirror;
 using UnityEngine;
 

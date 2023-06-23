@@ -5,6 +5,7 @@ using FishNet.Managing.Client;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client;
+using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr

@@ -2,6 +2,7 @@
 
 using FishNet.Object;
 using Hathora.Demos.Shared.Scripts.Client;
+using Hathora.Demos.Shared.Scripts.Client.Player;
 using UnityEngine;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player

@@ -1,6 +1,6 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Demos.Shared.Scripts.Client;
+using Hathora.Demos.Shared.Scripts.Client.Player;
 using Mirror;
 using UnityEngine;
 

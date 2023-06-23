@@ -11,9 +11,8 @@ using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Hathora.Demos.Shared.Scripts.Client
+namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
     /// <summary>
     /// - This spawns BEFORE the player, or even connected to the network.

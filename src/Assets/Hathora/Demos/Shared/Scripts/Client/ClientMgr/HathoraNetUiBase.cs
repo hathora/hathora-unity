@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace Hathora.Demos.Shared.Scripts.Client
+namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
     /// <summary>
     /// Handles the non-Player UI so we can keep the logic separate.
