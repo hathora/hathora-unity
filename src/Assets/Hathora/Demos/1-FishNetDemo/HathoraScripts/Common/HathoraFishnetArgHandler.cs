@@ -19,7 +19,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
         protected override void InitMemo(string _memoStr)
         {
             base.InitMemo(_memoStr);
-            NetUI.Singleton.SetShowDebugMemoTxt(_memoStr);
+            HathoraFishNetUI.Singleton.SetShowDebugMemoTxt(_memoStr);
         }
 
         protected override void StartServer()

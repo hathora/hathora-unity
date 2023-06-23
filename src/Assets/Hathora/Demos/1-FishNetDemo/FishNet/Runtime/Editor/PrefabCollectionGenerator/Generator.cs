@@ -466,10 +466,6 @@ namespace FishNet.Editing.PrefabCollectionGenerator
 
             if (_cachedDefaultPrefabs == null)
             {
-                // #################################################################################################
-                // Hathora Demo nested in a singular dir: Don't create! Instead, search `t:DefaultPrefabObjects`
-                return null;
-                // #################################################################################################
                 string fullPath = Path.GetFullPath(defaultPrefabsPath);
                 UnityDebug.Log($"Creating a new DefaultPrefabsObject at {fullPath}.");
                 string directory = Path.GetDirectoryName(fullPath);

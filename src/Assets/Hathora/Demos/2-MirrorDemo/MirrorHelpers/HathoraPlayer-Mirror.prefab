@@ -87,10 +87,27 @@ PrefabInstance:
       propertyPath: m_Name
       value: HathoraPlayer-Mirror
       objectReference: {fileID: 0}
+    - target: {fileID: 8376981043650853733, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
+        type: 3}
+      propertyPath: playerInfoTxt
+      value: 
+      objectReference: {fileID: 3916964427634596072}
     m_RemovedComponents:
     - {fileID: 181022890959971896, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
     - {fileID: 360929489047336484, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
+--- !u!114 &3916964427634596072 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2714522102071268962, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1436702281350762122}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6149056108794565156 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5090726670223187118, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,
@@ -165,6 +182,21 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &5224528913631253801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6149056108794565156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ac1e35462ffad469e77d1c2fe6c9f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &6884720292035284187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,21 +228,6 @@ MonoBehaviour:
   animRotation: 0
   velocity: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
---- !u!114 &5224528913631253801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6149056108794565156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71ac1e35462ffad469e77d1c2fe6c9f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!4 &6149056108794565160 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5090726670223187106, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1,

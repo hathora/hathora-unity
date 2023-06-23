@@ -52,8 +52,8 @@ namespace Hathora.Demos.Shared.Scripts.Client
         public virtual void AssertUsingValidNetConfig()
         {
             // Are we using any Client Config at all?
-            if (HathoraClientConfig == null || !HathoraClientConfig.HasAppId && NetUI.Singleton != null)
-                NetUI.Singleton.SetInvalidConfig(HathoraClientConfig);
+            if (HathoraClientConfig == null || !HathoraClientConfig.HasAppId && HathoraFishNetUI.Singleton != null)
+                HathoraFishNetUI.Singleton.SetInvalidConfig(HathoraClientConfig);
         }
 
         // // TODO: implement me in child class:
@@ -101,7 +101,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         protected virtual void OnConnectFailed(string _friendlyReason)
         {
             IsConnecting = false;
-            NetUI.Singleton.OnJoinLobbyFailed(_friendlyReason);
+            HathoraFishNetUI.Singleton.OnJoinLobbyFailed(_friendlyReason);
         }
 
         protected virtual void OnConnectSuccess()
@@ -109,7 +109,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             Debug.Log("[HathoraClientBase] OnConnectSuccess");
             
             IsConnecting = false;
-            NetUI.Singleton.OnJoinLobbySuccess();
+            HathoraFishNetUI.Singleton.OnJoinLobbySuccess();
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraClientBase] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
-                NetUI.Singleton.OnGetServerInfoFail();
+                HathoraFishNetUI.Singleton.OnGetServerInfoFail();
                 return; // fail
             }
             
@@ -233,22 +233,22 @@ namespace Hathora.Demos.Shared.Scripts.Client
         {
             if (string.IsNullOrEmpty(_connectionInfo?.ExposedPort?.Host))
             {
-                NetUI.Singleton.OnGetServerInfoFail();
+                HathoraFishNetUI.Singleton.OnGetServerInfoFail();
                 return;
             }
             
-            NetUI.Singleton.OnGetServerInfoSuccess(_connectionInfo);
+            HathoraFishNetUI.Singleton.OnGetServerInfoSuccess(_connectionInfo);
         }
         
         protected virtual void OnAuthLoginComplete(bool _isSuccess)
         {
             if (!_isSuccess)
             {
-                NetUI.Singleton.OnAuthFailed();
+                HathoraFishNetUI.Singleton.OnAuthFailed();
                 return;
             }
 
-            NetUI.Singleton.OnAuthedLoggedIn();
+            HathoraFishNetUI.Singleton.OnAuthedLoggedIn();
         }
 
         protected virtual void OnViewPublicLobbiesComplete(List<Lobby> _lobbies)
@@ -262,7 +262,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             }
             
             List<Lobby> sortedLobbies = _lobbies.OrderBy(lobby => lobby.CreatedAt).ToList();
-            NetUI.Singleton.OnViewLobbies(sortedLobbies);
+            HathoraFishNetUI.Singleton.OnViewLobbies(sortedLobbies);
         }
         
         /// <summary>
@@ -273,12 +273,12 @@ namespace Hathora.Demos.Shared.Scripts.Client
         {
             if (string.IsNullOrEmpty(_lobby?.RoomId))
             {
-                NetUI.Singleton.OnCreatedOrJoinedLobbyFail();
+                HathoraFishNetUI.Singleton.OnCreatedOrJoinedLobbyFail();
                 return;
             }
 
             string friendlyRegion = _lobby.Region.ToString().SplitPascalCase();
-            NetUI.Singleton.OnCreatedOrJoinedLobby(_lobby.RoomId, friendlyRegion);
+            HathoraFishNetUI.Singleton.OnCreatedOrJoinedLobby(_lobby.RoomId, friendlyRegion);
         }
         #endregion // Callbacks
     }

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
-using Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -19,106 +18,102 @@ namespace Hathora.Demos.Shared.Scripts.Client
     /// Generally, this is going to be pre-connection UI such as create/join lobbies.
     /// UI OnEvent entry points from Buttons start here.
     /// </summary>
-    public class NetUI : MonoBehaviour
+    public abstract class HathoraNetUiBase : MonoBehaviour
     {
         #region Serialized Fields
         [FormerlySerializedAs("InvalidConfigPnl")]
         [Header("Help")]
         [SerializeField]
-        private GameObject InvalidConfigTemplatePnl;
+        protected GameObject InvalidConfigTemplatePnl;
         
         [SerializeField]
-        private GameObject InvalidConfigPnl;
+        protected GameObject InvalidConfigPnl;
         
         [Header("CLI")]
         [SerializeField]
-        private TextMeshProUGUI debugMemoTxt;
+        protected TextMeshProUGUI debugMemoTxt;
         
         [Header("Auth")]
         [SerializeField]
-        private Button authBtn;
+        protected Button authBtn;
         [SerializeField]
-        private TextMeshProUGUI authTxt;
+        protected TextMeshProUGUI authTxt;
 
         [Header("Lobby (Before Exists)")]
         [SerializeField]
-        private Button createLobbyBtn;
+        protected Button createLobbyBtn;
         [SerializeField]
-        private Button getLobbyInfoBtn;
+        protected Button getLobbyInfoBtn;
         [SerializeField]
-        private TMP_InputField getLobbyInfoInput;
+        protected TMP_InputField getLobbyInfoInput;
 
         [Header("Lobby (After Exists)")]
         [SerializeField]
-        private TextMeshProUGUI lobbyRoomIdTxt;
+        protected TextMeshProUGUI lobbyRoomIdTxt;
         [SerializeField]
-        private Button viewLobbiesBtn;
+        protected Button viewLobbiesBtn;
         [SerializeField]
-        private Button copyLobbyRoomIdBtn;
+        protected Button copyLobbyRoomIdBtn;
         [SerializeField]
-        private TextMeshProUGUI copiedRoomIdFadeTxt;
+        protected TextMeshProUGUI copiedRoomIdFadeTxt;
         [SerializeField]
-        private TextMeshProUGUI createOrGetLobbyInfoErrTxt;
+        protected TextMeshProUGUI createOrGetLobbyInfoErrTxt;
         [SerializeField]
-        private TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
+        protected TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
         
         [Header("Room (Get Server/Connection Info)")]
         [SerializeField]
-        private Button getServerInfoBtn;
+        protected Button getServerInfoBtn;
         [SerializeField]
-        private TextMeshProUGUI getServerInfoTxt;
+        protected TextMeshProUGUI getServerInfoTxt;
         [SerializeField]
-        private Button copyServerInfoBtn;
+        protected Button copyServerInfoBtn;
         [SerializeField]
-        private TextMeshProUGUI copiedServerInfoFadeTxt;
+        protected TextMeshProUGUI copiedServerInfoFadeTxt;
         [SerializeField]
-        private TextMeshProUGUI getServerInfoErrTxt;
+        protected TextMeshProUGUI getServerInfoErrTxt;
         
-        [Header("Transport (Fishnet): Join Lobby [as Client]")]
+        [Header("NetCode Transport: Join Lobby [as Client]")]
         [SerializeField]
-        private Button joinLobbyAsClientBtn;
+        protected Button joinLobbyAsClientBtn;
         
         [SerializeField]
-        private TextMeshProUGUI joiningLobbyStatusTxt;
+        protected TextMeshProUGUI joiningLobbyStatusTxt;
         #endregion // Serialized Fields
 
-        public static NetUI Singleton { get; private set; }
+        // ###################################################################
+        // public static HathoraHathoraNetUiBaseBase Singleton { get; protected set; }
+        // ###################################################################
 
         private const float FADE_TXT_DISPLAY_DURATION_SECS = 0.5f;
         private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
-        static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
-        const string headerBoldColorEnd = "</color></b>";
-        private static HathoraFishnetClient HathoraFishnetClient => HathoraFishnetClient.Singleton;
-        private static HathoraClientSession HathoraClientSession => HathoraClientSession.Singleton;
+        private static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
+        private const string headerBoldColorEnd = "</color></b>";
 
+        private HathoraClientBase HathoraClientBase;
+        
+        protected static HathoraClientSession HathoraClientSession => 
+            HathoraClientSession.Singleton;
+        
         
         #region Init
-        private void Awake()
+        protected void InitOnAwake(HathoraClientBase _hathoraClientBase)
         {
-            setSingleton();
+            SetSingleton();
+            this.HathoraClientBase = _hathoraClientBase;
         }
 
-        private void setSingleton()
-        {
-            if (Singleton != null)
-            {
-                Debug.LogError("[NetUI]**ERR @ setSingleton: Destroying dupe");
-                Destroy(gameObject);
-                return;
-            }
-
-            Singleton = this;
-        }
+        protected abstract void SetSingleton();
         #endregion // Init
         
         
         #region UI Interactions
         public void OnAuthLoginBtnClick()
         {
-            HathoraFishnetClient.AssertUsingValidNetConfig();
+            HathoraClientBase.AssertUsingValidNetConfig();
                 
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            _ = HathoraFishnetClient.AuthLoginAsync(); // !await
+            _ = HathoraClientBase.AuthLoginAsync(); // !await
         }
 
         public void OnCreateLobbyBtnClick()
@@ -128,7 +123,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             // (!) Region Index starts at 1 (not 0) // TODO: Get from UI
             const Region _region = Region.WashingtonDC;
             
-            _ = HathoraFishnetClient.CreateLobbyAsync(_region); // !await // public lobby
+            _ = HathoraClientBase.CreateLobbyAsync(_region); // !await // public lobby
         }
 
         /// <summary>
@@ -146,7 +141,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
                 return;
             }
             
-            _ = HathoraFishnetClient.GetLobbyInfoAsync(roomIdInputStr); // !await
+            _ = HathoraClientBase.GetLobbyInfoAsync(roomIdInputStr); // !await
         }
 
         /// <summary>
@@ -162,7 +157,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             
             try
             {
-                await HathoraFishnetClient.ViewPublicLobbies(region);
+                await HathoraClientBase.ViewPublicLobbies(region);
             }
             catch (Exception e)
             {
@@ -186,7 +181,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
             // The ServerConnectionInfo should already be cached
-            _ = HathoraFishnetClient.GetActiveConnectionInfo(HathoraClientSession.RoomId); // !await
+            _ = HathoraClientBase.GetActiveConnectionInfo(HathoraClientSession.RoomId); // !await
         }
         
         /// <summary>
@@ -204,19 +199,21 @@ namespace Hathora.Demos.Shared.Scripts.Client
         /// <summary>Component OnClick hides joinLobbyAsClientBtn</summary>
         public void OnJoinLobbyAsClientBtnClick()
         {
-            Debug.Log("[NetUI] OnJoinLobbyAsClientBtnClick");
+            Debug.Log("[HathoraNetUiBase] OnJoinLobbyAsClientBtnClick");
 
             joinLobbyAsClientBtn.gameObject.SetActive(false);
             
             joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
             joiningLobbyStatusTxt.gameObject.SetActive(true);
             
-            _ = HathoraFishnetClient.Connect();
+            Connect();
         }
+
+        protected abstract void Connect();
         
         public void OnJoinLobbySuccess()
         {
-            Debug.Log("[NetUI] OnJoinLobbySuccess");
+            Debug.Log("[HathoraNetUiBase] OnJoinLobbySuccess");
             
             joiningLobbyStatusTxt.text = "<color=green>Joined Lobby</color>";
             // Player stats should be updated via NetHathoraPlayer.OnStartClient
@@ -224,7 +221,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
 
         public void OnJoinLobbyFailed(string _friendlyErr)
         {
-            Debug.Log($"[NetUI] OnJoinLobbyFailed: {_friendlyErr}");
+            Debug.Log($"[HathoraNetUiBase] OnJoinLobbyFailed: {_friendlyErr}");
 
             joiningLobbyStatusTxt.gameObject.SetActive(false);
             joinLobbyAsClientBtn.gameObject.SetActive(true);
@@ -265,7 +262,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         {
             debugMemoTxt.text = memoStr;
             debugMemoTxt.gameObject.SetActive(true);
-            Debug.Log($"[NetUI] Debug Memo: '{memoStr}'");
+            Debug.Log($"[HathoraNetUiBase] Debug Memo: '{memoStr}'");
         }
 
         public void SetShowAuthTxt(string authStr)
@@ -302,7 +299,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         /// This also resets interactable
         /// </summary>
         /// <param name="show"></param>
-        private void showInitLobbyUi(bool show)
+        protected void showInitLobbyUi(bool show)
         {
             createLobbyBtn.interactable = show;
             getLobbyInfoBtn.interactable = show;
@@ -329,7 +326,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
         public void OnGetServerInfoSuccess(ConnectionInfoV2 connectionInfo)
         {
             Debug.Log(
-                $"[NetUI] OnGetServerInfoSuccess: {HathoraClientSession.GetServerInfoIpPort()} " +
+                $"[HathoraNetUiBase] OnGetServerInfoSuccess: {HathoraClientSession.GetServerInfoIpPort()} " +
                 $"({connectionInfo.ExposedPort.TransportType})");
             
             // ####################
@@ -381,7 +378,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             viewLobbiesBtn.interactable = true;
         }
         
-        private async Task ShowFadeTxtThenFadeAsync(TextMeshProUGUI fadeTxt)
+        protected async Task ShowFadeTxtThenFadeAsync(TextMeshProUGUI fadeTxt)
         {
             fadeTxt.gameObject.SetActive(true);
             await Task.Delay((int)(FADE_TXT_DISPLAY_DURATION_SECS * 1000));
@@ -408,13 +405,13 @@ namespace Hathora.Demos.Shared.Scripts.Client
             
             // Core issue
             string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
-                $"{nameof(HathoraFishnetClient)} component";
+                $"{nameof(HathoraClientBase)} component";
             
             if (_config == null)
             {
                 InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(HathoraFishnetClient)}] !{nameof(HathoraClientConfig)} - " +
+                throw new Exception($"[{nameof(HathoraClientBase)}] !{nameof(HathoraClientConfig)} - " +
                     $"Serialize one at {netComponentPathFriendlyStr}");
             }
             
@@ -422,7 +419,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             {
                 InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(HathoraFishnetClient)}] !AppId - " +
+                throw new Exception($"[{nameof(HathoraClientBase)}] !AppId - " +
                     $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
                     "ServerConfig's AppId should match your ClientConfig's AppId)");
             }
@@ -434,7 +431,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             authBtn.gameObject.SetActive(false);
             InvalidConfigTemplatePnl.SetActive(true);
                 
-            throw new Exception("[NetUI.SetInvalidConfig] Error: " +
+            throw new Exception("[HathoraNetUiBase.SetInvalidConfig] Error: " +
                 "Using template Config! Create a new one via top menu `Hathora/Config Finder`");
         }
         #endregion /Dynamic UI
