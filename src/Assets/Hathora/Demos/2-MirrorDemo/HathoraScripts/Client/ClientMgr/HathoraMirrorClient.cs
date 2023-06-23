@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FishNet;
-using FishNet.Managing.Client;
-using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
@@ -17,6 +14,7 @@ using Hathora.Demos.Shared.Scripts.Client;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Mirror;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -28,15 +26,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     public class HathoraMirrorClient : MonoBehaviour
     {
         /// <summary>Updates @ OnClientConnectionState</summary>
-        private LocalConnectionState localConnectionState;
+        private ConnectState localConnectionState;
         private bool isConnecting;
         
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         private HathoraClientConfig netHathoraConfig;
         
-        [FormerlySerializedAs("hathoraSession")]
-        [FormerlySerializedAs("netSession")]
         [Header("Session, APIs")]
         [SerializeField]
         private HathoraClientSession hathoraClientSession;

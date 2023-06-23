@@ -25,14 +25,10 @@ namespace Hathora.Demos.Shared.Scripts.Client
         /// <summary>Updates this on state changes</summary>
         protected bool IsConnecting;
         
-        [FormerlySerializedAs("hathoraClientConfig")]
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         protected HathoraClientConfig HathoraClientConfig;
         
-        [FormerlySerializedAs("hathoraClientSession")]
-        [FormerlySerializedAs("hathoraSession")]
-        [FormerlySerializedAs("netSession")]
         [Header("Session, APIs")]
         [SerializeField]
         protected HathoraClientSession HathoraClientSession;
