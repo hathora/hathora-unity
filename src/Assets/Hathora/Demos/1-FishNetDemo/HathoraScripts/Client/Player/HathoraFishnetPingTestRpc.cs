@@ -7,43 +7,55 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
 {
     /// <summary>
     /// As soon as we connect to the server, we send a ping to the server => Server will pong us back.
-    /// Mirror NetworkBehaviour Doc | https://fish-networking.gitbook.io/docs/manual/guides/network-behaviour-guides 
+    /// FishNet NetworkBehaviour Doc | https://fish-networking.gitbook.io/docs/manual/guides/network-behaviour-guides  
     /// </summary>
     public class HathoraFishnetPingTestRpc : NetworkBehaviour
     {
-        private int _numTimesRpcdToServer;
+        // TODO: Make syncvar?
+        private int numTimesRpcdToServer;
+
+        private static bool pressedInput_R() => 
+            Input.GetKeyDown(KeyCode.R);
         
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R))
-                TestPingToServer();
+            if (pressedInput_R())
+                pingServer();
         }
 
-        public void TestPingToServer()
+        private void pingServer()
         {
-            string msg = $"Ping #{_numTimesRpcdToServer++}!";
-            Debug.Log($"[NetPingTestRpc] Sending test ping server == '{msg}'");
-            SendMsgServerRpc(msg);   
+            string msg = $"Ping #{numTimesRpcdToServer++}!";
+            Debug.Log("[HathoraFishnetPingTestRpc.pingServer] " +
+                $"Sending msg: '{msg}' to server");
+            
+            RpcSendMsgToServer(msg);   
         }
-        
-        /// <summary>
-        /// Send a msg to the server from an observer.
-        /// </summary>
-        /// <param name="msg">Arbitrary string</param>
+
+        /// <summary>Send a msg to the server from an observer (client).</summary>
+        /// <param name="_msgFromClient">Arbitrary string</param>
         [ServerRpc]
-        public void SendMsgServerRpc(string msg)
+        public void RpcSendMsgToServer(string _msgFromClient) =>
+            ServerSendMsgToClient(_msgFromClient);
+
+        /// <summary>Send a msg from Server to Client.</summary>
+        /// <param name="_msgFromClient"></param>
+        [Server]
+        public void ServerSendMsgToClient(string _msgFromClient)
         {
-            Debug.Log($"[NetPingTestRpc] SendMsgServerRpc: Received msg on server (from observed client) == '{msg}'");
-            SendMsgObserversRpc(msg); // Ask server to send the msg back to all observers.
+            Debug.Log("[HathoraFishnetPingTestRpc.ServerSendMsgToClient] Server received " +
+                $"msgFromClient: '{_msgFromClient}'");
+            
+            RpcSendMsgToClientObservers(_msgFromClient); // Ask server to send the msg back to all observers.
         }
-        
-        /// <summary>
-        /// Send a msg to ALL observers.
-        /// </summary>
-        /// <param name="msg">Arbitrary string</param>
-        // [ServerRpc(RequireOwnership = true)]
+
+        /// <summary>Send a msg from server to ALL observers (clients).</summary>
+        /// <param name="_msgFromServer">Arbitrary string</param>
         [ObserversRpc]
-        public void SendMsgObserversRpc(string msg) =>
-            Debug.Log($"[NetPingTestRpc] SendMsgObserversRpc: Received on observer (from server) == '{msg}'");
+        public void RpcSendMsgToClientObservers(string _msgFromServer)
+        {
+            Debug.Log("[HathoraFishnetPingTestRpc.RpcSendMsgToClientObservers] Client received " +
+                $"msgFromServer: '{_msgFromServer}'");
+        }
     }
 }
