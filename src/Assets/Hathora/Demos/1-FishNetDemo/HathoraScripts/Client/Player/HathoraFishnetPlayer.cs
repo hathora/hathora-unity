@@ -23,7 +23,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
         public override void OnStartNetwork()
         {
             base.OnStartNetwork();
-            Debug.Log($"[NetHathoraPlayer] OnStartNetwork");
+            Debug.Log($"[HathoraFishnetPlayer] OnStartNetwork");
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
         {
             base.OnStartClient();
             
-            Debug.Log($"[NetHathoraPlayer] OnStartClient: IsOwner? {base.IsOwner}");
+            Debug.Log($"[HathoraFishnetPlayer] OnStartClient: IsOwner? {base.IsOwner}");
             if (base.IsOwner)
                 owningClientStarted();
         }
@@ -52,26 +52,26 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.Player
         public override void OnStopClient()
         {
             base.OnStopClient();
-            Debug.Log("[NetHathoraPlayer] OnStopClient");
+            Debug.Log("[HathoraFishnetPlayer] OnStopClient");
         }
         
         /// <summary>Called only once, AFTER OnStopClient</summary>
         public override void OnStopNetwork()
         {
             base.OnStopNetwork();
-            Debug.Log("[NetHathoraPlayer] OnStopNetwork");
+            Debug.Log("[HathoraFishnetPlayer] OnStopNetwork");
         }
 
         private void NetworkSpawnLogs()
         {
-            Debug.Log($"[NetHathoraPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");
+            Debug.Log($"[HathoraFishnetPlayer] OnNetworkSpawn, id==={NetworkObject.ObjectId}");
             
             if (base.IsHost)
-                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on host (server+client)");
+                Debug.Log("[HathoraFishnetPlayer] OnNetworkSpawn called on host (server+client)");
             else if (base.IsServerOnly)
-                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on server");
+                Debug.Log("[HathoraFishnetPlayer] OnNetworkSpawn called on server");
             else if (base.IsClient)
-                Debug.Log("[NetHathoraPlayer] OnNetworkSpawn called on client");
+                Debug.Log("[HathoraFishnetPlayer] OnNetworkSpawn called on client");
         }
         #endregion // Init
         
