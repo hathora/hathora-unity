@@ -211,7 +211,7 @@ namespace Hathora.Demos.Shared.Scripts.Client
             joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
             joiningLobbyStatusTxt.gameObject.SetActive(true);
             
-            _ = HathoraFishnetClient.ConnectAsync();
+            _ = HathoraFishnetClient.Connect();
         }
         
         public void OnJoinLobbySuccess()

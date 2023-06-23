@@ -16,10 +16,12 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// </summary>
     public class HathoraFishnetClient : HathoraClientBase
     {
+        #region vars
         public static HathoraFishnetClient Singleton { get; private set; }
 
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;
+        #endregion // vars
 
         
         #region Init
@@ -58,7 +60,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// This will trigger `OnClientConnectionState(state)`
         /// </summary>
         /// <returns>isSuccess</returns>
-        public bool ConnectAsync()
+        public bool Connect()
         {
             Debug.Log("[HathoraFishnetClient] ConnectAsync");
 
@@ -75,7 +77,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             // -----------------
             // Connect
             Debug.Log("[HathoraFishnetClient.ConnectAsync] Connecting to: " + 
-                $"{HathoraClientSession.GetServerInfoIpPort()} via FishNet.{transport.name} transport");
+                $"{HathoraClientSession.GetServerInfoIpPort()} via FishNet " +
+                $"NetworkManager.{transport.name} transport");
 
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
             bool isSuccess = InstanceFinder.ClientManager.StartConnection(

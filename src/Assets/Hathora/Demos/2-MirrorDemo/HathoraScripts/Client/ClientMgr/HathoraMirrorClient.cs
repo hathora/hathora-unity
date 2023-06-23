@@ -1,69 +1,44 @@
 // Created by dylan@hathora.dev
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Core.Scripts.Runtime.Client;
-using Hathora.Core.Scripts.Runtime.Client.Config;
-using Hathora.Core.Scripts.Runtime.Client.Models;
-using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client;
-using Hathora.Demos.Shared.Scripts.Client.Models;
-using UnityEngine;
-using UnityEngine.Serialization;
 using Mirror;
+using UnityEngine;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
     /// <summary>
-    /// This spawns BEFORE the player, or even connected to the network.
-    /// This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
-    /// To add scripts, add to the `ClientApis` serialized field.
+    /// - This spawns BEFORE the player, or even connected to the network.
+    /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
+    /// - To add API scripts: Add to the `ClientApis` serialized field.
+    /// 
+    /// MIRROR NOTES / NOTABLE PROPS + FUNCS:
+    /// - Mirror.NetworkClient
+    /// - Mirror.NetworkManager.singleton
+    /// - Mirror.NetworkManager.ConnectState is INTERNAL, but broken up into individual props
     /// </summary>
-    public class HathoraMirrorClient : MonoBehaviour
+    public class HathoraMirrorClient : HathoraClientBase
     {
-        /// <summary>Updates @ OnClientConnectionState</summary>
-        private ConnectState localConnectionState;
-        private bool isConnecting;
-        
-        [Header("(!) Get from Hathora dir; see hover tooltip")]
-        [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
-        private HathoraClientConfig netHathoraConfig;
-        
-        [Header("Session, APIs")]
-        [SerializeField]
-        private HathoraClientSession hathoraClientSession;
-        
-        [SerializeField]
-        public ClientApiContainer ClientApis;
-     
-        
+        #region vars
         public static HathoraMirrorClient Singleton { get; private set; }
-
-        private Configuration hathoraSdkConfig;
-
         
-        #region Init
-        private void Awake()
-        {
-            setSingleton();
-        }
+        private bool isConnected => NetworkClient.isConnected;
+        private bool isConnecting => NetworkClient.isConnecting;
+        #endregion // vars
+        
 
-        public void AssertUsingValidNetConfig()
+        #region Init
+        protected override void OnAwake()
         {
-            // Are we using any Client Config at all?
-            if (netHathoraConfig == null || !netHathoraConfig.HasAppId && NetUI.Singleton != null)
-                NetUI.Singleton.SetInvalidConfig(netHathoraConfig);
+            base.OnAwake();
+            setSingleton();
         }
 
         private void setSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraFishnetClient]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraMirrorClient]**ERR @ setSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }
@@ -71,16 +46,30 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             Singleton = this;
         }
         
-        private void Start()
+        protected override void OnStart()
         {
-            ClientApis.InitAll(
-                netHathoraConfig, 
-                _hathoraSdkConfig: null); // Base will create this
+            base.OnStart();
             
             // This is a Client manager script; listen for relative events
-            InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
+            Mirror.NetworkManager.singleton.transport.OnClientConnected += OnClientConnected;
+            Mirror.NetworkManager.singleton.transport.OnClientDisconnected += OnClientDisconnected;
         }
         #endregion // Init
+        
+        
+        #region NetCode Callbacks
+        private void OnClientConnected()
+        {
+            Debug.Log("[HathoraMirrorClient] OnClientConnected");
+            OnConnectSuccess();
+        }
+
+        private void OnClientDisconnected()
+        {
+            Debug.Log("[HathoraMirrorClient] OnClientDisconnected");
+            OnConnectFailed("Disconnected");
+        }
+        #endregion // NetCode Callbacks
         
         
         #region Interactions from UI
@@ -90,266 +79,60 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// This will trigger `OnClientConnectionState(state)`
         /// </summary>
         /// <returns>isSuccess</returns>
-        public bool ConnectAsync()
+        public bool Connect()
         {
-            Debug.Log("[HathoraFishnetClient] ConnectAsync");
+            Debug.Log("[HathoraMirrorClient] ConnectAsync");
 
-            isConnecting = true;
-            Transport transport = InstanceFinder.TransportManager.Transport;
-            ClientManager clientMgr = InstanceFinder.ClientManager;
+            IsConnecting = true;
 
             // -----------------
             // Validate; UI and err handling is handled within
-            bool isReadyToConnect = preConnectCheck(clientMgr, transport);
+            bool isReadyToConnect = ValidateIsReadyToConnect();
             if (!isReadyToConnect)
                 return false; // !isSuccess
 
             // -----------------
             // Connect
-            Debug.Log("[HathoraFishnetClient.ConnectAsync] Connecting to: " + 
-                $"{hathoraClientSession.GetServerInfoIpPort()} via FishNet.{transport.name} transport");
+            Debug.Log("[HathoraMirrorClient.ConnectAsync] Connecting to: " + 
+                $"{HathoraClientSession.GetServerInfoIpPort()} via Mirror " +
+                $"NetworkManager.{NetworkManager.singleton.transport.name} transport");
 
-            ExposedPort connectInfo = hathoraClientSession.ServerConnectionInfo.ExposedPort;
-            bool isSuccess = InstanceFinder.ClientManager.StartConnection(
-                connectInfo.Host, 
-                (ushort)connectInfo.Port);
-
-            if (!isSuccess)
+            ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
+            NetworkClient.Connect(connectInfo.Host);
+            
+            // TODO: How to validate success? Is this a synchronous connect?
+            if (!isConnected)
             {
-                onConnectFailed("StartConnection !isSuccess");
+                OnConnectFailed("StartConnection !isSuccess");
                 return false;
             }
             
-            return true; // isSuccess
+            return true; // isSuccess => Continued at OnClientConnected()
         }
 
-        private bool preConnectCheck(
-            ClientManager _clientMgr, 
-            Transport _transport)
+        private bool ValidateIsReadyToConnect()
         {
-            // Validate host:port connection info
-            if (!hathoraClientSession.CheckIsValidServerConnectionInfo())
-            {
-                onConnectFailed("Invalid ServerConnectionInfo");
-                return false; // !isStarted
-            }
+            if (!ValidateServerConfigConnectionInfo())
+                return false;
 
-            if (InstanceFinder.NetworkManager == null)
+            if (NetworkManager.singleton == null)
             {
-                onConnectFailed("!NetworkManager");
+                OnConnectFailed("!NetworkManager");
                 return false; // !isSuccess
             }
 
             // Validate state
-            LocalConnectionState currentState = _transport.GetConnectionState(server: false);
-            if (currentState != LocalConnectionState.Stopped)
+            if (isConnected || isConnecting)
             {
-                _clientMgr.StopConnection();
-                onConnectFailed("Prior connection !stopped: Try again soon");
+                NetworkClient.Disconnect();
+                OnConnectFailed("Prior connection still active: Disconnecting... " +
+                    "Try again soon");
+                
                 return false; // !isSuccess
             }
             
             // Success - ready to connect
             return true;
-        }
-
-        private void onConnectFailed(string _friendlyReason)
-        {
-            isConnecting = false;
-            NetUI.Singleton.OnJoinLobbyFailed(_friendlyReason);
-        }
-
-        private void OnClientConnectionState(ClientConnectionStateArgs _state)
-        {
-            localConnectionState = _state.ConnectionState;
-            Debug.Log($"[HathoraFishnetClient.OnClientConnectionState] " +
-                $"New state: {localConnectionState}");
-            
-            // onConnectSuccess?
-            if (localConnectionState == LocalConnectionState.Started)
-                onConnectSuccess();
-            
-            // onConnectFailed?
-            bool stopped = localConnectionState == LocalConnectionState.Stopped; 
-            bool stoppedConnecting = stopped && isConnecting;
-            if (stoppedConnecting)
-                onConnectFailed("Connection stopped");
-        }
-
-        private void onConnectSuccess()
-        {
-            Debug.Log("[HathoraFishnetClient] onConnectSuccess");
-            isConnecting = false;
-            NetUI.Singleton.OnJoinLobbySuccess();
-        }
-
-        /// <summary>
-        /// Auths anonymously => Creates new hathoraClientSession.
-        /// </summary>
-        public async Task AuthLoginAsync()
-        {
-            AuthResult result;
-            try
-            {
-                result = await ClientApis.clientAuthApi.ClientAuthAsync();
-            }
-            catch
-            {
-                OnAuthLoginComplete(isSuccess:false);
-                return;
-            }
-           
-            hathoraClientSession.InitNetSession(result.PlayerAuthToken);
-            OnAuthLoginComplete(result.IsSuccess);
-        }
-
-        /// <summary>
-        /// Creates lobby => caches Lobby info @ hathoraClientSession
-        /// </summary>
-        /// <param name="_region"></param>
-        /// <param name="_visibility"></param>
-        public async Task CreateLobbyAsync(
-            Region _region,
-            CreateLobbyRequest.VisibilityEnum _visibility = CreateLobbyRequest.VisibilityEnum.Public)
-        {
-            Lobby lobby;
-            try
-            {
-                lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(
-                    hathoraClientSession.PlayerAuthToken,
-                    _visibility,
-                    _region);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyCompleteAsync(null);
-                return;
-            }
-            
-            hathoraClientSession.Lobby = lobby;
-            OnCreateOrJoinLobbyCompleteAsync(lobby);
-        }
-
-        /// <summary>
-        /// Gets lobby info, if you arleady know the roomId.
-        /// (!) Creating a lobby will automatically return the lobbyInfo (along with the roomId).
-        /// </summary>
-        public async Task GetLobbyInfoAsync(string roomId)
-        {
-            Lobby lobby;
-            try
-            {
-                lobby = await ClientApis.clientLobbyApi.ClientGetLobbyInfoAsync(roomId);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyCompleteAsync(null);
-                return;
-            }
-
-            hathoraClientSession.Lobby = lobby;
-            OnCreateOrJoinLobbyCompleteAsync(lobby);
-        }
-        
-        /// <summary>Public lobbies only.</summary>
-        /// <param name="_region">
-        /// TODO (to confirm): null region returns *all* region lobbies?
-        /// </param>
-        public async Task ViewPublicLobbies(Region? _region = null)
-        {
-            List<Lobby> lobbies;
-            try
-            {
-                lobbies = await ClientApis.clientLobbyApi.ClientListPublicLobbiesAsync();
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                throw new NotImplementedException("TODO: Get lobbies err handling UI");
-            }
-
-            hathoraClientSession.Lobbies = lobbies;
-            OnViewPublicLobbiesComplete(lobbies);
-        }
-        
-        /// <summary>
-        /// Gets ip:port (+transport type) info so we can connect the Client via the selected transport (eg: Fishnet).
-        /// AKA "GetServerInfo" (from UI). Polls until status is `Active`: May take a bit!
-        /// </summary>
-        public async Task GetActiveConnectionInfo(string roomId)
-        {
-            ConnectionInfoV2 connectionInfo;
-            try
-            {
-                connectionInfo = await ClientApis.clientRoomApi.ClientGetConnectionInfoAsync(roomId);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[HathoraFishnetClient] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
-                NetUI.Singleton.OnGetServerInfoFail();
-                return; // fail
-            }
-            
-            hathoraClientSession.ServerConnectionInfo = connectionInfo;
-            OnGetActiveConnectionInfoComplete(connectionInfo);
-        }
-        
-        /// <summary>AKA OnGetServerInfoSuccess</summary>
-        private void OnGetActiveConnectionInfoComplete(ConnectionInfoV2 connectionInfo)
-        {
-            if (string.IsNullOrEmpty(connectionInfo?.ExposedPort?.Host))
-            {
-                NetUI.Singleton.OnGetServerInfoFail();
-                return;
-            }
-            
-            NetUI.Singleton.OnGetServerInfoSuccess(connectionInfo);
-        }
-        #endregion // Interactions from UI
-        
-        
-        #region Callbacks
-        private void OnAuthLoginComplete(bool isSuccess)
-        {
-            if (!isSuccess)
-            {
-                NetUI.Singleton.OnAuthFailed();
-                return;
-            }
-
-            NetUI.Singleton.OnAuthedLoggedIn();
-        }
-
-        private void OnViewPublicLobbiesComplete(List<Lobby> lobbies)
-        {
-            int numLobbiesFound = lobbies?.Count ?? 0;
-            Debug.Log($"[NetHathoraPlayer] OnViewPublicLobbiesComplete: # Lobbies found: {numLobbiesFound}");
-
-            if (lobbies == null || numLobbiesFound == 0)
-            {
-                throw new NotImplementedException("TODO: !Lobbies handling");
-            }
-            
-            List<Lobby> sortedLobbies = lobbies.OrderBy(lobby => lobby.CreatedAt).ToList();
-            NetUI.Singleton.OnViewLobbies(sortedLobbies);
-        }
-        
-        /// <summary>
-        /// On success, most users will want to call GetActiveConnectionInfo().
-        /// </summary>
-        /// <param name="lobby"></param>
-        private void OnCreateOrJoinLobbyCompleteAsync(Lobby lobby)
-        {
-            if (string.IsNullOrEmpty(lobby?.RoomId))
-            {
-                NetUI.Singleton.OnCreatedOrJoinedLobbyFail();
-                return;
-            }
-
-            string friendlyRegion = lobby.Region.ToString().SplitPascalCase();
-            NetUI.Singleton.OnCreatedOrJoinedLobby(lobby.RoomId, friendlyRegion);
         }
         #endregion // Callbacks
     }
