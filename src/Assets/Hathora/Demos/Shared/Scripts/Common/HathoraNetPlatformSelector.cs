@@ -37,12 +37,12 @@ namespace Hathora.Demos.Shared.Scripts.Common
             {
                 case NetPlatform.FishNet:
                     Debug.Log($"{logPrefix} FishNet");
-                    _ = loadSceneAsync("HathoraDemoScene-FishNet");
+                    _ = LoadSceneAsync("HathoraDemoScene-FishNet");
                     break;
 
                 case NetPlatform.Mirror:
                     Debug.Log($"{logPrefix} Mirror");
-                    _ = loadSceneAsync("HathoraDemoScene-Mirror");
+                    _ = LoadSceneAsync("HathoraDemoScene-Mirror");
                     break;
 
                 case NetPlatform.NGO:
@@ -57,8 +57,10 @@ namespace Hathora.Demos.Shared.Scripts.Common
         }
         
         // Load scene based on NetPlatform
-        private static async Task loadSceneAsync(string _sceneName)
+        public static async Task LoadSceneAsync(string _sceneName)
         {
+            Debug.Log($"[HathoraNetPlatformSelector.LoadSceneAsync] {_sceneName}");
+
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(
                 _sceneName, 
                 LoadSceneMode.Single);

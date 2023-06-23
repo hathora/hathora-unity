@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 31724710}
   - component: {fileID: 31724709}
   - component: {fileID: 31724713}
+  - component: {fileID: 31724714}
   m_Layer: 5
   m_Name: PlatformSelectorCanvas
   m_TagString: Untagged
@@ -238,6 +239,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76f312e75059f8249ab673d31483ff83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &31724714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31724708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70bcbe019ec0cc14a86c2ec27c5730f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &64920219

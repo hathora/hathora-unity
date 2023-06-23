@@ -29,12 +29,27 @@ namespace Hathora.Demos.Shared.Scripts.Common
             // -memo {string} // Show arbitrary text at bottom of screen
             if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
                 InitMemo(memoStr);
+            
+            // -scene {string} // Load scene by name
+            if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
+                InitScene(sceneName);
         }
+
+        /// <summary>
+        /// For the demo:
+        /// - "HathoraDemoScene-Menu"
+        /// - "HathoraDemoScene-FishNet"
+        /// - "HathoraDemoScene-Mirror"
+        /// - "HathoraDemoScene-UnityNGO"
+        /// </summary>
+        /// <param name="_sceneName"></param>
+        protected virtual void InitScene(string _sceneName) =>
+            _ = HathoraNetPlatformSelector.LoadSceneAsync(_sceneName);
 
         /// <summary>Override me -> Set memoStr in UI</summary>
         /// <param name="_memoStr"></param>
         protected virtual void InitMemo(string _memoStr) =>
-            Debug.Log($"[HathoraArgHandler] InitMemo: {_memoStr}");
+            Debug.Log($"[HathoraArgHandler.InitMemo] {_memoStr}");
         
         /// <summary>
         /// - "server" -> StartServer()
@@ -43,7 +58,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// </summary>
         protected virtual void InitMode(string _mode)
         {
-            Debug.Log($"[HathoraArgHandlerBase] InitMode: {_mode}");
+            Debug.Log($"[HathoraArgHandlerBase.InitMode] {_mode}");
             switch (_mode)
             {
                 case "server":
@@ -63,13 +78,13 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// <summary>Both server *and* client.OR, override me</summary>
         protected virtual void StartHost()
         {
-            Debug.Log("[HathoraArgHandlerBase] StartHost (server+client)");
+            Debug.Log("[HathoraArgHandlerBase.StartHost] (server+client)");
             StartServer();
             StartClient();
         }
         
         protected virtual void StartServer() =>
-            Debug.Log("[HathoraArgHandlerBase] @ StartServer");
+            Debug.Log("[HathoraArgHandlerBase] StartServer");
 
         protected virtual void StartClient() =>
             Debug.Log("[HathoraArgHandlerBase] StartClient");
