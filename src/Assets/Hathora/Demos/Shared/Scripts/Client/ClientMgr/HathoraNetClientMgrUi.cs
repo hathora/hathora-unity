@@ -8,8 +8,6 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
@@ -18,69 +16,14 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// Generally, this is going to be pre-connection UI such as create/join lobbies.
     /// UI OnEvent entry points from Buttons start here.
     /// </summary>
-    public abstract class HathoraNetUiBase : MonoBehaviour
+    public class HathoraNetClientMgrUi : MonoBehaviour
     {
         #region Serialized Fields
-        [FormerlySerializedAs("InvalidConfigPnl")]
-        [Header("Help")]
         [SerializeField]
-        protected GameObject InvalidConfigTemplatePnl;
-        
-        [SerializeField]
-        protected GameObject InvalidConfigPnl;
-        
-        [Header("CLI")]
-        [SerializeField]
-        protected TextMeshProUGUI debugMemoTxt;
-        
-        [Header("Auth")]
-        [SerializeField]
-        protected Button authBtn;
-        [SerializeField]
-        protected TextMeshProUGUI authTxt;
-
-        [Header("Lobby (Before Exists)")]
-        [SerializeField]
-        protected Button createLobbyBtn;
-        [SerializeField]
-        protected Button getLobbyInfoBtn;
-        [SerializeField]
-        protected TMP_InputField getLobbyInfoInput;
-
-        [Header("Lobby (After Exists)")]
-        [SerializeField]
-        protected TextMeshProUGUI lobbyRoomIdTxt;
-        [SerializeField]
-        protected Button viewLobbiesBtn;
-        [SerializeField]
-        protected Button copyLobbyRoomIdBtn;
-        [SerializeField]
-        protected TextMeshProUGUI copiedRoomIdFadeTxt;
-        [SerializeField]
-        protected TextMeshProUGUI createOrGetLobbyInfoErrTxt;
-        [SerializeField]
-        protected TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
-        
-        [Header("Room (Get Server/Connection Info)")]
-        [SerializeField]
-        protected Button getServerInfoBtn;
-        [SerializeField]
-        protected TextMeshProUGUI getServerInfoTxt;
-        [SerializeField]
-        protected Button copyServerInfoBtn;
-        [SerializeField]
-        protected TextMeshProUGUI copiedServerInfoFadeTxt;
-        [SerializeField]
-        protected TextMeshProUGUI getServerInfoErrTxt;
-        
-        [Header("NetCode Transport: Join Lobby [as Client]")]
-        [SerializeField]
-        protected Button joinLobbyAsClientBtn;
-        
-        [SerializeField]
-        protected TextMeshProUGUI joiningLobbyStatusTxt;
+        private HathoraNetClientMgrUiBaseContainer ui;
         #endregion // Serialized Fields
 
+        
         // ###################################################################
         // public static HathoraHathoraNetUiBaseBase Singleton { get; protected set; }
         // ###################################################################
@@ -97,17 +40,35 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         
         #region Init
+        private void Awake() => 
+            OnAwake();
+
+        protected virtual void OnAwake()
+        {
+            // InitOnAwake(hathoraClientBase);
+        }
+
+        /// <summary>Call me @ OnAwake</summary>
         protected void InitOnAwake(HathoraClientBase _hathoraClientBase)
         {
-            SetSingleton();
+            if (_hathoraClientBase == null)
+                throw new ArgumentNullException(nameof(_hathoraClientBase));
+            
+            // SetSingleton();
             this.HathoraClientBase = _hathoraClientBase;
         }
 
-        protected abstract void SetSingleton();
         #endregion // Init
         
         
         #region UI Interactions
+        public virtual void OnStartServerBtnClick() { }
+        public virtual void OnStartClientBtnClick() { }
+        public virtual void OnStartHostBtnClick() { }
+        public virtual void OnStopServerBtnClick() { }
+        public virtual void OnStopClientBtnClick() { }
+        public virtual void OnStopHostBtnClick() { }
+
         public void OnAuthLoginBtnClick()
         {
             HathoraClientBase.AssertUsingValidNetConfig();
@@ -133,7 +94,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             ShowGettingLobbyInfoUi();
             string roomIdInputStr = GetLobbyInfoInputStr();
-            getLobbyInfoInput.text = "";
+            ui.getLobbyInfoInput.text = "";
 
             if (string.IsNullOrEmpty(roomIdInputStr))
             {
@@ -149,8 +110,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// </summary>
         public async void OnViewLobbiesBtnClick()
         {
-            viewLobbiesSeeLogsFadeTxt.text = "<color=yellow>Getting Lobbies...</color>";
-            _ = ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt); // !await
+            ui.viewLobbiesSeeLogsFadeTxt.text = "<color=yellow>Getting Lobbies...</color>";
+            _ = ShowFadeTxtThenFadeAsync(ui.viewLobbiesSeeLogsFadeTxt); // !await
 
             // TODO: Get region from UI // TODO: Confirm null region returns ALL regions?
             Region? region = null;
@@ -161,7 +122,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             }
             catch (Exception e)
             {
-                viewLobbiesBtn.interactable = true;
+                ui.viewLobbiesBtn.interactable = true;
             }
         }
         
@@ -170,7 +131,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             GUIUtility.systemCopyBuffer = HathoraClientSession.RoomId; // Copy to clipboard
             
             // Show + Fade
-            _ = ShowFadeTxtThenFadeAsync(copiedRoomIdFadeTxt); // !await
+            _ = ShowFadeTxtThenFadeAsync(ui.copiedRoomIdFadeTxt); // !await
         }
 
         /// <summary>
@@ -193,29 +154,25 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             GUIUtility.systemCopyBuffer = serverInfo; // Copy to clipboard
             
             // Show + Fade
-            _ = ShowFadeTxtThenFadeAsync(copiedServerInfoFadeTxt); // !await
+            _ = ShowFadeTxtThenFadeAsync(ui.copiedServerInfoFadeTxt); // !await
         }
 
         /// <summary>Component OnClick hides joinLobbyAsClientBtn</summary>
-        public void OnJoinLobbyAsClientBtnClick()
+        public virtual void OnJoinLobbyAsClientBtnClick()
         {
             Debug.Log("[HathoraNetUiBase] OnJoinLobbyAsClientBtnClick");
 
-            joinLobbyAsClientBtn.gameObject.SetActive(false);
+            ui.joinLobbyAsClientBtn.gameObject.SetActive(false);
             
-            joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
-            joiningLobbyStatusTxt.gameObject.SetActive(true);
-            
-            Connect();
+            ui.joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
+            ui.joiningLobbyStatusTxt.gameObject.SetActive(true);
         }
 
-        protected abstract void Connect();
-        
         public void OnJoinLobbySuccess()
         {
             Debug.Log("[HathoraNetUiBase] OnJoinLobbySuccess");
             
-            joiningLobbyStatusTxt.text = "<color=green>Joined Lobby</color>";
+            ui.joiningLobbyStatusTxt.text = "<color=green>Joined Lobby</color>";
             // Player stats should be updated via NetHathoraPlayer.OnStartClient
         }
 
@@ -223,13 +180,13 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             Debug.Log($"[HathoraNetUiBase] OnJoinLobbyFailed: {_friendlyErr}");
 
-            joiningLobbyStatusTxt.gameObject.SetActive(false);
-            joinLobbyAsClientBtn.gameObject.SetActive(true);
+            ui.joiningLobbyStatusTxt.gameObject.SetActive(false);
+            ui.joinLobbyAsClientBtn.gameObject.SetActive(true);
 
             if (string.IsNullOrEmpty(_friendlyErr))
                 return;
             
-            joiningLobbyStatusTxt.text = $"<color=orange>{_friendlyErr}</color>";
+            ui.joiningLobbyStatusTxt.text = $"<color=orange>{_friendlyErr}</color>";
         }
         #endregion // UI Interactions
         
@@ -260,39 +217,39 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <param name="memoStr"></param>
         public void SetShowDebugMemoTxt(string memoStr)
         {
-            debugMemoTxt.text = memoStr;
-            debugMemoTxt.gameObject.SetActive(true);
+            ui.debugMemoTxt.text = memoStr;
+            ui.debugMemoTxt.gameObject.SetActive(true);
             Debug.Log($"[HathoraNetUiBase] Debug Memo: '{memoStr}'");
         }
 
         public void SetShowAuthTxt(string authStr)
         {
-            authTxt.text = authStr;
-            authTxt.gameObject.SetActive(true);
+            ui.authTxt.text = authStr;
+            ui.authTxt.gameObject.SetActive(true);
         }
         
         public void SetShowLobbyTxt(string roomId)
         {
-            lobbyRoomIdTxt.text = roomId;
-            lobbyRoomIdTxt.gameObject.SetActive(true);
+            ui.lobbyRoomIdTxt.text = roomId;
+            ui.lobbyRoomIdTxt.gameObject.SetActive(true);
         }
 
         public void SetShowCreateOrJoinLobbyErrTxt(string friendlyErrStr)
         {
-            createOrGetLobbyInfoErrTxt.text = friendlyErrStr;
-            createOrGetLobbyInfoErrTxt.gameObject.SetActive(true);
+            ui.createOrGetLobbyInfoErrTxt.text = friendlyErrStr;
+            ui.createOrGetLobbyInfoErrTxt.gameObject.SetActive(true);
         }
         
         public void SetGetServerInfoErrTxt(string friendlyErrStr)
         {
-            getServerInfoErrTxt.text = friendlyErrStr;
-            getServerInfoErrTxt.gameObject.SetActive(true);
+            ui.getServerInfoErrTxt.text = friendlyErrStr;
+            ui.getServerInfoErrTxt.gameObject.SetActive(true);
         }
         
         public void SetServerInfoTxt(string serverInfo)
         {
-            getServerInfoTxt.text = serverInfo;
-            getServerInfoTxt.gameObject.SetActive(true);
+            ui.getServerInfoTxt.text = serverInfo;
+            ui.getServerInfoTxt.gameObject.SetActive(true);
         }
 
         /// <summary>
@@ -301,20 +258,20 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <param name="show"></param>
         protected void showInitLobbyUi(bool show)
         {
-            createLobbyBtn.interactable = show;
-            getLobbyInfoBtn.interactable = show;
+            ui.createLobbyBtn.interactable = show;
+            ui.getLobbyInfoBtn.interactable = show;
             
-            createLobbyBtn.gameObject.SetActive(show);
-            getLobbyInfoBtn.gameObject.SetActive(show);
+            ui.createLobbyBtn.gameObject.SetActive(show);
+            ui.getLobbyInfoBtn.gameObject.SetActive(show);
             
             // On or off: If this is resetting, we'll hide it. 
             // This also hides the cancel btn
-            lobbyRoomIdTxt.gameObject.SetActive(false); // Behind 'Create Lobby' btn
-            getLobbyInfoInput.gameObject.SetActive(false);
-            copyLobbyRoomIdBtn.gameObject.SetActive(false);
-            createOrGetLobbyInfoErrTxt.gameObject.SetActive(false);
-            copiedRoomIdFadeTxt.gameObject.SetActive(false);
-            viewLobbiesSeeLogsFadeTxt.gameObject.SetActive(false);
+            ui.lobbyRoomIdTxt.gameObject.SetActive(false); // Behind 'Create Lobby' btn
+            ui.getLobbyInfoInput.gameObject.SetActive(false);
+            ui.copyLobbyRoomIdBtn.gameObject.SetActive(false);
+            ui.createOrGetLobbyInfoErrTxt.gameObject.SetActive(false);
+            ui.copiedRoomIdFadeTxt.gameObject.SetActive(false);
+            ui.viewLobbiesSeeLogsFadeTxt.gameObject.SetActive(false);
         }
 
         public void OnCreatedOrJoinedLobbyFail()
@@ -337,13 +294,13 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 $"{connectionInfo.ExposedPort.Host}<color=yellow><b>:</b></color>{connectionInfo.ExposedPort.Port}\n" +
                 $"(<color=yellow>{connectionInfo.ExposedPort.TransportType}</color>)");
             
-            copyServerInfoBtn.gameObject.SetActive(true);
-            joinLobbyAsClientBtn.gameObject.SetActive(true);
+            ui.copyServerInfoBtn.gameObject.SetActive(true);
+            ui.joinLobbyAsClientBtn.gameObject.SetActive(true);
         }
         
         public void OnGetServerInfoFail()
         {
-            getServerInfoBtn.gameObject.SetActive(true);
+            ui.getServerInfoBtn.gameObject.SetActive(true);
             SetGetServerInfoErrTxt("<color=orange>Failed to Get Server Info - see logs</color>");
         }
         
@@ -355,18 +312,18 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 $"{headerBoldColorBegin}Region{headerBoldColorEnd}: {_friendlyRegionStr}");
 
             // We can now show the lobbies and ServerConnectionInfo copy btn
-            copyLobbyRoomIdBtn.gameObject.SetActive(true);
-            viewLobbiesBtn.gameObject.SetActive(true);
-            getServerInfoBtn.gameObject.SetActive(true);
+            ui.copyLobbyRoomIdBtn.gameObject.SetActive(true);
+            ui.viewLobbiesBtn.gameObject.SetActive(true);
+            ui.getServerInfoBtn.gameObject.SetActive(true);
         }
 
         public string GetLobbyInfoInputStr() =>
-            getLobbyInfoInput.text.Trim();
+            ui.getLobbyInfoInput.text.Trim();
         
         public void OnViewLobbies(List<Lobby> lobbies)
         {
-            viewLobbiesSeeLogsFadeTxt.text = "See Logs";
-            _ = ShowFadeTxtThenFadeAsync(viewLobbiesSeeLogsFadeTxt); // !await
+            ui.viewLobbiesSeeLogsFadeTxt.text = "See Logs";
+            _ = ShowFadeTxtThenFadeAsync(ui.viewLobbiesSeeLogsFadeTxt); // !await
             
             foreach (Lobby lobby in lobbies)
             {
@@ -375,7 +332,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             }
             
             // TODO: Create a UI view for these servers
-            viewLobbiesBtn.interactable = true;
+            ui.viewLobbiesBtn.interactable = true;
         }
         
         protected async Task ShowFadeTxtThenFadeAsync(TextMeshProUGUI fadeTxt)
@@ -400,8 +357,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         public void SetInvalidConfig(HathoraClientConfig _config)
         {
-            if (authBtn != null)
-                authBtn.gameObject.SetActive(false); // Prevent UI overlap
+            if (ui.authBtn != null)
+                ui.authBtn.gameObject.SetActive(false); // Prevent UI overlap
             
             // Core issue
             string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
@@ -409,7 +366,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             if (_config == null)
             {
-                InvalidConfigPnl.SetActive(true);
+                ui.authBtn.gameObject.SetActive(false);
+                ui.InvalidConfigPnl.SetActive(true);
 
                 throw new Exception($"[{nameof(HathoraClientBase)}] !{nameof(HathoraClientConfig)} - " +
                     $"Serialize one at {netComponentPathFriendlyStr}");
@@ -417,7 +375,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             if (!_config.HasAppId)
             {
-                InvalidConfigPnl.SetActive(true);
+                ui.InvalidConfigPnl.SetActive(true);
 
                 throw new Exception($"[{nameof(HathoraClientBase)}] !AppId - " +
                     $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
@@ -428,8 +386,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             if (!isTemplate)
                 return;
             
-            authBtn.gameObject.SetActive(false);
-            InvalidConfigTemplatePnl.SetActive(true);
+            ui.authBtn.gameObject.SetActive(false);
+            ui.InvalidConfigTemplatePnl.SetActive(true);
                 
             throw new Exception("[HathoraNetUiBase.SetInvalidConfig] Error: " +
                 "Using template Config! Create a new one via top menu `Hathora/Config Finder`");

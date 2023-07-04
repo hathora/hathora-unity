@@ -56,7 +56,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.Player
 
         private void NetworkSpawnLogs()
         {
-            Debug.Log($"[HathoraMirrorPlayer] OnNetworkSpawn, id==={base.netId}");
+            Debug.Log($"[HathoraMirrorPlayer] OnNetworkSpawn; " +
+                $"id: {base.netId}, " +
+                $"name: `{gameObject.name}`");
             
             if (base.isClient && base.isServer)
                 Debug.Log("[HathoraMirrorPlayer] OnNetworkSpawn called on host (server+client)");

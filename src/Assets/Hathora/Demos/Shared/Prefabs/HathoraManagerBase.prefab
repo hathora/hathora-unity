@@ -765,9 +765,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnGetServerInfoBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1101,9 +1101,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnViewLobbiesBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1853,9 +1853,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnCopyServerInfoBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2128,9 +2128,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnCopyLobbyRoomIdBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3134,9 +3134,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnJoinLobbyAsClientBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3480,18 +3480,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 6730436420034938643}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -3504,9 +3492,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnAuthLoginBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4150,7 +4138,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
         m_MethodName: OnGetLobbyInfoInputEnd
         m_Mode: 1
@@ -4641,9 +4629,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 6730436421059953483}
+      - m_Target: {fileID: 6730436421059953532}
         m_TargetAssemblyTypeName: Hathora.Common.NetUI, Assembly-CSharp
-        m_MethodName: OnCreateLobbyBtnClick
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5839,7 +5827,7 @@ GameObject:
   - component: {fileID: 6730436421059953533}
   - component: {fileID: 6730436421059953482}
   - component: {fileID: 6730436421059953525}
-  - component: {fileID: 6730436421059953483}
+  - component: {fileID: 7956842116436940529}
   m_Layer: 5
   m_Name: HathoraUiMgr
   m_TagString: Untagged
@@ -5924,7 +5912,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6730436421059953483
+--- !u!114 &7956842116436940529
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5933,7 +5921,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6730436421059953532}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ca51f816b3dffa4994b701d450859a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 62d38579494d78a4da2e60be45bff4c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   InvalidConfigTemplatePnl: {fileID: 1601947993005168853}

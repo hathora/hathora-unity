@@ -55,6 +55,27 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         
         #region Interactions from UI
+        public void StartHost()
+        {
+            StartServer();
+            StartClient();
+        }
+
+        public void StartServer() =>
+            InstanceFinder.ServerManager.StartConnection();
+        
+        public void StartClient() =>
+            InstanceFinder.ClientManager.StartConnection();
+        
+        public void StopHost() =>
+            StopServer(_sendDisconnectMsgToClients: true);
+
+        public void StopServer(bool _sendDisconnectMsgToClients) =>
+            InstanceFinder.ServerManager.StopConnection(_sendDisconnectMsgToClients);
+        
+        public void StopClient() =>
+            InstanceFinder.ClientManager.StopConnection();
+
         /// <summary>
         /// Connect to the Server as a Client via net code. Uses cached vals.
         /// Currently uses FishNet.Tugboat (UDP) transport.
