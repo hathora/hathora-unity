@@ -117,8 +117,7 @@ PrefabInstance:
       propertyPath: playerInfoTxt
       value: 
       objectReference: {fileID: 3782921312097621434}
-    m_RemovedComponents:
-    - {fileID: 8376981043650853733, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f45c1d3c08536fa4a947fb2e1b4f3cc1, type: 3}
 --- !u!1 &377546734245121417 stripped
 GameObject:
@@ -226,6 +225,7 @@ MonoBehaviour:
   - {fileID: 1795320644966163543}
   - {fileID: 3019342032310961408}
   - {fileID: 5727529896489604680}
+  - {fileID: 8957940544026011107}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -314,6 +314,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9f286a8f43f09e40a05b1625852516c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 5374253697427725287}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5374253697427725287}
