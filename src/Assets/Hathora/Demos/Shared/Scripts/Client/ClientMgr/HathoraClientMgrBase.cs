@@ -10,6 +10,7 @@ using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client.Models;
+using Mirror;
 using UnityEngine;
 
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
@@ -21,9 +22,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// </summary>
     public abstract class HathoraClientMgrBase : MonoBehaviour
     {
-        /// <summary>Updates this on state changes</summary>
-        protected bool IsConnecting;
-        
+        #region Serialized Fields
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         protected HathoraClientConfig HathoraClientConfig;
@@ -34,8 +33,14 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         [SerializeField]
         protected ClientApiContainer ClientApis;
+        #endregion // Serialized Fields
+        
         
         // public static Hathora{X}Client Singleton { get; private set; } // TODO: Implement me in child
+        
+        /// <summary>Updates this on state changes</summary>
+        protected bool IsConnecting { get; set; }
+        
         private HathoraNetClientMgrUiBase netClientMgrUiBase { get; set; }
 
         

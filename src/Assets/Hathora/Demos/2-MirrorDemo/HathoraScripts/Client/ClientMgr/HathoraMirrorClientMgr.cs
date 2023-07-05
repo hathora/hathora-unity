@@ -62,7 +62,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
             // This is a Client manager script; listen for relative events
             transport.OnClientConnected += base.OnConnectSuccess;
-            
+            transport.OnClientError += onMirrorClientError;
             transport.OnClientDisconnected += () => 
                 base.OnConnectFailed("Disconnected");;
         }
@@ -143,6 +143,20 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             
             // Success - ready to connect
             return true;
+        }
+        
+        /// <summary>
+        /// Client connection err
+        /// </summary>
+        /// <param name="_transportErr"></param>
+        /// <param name="_extraInfo">This is a complete guess of what it is; we just know it's a string</param>
+        private void onMirrorClientError(TransportError _transportErr, string _extraInfo)
+        {
+            Debug.LogError("[HathoraMirrorClient] onMirrorClientError: " +
+                           $"_transportErr: {_transportErr}, " +
+                           $"_extraInfo: {_extraInfo}");
+
+            base.IsConnecting = false;
         }
         #endregion // Callbacks
     }

@@ -177,6 +177,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Debug.Log("[HathoraNetUiBase] OnJoinLobbyAsClientBtnClick");
 
             ui.joinLobbyAsClientBtn.gameObject.SetActive(false);
+            ui.joiningLobbyStatusErrTxt.gameObject.SetActive(false);
             
             ui.joiningLobbyStatusTxt.text = "<color=yellow>Joining Lobby...</color>";
             ui.joiningLobbyStatusTxt.gameObject.SetActive(true);
@@ -200,7 +201,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             if (string.IsNullOrEmpty(_friendlyErr))
                 return;
             
-            ui.joiningLobbyStatusTxt.text = $"<color=orange>{_friendlyErr}</color>";
+            ui.joiningLobbyStatusErrTxt.text = $"<color=orange>{_friendlyErr}</color>";
+            ui.joiningLobbyStatusErrTxt.gameObject.SetActive(true);
         }
         #endregion // UI Interactions
         

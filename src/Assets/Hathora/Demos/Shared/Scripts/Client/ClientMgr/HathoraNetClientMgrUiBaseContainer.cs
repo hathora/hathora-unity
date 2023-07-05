@@ -72,9 +72,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         [Header("NetCode Transport: Join Lobby [as Client]")]
         [SerializeField]
         public Button joinLobbyAsClientBtn;
-        
         [SerializeField]
         public TextMeshProUGUI joiningLobbyStatusTxt;
+        [SerializeField, Tooltip("This will show while you still see the Join button returned")]
+        public TextMeshProUGUI joiningLobbyStatusErrTxt;
         #endregion // Serialized Fields
     }
 }
