@@ -99,6 +99,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         
         #region Interactions from UI
+        public abstract bool ConnectAsClient();
         public abstract void StartServer();
         public abstract void StartClient();
         public abstract void StopHost();

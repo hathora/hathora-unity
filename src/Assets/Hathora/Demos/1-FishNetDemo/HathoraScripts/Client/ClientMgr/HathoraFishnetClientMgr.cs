@@ -2,7 +2,6 @@
 
 using FishNet;
 using FishNet.Managing.Client;
-using FishNet.Managing.Transporting;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
@@ -85,8 +84,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// Currently uses FishNet.Tugboat (UDP) transport.
         /// This will trigger `OnClientConnectionState(state)`
         /// </summary>
-        /// <returns>isSuccess</returns>
-        public bool Connect()
+        /// <returns>
+        /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
+        /// </returns>
+        public override bool ConnectAsClient()
         {
             Debug.Log("[HathoraFishnetClient] ConnectAsync");
             
@@ -95,10 +96,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
             // -----------------
             // Validate; UI and err handling is handled within
-            ClientManager clientMgr = InstanceFinder.ClientManager;
-            bool isReadyToConnect = ValidateIsReadyToConnect(clientMgr, transport);
+            bool isReadyToConnect = ValidateIsReadyToConnect(InstanceFinder.ClientManager, transport);
             if (!isReadyToConnect)
-                return false; // !isSuccess
+                return false; // !startedConnection
 
             // -----------------
             // Set port + host (ip)
@@ -106,18 +106,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             transport.SetPort((ushort)connectInfo.Port);
             transport.SetClientAddress(connectInfo.Host);
             
-            // Connect now (sync?)
-            bool isSuccess = InstanceFinder.ClientManager.StartConnection(
-                connectInfo.Host, 
-                (ushort)connectInfo.Port);
-
-            if (!isSuccess)
-            {
-                base.OnConnectFailed(_friendlyReason: "StartConnection !isSuccess");
-                return false;
-            }
-            
-            return true; // isSuccess
+            // Connect now => cb @ OnClientConnected()
+            bool startedConnection = InstanceFinder.ClientManager.StartConnection();
+            return startedConnection;
         }
 
         private bool ValidateIsReadyToConnect(

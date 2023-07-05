@@ -85,7 +85,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         }
 
         public void Connect() => 
-            HathoraClientMgr.Connect();
+            HathoraClientMgr.ConnectAsClient();
         #endregion /Dynamic UI
     }
 }

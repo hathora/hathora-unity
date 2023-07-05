@@ -89,8 +89,10 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// Connect to the Server as a Client via net code. Uses cached vals.
         /// Currently uses Mirror.Kcp (UDP) transport.
         /// </summary>
-        /// <returns>isSuccess</returns>
-        public bool ConnectAsClient()
+        /// <returns>
+        /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
+        /// </returns>
+        public override bool ConnectAsClient()
         {
             Debug.Log("[HathoraMirrorClient] ConnectAsync (expecting `Kcp` transport)");
 
@@ -99,25 +101,19 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             
             // -----------------
             // Validate; UI and err handling is handled within
-            bool isReadyToConnect = ValidateIsReadyToConnect();
+            bool isReadyToConnect = ValidateIsReadyToConnect(); // Handles UI + logs within
             if (!isReadyToConnect)
-                return false; // !isSuccess
+                return false; // !startedConnection
 
             // -----------------
-            // via NetworkManager: set transport port -> Set Host (ip)
+            // Set port + host (ip)
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
-            NetworkManager.singleton.networkAddress = connectInfo.Host;
+            NetworkManager.singleton.networkAddress = connectInfo.Host; // host address (eg: `localhost`); not an IP address
+            kcpTransport.port = (ushort)connectInfo.Port;
             
+            // Connect now => cb @ OnClientConnected()
             StartClient();
-            
-            // TODO: How to validate success? Is this a synchronous connect?
-            if (!isConnected)
-            {
-                OnConnectFailed("StartConnection !isSuccess");
-                return false;
-            }
-            
-            return true; // isSuccess => Continued at OnClientConnected()
+            return true; // startedConnection; continued @ OnClientConnected()
         }
 
         private bool ValidateIsReadyToConnect()

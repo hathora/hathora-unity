@@ -24,6 +24,7 @@ MonoBehaviour:
     _serverBuildExeName: Hathora-Unity-LinuxServer.x86_64
     _isDevBuild: 1
     _cleanBuildDir: 1
+    _overwriteDockerfile: 1
   _hathoraDeployOpts:
     _roomsPerProcess: 1
     _planNameSelectedIndex: 1
@@ -44,4 +45,4 @@ MonoBehaviour:
         _transportNickname: 
   _hathoraLobbyRoomOpts:
     _hathoraRegion: 1
-    _regionSelectedIndex: 1
+    hathoraRegionSelectedIndexUi: 1
