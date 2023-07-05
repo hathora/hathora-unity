@@ -4,7 +4,6 @@ using FishNet;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Demos.Shared.Scripts.Client;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
 
@@ -15,10 +14,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
     /// - To add API scripts: Add to the `ClientApis` serialized field.
     /// </summary>
-    public class HathoraFishnetClient : HathoraClientBase
+    public class HathoraFishnetClientMgr : HathoraClientBase
     {
         #region vars
-        public static HathoraFishnetClient Singleton { get; private set; }
+        public static HathoraFishnetClientMgr Singleton { get; private set; }
 
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;

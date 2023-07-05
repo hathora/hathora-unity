@@ -11,24 +11,21 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// - UI OnEvent entry points from Buttons start here.
     /// - This particular child should be used for both FishNet.
     /// </summary>
-    public class HathoraFishnetClientMgrUi : HathoraNetClientMgrUi, IHathoraNetClientMgrUi
+    public class HathoraFishnetClientMgrUi : HathoraNetClientMgrUiBase, IHathoraNetClientMgrUi
     {
         public static HathoraFishnetClientMgrUi Singleton { get; private set; }
-        private static HathoraFishnetClient hathoraClient => 
-            HathoraFishnetClient.Singleton;
+        private static HathoraFishnetClientMgr HathoraClientMgr => 
+            HathoraFishnetClientMgr.Singleton;
         
 
         #region Init
-        protected override void OnAwake()
+        protected override void OnStart()
         {
-            base.OnAwake();
-            InitOnAwake(hathoraClient);
-            SetSingleton();
+            base.OnStart();
+            InitOnStart(HathoraClientMgr);
         }
-
-        public HathoraNetClientMgrUiBaseContainer ui { get; set; }
-
-        public void SetSingleton()
+        
+        protected override void SetSingleton()
         {
             if (Singleton != null)
             {
@@ -48,25 +45,37 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public override void OnStartServerBtnClick()
         {
             base.OnStartServerBtnClick();
-            hathoraClient.StartServer();
+            HathoraClientMgr.StartServer();
         }
-        
+
         public override void OnStartClientBtnClick()
         {
             base.OnStartClientBtnClick();
-            hathoraClient.StartClient();
+            HathoraClientMgr.StartClient();
         }
 
         public override void OnStartHostBtnClick()
         {
             base.OnStartHostBtnClick();
-            hathoraClient.StartHost();
+            HathoraClientMgr.StartHost();
         }
 
         public override void OnStopServerBtnClick()
         {
             base.OnStopServerBtnClick();
-            hathoraClient.StopServer(_sendDisconnectMsgToClients: true);
+            HathoraClientMgr.StopServer(_sendDisconnectMsgToClients: true);
+        }
+        
+        public override void OnStopClientBtnClick()
+        {
+            base.OnStopClientBtnClick();
+            HathoraClientMgr.StopClient();
+        }
+        
+        public override void OnStopHostBtnClick()
+        {
+            base.OnStopHostBtnClick();
+            HathoraClientMgr.StopHost();
         }
 
         public override void OnJoinLobbyAsClientBtnClick()
@@ -76,7 +85,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         }
 
         public void Connect() => 
-            hathoraClient.Connect();
+            HathoraClientMgr.Connect();
         #endregion /Dynamic UI
     }
 }

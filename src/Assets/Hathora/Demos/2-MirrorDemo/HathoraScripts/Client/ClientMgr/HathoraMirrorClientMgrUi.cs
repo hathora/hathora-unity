@@ -11,7 +11,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// - UI OnEvent entry points from Buttons start here.
     /// - This particular child should be used for both Mirror.
     /// </summary>
-    public class HathoraMirrorClientMgrUi : HathoraNetClientMgrUi, IHathoraNetClientMgrUi
+    public class HathoraMirrorClientMgrUi : HathoraNetClientMgrUiBase, IHathoraNetClientMgrUi
     {
         public static HathoraMirrorClientMgrUi Singleton { get; private set; }
         private static HathoraMirrorClient hathoraClient => 
@@ -19,20 +19,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
-        protected override void OnAwake()
+        protected override void OnStart()
         {
-            base.OnAwake();
-            InitOnAwake(hathoraClient);
-            SetSingleton();
+            base.OnStart();
+            InitOnStart(hathoraClient);
         }
 
-        public HathoraNetClientMgrUiBaseContainer ui
-        {
-            get;
-            set;
-        }
-
-        public void SetSingleton()
+        protected override void SetSingleton()
         {
             if (Singleton != null)
             {

@@ -5727,8 +5727,9 @@ GameObject:
   - component: {fileID: 6730436420958521603}
   - component: {fileID: 6730436420958521613}
   - component: {fileID: 6730436420958521612}
+  - component: {fileID: 2086546613057634195}
   m_Layer: 5
-  m_Name: HathoraCanvas
+  m_Name: HathoraSdkCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5816,6 +5817,39 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2086546613057634195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6730436420958521615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62d38579494d78a4da2e60be45bff4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InvalidConfigTemplatePnl: {fileID: 1601947993005168853}
+  InvalidConfigPnl: {fileID: 8186817548413202485}
+  debugMemoTxt: {fileID: 6730436419656526884}
+  authBtn: {fileID: 6730436420034938640}
+  authTxt: {fileID: 6730436420155423856}
+  createLobbyBtn: {fileID: 6730436420694237204}
+  getLobbyInfoBtn: {fileID: 6730436420779342457}
+  getLobbyInfoInput: {fileID: 6730436420283370812}
+  lobbyRoomIdTxt: {fileID: 6730436420475557258}
+  viewLobbiesBtn: {fileID: 6730436419249410377}
+  copyLobbyRoomIdBtn: {fileID: 6730436419547317144}
+  copiedRoomIdFadeTxt: {fileID: 6730436420094247181}
+  createOrGetLobbyInfoErrTxt: {fileID: 6730436420905603953}
+  viewLobbiesSeeLogsFadeTxt: {fileID: 6730436419137119030}
+  getServerInfoBtn: {fileID: 6730436419053282267}
+  getServerInfoTxt: {fileID: 6730436419546088067}
+  copyServerInfoBtn: {fileID: 6730436419467952925}
+  copiedServerInfoFadeTxt: {fileID: 6730436420803180435}
+  getServerInfoErrTxt: {fileID: 6730436420910717614}
+  joinLobbyAsClientBtn: {fileID: 6730436419947261734}
+  joiningLobbyStatusTxt: {fileID: 927034867}
 --- !u!1 &6730436421059953532
 GameObject:
   m_ObjectHideFlags: 0
@@ -5827,9 +5861,8 @@ GameObject:
   - component: {fileID: 6730436421059953533}
   - component: {fileID: 6730436421059953482}
   - component: {fileID: 6730436421059953525}
-  - component: {fileID: 7956842116436940529}
   m_Layer: 5
-  m_Name: HathoraUiMgr
+  m_Name: HathoraUiWrapperPnl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5912,39 +5945,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7956842116436940529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6730436421059953532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d38579494d78a4da2e60be45bff4c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InvalidConfigTemplatePnl: {fileID: 1601947993005168853}
-  InvalidConfigPnl: {fileID: 8186817548413202485}
-  debugMemoTxt: {fileID: 6730436419656526884}
-  authBtn: {fileID: 6730436420034938640}
-  authTxt: {fileID: 6730436420155423856}
-  createLobbyBtn: {fileID: 6730436420694237204}
-  getLobbyInfoBtn: {fileID: 6730436420779342457}
-  getLobbyInfoInput: {fileID: 6730436420283370812}
-  lobbyRoomIdTxt: {fileID: 6730436420475557258}
-  viewLobbiesBtn: {fileID: 6730436419249410377}
-  copyLobbyRoomIdBtn: {fileID: 6730436419547317144}
-  copiedRoomIdFadeTxt: {fileID: 6730436420094247181}
-  createOrGetLobbyInfoErrTxt: {fileID: 6730436420905603953}
-  viewLobbiesSeeLogsFadeTxt: {fileID: 6730436419137119030}
-  getServerInfoBtn: {fileID: 6730436419053282267}
-  getServerInfoTxt: {fileID: 6730436419546088067}
-  copyServerInfoBtn: {fileID: 6730436419467952925}
-  copiedServerInfoFadeTxt: {fileID: 6730436420803180435}
-  getServerInfoErrTxt: {fileID: 6730436420910717614}
-  joinLobbyAsClientBtn: {fileID: 6730436419947261734}
-  joiningLobbyStatusTxt: {fileID: 927034867}
 --- !u!1 &6730436421062696142
 GameObject:
   m_ObjectHideFlags: 0

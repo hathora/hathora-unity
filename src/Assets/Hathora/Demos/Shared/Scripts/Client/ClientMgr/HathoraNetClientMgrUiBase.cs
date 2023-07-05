@@ -16,11 +16,17 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// Generally, this is going to be pre-connection UI such as create/join lobbies.
     /// UI OnEvent entry points from Buttons start here.
     /// </summary>
-    public class HathoraNetClientMgrUi : MonoBehaviour
+    public abstract class HathoraNetClientMgrUiBase : MonoBehaviour
     {
         #region Serialized Fields
         [SerializeField]
         private HathoraNetClientMgrUiBaseContainer ui;
+
+        public HathoraNetClientMgrUiBaseContainer Ui
+        {
+            get => ui;
+            set => ui = value;
+        }
         #endregion // Serialized Fields
 
         
@@ -37,27 +43,35 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         protected static HathoraClientSession HathoraClientSession => 
             HathoraClientSession.Singleton;
-        
-        
+
+
         #region Init
         private void Awake() => 
             OnAwake();
+        
+        private void Start() => 
+            OnStart();
 
-        protected virtual void OnAwake()
+        protected virtual void OnAwake() =>
+            SetSingleton();
+
+        /// <summary>Override + Call InitOnStart</summary>
+        protected virtual void OnStart()
         {
-            // InitOnAwake(hathoraClientBase);
+            // InitOnStart(hathoraClientBase);
         }
 
-        /// <summary>Call me @ OnAwake</summary>
-        protected void InitOnAwake(HathoraClientBase _hathoraClientBase)
+        /// <summary>Call me @ OnStart</summary>
+        protected void InitOnStart(HathoraClientBase _hathoraClientBase)
         {
             if (_hathoraClientBase == null)
                 throw new ArgumentNullException(nameof(_hathoraClientBase));
             
-            // SetSingleton();
             this.HathoraClientBase = _hathoraClientBase;
         }
-
+        
+        /// <summary>Override this and set your singleton instance</summary>
+        protected abstract void SetSingleton();
         #endregion // Init
         
         
