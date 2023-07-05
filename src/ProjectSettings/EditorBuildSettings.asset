@@ -6,12 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Hathora/Demos/HathoraDemoScene-Menu.unity
-    guid: 68e42908b5f41c641bf94c6eb9ccc16e
-  - enabled: 1
-    path: Assets/Hathora/Demos/1-FishNetDemo/HathoraDemoScene-FishNet.unity
-    guid: 4680c4744e9021f469e23205b96fdcd5
-  - enabled: 1
     path: Assets/Hathora/Demos/2-MirrorDemo/HathoraDemoScene-Mirror.unity
     guid: 7c7c3f16415616e49ba42b0d15075032
   m_configObjects:
