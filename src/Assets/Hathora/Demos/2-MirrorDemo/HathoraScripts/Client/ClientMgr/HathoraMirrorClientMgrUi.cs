@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
+using Mirror;
 using UnityEngine;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
@@ -14,15 +15,15 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     public class HathoraMirrorClientMgrUi : HathoraNetClientMgrUiBase, IHathoraNetClientMgrUi
     {
         public static HathoraMirrorClientMgrUi Singleton { get; private set; }
-        private static HathoraMirrorClient hathoraClient => 
-            HathoraMirrorClient.Singleton;
+        private static HathoraMirrorClientMgr HathoraClientMgr => 
+            HathoraMirrorClientMgr.Singleton;
         
 
         #region Init
         protected override void OnStart()
         {
             base.OnStart();
-            InitOnStart(hathoraClient);
+            InitOnStart(HathoraClientMgr);
         }
 
         protected override void SetSingleton()
@@ -42,6 +43,42 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
         
         #region UI Interactions
+        public override void OnStartServerBtnClick()
+        {
+            base.OnStartServerBtnClick();
+            NetworkManager.singleton.StartServer();
+        }
+
+        public override void OnStartClientBtnClick()
+        {
+            base.OnStartClientBtnClick();
+            NetworkManager.singleton.StartClient();
+        }
+
+        public override void OnStartHostBtnClick()
+        {
+            base.OnStartHostBtnClick();
+            NetworkManager.singleton.StartHost();
+        }
+
+        public override void OnStopServerBtnClick()
+        {
+            base.OnStopServerBtnClick();
+            NetworkManager.singleton.StopServer();
+        }
+        
+        public override void OnStopClientBtnClick()
+        {
+            base.OnStopClientBtnClick();
+            NetworkManager.singleton.StopClient();
+        }
+        
+        public override void OnStopHostBtnClick()
+        {
+            base.OnStopHostBtnClick();
+            NetworkManager.singleton.StopHost();
+        }
+        
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
@@ -49,7 +86,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         }
         
         public void Connect() => 
-            hathoraClient.Connect();
+            HathoraClientMgr.Connect();
         #endregion /Dynamic UI
     }
 }

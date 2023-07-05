@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Cloud.Sdk.Model;
-using Hathora.Demos.Shared.Scripts.Client;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using Mirror;
 using UnityEngine;
@@ -18,13 +17,17 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// - Mirror.NetworkManager.singleton
     /// - Mirror.NetworkManager.ConnectState is INTERNAL, but broken up into individual props
     /// </summary>
-    public class HathoraMirrorClient : HathoraClientBase
+    public class HathoraMirrorClientMgr : HathoraClientMgrBase
     {
         #region vars
-        public static HathoraMirrorClient Singleton { get; private set; }
+        public static HathoraMirrorClientMgr Singleton { get; private set; }
         
-        private bool isConnected => NetworkClient.isConnected;
-        private bool isConnecting => NetworkClient.isConnecting;
+        private static bool isConnected => NetworkClient.isConnected;
+        private static bool isConnecting => NetworkClient.isConnecting;
+
+        private static Transport transport => 
+            Mirror.NetworkManager.singleton.transport; 
+
         #endregion // vars
         
 
@@ -49,43 +52,46 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
         protected override void OnStart()
         {
+            base.InitOnStart(HathoraMirrorClientMgrUi.Singleton);
             base.OnStart();
-            
+
             // This is a Client manager script; listen for relative events
-            Mirror.NetworkManager.singleton.transport.OnClientConnected += OnClientConnected;
-            Mirror.NetworkManager.singleton.transport.OnClientDisconnected += OnClientDisconnected;
+            transport.OnClientConnected += base.OnConnectSuccess;
+            
+            transport.OnClientDisconnected += () => 
+                base.OnConnectFailed("Disconnected");;
         }
         #endregion // Init
         
-        
-        #region NetCode Callbacks
-        private void OnClientConnected()
-        {
-            Debug.Log("[HathoraMirrorClient] OnClientConnected");
-            OnConnectSuccess();
-        }
 
-        private void OnClientDisconnected()
-        {
-            Debug.Log("[HathoraMirrorClient] OnClientDisconnected");
-            OnConnectFailed("Disconnected");
-        }
-        #endregion // NetCode Callbacks
-        
-        
         #region Interactions from UI
+        public override void StartServer() => 
+            NetworkManager.singleton.StartServer();
+
+        public override void StartClient() => 
+            NetworkManager.singleton.StartClient();
+
+        public override void StopHost() =>
+            NetworkManager.singleton.StopHost();
+
+        public override void StopServer() => 
+            NetworkManager.singleton.StopServer();
+
+        public override void StopClient() => 
+            NetworkManager.singleton.StopClient();
+        
         /// <summary>
         /// Connect to the Server as a Client via net code. Uses cached vals.
-        /// Currently uses FishNet.Tugboat (UDP) transport.
-        /// This will trigger `OnClientConnectionState(state)`
+        /// Currently uses Mirror.Kcp (UDP) transport.
         /// </summary>
         /// <returns>isSuccess</returns>
         public bool Connect()
         {
             Debug.Log("[HathoraMirrorClient] ConnectAsync");
 
-            IsConnecting = true;
-
+            // Set connecting state + log where we're connecting to
+            base.SetConnectingState(transport.name);
+            
             // -----------------
             // Validate; UI and err handling is handled within
             bool isReadyToConnect = ValidateIsReadyToConnect();
@@ -94,10 +100,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
             // -----------------
             // Connect
-            Debug.Log("[HathoraMirrorClient.ConnectAsync] Connecting to: " + 
-                $"{HathoraClientSession.GetServerInfoIpPort()} via Mirror " +
-                $"NetworkManager.{NetworkManager.singleton.transport.name} transport");
-
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
             NetworkClient.Connect(connectInfo.Host);
             

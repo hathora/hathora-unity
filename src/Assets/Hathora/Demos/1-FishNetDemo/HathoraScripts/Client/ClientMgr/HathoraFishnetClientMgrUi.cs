@@ -9,7 +9,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// Handles the non-Player UI so we can keep the logic separate.
     /// - Generally, this is going to be pre-connection UI such as create/join lobbies.
     /// - UI OnEvent entry points from Buttons start here.
-    /// - This particular child should be used for both FishNet.
+    /// - This particular child should be used for FishNet.
     /// </summary>
     public class HathoraFishnetClientMgrUi : HathoraNetClientMgrUiBase, IHathoraNetClientMgrUi
     {
@@ -63,7 +63,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public override void OnStopServerBtnClick()
         {
             base.OnStopServerBtnClick();
-            HathoraClientMgr.StopServer(_sendDisconnectMsgToClients: true);
+            HathoraClientMgr.StopServer();
         }
         
         public override void OnStopClientBtnClick()

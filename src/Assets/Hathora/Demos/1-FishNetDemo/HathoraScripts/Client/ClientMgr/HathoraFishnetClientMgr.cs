@@ -14,10 +14,13 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
     /// - To add API scripts: Add to the `ClientApis` serialized field.
     /// </summary>
-    public class HathoraFishnetClientMgr : HathoraClientBase
+    public class HathoraFishnetClientMgr : HathoraClientMgrBase
     {
         #region vars
         public static HathoraFishnetClientMgr Singleton { get; private set; }
+        
+        private Transport transport => 
+            InstanceFinder.TransportManager.Transport; 
 
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;
@@ -45,6 +48,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         protected override void OnStart()
         {
+            base.InitOnStart(HathoraFishnetClientMgrUi.Singleton);
             base.OnStart();
             
             // This is a Client manager script; listen for relative events
@@ -60,19 +64,19 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             StartClient();
         }
 
-        public void StartServer() =>
+        public override void StartServer() =>
             InstanceFinder.ServerManager.StartConnection();
         
-        public void StartClient() =>
+        public override void StartClient() =>
             InstanceFinder.ClientManager.StartConnection();
         
-        public void StopHost() =>
-            StopServer(_sendDisconnectMsgToClients: true);
+        public override void StopHost() =>
+            StopServer(); // StopServer() will also stop the client
 
-        public void StopServer(bool _sendDisconnectMsgToClients) =>
-            InstanceFinder.ServerManager.StopConnection(_sendDisconnectMsgToClients);
+        public override void StopServer() =>
+            InstanceFinder.ServerManager.StopConnection(sendDisconnectMessage: true);
         
-        public void StopClient() =>
+        public override void StopClient() =>
             InstanceFinder.ClientManager.StopConnection();
 
         /// <summary>
@@ -84,10 +88,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public bool Connect()
         {
             Debug.Log("[HathoraFishnetClient] ConnectAsync");
-
-            IsConnecting = true;
-            Transport transport = InstanceFinder.TransportManager.Transport;
+            
+            // Set connecting state + log where we're connecting to
             ClientManager clientMgr = InstanceFinder.ClientManager;
+            base.SetConnectingState(transport.name);
 
             // -----------------
             // Validate; UI and err handling is handled within
@@ -97,10 +101,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
             // -----------------
             // Connect
-            Debug.Log("[HathoraFishnetClient.ConnectAsync] Connecting to: " + 
-                $"{HathoraClientSession.GetServerInfoIpPort()} via FishNet " +
-                $"NetworkManager.{transport.name} transport");
-
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
             bool isSuccess = InstanceFinder.ClientManager.StartConnection(
                 connectInfo.Host, 
@@ -108,7 +108,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
             if (!isSuccess)
             {
-                OnConnectFailed("StartConnection !isSuccess");
+                base.OnConnectFailed(_friendlyReason: "StartConnection !isSuccess");
                 return false;
             }
             
@@ -124,7 +124,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
             if (InstanceFinder.NetworkManager == null)
             {
-                OnConnectFailed("!NetworkManager");
+                base.OnConnectFailed("!NetworkManager");
                 return false; // !isSuccess
             }
 
@@ -133,7 +133,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             if (currentState != LocalConnectionState.Stopped)
             {
                 _clientMgr.StopConnection();
-                OnConnectFailed("Prior connection !stopped: Try again soon");
+                base.OnConnectFailed("Prior connection !stopped: Try again soon");
                 return false; // !isSuccess
             }
             
@@ -149,13 +149,13 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             
             // onConnectSuccess?
             if (localConnectionState == LocalConnectionState.Started)
-                OnConnectSuccess();
+                base.OnConnectSuccess();
             
             // onConnectFailed?
             bool stopped = localConnectionState == LocalConnectionState.Stopped; 
             bool stoppedConnecting = stopped && IsConnecting;
             if (stoppedConnecting)
-                OnConnectFailed("Connection stopped");
+                base.OnConnectFailed("Connection stopped");
         }
         #endregion // Callbacks
     }

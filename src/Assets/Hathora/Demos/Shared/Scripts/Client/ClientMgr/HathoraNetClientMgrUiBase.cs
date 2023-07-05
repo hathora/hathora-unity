@@ -39,7 +39,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         private static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
         private const string headerBoldColorEnd = "</color></b>";
 
-        private HathoraClientBase HathoraClientBase;
+        private HathoraClientMgrBase hathoraClientMgrBase;
         
         protected static HathoraClientSession HathoraClientSession => 
             HathoraClientSession.Singleton;
@@ -62,12 +62,12 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         }
 
         /// <summary>Call me @ OnStart</summary>
-        protected void InitOnStart(HathoraClientBase _hathoraClientBase)
+        protected void InitOnStart(HathoraClientMgrBase _hathoraClientMgrBase)
         {
-            if (_hathoraClientBase == null)
-                throw new ArgumentNullException(nameof(_hathoraClientBase));
+            if (_hathoraClientMgrBase == null)
+                throw new ArgumentNullException(nameof(_hathoraClientMgrBase));
             
-            this.HathoraClientBase = _hathoraClientBase;
+            this.hathoraClientMgrBase = _hathoraClientMgrBase;
         }
         
         /// <summary>Override this and set your singleton instance</summary>
@@ -85,10 +85,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         public void OnAuthLoginBtnClick()
         {
-            HathoraClientBase.AssertUsingValidNetConfig();
+            hathoraClientMgrBase.AssertUsingValidNetConfig();
                 
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
-            _ = HathoraClientBase.AuthLoginAsync(); // !await
+            _ = hathoraClientMgrBase.AuthLoginAsync(); // !await
         }
 
         public void OnCreateLobbyBtnClick()
@@ -98,7 +98,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             // (!) Region Index starts at 1 (not 0) // TODO: Get from UI
             const Region _region = Region.WashingtonDC;
             
-            _ = HathoraClientBase.CreateLobbyAsync(_region); // !await // public lobby
+            _ = hathoraClientMgrBase.CreateLobbyAsync(_region); // !await // public lobby
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 return;
             }
             
-            _ = HathoraClientBase.GetLobbyInfoAsync(roomIdInputStr); // !await
+            _ = hathoraClientMgrBase.GetLobbyInfoAsync(roomIdInputStr); // !await
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             try
             {
-                await HathoraClientBase.ViewPublicLobbies(region);
+                await hathoraClientMgrBase.ViewPublicLobbies(region);
             }
             catch (Exception e)
             {
@@ -156,7 +156,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             SetServerInfoTxt("<color=yellow>Getting server connection info...</color>");
             
             // The ServerConnectionInfo should already be cached
-            _ = HathoraClientBase.GetActiveConnectionInfo(HathoraClientSession.RoomId); // !await
+            _ = hathoraClientMgrBase.GetActiveConnectionInfo(HathoraClientSession.RoomId); // !await
         }
         
         /// <summary>
@@ -376,14 +376,14 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             // Core issue
             string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
-                $"{nameof(HathoraClientBase)} component";
+                $"{nameof(hathoraClientMgrBase)} component";
             
             if (_config == null)
             {
                 ui.authBtn.gameObject.SetActive(false);
                 ui.InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(HathoraClientBase)}] !{nameof(HathoraClientConfig)} - " +
+                throw new Exception($"[{nameof(hathoraClientMgrBase)}] !{nameof(HathoraClientConfig)} - " +
                     $"Serialize one at {netComponentPathFriendlyStr}");
             }
             
@@ -391,7 +391,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             {
                 ui.InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(HathoraClientBase)}] !AppId - " +
+                throw new Exception($"[{nameof(hathoraClientMgrBase)}] !AppId - " +
                     $"Set one at {netComponentPathFriendlyStr} (See top menu `Hathora/Configuration` - your " +
                     "ServerConfig's AppId should match your ClientConfig's AppId)");
             }
