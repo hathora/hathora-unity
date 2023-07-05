@@ -90,7 +90,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// Currently uses Mirror.Kcp (UDP) transport.
         /// </summary>
         /// <returns>isSuccess</returns>
-        public bool Connect()
+        public bool ConnectAsClient()
         {
             Debug.Log("[HathoraMirrorClient] ConnectAsync (expecting `Kcp` transport)");
 
@@ -104,10 +104,11 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 return false; // !isSuccess
 
             // -----------------
-            // Set transport port -> Connect with Host (ip) info
+            // via NetworkManager: set transport port -> Set Host (ip)
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
-            kcpTransport.Port = (ushort)connectInfo.Port;
-            NetworkClient.Connect(connectInfo.Host);
+            NetworkManager.singleton.networkAddress = connectInfo.Host;
+            
+            StartClient();
             
             // TODO: How to validate success? Is this a synchronous connect?
             if (!isConnected)

@@ -86,7 +86,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         }
         
         public void Connect() => 
-            HathoraClientMgr.Connect();
+            HathoraClientMgr.ConnectAsClient();
         #endregion /Dynamic UI
     }
 }
