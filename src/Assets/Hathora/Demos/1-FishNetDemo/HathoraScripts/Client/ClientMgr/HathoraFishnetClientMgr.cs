@@ -2,6 +2,7 @@
 
 using FishNet;
 using FishNet.Managing.Client;
+using FishNet.Managing.Transporting;
 using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
@@ -90,18 +91,22 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             Debug.Log("[HathoraFishnetClient] ConnectAsync");
             
             // Set connecting state + log where we're connecting to
-            ClientManager clientMgr = InstanceFinder.ClientManager;
             base.SetConnectingState(transport.name);
 
             // -----------------
             // Validate; UI and err handling is handled within
+            ClientManager clientMgr = InstanceFinder.ClientManager;
             bool isReadyToConnect = ValidateIsReadyToConnect(clientMgr, transport);
             if (!isReadyToConnect)
                 return false; // !isSuccess
 
             // -----------------
-            // Connect
+            // Set port + host (ip)
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
+            transport.SetPort((ushort)connectInfo.Port);
+            transport.SetClientAddress(connectInfo.Host);
+            
+            // Connect now (sync?)
             bool isSuccess = InstanceFinder.ClientManager.StartConnection(
                 connectInfo.Host, 
                 (ushort)connectInfo.Port);
