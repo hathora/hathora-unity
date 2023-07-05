@@ -182,7 +182,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             ui.joiningLobbyStatusTxt.gameObject.SetActive(true);
         }
 
-        public void OnJoinLobbySuccess()
+        public void OnJoinLobbyConnectSuccess()
         {
             Debug.Log("[HathoraNetUiBase] OnJoinLobbySuccess");
             

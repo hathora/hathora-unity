@@ -2,6 +2,7 @@
 
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
+using kcp2k;
 using Mirror;
 using UnityEngine;
 
@@ -26,7 +27,11 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         private static bool isConnecting => NetworkClient.isConnecting;
 
         private static Transport transport => 
-            Mirror.NetworkManager.singleton.transport; 
+            Mirror.NetworkManager.singleton.transport;
+
+        /// <summary>Req'd to set port</summary>
+        private static KcpTransport kcpTransport =>
+            (KcpTransport)transport;
 
         #endregion // vars
         
@@ -87,7 +92,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// <returns>isSuccess</returns>
         public bool Connect()
         {
-            Debug.Log("[HathoraMirrorClient] ConnectAsync");
+            Debug.Log("[HathoraMirrorClient] ConnectAsync (expecting `Kcp` transport)");
 
             // Set connecting state + log where we're connecting to
             base.SetConnectingState(transport.name);
@@ -99,8 +104,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 return false; // !isSuccess
 
             // -----------------
-            // Connect
+            // Set transport port -> Connect with Host (ip) info
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
+            kcpTransport.Port = (ushort)connectInfo.Port;
             NetworkClient.Connect(connectInfo.Host);
             
             // TODO: How to validate success? Is this a synchronous connect?

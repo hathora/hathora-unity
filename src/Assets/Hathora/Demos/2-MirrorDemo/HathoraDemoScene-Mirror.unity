@@ -1888,7 +1888,7 @@ PrefabInstance:
     - target: {fileID: 5049982408486401752, guid: 127b03e81323ad14ca3d3a53f8f2eded,
         type: 3}
       propertyPath: m_Name
-      value: OfflineCamera-MirrorDestroysThisOnPlayerSpawn
+      value: OfflineCamera-MirrorMovesThisToLocalPlayerOnSpawnAndBackOnDc
       objectReference: {fileID: 0}
     - target: {fileID: 5049982408486401752, guid: 127b03e81323ad14ca3d3a53f8f2eded,
         type: 3}

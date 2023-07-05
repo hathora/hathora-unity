@@ -134,8 +134,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected virtual void OnConnectSuccess()
         {
             IsConnecting = false;
-            netClientMgrUiBase.OnJoinLobbySuccess();
-
+            netClientMgrUiBase.OnJoinLobbyConnectSuccess();
         }
 
         /// <summary>
