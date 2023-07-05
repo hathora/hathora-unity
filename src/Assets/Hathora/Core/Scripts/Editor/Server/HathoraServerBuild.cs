@@ -124,7 +124,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             // ----------------
             // Open the build directory - this will lose focus of the inspector
             // TODO: Play a small, subtle chime sfx?
-            strb.AppendLine("Opening build dir ...");
+            strb.AppendLine("Opening build dir ...").AppendLine();
             Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
                 $"Build succeeded @ path: `{configPaths.PathToBuildDir}`");
             
