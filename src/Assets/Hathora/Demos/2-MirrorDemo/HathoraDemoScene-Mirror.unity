@@ -1163,17 +1163,17 @@ PrefabInstance:
     - target: {fileID: 2314140327667261357, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2314140327667261357, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2314140327667261357, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -116
       objectReference: {fileID: 0}
     - target: {fileID: 2707931863092874625, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
@@ -1198,17 +1198,17 @@ PrefabInstance:
     - target: {fileID: 2707931863469968434, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2707931863469968434, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2707931863469968434, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -58
       objectReference: {fileID: 0}
     - target: {fileID: 2707931863469968435, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
@@ -1348,12 +1348,12 @@ PrefabInstance:
     - target: {fileID: 2707931864174298625, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2707931864174298625, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2707931864174298626, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
@@ -1604,7 +1604,7 @@ PrefabInstance:
     - target: {fileID: 7978815428160413858, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7978815428160413871, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
@@ -1941,6 +1941,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
       value: Hathora.Demos.Shared.Scripts.Client.ClientMgr.HathoraNetClientMgrUiBase,
         Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6730436419347061397, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_text
+      value: Hathora SDK (Mirror)
       objectReference: {fileID: 0}
     - target: {fileID: 6730436419467952925, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
