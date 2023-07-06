@@ -2433,6 +2433,16 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 8791311661285347568, guid: 2d63f6f393ed6914880cf620644c1d77,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 627.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 8791311661285347569, guid: 2d63f6f393ed6914880cf620644c1d77,
+        type: 3}
+      propertyPath: m_text
+      value: Select a <color=yellow>Hathora<>FishNet</color> Demo
+      objectReference: {fileID: 0}
     - target: {fileID: 8791311662469803670, guid: 2d63f6f393ed6914880cf620644c1d77,
         type: 3}
       propertyPath: m_Name
