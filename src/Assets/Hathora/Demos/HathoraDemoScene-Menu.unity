@@ -770,6 +770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70bcbe019ec0cc14a86c2ec27c5730f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mockArgsInEditor: 0
 --- !u!4 &672619051
 Transform:
   m_ObjectHideFlags: 0

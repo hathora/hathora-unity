@@ -15,7 +15,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
     public abstract class HathoraArgHandlerBase : MonoBehaviour
     {
         #region vars
-        private static bool _sceneArgConsumed;
+        private static bool _sceneArgConsumed = false;
         
         /// <summary>We only trigger this once</summary>
         public static bool SceneArgConsumed
@@ -24,7 +24,8 @@ namespace Hathora.Demos.Shared.Scripts.Common
             set 
             {
                 if (value)
-                    Debug.Log($"[HathoraArgHandlerBase] SceneArgConsumed @ {SceneManager.GetActiveScene().name}");
+                    Debug.Log($"[HathoraArgHandlerBase] SceneArgConsumed @ " +
+                        SceneManager.GetActiveScene().name);
                 
                 _sceneArgConsumed = value;
             }
@@ -178,5 +179,13 @@ namespace Hathora.Demos.Shared.Scripts.Common
             return argDictionary;
         }
         #endregion // Utils
+        
+        
+        void OnDisable()
+        {
+            // Static vars may persist between Editor play sessions. 
+            _sceneArgConsumed = false;
+            _modeArgConsumed = false;
+        }
     }
 }

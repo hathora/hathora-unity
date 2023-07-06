@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Demos.Shared.Scripts.Common
 {
@@ -11,7 +12,8 @@ namespace Hathora.Demos.Shared.Scripts.Common
     public class HathoraMenuArgHandler : HathoraArgHandlerBase
     {
         #region Mock Testing
-        private const bool MOCK_ARG_IN_EDITOR = true;
+        [SerializeField]
+        private bool mockArgsInEditor;
         
         /// <summary>Keys already include the `-` prefix.</summary>
         private static Dictionary<string, string> MOCK_ARGS_DICT = new()
@@ -27,7 +29,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
         protected override async Task InitArgs(Dictionary<string, string> _cmdLineArgsOverrideList = null)
         {
             #if UNITY_EDITOR
-            if (MOCK_ARG_IN_EDITOR)
+            if (mockArgsInEditor)
             {
                 Debug.LogWarning($"[HathoraMenuAregHandler] Init: " +
                     $"<color=yellow>MOCK_ARG_IN_EDITOR</color>: `{MOCK_ARGS_DICT_STR}`");
