@@ -20,38 +20,52 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
         private KcpTransport kcpTransport;
 
         
-        private void Start() => base.Init();
+        private void Start() => base.InitArgs();
 
-        protected override void InitMemo(string _memoStr)
+        protected override void InitArgMemo(string _memoStr)
         {
-            base.InitMemo(_memoStr);
+            base.InitArgMemo(_memoStr);
             HathoraMirrorClientMgrUi.Singleton.SetShowDebugMemoTxt(_memoStr);
         }
 
-        protected override void StartServer()
+        protected override void ArgModeStartServer()
         {
-            base.StartServer();
+            base.ArgModeStartServer();
 
-            if (!NetworkServer.active)
-                return;
-            
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
+            if (NetworkServer.active)
+                return;
+
             Debug.Log("[HathoraMirrorArgHandler] Starting Server ...");
             manager.StartServer();
         }
 
-        protected override void StartClient()
+        protected override void ArgModeStartClient()
         {
-            base.StartClient();
+            base.ArgModeStartClient();
             
-            if (!NetworkClient.active)
-                return;
-
+            // It's very possible this already started, if Mirror's NetworkManager
+            // Auto join clients checkbox is true
+            if (NetworkClient.active)
+                return; // We don't want to start 2x
             
             Debug.Log("[HathoraMirrorArgHandler] Starting Client to " +
                 $"{manager.networkAddress}:{kcpTransport.Port} (TODO_PROTOCOL) ...");
             manager.StartClient();
+        }
+        
+        protected override void ArgModeStartHost()
+        {
+            // base.StartHost(); // We don't want to just StartServer -> StartClient().
+
+            // It's very possible this already started, if Mirror's NetworkManager
+            // start on headless checkbox is true
+            if (NetworkServer.active)
+                return; // We don't want to start 2x
+            
+            Debug.Log("[HathoraMirrorArgHandler] Starting Host (Server+Client) ...");
+            manager.StartHost(); // Different from FishNet
         }
     }
 }

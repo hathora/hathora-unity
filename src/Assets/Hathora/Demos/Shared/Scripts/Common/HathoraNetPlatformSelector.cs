@@ -12,9 +12,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
     /// </summary>
     public class HathoraNetPlatformSelector : MonoBehaviour
     {
-        /// <summary>We only load scene once on init</summary>
-        public static bool LoadSceneConsumed;
-        
         [Serializable]
         public enum NetPlatform
         {
@@ -40,12 +37,12 @@ namespace Hathora.Demos.Shared.Scripts.Common
             {
                 case NetPlatform.FishNet:
                     Debug.Log($"{logPrefix} FishNet");
-                    _ = LoadSceneOnceAsync("HathoraDemoScene-FishNet");
+                    _ = LoadSceneOnceFromArgAsync("HathoraDemoScene-FishNet");
                     break;
 
                 case NetPlatform.Mirror:
                     Debug.Log($"{logPrefix} Mirror");
-                    _ = LoadSceneOnceAsync("HathoraDemoScene-Mirror");
+                    _ = LoadSceneOnceFromArgAsync("HathoraDemoScene-Mirror");
                     break;
 
                 case NetPlatform.NGO:
@@ -65,18 +62,20 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// 
         /// Mostly used for args or initial scene selection.
         /// </summary>
-        /// <param name="_sceneName"></param>
-        public static async Task LoadSceneOnceAsync(string _sceneName)
+        /// <param name="_sceneName">CLI Arg passed from `-scene {sceneName}`.</param>
+        public static async Task LoadSceneOnceFromArgAsync(string _sceneName)
         {
-            Debug.Log($"[HathoraNetPlatformSelector.LoadSceneAsync] sceneName: {_sceneName}");
+            Debug.Log("[HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync] " +
+                $"sceneName: {_sceneName}");
 
-            if (LoadSceneConsumed)
+            if (HathoraArgHandlerBase.SceneArgConsumed)
             {
                 Debug.LogWarning("[HathoraNetPlatformSelector.LoadSceneAsync] " +
                     "LoadSceneOnceAsync already consumed! Aborting.");
                 return;
             }
-            
+
+            HathoraArgHandlerBase.SceneArgConsumed = true;
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(
                 _sceneName, 
                 LoadSceneMode.Single);
@@ -84,7 +83,5 @@ namespace Hathora.Demos.Shared.Scripts.Common
             while (!asyncLoad.isDone)
                 await Task.Yield();
         }
-        
-        
     }
 }

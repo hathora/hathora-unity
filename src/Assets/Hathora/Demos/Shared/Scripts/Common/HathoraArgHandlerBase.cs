@@ -1,38 +1,80 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Hathora.Demos.Shared.Scripts.Common
 {
     /// <summary>
     /// Commandline helper - run via `-_mode {server|client|host} -memo {someStr}`.
+    /// (!) `-scene` is loaded / awaited before any other cmd.
     /// Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
     /// </summary>
     public abstract class HathoraArgHandlerBase : MonoBehaviour
     {
-        private void Start() => Init();
-
-        protected virtual void Init()
+        #region vars
+        private static bool _sceneArgConsumed;
+        
+        /// <summary>We only trigger this once</summary>
+        public static bool SceneArgConsumed
         {
-            Debug.Log($"[HathoraArgHandlerBase] Init @ scene: {gameObject.scene.name}");
+            get => _sceneArgConsumed;
+            set 
+            {
+                if (value)
+                    Debug.Log($"[HathoraArgHandlerBase] SceneArgConsumed @ {SceneManager.GetActiveScene().name}");
+                
+                _sceneArgConsumed = value;
+            }
+        }
+
+        
+        private static bool _modeArgConsumed;
+        
+        /// <summary>We only trigger this once</summary>
+        public static bool ModeArgConsumed
+        {
+            get => _modeArgConsumed;
+            set 
+            {
+                if (value)
+                    Debug.Log($"[HathoraArgHandlerBase] ModeArgConsumed @ {SceneManager.GetActiveScene().name}");
+                
+                _modeArgConsumed = value;
+            }
+        }
+        #endregion // vars
+        
+        
+        private async void Start() => await InitArgs();
+
+        /// <summary>
+        /// (!) Some args like `-scene` and `-mode` are statically consumed only once
+        /// (eg: reloading the scene won't apply them).</summary>
+        /// <param name="_cmdLineArgsOverrideList">Perhaps for mock testing</param>
+        protected virtual async Task InitArgs(Dictionary<string, string> _cmdLineArgsOverrideList = null)
+        {
+            Debug.Log($"[HathoraArgHandlerBase] Init @ scene: {gameObject.scene.name} " +
+                "(before consuming `-scene` arg, if exists)");
             
-            if (Application.isEditor) 
+            if (Application.isEditor && _cmdLineArgsOverrideList == null)
                 return;
 
-            Dictionary<string, string> args = GetCommandlineArgs();
+            Dictionary<string, string> args = _cmdLineArgsOverrideList ?? GetCommandlineArgs();
 
-            // -_mode {server|client|host} // Logs and start netcode
-            if (args.TryGetValue("-mode", out string mode))
-                InitMode(mode);
-
-            // -memo {string} // Show arbitrary text at bottom of screen
-            if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
-                InitMemo(memoStr);
-            
             // -scene {string} // Load scene by name
             if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
-                InitScene(sceneName);
+                await InitArgScene(sceneName);
+            
+            // -_mode {server|client|host} // Logs and start netcode
+            if (args.TryGetValue("-mode", out string mode))
+                InitArgMode(mode);
+            
+            // -memo {string} // Show arbitrary text at bottom of screen
+            if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
+                InitArgMemo(memoStr);
         }
 
         /// <summary>
@@ -43,12 +85,20 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// - "HathoraDemoScene-UnityNGO"
         /// </summary>
         /// <param name="_sceneName"></param>
-        protected virtual void InitScene(string _sceneName) =>
-            _ = HathoraNetPlatformSelector.LoadSceneOnceAsync(_sceneName);
+        protected virtual async Task InitArgScene(string _sceneName)
+        {
+            if (SceneArgConsumed)
+            {
+                Debug.LogWarning("[HathoraArgHandlerBase.InitMode] SceneArgConsumed, already");
+                return;
+            }
+            
+            await HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync(_sceneName);
+        }
 
         /// <summary>Override me -> Set memoStr in UI</summary>
         /// <param name="_memoStr"></param>
-        protected virtual void InitMemo(string _memoStr) =>
+        protected virtual void InitArgMemo(string _memoStr) =>
             Debug.Log($"[HathoraArgHandler.InitMemo] {_memoStr}");
         
         /// <summary>
@@ -56,39 +106,50 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// - "client" -> StartClient()
         /// - "host" -> StartHost() // server+client together
         /// </summary>
-        protected virtual void InitMode(string _mode)
+        protected virtual void InitArgMode(string _mode)
         {
+            if (ModeArgConsumed)
+            {
+                Debug.LogWarning("[HathoraArgHandlerBase.InitMode] ModeArgConsumed, already");
+                return;
+            }
+            
             Debug.Log($"[HathoraArgHandlerBase.InitMode] {_mode}");
+            ModeArgConsumed = true;
+
             switch (_mode)
             {
                 case "server":
-                    StartServer();
+                    ArgModeStartServer();
                     break;
                 
                 case "client":
-                    StartClient();
+                    ArgModeStartClient();
                     break;
                 
                 case "host":
-                    StartHost();
+                    ArgModeStartHost();
                     break;
             }
         }
 
-        /// <summary>Both server *and* client.OR, override me</summary>
-        protected virtual void StartHost()
-        {
-            Debug.Log("[HathoraArgHandlerBase.StartHost] (server+client)");
-            StartServer();
-            StartClient();
-        }
-        
-        protected virtual void StartServer() =>
+        protected virtual void ArgModeStartServer() =>
             Debug.Log("[HathoraArgHandlerBase] StartServer");
 
-        protected virtual void StartClient() =>
+        protected virtual void ArgModeStartClient() =>
             Debug.Log("[HathoraArgHandlerBase] StartClient");
 
+        /// <summary>
+        /// Both server *and* client.
+        /// Most NetCode just allows StartServer() -> StartClient(); override if not.
+        /// </summary>
+        protected virtual void ArgModeStartHost()
+        {
+            Debug.Log("[HathoraArgHandlerBase.StartHost] (server+client) Starting...");
+            ArgModeStartServer();
+            ArgModeStartClient();
+        }
+        
         
         #region Utils
         protected static Dictionary<string, string> GetCommandlineArgs()
