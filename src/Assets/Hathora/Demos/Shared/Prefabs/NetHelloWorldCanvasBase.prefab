@@ -37,10 +37,10 @@ RectTransform:
   m_Father: {fileID: 3330625038774648248}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -174}
-  m_SizeDelta: {x: 147, y: 37}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -153.4272}
+  m_SizeDelta: {x: 147, y: 30.1424}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &4008572534361851586
 CanvasRenderer:
@@ -318,10 +318,10 @@ RectTransform:
   m_Father: {fileID: 1340666379586977453}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 18.086, y: -18.5}
-  m_SizeDelta: {x: 36.172, y: 37}
+  m_AnchoredPosition: {x: 18.085999, y: -0.0710001}
+  m_SizeDelta: {x: 36.171997, y: 0.1420002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4774882332606104314
 CanvasRenderer:
@@ -360,8 +360,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 1325400063
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0.30588236}
+    rgba: 4278255608
+  m_fontColor: {r: 0.972549, g: 1, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -460,7 +460,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 147, y: 37}
+  m_SizeDelta: {x: 147, y: 30.1424}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &208879228370826387
 CanvasRenderer:
@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 2707931863147780690}
   - component: {fileID: 2707931863147780689}
   m_Layer: 5
-  m_Name: NetClientLblTxt
+  m_Name: NetStartClientLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -839,8 +839,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 362, y: -19}
-  m_SizeDelta: {x: 400, y: 37}
+  m_AnchoredPosition: {x: 362, y: -15.071}
+  m_SizeDelta: {x: 400, y: 30.142}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2707931863147780690
 CanvasRenderer:
@@ -1055,7 +1055,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 147, y: 37}
+  m_SizeDelta: {x: 147, y: 30.1424}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2707931863469968445
 CanvasRenderer:
@@ -1303,7 +1303,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 147, y: 37}
+  m_SizeDelta: {x: 147, y: 30.1424}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2707931864174298636
 CanvasRenderer:
@@ -1447,7 +1447,7 @@ GameObject:
   - component: {fileID: 2707931864296491009}
   - component: {fileID: 2707931864296491008}
   m_Layer: 5
-  m_Name: NetServerLblTxt
+  m_Name: NetStartServerLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1470,8 +1470,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 362, y: -19}
-  m_SizeDelta: {x: 400, y: 37}
+  m_AnchoredPosition: {x: 362, y: -15.071}
+  m_SizeDelta: {x: 400, y: 30.142}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2707931864296491009
 CanvasRenderer:
@@ -1742,8 +1742,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1877,8 +1877,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2012,10 +2012,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.15
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 33
@@ -2066,7 +2066,7 @@ GameObject:
   - component: {fileID: 4573085717632850749}
   - component: {fileID: 3408159397730756698}
   m_Layer: 5
-  m_Name: NetServerLblTxt
+  m_Name: NetStartHostLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2089,8 +2089,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 362, y: -19}
-  m_SizeDelta: {x: 400, y: 37}
+  m_AnchoredPosition: {x: 362, y: -15.071}
+  m_SizeDelta: {x: 400, y: 30.142}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4573085717632850749
 CanvasRenderer:
@@ -2222,10 +2222,10 @@ RectTransform:
   m_Father: {fileID: 8361206718488458873}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 18.086, y: -18.5}
-  m_SizeDelta: {x: 36.172, y: 37}
+  m_AnchoredPosition: {x: 18.086, y: -0.0710001}
+  m_SizeDelta: {x: 36.172, y: 0.1420002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &250738251848006707
 CanvasRenderer:
@@ -2265,7 +2265,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 1325400063
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0.30588236}
+  m_fontColor: {r: 0.972549, g: 1, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2336,7 +2336,7 @@ GameObject:
   - component: {fileID: 2911791521283823469}
   - component: {fileID: 3200352245581937804}
   m_Layer: 5
-  m_Name: NetServerLblTxt
+  m_Name: NetStopServerLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2359,8 +2359,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 362, y: -19}
-  m_SizeDelta: {x: 400, y: 37}
+  m_AnchoredPosition: {x: 362, y: -15.071}
+  m_SizeDelta: {x: 400, y: 30.142}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2911791521283823469
 CanvasRenderer:
@@ -2553,8 +2553,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2607,7 +2607,7 @@ GameObject:
   - component: {fileID: 3224276766608668893}
   - component: {fileID: 941703840885178212}
   m_Layer: 5
-  m_Name: NetServerLblTxt
+  m_Name: NetStopHostLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2630,8 +2630,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 362, y: -19}
-  m_SizeDelta: {x: 400, y: 37}
+  m_AnchoredPosition: {x: 362, y: -15.071}
+  m_SizeDelta: {x: 400, y: 30.142}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3224276766608668893
 CanvasRenderer:
@@ -2767,10 +2767,10 @@ RectTransform:
   m_Father: {fileID: 3330625038774648248}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -174}
-  m_SizeDelta: {x: 147, y: 37}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -102.284805}
+  m_SizeDelta: {x: 147, y: 30.1424}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &4219458751614162800
 CanvasRenderer:
@@ -3071,8 +3071,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3206,8 +3206,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3361,7 +3361,7 @@ GameObject:
   - component: {fileID: 8259718148921566708}
   - component: {fileID: 6434183772792732784}
   m_Layer: 5
-  m_Name: NetClientLblTxt
+  m_Name: NetStopClientLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3384,8 +3384,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 362, y: -19}
-  m_SizeDelta: {x: 400, y: 37}
+  m_AnchoredPosition: {x: 362, y: -15.071}
+  m_SizeDelta: {x: 400, y: 30.142}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8259718148921566708
 CanvasRenderer:
@@ -3663,10 +3663,10 @@ RectTransform:
   m_Father: {fileID: 1745506024769857348}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 18.086, y: -18.5}
-  m_SizeDelta: {x: 36.172, y: 37}
+  m_AnchoredPosition: {x: 18.086, y: 0}
+  m_SizeDelta: {x: 36.172, y: 0.0000038147}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2273438814262526108
 CanvasRenderer:
@@ -3706,7 +3706,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 1325400063
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0.30588236}
+  m_fontColor: {r: 0.972549, g: 1, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3802,10 +3802,10 @@ RectTransform:
   m_Father: {fileID: 3330625038774648248}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -58}
-  m_SizeDelta: {x: 147, y: 37}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -51.142403}
+  m_SizeDelta: {x: 147, y: 30.1424}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5753911538951956239
 CanvasRenderer:
