@@ -1884,7 +1884,7 @@ PrefabInstance:
     - target: {fileID: 4194415798059259002, guid: 127b03e81323ad14ca3d3a53f8f2eded,
         type: 3}
       propertyPath: m_Name
-      value: EnvWrapper
+      value: EnvWrapper-URP
       objectReference: {fileID: 0}
     - target: {fileID: 4194415798059259005, guid: 127b03e81323ad14ca3d3a53f8f2eded,
         type: 3}
