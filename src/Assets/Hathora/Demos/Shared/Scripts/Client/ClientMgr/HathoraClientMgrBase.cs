@@ -12,6 +12,7 @@ using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
@@ -23,16 +24,22 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     public abstract class HathoraClientMgrBase : MonoBehaviour
     {
         #region Serialized Fields
+        [FormerlySerializedAs("HathoraClientConfig")]
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
-        protected HathoraClientConfig HathoraClientConfig;
-        
+        private HathoraClientConfig hathoraClientConfig;
+        protected HathoraClientConfig HathoraClientConfig => hathoraClientConfig;
+
+        [FormerlySerializedAs("HathoraClientSession")]
         [Header("Session, APIs")]
         [SerializeField]
-        protected HathoraClientSession HathoraClientSession;
+        private HathoraClientSession hathoraClientSession;
+        protected HathoraClientSession HathoraClientSession => hathoraClientSession;
         
+        [FormerlySerializedAs("ClientApis")]
         [SerializeField]
-        protected ClientApiContainer ClientApis;
+        private ClientApiContainer clientApis;
+        protected ClientApiContainer ClientApis => clientApis;
         #endregion // Serialized Fields
         
         
@@ -48,10 +55,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         private void Awake() => OnAwake();
         private void Start() => OnStart();
 
-        protected virtual void OnAwake()
-        {
-            // setSingleton(); // TODO: Override me + implement in child class 
-        }
+        /// <summary>setSingleton()</summary>
+        protected abstract void OnAwake();
 
         /// <summary>Override OnStart and call this before anything.</summary>
         /// <param name="_netClientMgrUiBase"></param>
@@ -62,40 +67,36 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         protected virtual void OnStart()
         {
-            AssertUsingValidNetConfig();
-            InitApis(
-                HathoraClientConfig, 
-                _hathoraSdkConfig: null); // Base will create this
+            validateReqs();
+            initApis(_hathoraSdkConfig: null); // Base will create this
         }
         
         /// <summary>
+        /// Init all Client API wrappers. Uses serialized HathoraClientConfig
         /// </summary>
-        /// <param name="_netHathoraConfig"></param>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        private void InitApis(
-            HathoraClientConfig _netHathoraConfig, 
-            Configuration _hathoraSdkConfig = null)
+        private void initApis(Configuration _hathoraSdkConfig = null)
         {
-            if (ClientApis.ClientAuthApi != null)
-                ClientApis.ClientAuthApi.Init(_netHathoraConfig, _hathoraSdkConfig);
+            if (clientApis.ClientAuthApi != null)
+                clientApis.ClientAuthApi.Init(hathoraClientConfig, _hathoraSdkConfig);
             
-            if (ClientApis.ClientLobbyApi != null)
-                ClientApis.ClientLobbyApi.Init(_netHathoraConfig, _hathoraSdkConfig);
+            if (clientApis.ClientLobbyApi != null)
+                clientApis.ClientLobbyApi.Init(hathoraClientConfig, _hathoraSdkConfig);
 
-            if (ClientApis.ClientRoomApi != null)
-                ClientApis.ClientRoomApi.Init(_netHathoraConfig, _hathoraSdkConfig);
+            if (clientApis.ClientRoomApi != null)
+                clientApis.ClientRoomApi.Init(hathoraClientConfig, _hathoraSdkConfig);
         }
 
-        public virtual void AssertUsingValidNetConfig()
+        public virtual void validateReqs()
         {
             // Are we using any Client Config at all?
-            bool hasConfig = HathoraClientConfig != null;
-            bool hasAppId = HathoraClientConfig.HasAppId;
+            bool hasConfig = hathoraClientConfig != null;
+            bool hasAppId = hathoraClientConfig.HasAppId;
             bool hasUiInstance = netClientMgrUiBase != null;
             bool hasNoAppIdButHasUiInstance = !hasAppId && hasUiInstance;
             
             if (!hasConfig || hasNoAppIdButHasUiInstance)
-                netClientMgrUiBase.SetInvalidConfig(HathoraClientConfig);
+                netClientMgrUiBase.SetInvalidConfig(hathoraClientConfig);
         }
 
         // // TODO: implement me in child class:
@@ -126,7 +127,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected bool ValidateServerConfigConnectionInfo()
         {
             // Validate host:port connection info
-            if (!HathoraClientSession.CheckIsValidServerConnectionInfo())
+            if (!hathoraClientSession.CheckIsValidServerConnectionInfo())
             {
                 OnConnectFailed("Invalid ServerConnectionInfo");
                 return false; // !success
@@ -148,7 +149,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             IsConnecting = true;
 
             Debug.Log("[HathoraClientBase.SetConnectingState] Connecting to: " + 
-                $"{HathoraClientSession.GetServerInfoIpPort()} via " +
+                $"{hathoraClientSession.GetServerInfoIpPort()} via " +
                 $"NetworkManager.{_transportName} transport");
         }
         
@@ -166,7 +167,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             AuthResult result;
             try
             {
-                result = await ClientApis.ClientAuthApi.ClientAuthAsync();
+                result = await clientApis.ClientAuthApi.ClientAuthAsync();
             }
             catch
             {
@@ -174,7 +175,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 return;
             }
            
-            HathoraClientSession.InitNetSession(result.PlayerAuthToken);
+            hathoraClientSession.InitNetSession(result.PlayerAuthToken);
             OnAuthLoginComplete(result.IsSuccess);
         }
 
@@ -190,8 +191,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Lobby lobby;
             try
             {
-                lobby = await ClientApis.ClientLobbyApi.ClientCreateLobbyAsync(
-                    HathoraClientSession.PlayerAuthToken,
+                lobby = await clientApis.ClientLobbyApi.ClientCreateLobbyAsync(
+                    hathoraClientSession.PlayerAuthToken,
                     _visibility,
                     _region);
             }
@@ -202,7 +203,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 return;
             }
             
-            HathoraClientSession.Lobby = lobby;
+            hathoraClientSession.Lobby = lobby;
             OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
 
@@ -215,7 +216,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Lobby lobby;
             try
             {
-                lobby = await ClientApis.ClientLobbyApi.ClientGetLobbyInfoAsync(_roomId);
+                lobby = await clientApis.ClientLobbyApi.ClientGetLobbyInfoAsync(_roomId);
             }
             catch (Exception e)
             {
@@ -224,7 +225,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 return;
             }
 
-            HathoraClientSession.Lobby = lobby;
+            hathoraClientSession.Lobby = lobby;
             OnCreateOrJoinLobbyCompleteAsync(lobby);
         }
         
@@ -237,7 +238,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             List<Lobby> lobbies;
             try
             {
-                lobbies = await ClientApis.ClientLobbyApi.ClientListPublicLobbiesAsync();
+                lobbies = await clientApis.ClientLobbyApi.ClientListPublicLobbiesAsync();
             }
             catch (Exception e)
             {
@@ -245,7 +246,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 throw new NotImplementedException("TODO: Get lobbies err handling UI");
             }
 
-            HathoraClientSession.Lobbies = lobbies;
+            hathoraClientSession.Lobbies = lobbies;
             OnViewPublicLobbiesComplete(lobbies);
         }
         
@@ -258,7 +259,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             ConnectionInfoV2 connectionInfo;
             try
             {
-                connectionInfo = await ClientApis.ClientRoomApi.ClientGetConnectionInfoAsync(_roomId);
+                connectionInfo = await clientApis.ClientRoomApi.ClientGetConnectionInfoAsync(_roomId);
             }
             catch (Exception e)
             {
@@ -267,7 +268,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 return; // fail
             }
             
-            HathoraClientSession.ServerConnectionInfo = connectionInfo;
+            hathoraClientSession.ServerConnectionInfo = connectionInfo;
             OnGetActiveConnectionInfoComplete(connectionInfo);
         }
         #endregion // Interactions from UI

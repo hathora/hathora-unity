@@ -85,7 +85,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         public void OnAuthLoginBtnClick()
         {
-            hathoraClientMgrBase.AssertUsingValidNetConfig();
+            hathoraClientMgrBase.validateReqs();
                 
             SetShowAuthTxt("<color=yellow>Logging in...</color>");
             _ = hathoraClientMgrBase.AuthLoginAsync(); // !await
