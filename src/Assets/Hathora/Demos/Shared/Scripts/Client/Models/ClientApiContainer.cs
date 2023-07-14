@@ -8,17 +8,18 @@ using UnityEngine.Serialization;
 namespace Hathora.Demos.Shared.Scripts.Client.Models
 {
     /// <summary>
-    /// Client API wrapper container to serialize in HathoraPlayer.
-    /// Have a new Hathora API to add?
+    /// Client API wrapper container to serialize in HathoraManager (in scene).
     /// 
-    /// 1. Serialize it here, and add to HathoraClientMgrBase.InitApis()
-    /// 
-    /// 2. Open scene HathoraManager (not prefab) >> Add new API script component
-    ///    to Hathora{Platform}ClientMgr.ClientApis >> serialize the script component
+    /// -> Have a new Hathora API to add?
+    /// 1. Serialize it here, and add to `HathoraClientMgrBase.InitApis()`
+    /// 2. Open scene `HathoraManager` GameObj (not prefab)
+    /// 3. Add the new script component to HathoraManager.Hathora{Platform}ClientMgr.ClientApis
+    /// 4. Add a new script[] to ClientApis container -> drag the script into the serialized field
     /// </summary>
     [Serializable]
     public struct ClientApiContainer
     {
+        [Header("Hathora Client API wrappers")]
         [FormerlySerializedAs("authApi")]
         [SerializeField]
         private HathoraNetClientAuthApi clientAuthApi;
