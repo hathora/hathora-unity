@@ -39,7 +39,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         #region Init
         protected override void OnAwake()
         {
-            base.OnAwake();
             setSingleton();
         }
 

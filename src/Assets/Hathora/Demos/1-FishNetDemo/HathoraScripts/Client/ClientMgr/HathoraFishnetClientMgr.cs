@@ -30,7 +30,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         #region Init
         protected override void OnAwake()
         {
-            base.OnAwake();
             setSingleton();
         }
 

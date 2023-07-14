@@ -73,7 +73,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
             catch (ApiException apiException)
             {
-                HandleClientApiException(
+                HandleApiException(
                     nameof(HathoraNetClientLobbyApi),
                     nameof(ClientCreateLobbyAsync), 
                     apiException);
@@ -111,7 +111,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
             catch (ApiException apiException)
             {
-                HandleClientApiException(
+                HandleApiException(
                     nameof(HathoraNetClientLobbyApi),
                     nameof(ClientGetLobbyInfoAsync), 
                     apiException);
@@ -152,7 +152,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
             catch (ApiException apiException)
             {
-                HandleClientApiException(
+                HandleApiException(
                     nameof(HathoraNetClientLobbyApi),
                     nameof(ClientListPublicLobbiesAsync), 
                     apiException);

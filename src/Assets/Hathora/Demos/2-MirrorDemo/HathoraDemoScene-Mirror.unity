@@ -908,10 +908,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30db761ed8fdc554789848d59360285d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HathoraClientConfig: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a,
+  hathoraClientConfig: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a,
     type: 2}
-  HathoraClientSession: {fileID: 2078239013}
-  ClientApis:
+  hathoraClientSession: {fileID: 2078239013}
+  clientApis:
     clientAuthApi: {fileID: 2078239010}
     clientLobbyApi: {fileID: 2078239009}
     clientRoomApi: {fileID: 2078239008}

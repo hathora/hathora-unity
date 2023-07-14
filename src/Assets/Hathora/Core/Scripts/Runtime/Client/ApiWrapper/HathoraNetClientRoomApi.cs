@@ -69,7 +69,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 }
                 catch(ApiException apiException)
                 {
-                    HandleClientApiException(
+                    HandleApiException(
                         nameof(HathoraNetClientRoomApi),
                         nameof(ClientGetConnectionInfoAsync), 
                         apiException);
