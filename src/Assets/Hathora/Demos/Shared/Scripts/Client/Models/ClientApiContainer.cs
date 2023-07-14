@@ -1,50 +1,37 @@
 // Created by dylan@hathora.dev
 
 using System;
-using Hathora.Cloud.Sdk.Client;
-using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.ApiWrapper;
-using Hathora.Core.Scripts.Runtime.Client.Config;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Hathora.Demos.Shared.Scripts.Client.Models
 {
     /// <summary>
-    /// API wrapper container to serialize in HathoraPlayer.
+    /// Client API wrapper container to serialize in HathoraPlayer.
     /// Have a new Hathora API to add?
-    /// 1. Serialize it here and add to InitAll().
-    /// 2. Open `Player` prefab >> Add new API script component to NetworkManager.
-    /// 3. Drag the new API component to the serialized field here.
+    /// 
+    /// 1. Serialize it here, and add to HathoraClientMgrBase.InitApis()
+    /// 
+    /// 2. Open scene HathoraManager (not prefab) >> Add new API script component
+    ///    to Hathora{Platform}ClientMgr.ClientApis >> serialize the script component
     /// </summary>
     [Serializable]
     public struct ClientApiContainer
     {
         [FormerlySerializedAs("authApi")]
         [SerializeField]
-        public HathoraNetClientAuthApi clientAuthApi;
+        private HathoraNetClientAuthApi clientAuthApi;
+        public HathoraNetClientAuthApi ClientAuthApi => clientAuthApi;
         
         [FormerlySerializedAs("lobbyApi")]
         [SerializeField]
-        public HathoraNetClientLobbyApi clientLobbyApi;
+        private HathoraNetClientLobbyApi clientLobbyApi;
+        public HathoraNetClientLobbyApi ClientLobbyApi => clientLobbyApi;
 
         [FormerlySerializedAs("roomApi")]
         [SerializeField]
-        public HathoraNetClientRoomApi clientRoomApi;
-        
-        
-        /// <summary>
-        /// </summary>
-        /// <param name="_netHathoraConfig"></param>
-        /// <param name="_netSession"></param>
-        /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        public void InitAll(
-            HathoraClientConfig _netHathoraConfig, 
-            Configuration _hathoraSdkConfig = null)
-        {
-            clientAuthApi.Init(_netHathoraConfig, _hathoraSdkConfig);
-            clientLobbyApi.Init(_netHathoraConfig, _hathoraSdkConfig);
-            clientRoomApi.Init(_netHathoraConfig, _hathoraSdkConfig);
-        }
+        private HathoraNetClientRoomApi clientRoomApi;
+        public HathoraNetClientRoomApi ClientRoomApi => clientRoomApi;
     }
 }

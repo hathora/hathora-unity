@@ -4,13 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client.Models;
-using Mirror;
 using UnityEngine;
 
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
@@ -63,12 +63,27 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected virtual void OnStart()
         {
             AssertUsingValidNetConfig();
-
-            ClientApis.InitAll(
+            InitApis(
                 HathoraClientConfig, 
                 _hathoraSdkConfig: null); // Base will create this
+        }
+        
+        /// <summary>
+        /// </summary>
+        /// <param name="_netHathoraConfig"></param>
+        /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
+        private void InitApis(
+            HathoraClientConfig _netHathoraConfig, 
+            Configuration _hathoraSdkConfig = null)
+        {
+            if (ClientApis.ClientAuthApi != null)
+                ClientApis.ClientAuthApi.Init(_netHathoraConfig, _hathoraSdkConfig);
             
-            // TODO: Override + sub to any callbacks events, such as connection state updates 
+            if (ClientApis.ClientLobbyApi != null)
+                ClientApis.ClientLobbyApi.Init(_netHathoraConfig, _hathoraSdkConfig);
+
+            if (ClientApis.ClientRoomApi != null)
+                ClientApis.ClientRoomApi.Init(_netHathoraConfig, _hathoraSdkConfig);
         }
 
         public virtual void AssertUsingValidNetConfig()
@@ -151,7 +166,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             AuthResult result;
             try
             {
-                result = await ClientApis.clientAuthApi.ClientAuthAsync();
+                result = await ClientApis.ClientAuthApi.ClientAuthAsync();
             }
             catch
             {
@@ -175,7 +190,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Lobby lobby;
             try
             {
-                lobby = await ClientApis.clientLobbyApi.ClientCreateLobbyAsync(
+                lobby = await ClientApis.ClientLobbyApi.ClientCreateLobbyAsync(
                     HathoraClientSession.PlayerAuthToken,
                     _visibility,
                     _region);
@@ -200,7 +215,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Lobby lobby;
             try
             {
-                lobby = await ClientApis.clientLobbyApi.ClientGetLobbyInfoAsync(_roomId);
+                lobby = await ClientApis.ClientLobbyApi.ClientGetLobbyInfoAsync(_roomId);
             }
             catch (Exception e)
             {
@@ -222,7 +237,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             List<Lobby> lobbies;
             try
             {
-                lobbies = await ClientApis.clientLobbyApi.ClientListPublicLobbiesAsync();
+                lobbies = await ClientApis.ClientLobbyApi.ClientListPublicLobbiesAsync();
             }
             catch (Exception e)
             {
@@ -243,7 +258,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             ConnectionInfoV2 connectionInfo;
             try
             {
-                connectionInfo = await ClientApis.clientRoomApi.ClientGetConnectionInfoAsync(_roomId);
+                connectionInfo = await ClientApis.ClientRoomApi.ClientGetConnectionInfoAsync(_roomId);
             }
             catch (Exception e)
             {
