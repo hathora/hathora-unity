@@ -92,13 +92,13 @@ FROM ubuntu
 # Copy the server build files into the container, if Dockerfile is @ parent
 COPY {relativePathToBuildDir} .
 
-# Give execute permission for the script
-RUN chmod +x ./{_serverPaths.ExeBuildName}
-
 # Update system and install certificates
 RUN apt-get update && \
     apt-get install -y ca-certificates && \
     update-ca-certificates
+
+# Give execute permission for the script
+RUN chmod +x ./{_serverPaths.ExeBuildName}
 
 # Run the Linux server in headless mode as a dedicated server
 # Add `-scene <sceneName>` to load a scene before loading the mode

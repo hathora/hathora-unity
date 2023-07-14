@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
@@ -29,8 +30,30 @@ namespace Hathora.Core.Scripts.Runtime.Server
         #endregion // Serialized Fields
         
         public static HathoraServerMgr Singleton { get; private set; }
-        Process process;
         
+        Process systemHathoraProcess;
+        
+        /// <summary>
+        /// systemHathoraProcess tries to set async @ Awake, but it could still take some time.
+        /// We'll await until != null for 5s before timing out. 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Process> GetSystemHathoraProcessAsync()
+        {
+            CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(5));
+
+            while (systemHathoraProcess == null)
+            {
+                if (cancellationTokenSource.IsCancellationRequested)
+                    throw new TimeoutException("[HathoraServerMgr.GetProcessAsync] Timed out");
+
+                await Task.Delay(
+                    TimeSpan.FromMilliseconds(100), 
+                    cancellationTokenSource.Token);
+            }
+
+            return systemHathoraProcess;
+        }        
         
         #region Init
         private void Awake()
@@ -42,6 +65,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
             Debug.Log("[HathoraServerMgr] Awake");
             setSingleton();
+            
+            // Unlike Client calls, we can init immediately @ Awake
+            validateReqs();
+            initApis(_hathoraSdkConfig: null); // Base will create this
+            _ = getHathoraProcessAsync(); // !await
         }
 
         private void setSingleton()
@@ -57,12 +85,10 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
             Singleton = this;
         }
-
+        
         private void Start()
         {
-            validateReqs();
-            initApis(_hathoraSdkConfig: null); // Base will create this
-            _ = getHathoraProcessAsync(); // !await
+
         }
 
         /// <summary>
@@ -80,7 +106,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             if (!hasHathoraProcId)
                 return;
             
-            this.process = await serverApis.ServerProcessApi.GetProcessInfoAsync(HATHORA_PROCESS_ID);
+            this.systemHathoraProcess = await serverApis.ServerProcessApi.GetProcessInfoAsync(HATHORA_PROCESS_ID);
         }
 
         private void validateReqs()
