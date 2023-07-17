@@ -2,6 +2,8 @@
 
 ![image](https://assetstorev1-prd-cdn.unity3d.com/key-image/44946285-5088-4f57-b51b-a996184da940.webp)
 
+(To install the plugin, check out our [installation guide](https://github.com/hathora/unity-plugin))
+
 This guide helps you setup:
 
 1. Low-level Hathora SDK and high-level SDK wrapper.
