@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using kcp2k;
@@ -69,21 +70,36 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Interactions from UI
-        public override void StartServer() => 
+        public override Task StartServer()
+        {
             NetworkManager.singleton.StartServer();
+            return Task.CompletedTask;
+        }
 
-        public override void StartClient() => 
+        public override Task StartClient()
+        {
             NetworkManager.singleton.StartClient();
+            return Task.CompletedTask;
+        }
 
-        public override void StopHost() =>
+        public override Task StopHost()
+        {
             NetworkManager.singleton.StopHost();
+            return Task.CompletedTask;
+        }
 
-        public override void StopServer() => 
+        public override Task StopServer()
+        {
             NetworkManager.singleton.StopServer();
+            return Task.CompletedTask;
+        }
 
-        public override void StopClient() => 
+        public override Task StopClient()
+        {
             NetworkManager.singleton.StopClient();
-        
+            return Task.CompletedTask;
+        }
+
         /// <summary>
         /// Connect to the Server as a Client via net code. Uses cached vals.
         /// Currently uses Mirror.Kcp (UDP) transport.
@@ -91,7 +107,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// <returns>
         /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
         /// </returns>
-        public override bool ConnectAsClient()
+        public override Task<bool> ConnectAsClient()
         {
             Debug.Log("[HathoraMirrorClient] ConnectAsync (expecting `Kcp` transport)");
 
@@ -102,7 +118,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             // Validate; UI and err handling is handled within
             bool isReadyToConnect = ValidateIsReadyToConnect(); // Handles UI + logs within
             if (!isReadyToConnect)
-                return false; // !startedConnection
+                return Task.FromResult(false); // !startedConnection
 
             // -----------------
             // Set port + host (ip)
@@ -112,7 +128,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             
             // Connect now => cb @ OnClientConnected()
             StartClient();
-            return true; // startedConnection; continued @ OnClientConnected()
+            return Task.FromResult(false); // startedConnection; continued @ OnClientConnected()
         }
 
         private bool ValidateIsReadyToConnect()

@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System.Threading.Tasks;
 using FishNet;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
@@ -63,20 +64,35 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             StartClient();
         }
 
-        public override void StartServer() =>
+        public override Task StartServer()
+        {
             InstanceFinder.ServerManager.StartConnection();
-        
-        public override void StartClient() =>
-            InstanceFinder.ClientManager.StartConnection();
-        
-        public override void StopHost() =>
-            StopServer(); // StopServer() will also stop the client
+            return Task.CompletedTask;
+        }
 
-        public override void StopServer() =>
+        public override Task StartClient()
+        {
+            InstanceFinder.ClientManager.StartConnection();
+            return Task.CompletedTask;
+        }
+
+        public override Task StopHost()
+        {
+            StopServer(); // StopServer() will also stop the client
+            return Task.CompletedTask;
+        }
+
+        public override Task StopServer()
+        {
             InstanceFinder.ServerManager.StopConnection(sendDisconnectMessage: true);
-        
-        public override void StopClient() =>
+            return Task.CompletedTask;
+        }
+
+        public override Task StopClient()
+        {
             InstanceFinder.ClientManager.StopConnection();
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Connect to the Server as a Client via net code. Uses cached vals.
@@ -86,7 +102,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// <returns>
         /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
         /// </returns>
-        public override bool ConnectAsClient()
+        public override Task<bool> ConnectAsClient()
         {
             Debug.Log("[HathoraFishnetClient] ConnectAsync");
             
@@ -97,7 +113,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             // Validate; UI and err handling is handled within
             bool isReadyToConnect = ValidateIsReadyToConnect(InstanceFinder.ClientManager, transport);
             if (!isReadyToConnect)
-                return false; // !startedConnection
+                return Task.FromResult(false); // !startedConnection
 
             // -----------------
             // Set port + host (ip)
@@ -107,7 +123,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             
             // Connect now => cb @ OnClientConnected()
             bool startedConnection = InstanceFinder.ClientManager.StartConnection();
-            return startedConnection;
+            return Task.FromResult(startedConnection);
         }
 
         private bool ValidateIsReadyToConnect(

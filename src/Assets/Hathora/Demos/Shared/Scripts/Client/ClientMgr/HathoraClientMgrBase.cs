@@ -115,12 +115,12 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         
         #region Interactions from UI
-        public abstract bool ConnectAsClient();
-        public abstract void StartServer();
-        public abstract void StartClient();
-        public abstract void StopHost();
-        public abstract void StopServer();
-        public abstract void StopClient();      
+        public abstract Task<bool> ConnectAsClient();
+        public abstract Task StartServer();
+        public abstract Task StartClient();
+        public abstract Task StopHost();
+        public abstract Task StopServer();
+        public abstract Task StopClient();      
         
         /// <summary>If !success, call OnConnectFailed().</summary>
         /// <returns>isValid</returns>

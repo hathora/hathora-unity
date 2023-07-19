@@ -2140,10 +2140,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f6013a6e61c214fadd13e0bb0cf12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HathoraClientConfig: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a,
+  hathoraClientConfig: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a,
     type: 2}
-  HathoraClientSession: {fileID: 2078239007}
-  ClientApis:
+  hathoraClientSession: {fileID: 2078239007}
+  clientApis:
     clientAuthApi: {fileID: 2078239010}
     clientLobbyApi: {fileID: 2078239009}
     clientRoomApi: {fileID: 2078239008}
