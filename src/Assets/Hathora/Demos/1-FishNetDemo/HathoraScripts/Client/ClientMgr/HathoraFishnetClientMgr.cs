@@ -58,10 +58,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         
         #region Interactions from UI
-        public void StartHost()
+        public override async Task StartHost()
         {
-            StartServer();
-            StartClient();
+            await StartServer();
+            await StartClient();
         }
 
         public override Task StartServer()

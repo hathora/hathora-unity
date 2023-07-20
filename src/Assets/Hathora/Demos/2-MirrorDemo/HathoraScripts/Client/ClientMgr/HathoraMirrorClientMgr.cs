@@ -82,6 +82,12 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             return Task.CompletedTask;
         }
 
+        public override Task StartHost()
+        {
+            NetworkManager.singleton.StartHost();
+            return Task.CompletedTask;
+        }
+
         public override Task StopHost()
         {
             NetworkManager.singleton.StopHost();
