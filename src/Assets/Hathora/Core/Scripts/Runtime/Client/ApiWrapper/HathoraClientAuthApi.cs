@@ -12,11 +12,16 @@ using UnityEngine;
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 {
     /// <summary>
-    /// * Call Init() to pass UserConfig/instances.
-    /// * Does not handle UI.
-    /// * Does not handle Session caching.
+    /// High-level API wrapper for the low-level Hathora SDK's Auth API.
+    /// * Caches SDK Config and HathoraClientConfig for API use. 
+    /// * Try/catches async API calls and [Base] automatically handlles API Exceptions.
+    /// * Due to code autogen, the SDK exposes too much: This simplifies and minimally exposes.
+    /// * Due to code autogen, the SDK sometimes have nuances: This provides fixes/workarounds.
+    /// * Call Init() to pass HathoraClientConfig + Hathora SDK Config (see HathoraClientMgr).
+    /// * Does not handle UI (see HathoraClientMgrUi).
+    /// * Does not handle Session caching (see HathoraClientSession).
     /// </summary>
-    public class HathoraNetClientAuthApi : HathoraNetClientApiBase
+    public class HathoraClientAuthApi : HathoraClientApiWrapperBase
     {
         private AuthV1Api authApi;
 
@@ -43,7 +48,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         public async Task<AuthResult> ClientAuthAsync(CancellationToken _cancelToken = default)
         {
             Debug.Log("[HathoraNetClientAuthApi] ClientAuthAsync");
-
+            
             LoginResponse anonLoginResult;
             try
             {
@@ -54,7 +59,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             catch (ApiException apiException)
             {
                 HandleApiException(
-                    nameof(HathoraNetClientAuthApi),
+                    nameof(HathoraClientAuthApi),
                     nameof(ClientAuthAsync), 
                     apiException);
                 return null;

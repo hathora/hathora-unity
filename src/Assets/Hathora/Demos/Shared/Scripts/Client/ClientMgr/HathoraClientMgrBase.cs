@@ -191,6 +191,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Region _region,
             CreateLobbyRequest.VisibilityEnum _visibility = CreateLobbyRequest.VisibilityEnum.Public,
             string _initConfigJsonStr = "{}",
+            string _roomId = null,
             CancellationToken _cancelToken = default)
         {
             Lobby lobby;
@@ -201,6 +202,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                     _visibility,
                     _region,
                     _initConfigJsonStr,
+                    _roomId,
                     _cancelToken);
             }
             catch (Exception e)
