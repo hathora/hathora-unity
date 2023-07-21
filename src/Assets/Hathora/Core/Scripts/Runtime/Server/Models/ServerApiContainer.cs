@@ -19,11 +19,27 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     [Serializable]
     public struct ServerApiContainer
     {
-        [FormerlySerializedAs("serverProcessApiWrapper")]
-        [FormerlySerializedAs("_serverProcessApi")]
         [Header("Hathora Server [runtime] API wrappers")]
+        [SerializeField]
+        private HathoraServerAppApi serverAppApi;
+        public HathoraServerAppApi ServerAppApi => serverAppApi;
+        
+        // [SerializeField] // Not generally intended for runtime use
+        // private HathoraServerBuildApi serverBuildApi;
+        // public HathoraServerBuildApi ServerBuildApi => serverBuildApi;
+        //
+        // [SerializeField] // Not generally intended for runtime use
+        // private HathoraServerDeployApi serverDeployApi;
+        // public HathoraServerDeployApi ServerDeployApi => serverDeployApi;
+        
+        [FormerlySerializedAs("_serverProcessApi")]
         [SerializeField]
         private HathoraServerProcessApi serverProcessApi;
         public HathoraServerProcessApi ServerProcessApi => serverProcessApi;
+        
+        [SerializeField]
+        private HathoraServerRoomApi serverRoomApi;
+        public HathoraServerRoomApi ServerRoomApi => serverRoomApi;
+        
     }
 }

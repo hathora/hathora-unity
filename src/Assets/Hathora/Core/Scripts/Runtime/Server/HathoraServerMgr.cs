@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEngine;
 
@@ -19,20 +20,64 @@ namespace Hathora.Core.Scripts.Runtime.Server
     /// </summary>
     public class HathoraServerMgr : MonoBehaviour
     {
-        #region Serialized Fields
+        #region Vars
         [Header("(!) Top menu: Hathora/ServerConfigFinder")]
         [SerializeField]
         private HathoraServerConfig hathoraServerConfig;
+        public HathoraServerConfig HathoraServerConfig
+        {
+            get {
+				#if !UNITY_SERVER && !UNITY_EDITOR
+				Debug.LogError("[HathoraServerMgr] (!) Tried to get hathoraServerConfig " +
+                    "from Server when NOT a <server || editor>");
+				return null;
+				#endif // !UNITY_SERVER && !UNITY_EDITOR
+
+                if (hathoraServerConfig == null)
+                {
+                    Debug.LogError("[HathoraServerMgr.hathoraServerConfig.get] HathoraServerMgr exists, " +
+                        "but !HathoraServerConfig -- Did you forget to serialize a config into your scene?");
+                }
+
+                return hathoraServerConfig;
+            }
+        }
         
         [Header("API Wrappers for Hathora SDK")]
         [SerializeField]
         private ServerApiContainer serverApis;
-        #endregion // Serialized Fields
         
-        public static HathoraServerMgr Singleton { get; private set; }
+        /// <summary>
+        /// Get the Hathora Server SDK API wrappers for all Server APIs.
+        /// (!) There may be high-level variants of the calls here; check 1st!
+        /// </summary>
+        public ServerApiContainer ServerApis => serverApis;
+
+        private static HathoraServerMgr _singleton;
+        public static HathoraServerMgr Singleton
+        {
+            get {
+                if (_singleton == null)
+                {
+                    Debug.LogError("[HathoraServerMgr.Singleton.get] " +
+                        "!Singleton -- Did you forget to add a `HathoraServerMgr` " +
+                        "script to your scene (via a `HathoraManager` prefab?");
+                    return null;
+                }
+
+                return _singleton;
+            }
+            private set => _singleton = value;
+        }
         
-        Process systemHathoraProcess;
-        
+        /// <summary>
+        /// (!) This is set async on Awake; check for null.
+        /// For the public accessor, `see GetSystemHathoraProcessAsync()`.
+        /// </summary>
+        private Process systemHathoraProcess;
+        #endregion // Vars
+
+
         /// <summary>
         /// systemHathoraProcess tries to set async @ Awake, but it could still take some time.
         /// We'll await until != null for 5s before timing out. 
@@ -40,12 +85,23 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <returns></returns>
         public async Task<Process> GetSystemHathoraProcessAsync()
         {
+            if (hathoraServerConfig == null)
+                return null;
+
+            if (systemHathoraProcess != null)
+                return systemHathoraProcess;
+            
+            // ------------
+            // Await up to 5s to become !null =>
             CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(5));
+            await HathoraTaskUtils.WaitUntil(() => 
+                systemHathoraProcess != null, 
+                _cancelToken: cancellationTokenSource.Token);
 
             while (systemHathoraProcess == null)
             {
                 if (cancellationTokenSource.IsCancellationRequested)
-                    throw new TimeoutException("[HathoraServerMgr.GetProcessAsync] Timed out");
+                    throw new TimeoutException("[HathoraServerMgr.GetSystemHathoraProcessAsync] Timed out");
 
                 await Task.Delay(
                     TimeSpan.FromMilliseconds(100), 
@@ -64,10 +120,10 @@ namespace Hathora.Core.Scripts.Runtime.Server
             #endif // !UNITY_SERVER
 
             Debug.Log("[HathoraServerMgr] Awake");
+            setSingleton();
             
             // Unlike Client calls, we can init immediately @ Awake
             validateReqs();
-            setSingleton();
             initApis(_hathoraSdkConfig: null); // Base will create this
             
             _ = getHathoraProcessAsync(); // !await
@@ -85,11 +141,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
 
             Singleton = this;
-        }
-        
-        private void Start()
-        {
-
         }
 
         /// <summary>
@@ -112,14 +163,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         private void validateReqs()
         {
-            if (hathoraServerConfig != null)
-                return;
-            
-            Debug.Log("[HathoraServerMgr] <color=orange>(!) !HathoraServerConfig; " +
-                $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} - " +
-                $"Destroying this optional `{name}` component " +
-                "(used for runtime Hathora Server SDK events) ...");
-            Destroy(this);
+            if (hathoraServerConfig == null)
+            {
+                Debug.LogError("[HathoraServerMgr] !HathoraServerConfig; " +
+                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)}");
+            }
         }
         
         /// <summary>
