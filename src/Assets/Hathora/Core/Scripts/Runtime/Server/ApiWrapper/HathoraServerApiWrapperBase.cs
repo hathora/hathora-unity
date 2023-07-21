@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using UnityEngine;
@@ -33,11 +34,27 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             this.HathoraServerConfig = _hathoraServerConfig;
             this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
         }
-        
-        public Configuration GenerateSdkConfig() => new()
+
+        public Configuration GenerateSdkConfig()
         {
-            AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-        };        
+            Configuration sdkConfig = null;
+            try
+            {
+                sdkConfig = new Configuration()
+                {
+                    AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+                };
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[HathoraServerApiWrapperBase.GenerateSdkConfig] " +
+                    "Failed to generate SDK config (is your HathoraClientConfig AppId set, " +
+                    $"and serialized @ HathoraManager.HathoraXClientMgr?): {e.Message}");
+                throw;
+            }
+
+            return sdkConfig;
+        }
         #endregion // Init
         
 
