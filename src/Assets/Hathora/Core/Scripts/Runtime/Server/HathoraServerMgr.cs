@@ -64,10 +64,10 @@ namespace Hathora.Core.Scripts.Runtime.Server
             #endif // !UNITY_SERVER
 
             Debug.Log("[HathoraServerMgr] Awake");
-            setSingleton();
             
             // Unlike Client calls, we can init immediately @ Awake
             validateReqs();
+            setSingleton();
             initApis(_hathoraSdkConfig: null); // Base will create this
             
             _ = getHathoraProcessAsync(); // !await
@@ -112,11 +112,14 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         private void validateReqs()
         {
-            if (hathoraServerConfig == null)
-            {
-                Debug.LogError("[HathoraServerMgr] !HathoraServerConfig; " +
-                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)}");
-            }
+            if (hathoraServerConfig != null)
+                return;
+            
+            Debug.Log("[HathoraServerMgr] <color=orange>(!) !HathoraServerConfig; " +
+                $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} - " +
+                $"Destroying this optional `{name}` component " +
+                "(used for runtime Hathora Server SDK events) ...");
+            Destroy(this);
         }
         
         /// <summary>
