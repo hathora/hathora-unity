@@ -132,7 +132,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
             if (hathoraServerConfig == null)
             {
                 Debug.LogError("[HathoraServerMgr] !HathoraServerConfig; " +
-                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)}");
+                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} (if you want " +
+                    $"server runtime calls from Server standalone || Editor");
             }
         }
         
