@@ -1966,6 +1966,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3964277563861138990, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: hathoraServerConfig
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6730436419053282267, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -2382,6 +2387,9 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7870911237288074961, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
     - {fileID: 6730436421059953483, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
+    - {fileID: 3835845685163830001, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
+    - {fileID: 1722805162799269922, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
+    - {fileID: 1671723813878938375, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
 --- !u!114 &6730436420086812907 stripped
 MonoBehaviour:
