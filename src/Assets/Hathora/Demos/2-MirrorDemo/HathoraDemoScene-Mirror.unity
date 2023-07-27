@@ -1004,6 +1004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48de3a7b4532d1b4fa44338d18a2c635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mockArgsInEditor: 0
   manager: {fileID: 1194941214106636809}
   kcpTransport: {fileID: 1194941214106636810}
 --- !u!114 &1194941214106636809

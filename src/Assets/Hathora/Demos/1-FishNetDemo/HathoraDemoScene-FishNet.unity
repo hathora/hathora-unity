@@ -2714,6 +2714,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fa31be64a6c5034e94f8f234539d631, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mockArgsInEditor: 0
 --- !u!1001 &8791311662459583026
 PrefabInstance:
   m_ObjectHideFlags: 0
