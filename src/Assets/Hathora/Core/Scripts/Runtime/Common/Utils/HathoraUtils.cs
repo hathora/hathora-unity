@@ -2,6 +2,11 @@
 
 using System;
 using System.IO;
+using System.Net;
+using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
 using Application = UnityEngine.Application;
 
@@ -56,6 +61,24 @@ namespace Hathora.Core.Scripts.Runtime.Common.Utils
             return $"{_dateTime.Value.ToShortDateString()} {_dateTime.Value.ToShortTimeString()}";
         }
 
+        /// <summary>Returns null on null || MinValue</summary>
+        public static string GetFriendlyDateTimeDiff(
+            TimeSpan _duration, 
+            bool _exclude0)
+        {
+            int totalHours = (int)_duration.TotalHours;
+            int totalMinutes = (int)_duration.TotalMinutes % 60;
+            int totalSeconds = (int)_duration.TotalSeconds % 60;
+            
+            if (totalHours > 0 || !_exclude0)
+                return $"{totalHours}h:{totalMinutes}m:{totalSeconds}s";
+            
+            return totalMinutes > 0 
+                ? $"{totalMinutes}m:{totalSeconds}s" 
+                : $"{totalSeconds}s";
+        }
+
+
         /// <summary>
         /// </summary>
         /// <param name="_startTime"></param>
@@ -68,16 +91,32 @@ namespace Hathora.Core.Scripts.Runtime.Common.Utils
             bool exclude0)
         {
             TimeSpan duration = _endTime - _startTime;
-            int totalHours = (int)duration.TotalHours;
-            int totalMinutes = (int)duration.TotalMinutes % 60;
-            int totalSeconds = (int)duration.TotalSeconds % 60;
-            
-            if (totalHours > 0 || !exclude0)
-                return $"{totalHours}h:{totalMinutes}m:{totalSeconds}s";
-            
-            return totalMinutes > 0 
-                ? $"{totalMinutes}m:{totalSeconds}s" 
-                : $"{totalSeconds}s";
+
+            return GetFriendlyDateTimeDiff(duration, exclude0);
+        }
+        
+        /// <summary>
+        /// Useful for creating a deep copy of a class obj. For example, with the Hathora Sdk Config.
+        /// JSON serialization: Similar to binary serialization, but uses JSON as an intermediary format.
+        /// It's simpler and doesn't require [Serializable] attribute but might be slower and
+        /// has limitations with some complex types.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T DeepCopy<T>(T obj)
+        {
+            var json = JsonConvert.SerializeObject(obj);
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        /// <summary>This can return more than 1 IP, but we just return the 1st</summary>
+        /// <param name="_host"></param>
+        /// <returns></returns>
+        public static async Task<IPAddress> ConvertHostToIpAddress(string _host)
+        {
+            IPAddress[] ips = await Dns.GetHostAddressesAsync(_host);
+            return ips.FirstOrDefault();
         }
     }
 }

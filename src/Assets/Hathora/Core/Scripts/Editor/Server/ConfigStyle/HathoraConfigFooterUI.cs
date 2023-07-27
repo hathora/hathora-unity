@@ -90,7 +90,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
             isDeployLogsFoldoutHeaderOpen = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isDeployLogsFoldoutHeaderOpen, 
-                "Deploy Logs");
+                @"""Deploy Application"" logs");
             
             // USER INPUT >>
             if (!isDeployLogsFoldoutHeaderOpen)
@@ -119,7 +119,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 
             isBuildLogsFoldoutHeaderOpen = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isBuildLogsFoldoutHeaderOpen, 
-                "Build Logs");
+                @"""Generate Server Build"" logs");
             
             // USER INPUT >>
             if (!isBuildLogsFoldoutHeaderOpen)

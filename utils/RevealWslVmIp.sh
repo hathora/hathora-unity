@@ -1,3 +1,4 @@
+#!/bin/bash
 ################################################################
 # If `localhost` doesn't work for you when testing a localhost`
 #   Linux server via WSL2 in Windows, then use this script

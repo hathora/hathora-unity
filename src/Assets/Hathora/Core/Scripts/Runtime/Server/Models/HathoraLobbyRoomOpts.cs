@@ -35,8 +35,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
         /// Since this Enum isn't alphabatized, also care if you Sort() the list.
         /// </summary>
+        [FormerlySerializedAs("hathoraRegionSelectedIndexUi")]
         [SerializeField]
-        private int hathoraRegionSelectedIndexUi = (int)Region.Seattle;
+        private int _hathoraRegionSelectedIndexUi = (int)Region.Seattle;
         
         /// <summary>
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
@@ -44,8 +45,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// </summary>
         public int SortedRegionSelectedIndexUi
         {
-            get => hathoraRegionSelectedIndexUi;
-            set => hathoraRegionSelectedIndexUi = value;
+            get => _hathoraRegionSelectedIndexUi;
+            set => _hathoraRegionSelectedIndexUi = value;
         }
 
 
@@ -61,7 +62,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// We check if there's a RoomId, and null checking leading up to it.
         /// </summary>
         public bool HasLastCreatedRoomConnection => 
-            !string.IsNullOrEmpty(_lastCreatedRoomConnection?.Room?.RoomId) && _lastCreatedRoomConnection?.ConnectionInfoV2?.ExposedPort != null;
+            !string.IsNullOrEmpty(_lastCreatedRoomConnection?.Room?.RoomId ?? string.Empty) && 
+            _lastCreatedRoomConnection?.ConnectionInfoV2?.ExposedPort != null;
+
+        /// <summary>
+        /// Checks if room has IsError *only*. Returns false if connection is null.
+        /// </summary>
+        public bool HasLastCreatedRoomConnectionErr => _lastCreatedRoomConnection?.IsError ?? false;
         #endregion // Hathora Region
     }
 }

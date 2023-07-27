@@ -15,7 +15,13 @@ using Debug = UnityEngine.Debug;
 namespace Hathora.Core.Scripts.Editor.Common
 {
     /// <summary>
-    /// Editor script to add the Hathora banner to an editor window
+    /// Editor script to add useful Editor utils for Hathora:
+    /// - Color and hyperlink constants.
+    /// - Hathora banner to an editor window.
+    /// - Common style utils.
+    /// - File utils, including ".hathora" dir helpers. 
+    /// - Terminal Process cmd handling.
+    /// - DateTime parsing.
     /// </summary>
     public static class HathoraEditorUtils
     {
@@ -57,6 +63,10 @@ namespace Hathora.Core.Scripts.Editor.Common
         public const string HATHORA_PINK_CANCEL_COLOR_HEX = "#ff4265";
         public const string HATHORA_GRAY_TRANSPARENT_COLOR_HEX = "#919191CC"; // 60% opacity
         public const string HATHORA_LINK_COLOR_HEX = "#02FE57";
+        
+        /// <summary>(!) Be sure to pair with an ending /color tag</summary>
+        public static string StartGreenColor => 
+            $"<color={HATHORA_GREEN_COLOR_HEX}>";
         
         public static GUIStyle GetRichFoldoutHeaderStyle() => new(EditorStyles.foldoutHeader) { richText = true };
         public static readonly RectOffset DefaultPadding = new(left: 1, right: 1, top: 0, bottom: 0);

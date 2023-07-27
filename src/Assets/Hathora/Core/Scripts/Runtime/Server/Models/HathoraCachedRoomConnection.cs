@@ -32,7 +32,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         private RoomWrapper _roomWrapper;
         public Room Room
         {
-            get => _roomWrapper.ToRoomType();
+            get => _roomWrapper?.ToRoomType();
             set => _roomWrapper = new RoomWrapper(value);
         }
         
@@ -40,11 +40,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         private ConnectionInfoV2Wrapper _connectionInfoV2Wrapper;
         public ConnectionInfoV2 ConnectionInfoV2
         {
-            get => _connectionInfoV2Wrapper.ToConnectionInfoV2Type();
+            get => _connectionInfoV2Wrapper?.ToConnectionInfoV2Type();
             set => _connectionInfoV2Wrapper = new ConnectionInfoV2Wrapper(value);
         }
-        
-        
+
+        public bool IsError { get; set; }
+        public string ErrReason { get; set; }
+
         public HathoraCachedRoomConnection(
             Region _region,
             Room _room, 
@@ -54,6 +56,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             this.HathoraRegion = _region;
             this.Room = _room;
             this.ConnectionInfoV2 = _connectionInfoV2;
+        }
+        
+        /// <summary>
+        /// Use this to mock the obj for a failure.
+        /// </summary>
+        public HathoraCachedRoomConnection()
+        {
         }
 
         /// <summary>

@@ -497,6 +497,44 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             return inputStr;
         }
         
+        /// <summary>
+        /// {label} {tooltip} {checkbox}
+        /// </summary>
+        /// <param name="_labelStr"></param>
+        /// <param name="_tooltip"></param>
+        /// <param name="_val"></param>
+        /// <param name="_alignCheckbox"></param>
+        /// <returns>isChecked</returns>
+        protected bool InsertHorizLabeledCheckboxField(
+            string _labelStr,
+            string _tooltip,
+            bool _val,
+            GuiAlign _alignCheckbox = GuiAlign.Stretched)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            InsertLabel(_labelStr, _tooltip);
+    
+            if (_alignCheckbox == GuiAlign.SmallRight)
+                InsertFlexSpace();
+
+            float maxToggleWidth = _alignCheckbox == GuiAlign.Stretched
+                ? -1f
+                : DEFAULT_MAX_FIELD_WIDTH;
+    
+            // USER INPUT >>
+            bool isChecked = GUILayout.Toggle(
+                _val, 
+                text: "", 
+                getDefaultInputLayoutOpts(_maxWidth: maxToggleWidth));
+    
+            if (_alignCheckbox == GuiAlign.SmallLeft)
+                InsertFlexSpace();
+
+            EditorGUILayout.EndHorizontal();
+            return isChecked;
+        }
+        
         public enum EnumListOpts
         {
             AsIs,

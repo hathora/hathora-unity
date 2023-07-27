@@ -10,15 +10,16 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
-    public class HathoraServerBuildApi : HathoraServerApiBase
+    public class HathoraServerBuildApi : HathoraServerApiWrapperBase
     {
         private readonly BuildV1Api buildApi;
+        private volatile bool uploading;
 
-        
         /// <summary>
         /// </summary>
         /// <param name="_hathoraServerConfig"></param>
@@ -54,7 +55,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (ApiException apiException)
             {
-                HandleServerApiException(
+                HandleApiException(
                     nameof(HathoraServerBuildApi),
                     nameof(CreateBuildAsync), 
                     apiException);
@@ -69,7 +70,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
         /// <summary>
         /// Wrapper for `RunBuildAsync` to upload the _tarball after calling CreateBuildAsync().
-        /// (!) After this is done
+        /// (!) Temporarily sets the Timeout to 15min (900k ms) to allow for large builds.
+        /// (!) After this is done, you probably want to call GetBuildInfoAsync().
         /// </summary>
         /// <param name="_buildId"></param>
         /// <param name="_pathToTarGzBuildFile">Ensure path is normalized</param>
@@ -80,25 +82,51 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _pathToTarGzBuildFile,
             CancellationToken _cancelToken = default)
         {
-            byte[] cloudRunBuildResultLogsStream;
-                
+            byte[] cloudRunBuildResultLogsStream = null;
+
+            #region Timeout Workaround
+            // Temporarily sets the Timeout to 15min (900k ms) to allow for large builds.
+            // Since Timeout has no setter, we need to temporarily make a new api instance.
+            Configuration highTimeoutConfig = HathoraUtils.DeepCopy(base.HathoraSdkConfig);
+            highTimeoutConfig.Timeout = (int)TimeSpan.FromMinutes(15).TotalMilliseconds;
+
+            BuildV1Api highTimeoutBuildApi = new(highTimeoutConfig);
+            #endregion // Timeout Workaround
+         
+            uploading = true;
+
             try
             {
-                await using FileStream fileStream = new(_pathToTarGzBuildFile, FileMode.Open, FileAccess.Read);
-                
-                cloudRunBuildResultLogsStream = await buildApi.RunBuildAsync(
+                _ = startProgressNoticeAsync(); // !await
+
+                await using FileStream fileStream = new(
+                    _pathToTarGzBuildFile,
+                    FileMode.Open,
+                    FileAccess.Read);
+
+                // (!) Using the `highTimeoutBuildApi` workaround instance here
+                cloudRunBuildResultLogsStream = await highTimeoutBuildApi.RunBuildAsync(
                     HathoraServerConfig.HathoraCoreOpts.AppId,
                     _buildId,
                     fileStream,
                     _cancelToken);
             }
+            catch (TaskCanceledException)
+            {
+                Debug.Log("[HathoraServerBuildApi.RunCloudBuildAsync] Task Cancelled || timed out");
+            }
             catch (ApiException apiException)
             {
-                HandleServerApiException(
+                HandleApiException(
                     nameof(HathoraServerBuildApi),
-                    nameof(RunCloudBuildAsync), 
+                    nameof(RunCloudBuildAsync),
                     apiException);
+
                 return null;
+            }
+            finally
+            {
+                uploading = false;
             }
 
             Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] Done - " +
@@ -110,7 +138,21 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             return logChunks;  // streamLogs 
         }
-        
+
+        private async Task startProgressNoticeAsync()
+        {
+            TimeSpan delayTimespan = TimeSpan.FromSeconds(5);
+            StringBuilder sb = new("...");
+            
+            while (uploading)
+            {
+                Debug.Log($"[HathoraServerBuild] Uploading {sb}");
+                
+                await Task.Delay(delayTimespan);
+                sb.Append(".");
+            }
+        }
+
         /// <summary>
         /// DONE - not necessarily success. Log stream every 500 lines
         /// (!) Unity, by default, truncates logs to 1k chars (including callstack).
@@ -158,7 +200,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (ApiException apiException)
             {
-                HandleServerApiException(
+                HandleApiException(
                     nameof(HathoraServerBuildApi),
                     nameof(GetBuildInfoAsync), 
                     apiException);

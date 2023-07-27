@@ -3,6 +3,7 @@
 using Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEditor;
+using UnityEngine;
 
 namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
 {
@@ -127,7 +128,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         //     EditorGUILayout.Space(10f);
         //
         //     EditorGUILayout.BeginVertical(GUI.skin.box);
-        //     GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+        //     GUILayout.Label($"{HathoraEditorUtils.StartHathoraGreenColor}" +
         //         "Customize via `Linux Auto Build Opts`</color>", CenterAlignLabelStyle);
         //     insertBuildBtn(_serverConfig);
         //     EditorGUILayout.EndVertical();
@@ -135,7 +136,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         //     EditorGUILayout.Space(10f);
         //
         //     EditorGUILayout.BeginVertical(GUI.skin.box);
-        //     GUILayout.Label($"<color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>" +
+        //     GUILayout.Label($"{HathoraEditorUtils.StartHathoraGreenColor}" +
         //         "Customize via `Hathora Deploy Opts`</color>", CenterAlignLabelStyle);
         //     insertHathoraDeployBtn(_serverConfig);
         //     EditorGUILayout.EndVertical();
@@ -166,5 +167,21 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         //     GUI.enabled = true;
         // }
         #endregion // Core Buttons
+        
+        
+        #region Meta
+        /// <summary>Change the icon of the ScriptableObject in the Project window.</summary>
+        public override Texture2D RenderStaticPreview(
+            string assetPath,
+            Object[] subAssets,
+            int width,
+            int height)
+        {
+            Texture2D icon = Resources.Load<Texture2D>("Icons/HathoraSmall");
+            return icon == null 
+                ? base.RenderStaticPreview(assetPath, subAssets, width, height) // Default fallback
+                : icon; // our custom icon
+        }
+        #endregion // Meta
     }
 }
