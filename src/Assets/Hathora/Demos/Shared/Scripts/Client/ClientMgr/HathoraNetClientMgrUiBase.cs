@@ -394,7 +394,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 ui.InvalidConfigPnl.SetActive(true);
 
                 throw new Exception($"[{nameof(hathoraClientMgrBase)}] !HathoraClientConfig.AppId - " +
-                    "Set one at Assets/Hathora/HathoraClientConfig");
+                    "Set one at Assets/Hathora/HathoraClientConfig. **For Non-host Servers, you may ignore this**");
             }
             
             bool isTemplate = _config.name.Contains(".template");
