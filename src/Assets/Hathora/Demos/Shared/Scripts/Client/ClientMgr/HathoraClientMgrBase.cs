@@ -57,9 +57,23 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         #region Init
         private void Awake() => OnAwake();
         private void Start() => OnStart();
+        
+        protected virtual void OnAwake()
+        {
+            SetSingleton();
+            SetTransport();
+        }
 
-        /// <summary>setSingleton()</summary>
-        protected abstract void OnAwake();
+        /// <summary>
+        /// You want other classes to easily be able to access your ClientMgr
+        /// </summary>
+        protected abstract void SetSingleton();
+
+        /// <summary>
+        /// For NetCode, there are generally different transports for WebGL.
+        /// Handle these with `#if UNITY_WEBGL`, perhaps. 
+        /// </summary>
+        protected virtual void SetTransport() { }
 
         /// <summary>Override OnStart and call this before anything.</summary>
         /// <param name="_netClientMgrUiBase"></param>

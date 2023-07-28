@@ -5,6 +5,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using kcp2k;
 using Mirror;
+using Mirror.SimpleWeb;
 using UnityEngine;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
@@ -38,23 +39,37 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
-        protected override void OnAwake()
-        {
-            setSingleton();
-        }
+        /// <summary>SetSingleton(), SetTransport()</summary>
+        protected override void OnAwake() =>
+            base.OnAwake();
 
-        private void setSingleton()
+        protected override void SetSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraMirrorClient]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraMirrorClient]**ERR @ SetSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }
 
             Singleton = this;
         }
-        
+
+        /// <summary>We want to use a different transport !UDP, such as WebGL.</summary>
+        protected override void SetTransport()
+        {
+            base.SetTransport();
+            
+            // Default is Kcp (UDP) >> We also want to consider WebGL builds
+            
+            #if UNITY_WEBGL
+            NetworkManager.singleton.transport =
+                NetworkManager.singleton.gameObject.AddComponent<SimpleWebTransport>();
+            #endif // UNITY_WEBGL
+            
+            // TODO: Consider other protocols
+        }
+
         protected override void OnStart()
         {
             base.InitOnStart(HathoraMirrorClientMgrUi.Singleton);

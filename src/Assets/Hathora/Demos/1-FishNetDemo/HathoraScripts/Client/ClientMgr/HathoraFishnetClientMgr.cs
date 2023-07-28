@@ -2,8 +2,10 @@
 
 using System.Threading.Tasks;
 using FishNet;
+using FishNet.Managing;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
+using FishNet.Transporting.Bayou;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
@@ -29,23 +31,42 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         
         #region Init
-        protected override void OnAwake()
-        {
-            setSingleton();
-        }
+        /// <summary>SetSingleton(), SetTransport()</summary>
+        protected override void OnAwake() =>
+            base.OnAwake();
 
-        private void setSingleton()
+        protected override void SetSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraFishnetClient]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraFishnetClient]**ERR @ SetSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }
 
             Singleton = this;
         }
-        
+
+        /// <summary>We want to use a different transport !UDP, such as WebGL.</summary>
+        protected override void SetTransport()
+        {
+            base.SetTransport();
+            
+            // Default is Tugboat (UDP) >> We also want to consider WebGL builds
+            string transportType = "UDP";
+            
+#if UNITY_WEBGL
+            InstanceFinder.NetworkManager.TransportManager.Transport =
+                InstanceFinder.NetworkManager.GetComponent<Bayou>();
+            transportType = "WebGL";
+#endif // UNITY_WEBGL
+            
+            // TODO: Consider other protocols
+
+            Debug.Log("[HathoraFishnetClientMgrBase.LogTransportName] " +
+                $"Transport set to `{transport.name}` ({transportType})");
+        }
+
         protected override void OnStart()
         {
             base.InitOnStart(HathoraFishnetClientMgrUi.Singleton);

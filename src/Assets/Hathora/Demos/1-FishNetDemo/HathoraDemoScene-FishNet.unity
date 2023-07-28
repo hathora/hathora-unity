@@ -768,6 +768,7 @@ GameObject:
   - component: {fileID: 8635938460796269350}
   - component: {fileID: 8635938460796269349}
   - component: {fileID: 8635938460796269351}
+  - component: {fileID: 8635938460796269352}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -2715,6 +2716,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mockArgsInEditor: 0
+--- !u!114 &8635938460796269352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1194941214106636804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 362dfd7e6009fb44c90beec3df0ad853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _useWss: 0
+  _sslConfiguration:
+    Enabled: 0
+    CertificatePath: 
+    CertificatePassword: 
+    SslProtocol: 0
+  _mtu: 1023
+  _port: 7770
+  _maximumClients: 2000
+  _clientAddress: localhost
 --- !u!1001 &8791311662459583026
 PrefabInstance:
   m_ObjectHideFlags: 0
