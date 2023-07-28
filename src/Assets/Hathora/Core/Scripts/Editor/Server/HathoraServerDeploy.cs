@@ -229,8 +229,10 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerDeployApi deployApi = new(_serverConfig);
 
                 Deployment deployment = null;
-
-                try { deployment = await deployBuildAsync(deployApi, buildInfo.BuildId); }
+                try
+                {
+                    deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+                }
                 catch (TaskCanceledException e)
                 {
                     Debug.Log($"{logPrefix} deployBuildAsync => Task Cancelled");
