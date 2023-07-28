@@ -2,10 +2,8 @@
 
 using System.Threading.Tasks;
 using FishNet;
-using FishNet.Managing;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
-using FishNet.Transporting.Bayou;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
@@ -63,8 +61,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             
             // TODO: Consider other protocols
 
-            Debug.Log("[HathoraFishnetClientMgrBase.LogTransportName] " +
-                $"Transport set to `{transport.name}` ({transportType})");
+            Debug.Log("[HathoraFishnetClientMgrBase.SetTransport] " +
+                $"Transport set to `{transport}` ({transportType})");
         }
 
         protected override void OnStart()

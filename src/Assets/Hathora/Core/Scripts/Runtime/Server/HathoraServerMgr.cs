@@ -91,6 +91,19 @@ namespace Hathora.Core.Scripts.Runtime.Server
             if (!validateReqs())
                 return;
             
+            // ######################################################################
+            // Transport is already set via ClientMgrBase.SetTransport()
+            // based on build settings. Set at ClientMgr since the
+            // NetworkManager Transports are shared with both Client+Server.
+            //
+            // For all intents and purposes, for now, consider NetworkManager +
+            // Transports all handled @ ClientMgr. The scope gets esp blurry
+            // when the server is both Server + Client ("Host").
+            //
+            // TODO: Mv ClientMgr.StartServer() here and edit memo ^
+            // TODO: Add a `HathoraCommonMgr` for shared code; mv StartHost() here
+            // ######################################################################
+
             // Unlike Client calls, we can init immediately @ Awake
             initApis(_hathoraSdkConfig: null); // Base will create this
 
@@ -102,7 +115,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             
             _ = getHathoraProcessFromEnvVarAsync(); // !await
         }
-        
+
         /// <param name="_overrideProcIdVal">Mock a val for testing within the Editor</param>
         private string getServerDeployedProcessId(string _overrideProcIdVal = null)
         {

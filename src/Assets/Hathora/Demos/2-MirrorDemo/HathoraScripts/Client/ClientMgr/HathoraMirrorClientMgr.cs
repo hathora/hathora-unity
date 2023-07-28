@@ -99,12 +99,12 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
             bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
             bool hasPort = hostPortContainer.port > 0;
+            string protocolStr = "";
 
             // Start FishNet Client via selected Transport
             if (hasHost && hasPort)
             {
                 // UDP == KcpTransport; WebGL (WS) == SimpleWebTransport
-                string protocolStr = "";
                 
 #if UNITY_WEBGL
                     protocolStr = "kcp";
@@ -117,6 +117,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
             else
                 NetworkManager.singleton.StartClient();
+            
+            Debug.Log("[HathoraMirrorClientMgrBase.StartClient] " +
+                $"Transport set to `{transport}` ({protocolStr})");
             
             return Task.CompletedTask;
         }

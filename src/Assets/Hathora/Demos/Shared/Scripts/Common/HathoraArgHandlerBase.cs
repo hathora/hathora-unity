@@ -86,9 +86,9 @@ namespace Hathora.Demos.Shared.Scripts.Common
                 args = MOCK_ARGS_DICT; // Override for debugging
             }
             
-            Debug.Log($"{logPrefix} scene: {gameObject.scene.name} " +
-                "(before consuming `-scene` arg, if exists)");
-
+            string argsStr = string.Join(" ", args.Select(kvp => $"{kvp.Key} {kvp.Value}"));
+            Debug.Log($"{logPrefix} Handling args: {argsStr}");
+            
             // -scene {string} // Load scene by name
             if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
                 await InitArgScene(sceneName);
@@ -112,6 +112,8 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// <param name="_sceneName"></param>
         protected virtual async Task InitArgScene(string _sceneName)
         {
+            Debug.Log($"[HathoraArgHandlerBase] InitArgScene: {_sceneName}");
+            
             if (SceneArgConsumed)
             {
                 Debug.LogWarning("[HathoraArgHandlerBase.InitMode] SceneArgConsumed, already");
@@ -133,6 +135,8 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// </summary>
         protected virtual void InitArgMode(string _mode)
         {
+            Debug.Log($"[HathoraArgHandlerBase] InitArgMode: {_mode}");
+
             if (ModeArgConsumed)
             {
                 Debug.LogWarning("[HathoraArgHandlerBase.InitMode] ModeArgConsumed, already");

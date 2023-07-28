@@ -135,15 +135,23 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         #region Interactions from UI -> Required Overrides
         public abstract Task<bool> ConnectAsClient();
+        
+        /// <summary>TODO: Mv to HathoraServerMgr</summary>
         public abstract Task StartServer();
+
+        /// <summary>TODO: Mv to HathoraServerMgr</summary>
+        public abstract Task StopServer();
 
         /// <param name="_hostPort">host:port provided by Hathora</param>
         public abstract Task StartClient(string _hostPort = null);
         
-        public abstract Task StartHost();
-        public abstract Task StopHost();
-        public abstract Task StopServer();
         public abstract Task StopClient(); 
+        
+        /// <summary>TODO: Create a `HathoraCommonMgr` and mv this</summary>
+        public abstract Task StartHost();
+
+        /// <summary>TODO: Create a `HathoraCommonMgr` and mv this</summary>
+        public abstract Task StopHost();
         #endregion // Interactions from UI -> Required Overrides
        
         
