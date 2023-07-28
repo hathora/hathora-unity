@@ -1,6 +1,6 @@
 {
-    "name": "MirrorSimpleWebTransport",
-    "rootNamespace": "",
+    "name": "BayouSimpleWebTransport",
+    "rootNamespace": "Bayou",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
