@@ -23,6 +23,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
     /// </summary>
     public class HathoraServerMgr : MonoBehaviour
     {
+        // ######################################################################
+        // TODO: Mv ClientMgr.StartServer() here
+        // TODO: Add a `HathoraCommonMgr` for shared code; mv StartHost() here
+        // ######################################################################
+        
         #region Vars
         /// <summary>Set null/empty to !fake a procId in the Editor</summary>
         [SerializeField, Tooltip("When in the Editor, we'll get this Hathora ProcessInfo " +
@@ -90,19 +95,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
             
             if (!validateReqs())
                 return;
-            
-            // ######################################################################
-            // Transport is already set via ClientMgrBase.SetTransport()
-            // based on build settings. Set at ClientMgr since the
-            // NetworkManager Transports are shared with both Client+Server.
-            //
-            // For all intents and purposes, for now, consider NetworkManager +
-            // Transports all handled @ ClientMgr. The scope gets esp blurry
-            // when the server is both Server + Client ("Host").
-            //
-            // TODO: Mv ClientMgr.StartServer() here and edit memo ^
-            // TODO: Add a `HathoraCommonMgr` for shared code; mv StartHost() here
-            // ######################################################################
 
             // Unlike Client calls, we can init immediately @ Awake
             initApis(_hathoraSdkConfig: null); // Base will create this
@@ -114,6 +106,36 @@ namespace Hathora.Core.Scripts.Runtime.Server
 #endif // UNITY_EDITOR
             
             _ = getHathoraProcessFromEnvVarAsync(); // !await
+        }
+
+        /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
+        private void Start()
+        {
+            TransportType configTransport = hathoraServerConfig.HathoraDeployOpts.SelectedTransportType;
+            setServerTransport(configTransport); // Based on HathoraServerConfig Deploy settings
+        }
+
+        /// <summary>
+        /// Set based on HathoraServerConfig deploy settings
+        /// TODO: THIS IS WIP: Make virtual; each NetworkManager/Transport will differ.
+        /// </summary>
+        private void setServerTransport(TransportType _configTransport)
+        {
+            switch (_configTransport)
+            {
+                case TransportType.Udp:
+                    return; // Already set default in most NetCode
+                
+                case TransportType.Tcp:
+                    // TODO: Set NetCode transport to TCP (Clients will connect via WS) for WebGL
+                    return;
+                
+                case TransportType.Tls: // TODO
+                default:
+                    Debug.LogError("[HathoraServerMgr.setServerTransport] (!) " +
+                        $"Unsupported transport type: `{_configTransport}`");
+                    return;
+            }
         }
 
         /// <param name="_overrideProcIdVal">Mock a val for testing within the Editor</param>

@@ -61,7 +61,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected virtual void OnAwake()
         {
             SetSingleton();
-            SetTransport();
+            
+            #if !UNITY_SERVER // We'll handle Server protocol type changes @ ServerMgr
+            SetClientTransport(); // Based on build settings
+            #endif
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// For NetCode, there are generally different transports for WebGL.
         /// Handle these with `#if UNITY_WEBGL`, perhaps. 
         /// </summary>
-        protected virtual void SetTransport() { }
+        protected virtual void SetClientTransport() { }
 
         /// <summary>Override OnStart and call this before anything.</summary>
         /// <param name="_netClientMgrUiBase"></param>

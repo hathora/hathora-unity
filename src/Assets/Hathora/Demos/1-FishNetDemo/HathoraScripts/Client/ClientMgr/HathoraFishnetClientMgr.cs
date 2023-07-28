@@ -47,9 +47,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         }
 
         /// <summary>We want to use a different transport !UDP, such as WebGL.</summary>
-        protected override void SetTransport()
+        protected override void SetClientTransport()
         {
-            base.SetTransport();
+            base.SetClientTransport();
             
             // Default is Tugboat (UDP) >> We also want to consider WebGL builds
             string transportType = "UDP";
