@@ -48,16 +48,17 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             HathoraClientMgr.StartServer();
         }
 
-        public override void OnStartClientBtnClick()
+        /// <param name="_hostPort">host:port provided by Hathora</param>
+        public override void OnStartClientBtnClick(string _hostPort = null)
         {
-            base.OnStartClientBtnClick();
-            HathoraClientMgr.StartClient();
+            base.OnStartClientBtnClick(_hostPort);
+            HathoraClientMgr.StartClient(_hostPort);
         }
 
         public override void OnStartHostBtnClick()
         {
             base.OnStartHostBtnClick();
-            HathoraClientMgr.StartHost();
+            _ = HathoraClientMgr.StartHost();
         }
 
         public override void OnStopServerBtnClick()

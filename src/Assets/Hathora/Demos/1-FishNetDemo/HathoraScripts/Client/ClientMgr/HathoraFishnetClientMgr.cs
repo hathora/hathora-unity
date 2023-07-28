@@ -91,9 +91,23 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             return Task.CompletedTask;
         }
 
-        public override Task StartClient()
+        /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
+        public override Task StartClient(string _hostPort = null)
         {
-            InstanceFinder.ClientManager.StartConnection();
+            (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
+            bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
+            bool hasPort = hostPortContainer.port > 0;
+
+            // Start FishNet Client via selected Transport
+            if (hasHost && hasPort)
+            {
+                InstanceFinder.ClientManager.StartConnection(
+                    hostPortContainer.hostNameOrIp, 
+                    hostPortContainer.port);    
+            }
+            else
+                InstanceFinder.ClientManager.StartConnection();
+            
             return Task.CompletedTask;
         }
 

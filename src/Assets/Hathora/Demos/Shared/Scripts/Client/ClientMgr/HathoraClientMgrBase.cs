@@ -136,7 +136,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         #region Interactions from UI -> Required Overrides
         public abstract Task<bool> ConnectAsClient();
         public abstract Task StartServer();
-        public abstract Task StartClient();
+
+        /// <param name="_hostPort">host:port provided by Hathora</param>
+        public abstract Task StartClient(string _hostPort = null);
+        
         public abstract Task StartHost();
         public abstract Task StopHost();
         public abstract Task StopServer();
@@ -414,5 +417,26 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 friendlyRegion);
         }
         #endregion // Callbacks
+        
+        
+        #region Utils
+        /// <summary>
+        /// This was likely passed in from the UI to override the default NetworkManager (often from Standalone Client).
+        /// Eg: "1.proxy.hathora.dev:12345" -> "1.proxy.hathora.dev", 12345
+        /// </summary>
+        /// <param name="_hostPort"></param>
+        /// <returns></returns>
+        protected static (string hostNameOrIp, ushort port) SplitPortFromHostOrIp(string _hostPort)
+        {
+            if (string.IsNullOrEmpty(_hostPort))
+                return default;
+            
+            string[] hostPortArr = _hostPort.Split(':');
+            string hostNameOrIp = hostPortArr[0];
+            ushort port = ushort.Parse(hostPortArr[1]);
+            
+            return (hostNameOrIp, port);
+        }
+        #endregion // Utils
     }
 }

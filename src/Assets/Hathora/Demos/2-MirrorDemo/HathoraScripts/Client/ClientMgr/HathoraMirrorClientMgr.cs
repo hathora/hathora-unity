@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
@@ -91,9 +92,32 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             return Task.CompletedTask;
         }
 
-        public override Task StartClient()
+        /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
+        public override Task StartClient(string _hostPort = null)
         {
-            NetworkManager.singleton.StartClient();
+            // Start Mirror Client via selected Transport
+            (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
+            bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
+            bool hasPort = hostPortContainer.port > 0;
+
+            // Start FishNet Client via selected Transport
+            if (hasHost && hasPort)
+            {
+                // UDP == KcpTransport; WebGL (WS) == SimpleWebTransport
+                string protocolStr = "";
+                
+#if UNITY_WEBGL
+                    protocolStr = "kcp";
+#else
+                    protocolStr = "udp";
+#endif
+                
+                Uri uri = new($"{protocolStr}://{_hostPort}");
+                NetworkManager.singleton.StartClient();
+            }
+            else
+                NetworkManager.singleton.StartClient();
+            
             return Task.CompletedTask;
         }
 
