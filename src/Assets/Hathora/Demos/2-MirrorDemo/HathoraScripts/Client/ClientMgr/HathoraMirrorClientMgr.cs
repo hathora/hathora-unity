@@ -113,7 +113,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 #endif
                 
                 Uri uri = new($"{protocolStr}://{_hostPort}");
-                NetworkManager.singleton.StartClient();
+                NetworkManager.singleton.StartClient(uri);
             }
             else
                 NetworkManager.singleton.StartClient();
