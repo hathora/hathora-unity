@@ -41,7 +41,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
-            InstanceFinder.ClientManager.StartConnection();
+
+            // Go through Hathora ClientMgr middleware to ensure the correct Transport is used
+            HathoraFishnetClientMgr.Singleton.StartClient();
         }
 
         protected override void ArgModeStartHost()

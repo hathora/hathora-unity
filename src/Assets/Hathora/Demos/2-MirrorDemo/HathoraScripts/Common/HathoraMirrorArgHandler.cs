@@ -49,10 +49,11 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             // Auto join clients checkbox is true
             if (NetworkClient.active)
                 return; // We don't want to start 2x
-            
-            Debug.Log("[HathoraMirrorArgHandler] Starting Client to " +
-                $"{manager.networkAddress}:{kcpTransport.Port} (TODO_PROTOCOL) ...");
-            manager.StartClient();
+
+            Debug.Log("[HathoraMirrorArgHandler] Starting Client ...");
+
+            // Go through Hathora ClientMgr middleware to ensure the correct Transport is used
+            HathoraMirrorClientMgr.Singleton.StartClient();
         }
         
         protected override void ArgModeStartHost()
