@@ -8,11 +8,21 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Application = UnityEngine.Application;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
 {
+    /// <summary>
+    /// Child of HathoraServerMgrBase to handle FishNet-specific Transport setup,
+    /// solely to support beyond UDP - such as TCP (WebGL/WS).
+    /// (!) If you only use UDP, HathoraServerMgrBase will suffice.
+    /// </summary>
     public class HathoraFishnetServerMgr : HathoraServerMgrBase
     {
+        [Header("UDP || TCP (WebGL/WS)?")]
+        [SerializeField, Tooltip("Set UDP || TCP here, or get from HathoraServerConfig?")]
+        private UserTransportType userServerTransportType;
+        
         /// <summary>Shortcuts to the selected Transport instance</summary>
         private static Transport transport
         {
@@ -33,10 +43,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
             HathoraServerConfigSource,
         }
 
-        [Header("UDP || TCP (WebGL/WS)?")]
-        [SerializeField, Tooltip("Set UDP || TCP here, or get from HathoraServerConfig?")]
-        private UserTransportType userServerTransportType;
-        
         public static HathoraServerMgrBase Singleton { get; private set; }
 
         protected override void OnAwake()
@@ -67,6 +73,13 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
         /// <param name="_configTransportType"></param>
         protected override void SetServerTransport(TransportType _configTransportType)
         {
+            if (Application.isEditor)
+            {
+                Debug.LogWarning("[HathoraFishnetServerMgr.SetServerTransport] Skipping, " +
+                    "since we're in the Editor (and already set Transport @ ClientMgr)");
+                return;
+            }
+            
             base.SetServerTransport(_configTransportType);
             
             switch (userServerTransportType)
@@ -118,11 +131,15 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
             Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
             
             Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
-            Assert.IsTrue(bayouWebglTcpWsTransport.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
 
-            transport = bayouWebglTcpWsTransport;
+            // Disable the old (if exists) -> enable the new
             if (tugboatUdpTransport != null)
-                Destroy(tugboatUdpTransport); // Prevent conflicts, just in case - possibly set to same port
+                tugboatUdpTransport.enabled = false;
+            
+            bayouWebglTcpWsTransport.enabled = true;
+
+            // Set the NetworkManager's Transport to the new
+            transport = bayouWebglTcpWsTransport;
         }
     }
 }
