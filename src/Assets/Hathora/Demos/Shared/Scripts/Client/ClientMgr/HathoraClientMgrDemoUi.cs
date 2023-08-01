@@ -80,9 +80,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         #region UI Interactions
         public virtual void OnStartServerBtnClick() { }
 
-        /// <param name="_hostPort">host:port provided by Hathora</param>
-        public virtual void OnStartClientBtnClick(string _hostPort = null) =>
-            Debug.Log($"[HathoraNetClientMgrUiBase.OnStartClientBtnClick] hostPort=={_hostPort}");
+        /// <param name="_hostPortOverride">host:port provided by Hathora</param>
+        public virtual void OnStartClientBtnClick(string _hostPortOverride = null) =>
+            Debug.Log($"[HathoraNetClientMgrUiBase.OnStartClientBtnClick] " +
+                $"_hostPortOverride=={_hostPortOverride} (if null, we'll get from NetworkManager)");
         
         public virtual void OnStartHostBtnClick() { }
         public virtual void OnStopServerBtnClick() { }

@@ -51,23 +51,26 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             HathoraClientMgr.StartServer();
         }
 
-        /// <param name="_hostPort">
+        /// <param name="_hostPortOverride">
         /// Normally passes the host:port provided by Hathora, but FishNet
         /// specifically gets it from the Ui.clientConnectInputField
         /// </param>
-        public override void OnStartClientBtnClick(string _hostPort = null)
+        public override void OnStartClientBtnClick(string _hostPortOverride = null)
         {
             // We want to override hostPort from the input field - np if null
-            _hostPort = HelloWorldDemoUi.ClientConnectInputField.text.Trim();
+            _hostPortOverride = HelloWorldDemoUi.ClientConnectInputField.text.Trim();
             
-            // Validate
-            const string pattern = @"^([\w-]+(\.\w+)*\.[a-zA-Z]{2,}:?[0-9]{1,5})$"; // "{ip||host}:{port}" || "localhost"
-            bool isHostIpPatternMatch = Regex.IsMatch(_hostPort, pattern);
-            Assert.IsTrue(isHostIpPatternMatch, "Expected 'host:port' pattern, " +
-                "such as '1.proxy.hathora.dev:7777' || 'localhost'");
+            if (!string.IsNullOrEmpty(_hostPortOverride))
+            {
+                // Validate input: "{ip||host}:{port}" || "localhost:7777"
+                const string pattern = @"^((localhost:[0-9]{1,5})|(([\w-]+(\.\w+)*\.[a-zA-Z]{2,})|(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)):[0-9]{1,5})$";
+                bool isHostIpPatternMatch = Regex.IsMatch(_hostPortOverride, pattern);
+                Assert.IsTrue(isHostIpPatternMatch, "Expected 'host:port' pattern, " +
+                    "such as '1.proxy.hathora.dev:7777' || 'localhost:7777'");    
+            }
             
-            base.OnStartClientBtnClick(_hostPort);
-            HathoraClientMgr.StartClient(_hostPort);
+            base.OnStartClientBtnClick(_hostPortOverride);
+            HathoraClientMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStartHostBtnClick()

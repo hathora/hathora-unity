@@ -49,8 +49,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             NetworkManager.singleton.StartServer();
         }
 
-        /// <param name="_hostPort">host:port provided by Hathora</param>
-        public override void OnStartClientBtnClick(string _hostPort = null)
+        /// <param name="_hostPortOverride">host:port provided by Hathora</param>
+        public override void OnStartClientBtnClick(string _hostPortOverride = null)
         {
             base.OnStartClientBtnClick();
             NetworkManager.singleton.StartClient();
