@@ -41,6 +41,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
 
         protected override void OnAwake()
         {
+            Debug.Log("[HathoraFishnetServerMgr] OnAwake");
             base.OnAwake();
             setSingleton();
         }
@@ -75,6 +76,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
                 
                 case UserTransportType.TcpWslWebgl:
                     // TODO: Set Bayou transport
+                    setBayouTransport();
                     break;
                 
                 case UserTransportType.HathoraServerConfigSource:
