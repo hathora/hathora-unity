@@ -72,14 +72,16 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
             switch (userServerTransportType)
             {
                 case UserTransportType.UdpDefault:
+                    Debug.Log("[HathoraFishnetServerMgr.SetServerTransport] UserTransportType.UdpDefault");
                     return; // Already set default in most NetCode
                 
                 case UserTransportType.TcpWslWebgl:
-                    // TODO: Set Bayou transport
+                    Debug.Log("[HathoraFishnetServerMgr.SetServerTransport] UserTransportType.TcpWslWebgl");
                     setBayouTransport();
                     break;
                 
                 case UserTransportType.HathoraServerConfigSource:
+                    Debug.Log("[HathoraFishnetServerMgr.SetServerTransport] UserTransportType.HathoraServerConfigSource");
                     setServerTransportViaHathoraConfig(_configTransportType);
                     break;
                     
