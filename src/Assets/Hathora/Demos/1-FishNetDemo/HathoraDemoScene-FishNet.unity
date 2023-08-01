@@ -2302,8 +2302,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugEditorMockProcId: 
-  hathoraServerConfig: {fileID: 0}
-  userServerTransportType: 0
+  hathoraServerConfig: {fileID: 11400000, guid: dd5f324711ba543478ebad7b0003f326,
+    type: 2}
+  userServerTransportType: 2
 --- !u!1001 &6730436420086812906
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2802,7 +2803,7 @@ MonoBehaviour:
   _changeFrameRate: 1
   _frameRate: 144
   _shareIds: 1
-  _startOnHeadless: 1
+  _startOnHeadless: 0
   _limitClientMTU: 1
 --- !u!114 &8635938460796269349
 MonoBehaviour:
