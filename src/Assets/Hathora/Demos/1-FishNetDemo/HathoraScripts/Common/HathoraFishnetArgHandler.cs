@@ -12,7 +12,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
     /// </summary>
     public class HathoraFishnetArgHandler : HathoraArgHandlerBase
     {
-        private void Start() => base.InitArgs();
+        private void Start() => 
+            _ = base.InitArgsAsync();
 
         protected override void InitArgMemo(string _memoStr)
         {

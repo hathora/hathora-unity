@@ -20,7 +20,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
         private KcpTransport kcpTransport;
 
         
-        private void Start() => base.InitArgs();
+        private void Start() => base.InitArgsAsync();
 
         protected override void InitArgMemo(string _memoStr)
         {
