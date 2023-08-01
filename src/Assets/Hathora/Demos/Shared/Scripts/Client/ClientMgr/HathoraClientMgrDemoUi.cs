@@ -25,6 +25,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         [SerializeField]
         private HathoraNetClientMgrUiBaseContainer sdkDemoUi;
         protected HathoraNetClientMgrUiBaseContainer SdkDemoUi => sdkDemoUi;
+        
+        [SerializeField]
+        private HathoraClientMgrHelloWorldDemoUi helloWorldDemoUi;
+        protected HathoraClientMgrHelloWorldDemoUi HelloWorldDemoUi => helloWorldDemoUi;
         #endregion // Serialized Fields
 
         
