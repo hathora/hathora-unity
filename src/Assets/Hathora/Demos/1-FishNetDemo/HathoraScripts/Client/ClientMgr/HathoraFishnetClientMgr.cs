@@ -5,6 +5,7 @@ using FishNet;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
 using FishNet.Transporting.Bayou;
+using FishNet.Transporting.Multipass;
 using FishNet.Transporting.Tugboat;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
@@ -56,33 +57,48 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         protected override void SetClientTransport()
         {
             base.SetClientTransport();
-            
-            Tugboat tugboatUdpTransport = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
-            Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
-            
+
             // Default is Tugboat (UDP) >> We also want to consider WebGL builds
             string transportType = "UDP";
             
-            // TODO: Use Multipass and we can support both at same time. Req's 2nd open port (eg: 7778).
-            // TODO: Consider other protocols
-#if UNITY_WEBGL && !UNITY_SERVER && !UNITY_EDITOR
-            Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
-            Assert.IsTrue(bayouWebglTcpWsTransport.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
 
-            transportType = "WebGL";
-            transport = bayouWebglTcpWsTransport;
+            #region bug: Changing the FishNet NetworkManager's TransportMgr.transport breaks the transport!
+//            Tugboat tugboatUdpTransport = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
+//            Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
+//             // TODO: Use Multipass and we can support both at same time. Req's 2nd open port (eg: 7778).
+//             // TODO: Consider other protocols
+// #if UNITY_WEBGL && !UNITY_SERVER // && !UNITY_EDITOR
+//             Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
+//             Assert.IsTrue(bayouWebglTcpWsTransport.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
+//
+//             transportType = "WebGL";
+//             transport = bayouWebglTcpWsTransport;
+//             
+//             if (tugboatUdpTransport != null)
+//                 Destroy(tugboatUdpTransport); // Prevent conflicts, just in case - possibly set to same port
+// #else
+//             // Tugboat already set as default
+//             Assert.IsNotNull(tugboatUdpTransport, "Expected `Tugboat` udp component in NetworkManager");
+//             Assert.IsTrue(tugboatUdpTransport.enabled, "Expected `Tugboat` udp component to be enabled in NetworkManager");
+//             Assert.IsTrue(tugboatUdpTransport.enabled);
+//             
+//             if (bayouWebglTcpWsTransport != null)
+//                 Destroy(bayouWebglTcpWsTransport); // Prevent conflicts, just in case - possibly set to same port
+// #endif
+            #endregion // bug: Changing the FishNet NetworkManager's TransportMgr.transport breaks the transport!
             
-            if (tugboatUdpTransport != null)
-                Destroy(tugboatUdpTransport); // Prevent conflicts, just in case - possibly set to same port
+            
+            #region Multipass
+            Multipass mp = InstanceFinder.NetworkManager.GetComponent<Multipass>();
+            Assert.IsNotNull(mp);
+            
+#if UNITY_WEBGL && !UNITY_SERVER // && !UNITY_EDITOR
+            mp.SetClientTransport<Bayou>();
 #else
-            // Tugboat already set as default
-            Assert.IsNotNull(tugboatUdpTransport, "Expected `Tugboat` udp component in NetworkManager");
-            Assert.IsTrue(tugboatUdpTransport.enabled, "Expected `Tugboat` udp component to be enabled in NetworkManager");
-            Assert.IsTrue(tugboatUdpTransport.enabled);
-            
-            if (bayouWebglTcpWsTransport != null)
-                Destroy(bayouWebglTcpWsTransport); // Prevent conflicts, just in case - possibly set to same port
+            mp.setClientTransport<Tugboat>();            
 #endif
+            #endregion // Multipass
+            
             
             Debug.Log("[HathoraFishnetClientMgrBase.SetTransport] " +
                 $"Transport set to `{transport}` ({transportType})");

@@ -3,6 +3,7 @@
 using FishNet;
 using FishNet.Transporting;
 using FishNet.Transporting.Bayou;
+using FishNet.Transporting.Multipass;
 using FishNet.Transporting.Tugboat;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Server;
@@ -86,7 +87,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
             {
                 case UserTransportType.UdpDefault:
                     Debug.Log("[HathoraFishnetServerMgr.SetServerTransport] UserTransportType.UdpDefault");
-                    return; // Already set default in most NetCode
+                    setTugboatTransport();
+                    return;
                 
                 case UserTransportType.TcpWslWebgl:
                     Debug.Log("[HathoraFishnetServerMgr.SetServerTransport] UserTransportType.TcpWslWebgl");
@@ -105,13 +107,27 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
             }
         }
 
+        /// <summary>
+        /// Tugboat == UDP (!WebGL)
+        /// </summary>
+        private static void setTugboatTransport()
+        {
+            #region Multipass
+            Multipass mp = InstanceFinder.NetworkManager.GetComponent<Multipass>();
+            Assert.IsNotNull(mp);
+            
+            mp.SetClientTransport<Tugboat>();
+            #endregion // Multipass
+        }
+
         /// <summary>Transport set from HathoraServerConfig (default UDP)</summary>
         private static void setServerTransportViaHathoraConfig(TransportType _configTransport)
         {
             switch (_configTransport)
             {
                 case TransportType.Udp:
-                    break; // Already set as default
+                    setTugboatTransport();
+                    break;
                     
                 case TransportType.Tcp:
                     setBayouTransport();
@@ -127,19 +143,29 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
         /// </summary>
         private static void setBayouTransport()
         {
-            Tugboat tugboatUdpTransport = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
-            Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
+            #region bug: Changing the FishNet NetworkManager's TransportMgr.transport breaks the transport!
+            // Tugboat tugboatUdpTransport = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
+            // Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
+            //
+            // Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
+            //
+            // // Disable the old (if exists) -> enable the new
+            // if (tugboatUdpTransport != null)
+            //     tugboatUdpTransport.enabled = false;
+            //
+            // bayouWebglTcpWsTransport.enabled = true;
+            //
+            // // Set the NetworkManager's Transport to the new
+            // transport = bayouWebglTcpWsTransport;
+            #endregion // bug: Changing the FishNet NetworkManager's TransportMgr.transport breaks the transport!
             
-            Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
-
-            // Disable the old (if exists) -> enable the new
-            if (tugboatUdpTransport != null)
-                tugboatUdpTransport.enabled = false;
             
-            bayouWebglTcpWsTransport.enabled = true;
-
-            // Set the NetworkManager's Transport to the new
-            transport = bayouWebglTcpWsTransport;
+            #region Multipass
+            Multipass mp = InstanceFinder.NetworkManager.GetComponent<Multipass>();
+            Assert.IsNotNull(mp);
+            
+            mp.SetClientTransport<Bayou>();
+            #endregion // Multipass
         }
     }
 }
