@@ -17,6 +17,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     public class HathoraNetClientMgrUiBaseContainer : MonoBehaviour
     {
         #region Serialized Fields
+        // TODO: Make these fields private with a public getter prop
         [FormerlySerializedAs("InvalidConfigPnl")]
         [Header("Help")]
         [SerializeField]

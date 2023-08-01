@@ -90,7 +90,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         protected override void OnStart()
         {
-            base.InitOnStart(HathoraFishnetClientMgrUi.Singleton);
+            base.InitOnStart(HathoraFishnetClientMgrDemoUi.Singleton);
             base.OnStart();
             
             // This is a Client manager script; listen for relative events

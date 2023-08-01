@@ -25,7 +25,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
         protected override void InitArgMemo(string _memoStr)
         {
             base.InitArgMemo(_memoStr);
-            HathoraMirrorClientMgrUi.Singleton.SetShowDebugMemoTxt(_memoStr);
+            HathoraMirrorClientMgrDemoUi.Singleton.SetShowDebugMemoTxt(_memoStr);
         }
 
         protected override void ArgModeStartServer()

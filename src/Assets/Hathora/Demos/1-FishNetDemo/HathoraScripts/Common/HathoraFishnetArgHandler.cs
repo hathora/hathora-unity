@@ -18,7 +18,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
         protected override void InitArgMemo(string _memoStr)
         {
             base.InitArgMemo(_memoStr);
-            HathoraFishnetClientMgrUi.Singleton.SetShowDebugMemoTxt(_memoStr);
+            HathoraFishnetClientMgrDemoUi.Singleton.SetShowDebugMemoTxt(_memoStr);
         }
 
         protected override void ArgModeStartServer()
