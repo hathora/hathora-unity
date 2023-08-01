@@ -16,12 +16,14 @@ namespace Hathora.Core.Scripts.Runtime.Server
 {
     /// <summary>
     /// Inits and centralizes all Hathora Server [runtime] API wrappers.
+    /// (!) If you are inheritting this, child should likely have setSingleton().
+    ///     (CTRL+F here for template)
     /// 
     /// Unlike HathoraClientMgrBase, we don't need a parent since Server is lower-level
     /// than Client (eg: No UI, Session or net code specific to a platform).
     /// TODO: If this gets more complex, make it an abstract base class; parity with Client.
     /// </summary>
-    public class HathoraServerMgr : MonoBehaviour
+    public class HathoraServerMgrBase : MonoBehaviour
     {
         // ######################################################################
         // TODO: Mv ClientMgr.StartServer() here
@@ -33,6 +35,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         [SerializeField, Tooltip("When in the Editor, we'll get this Hathora ProcessInfo " +
              "as if deployed on Hathora; useful for debugging")]
         private string debugEditorMockProcId;
+        protected string DebugEditorMockProcId => debugEditorMockProcId;
         
         [Header("(!) Top menu: Hathora/ServerConfigFinder")]
         [SerializeField]
@@ -56,7 +59,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
         }
         
-        [Header("API Wrappers for Hathora SDK")]
+        [Header("API Wrappers for Hathora SDK - See ServerApiContainer.cs")]
         [SerializeField]
         private ServerApiContainer serverApis;
         
@@ -66,110 +69,123 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// </summary>
         public ServerApiContainer ServerApis => serverApis;
 
-        public static HathoraServerMgr Singleton { get; private set; }
+        // /// <summary>TODO: Mv to child</summary>
+        // public static HathoraServerMgrBase Singleton { get; private set; }
 
         /// <summary>
         /// (!) This is set async on Awake; check for null.
         /// For the public accessor, `see GetSystemHathoraProcessAsync()`.
         /// </summary>
         private volatile Process cachedDeployedHathoraProcess;
+        protected Process CachedDeployedHathoraProcess => cachedDeployedHathoraProcess;
         
         /// <summary>Set @ Awake, and only if deployed on Hathora</summary>
         private string serverDeployedProcessId;
+        protected string ServerDeployedProcessId => serverDeployedProcessId;
+        
         private bool hasServerDeployedProcessId =>
             !string.IsNullOrEmpty(serverDeployedProcessId);
+        protected bool HasServerDeployedProcessId => hasServerDeployedProcessId;
         #endregion // Vars
 
         
         #region Init
-        private void Awake()
+        private void Awake() => OnAwake();
+        protected virtual void OnAwake()
         {
-            #if !UNITY_SERVER && !UNITY_EDITOR
-            Debug.Log("(!) [HathoraServerMgr.Awake] Destroying - not a server");
+#if !UNITY_SERVER && !UNITY_EDITOR
+            Debug.Log("(!) [HathoraServerMgrBase.Awake] Destroying - not a server");
             Destroy(this);
             return;
-            #endif // !UNITY_SERVER
-
-            Debug.Log("[HathoraServerMgr] Awake");
-            setSingleton();
+#endif
             
-            if (!validateReqs())
+
+            Debug.Log("[HathoraServerMgrBase] Awake");
+            // setSingleton(); // TODO: Mv to child
+            
+            if (!ValidateReqs())
                 return;
 
             // Unlike Client calls, we can init immediately @ Awake
-            initApis(_hathoraSdkConfig: null); // Base will create this
+            InitApis(_hathoraSdkConfig: null); // Base will create this
 
+            
 #if (UNITY_EDITOR)
             serverDeployedProcessId = getServerDeployedProcessId(debugEditorMockProcId);
 #else
             serverDeployedProcessId = getServerDeployedProcessId();
-#endif // UNITY_EDITOR
+#endif
             
-            _ = getHathoraProcessFromEnvVarAsync(); // !await
+            _ = GetHathoraProcessFromEnvVarAsync(); // !await
         }
 
         /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
-        private void Start()
+        private void Start() => OnStart();
+
+        /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
+        protected virtual void OnStart()
         {
             TransportType configTransport = hathoraServerConfig.HathoraDeployOpts.SelectedTransportType;
-            setServerTransport(configTransport); // Based on HathoraServerConfig Deploy settings
+            SetServerTransport(configTransport); // Based on HathoraServerConfig Deploy settings
         }
 
         /// <summary>
         /// Set based on HathoraServerConfig deploy settings
-        /// TODO: THIS IS WIP: Make virtual; each NetworkManager/Transport will differ.
+        /// TODO: Fish + Mirror should inherit this
         /// </summary>
-        private void setServerTransport(TransportType _configTransport)
+        protected virtual void SetServerTransport(TransportType _configTransport)
         {
-            switch (_configTransport)
-            {
-                case TransportType.Udp:
-                    return; // Already set default in most NetCode
-                
-                case TransportType.Tcp:
-                    // TODO: Set NetCode transport to TCP (Clients will connect via WS) for WebGL
-                    return;
-                
-                case TransportType.Tls: // TODO
-                default:
-                    Debug.LogError("[HathoraServerMgr.setServerTransport] (!) " +
-                        $"Unsupported transport type: `{_configTransport}`");
-                    return;
-            }
+            // switch (_configTransport)
+            // {
+            //     case TransportType.Udp:
+            //         return; // Already set default in most NetCode
+            //     
+            //     case TransportType.Tcp:
+            //         // TODO: Set NetCode transport to TCP (Clients will connect via WS) for WebGL
+            //         return;
+            //     
+            //     case TransportType.Tls: // TODO
+            //     default:
+            //         Debug.LogError("[HathoraServerMgrBase.setServerTransport] (!) " +
+            //             $"Unsupported transport type: `{_configTransport}`");
+            //         return;
+            // }
         }
 
         /// <param name="_overrideProcIdVal">Mock a val for testing within the Editor</param>
-        private string getServerDeployedProcessId(string _overrideProcIdVal = null)
+        protected virtual string getServerDeployedProcessId(string _overrideProcIdVal = null)
         {
             if (!string.IsNullOrEmpty(_overrideProcIdVal))
             {
-                Debug.Log("[HathoraServerMgr.getServerDeployedProcessId] (!) Overriding " +
+                Debug.Log("[HathoraServerMgrBase.getServerDeployedProcessId] (!) Overriding " +
                     $"HATHORA_PROCESS_ID with mock val: `{_overrideProcIdVal}`");
 
                 return _overrideProcIdVal;
             }
             return Environment.GetEnvironmentVariable("HATHORA_PROCESS_ID");
         }
-        private void setSingleton()
-        {
-            if (Singleton != null)
-            {
-                Debug.LogError("[HathoraServerMgrsetSingleton.] Error: " +
-                    "setSingleton: Destroying dupe");
-                
-                Destroy(gameObject);
-                return;
-            }
 
-            Singleton = this;
-        }
+        // /// <summary>TODO: Mv to child</summary>
+        // private void setSingleton() { }
+        // {
+        //     if (Singleton != null)
+        //     {
+        //         Debug.LogError("[HathoraServerMgrBase.setSingleton] Error: " +
+        //             "setSingleton: Destroying dupe");
+        //         
+        //         Destroy(gameObject);
+        //         return;
+        //     }
+        //
+        //     Singleton = this;
+        // }
 
-        private bool validateReqs()
+        protected virtual bool ValidateReqs()
         {
             if (hathoraServerConfig == null)
             {
-                Debug.LogError("[HathoraServerMgr] !HathoraServerConfig; " +
-                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} (if you want " +
+                Debug.LogError("[HathoraServerMgrBase] !HathoraServerConfig; " +
+                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgrBase)} (if you want " +
                     "server runtime calls from Server standalone || Editor)");
                 return false;
             }
@@ -182,7 +198,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// (!) Unlike ClientMgr that are Mono-derived, we init via Constructor instead of Init().
         /// </summary>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        private void initApis(Configuration _hathoraSdkConfig = null)
+        protected virtual void InitApis(Configuration _hathoraSdkConfig = null)
         {
             serverApis.ServerAppApi = new HathoraServerAppApi(hathoraServerConfig, _hathoraSdkConfig);
             serverApis.ServerLobbyApi = new HathoraServerLobbyApi(hathoraServerConfig, _hathoraSdkConfig);
@@ -196,7 +212,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         ///
         /// You probably want to call this @ OnAwake, then get cached ver later @ GetCachedHathoraProcessAsync()
         /// </summary>
-        private async Task getHathoraProcessFromEnvVarAsync()
+        protected virtual async Task GetHathoraProcessFromEnvVarAsync()
         {
             Debug.Log($"[getHathoraProcessAsync.getHathoraProcessAsync] " +
                 $"HATHORA_PROCESS_ID: `{serverDeployedProcessId}`");
@@ -236,7 +252,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             while (cachedDeployedHathoraProcess == null)
             {
                 if (cancellationTokenSource.IsCancellationRequested)
-                    throw new TimeoutException($"[HathoraServerMgr.{nameof(GetCachedHathoraProcessAsync)}] Timed out");
+                    throw new TimeoutException($"[HathoraServerMgrBase.{nameof(GetCachedHathoraProcessAsync)}] Timed out");
 
                 await Task.Delay(
                     TimeSpan.FromMilliseconds(100), 
@@ -258,7 +274,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         public async Task<HathoraGetDeployInfoResult> ServerGetDeployedInfoAsync(
             CancellationToken _cancelToken = default)
         {
-            Debug.Log("[HathoraServerMgr] ServerGetDeployedInfoAsync");
+            Debug.Log("[HathoraServerMgrBase] ServerGetDeployedInfoAsync");
 
             HathoraGetDeployInfoResult getDeployInfoResult = new(serverDeployedProcessId);
             
