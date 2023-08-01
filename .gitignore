@@ -87,3 +87,4 @@ HathoraServerConfig*.asset*
 # Ignore .tar.gz files or WIP files (.tar, .temp)
 **/.hathora/*.tar*
 **/.hathora/*.temp*
+src/Assets/Hathora/Core/Scripts/Editor/Common/SuperSave.*
