@@ -67,14 +67,14 @@ namespace Hathora.Demos.Shared.Scripts.Common
         #endregion // vars
         
         
-        private async void Start() => await InitArgs();
+        private async void Start() => await InitArgsAsync();
 
         /// <summary>
         /// (!) Some args like `-scene` and `-mode` are statically consumed only once
         /// (eg: reloading the scene won't apply them).</summary>
-        protected virtual async Task InitArgs()
+        protected virtual async Task InitArgsAsync()
         {
-            string logPrefix = $"[HathoraArgHandlerBase.{nameof(InitArgs)}]";
+            string logPrefix = $"[HathoraArgHandlerBase.{nameof(InitArgsAsync)}]";
             
             Dictionary<string, string> args = GetCommandlineArgs();
 
@@ -113,7 +113,15 @@ namespace Hathora.Demos.Shared.Scripts.Common
         protected virtual async Task InitArgScene(string _sceneName)
         {
             Debug.Log($"[HathoraArgHandlerBase] InitArgScene: {_sceneName}");
-            
+
+            // Get current scene name
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName == _sceneName)
+            {
+                _sceneArgConsumed = true;
+                return; // We're already in this scene
+            }
+
             if (SceneArgConsumed)
             {
                 Debug.LogWarning("[HathoraArgHandlerBase.InitMode] SceneArgConsumed, already");
