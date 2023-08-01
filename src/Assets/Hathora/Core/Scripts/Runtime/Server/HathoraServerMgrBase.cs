@@ -133,23 +133,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// Set based on HathoraServerConfig deploy settings
         /// TODO: Fish + Mirror should inherit this
         /// </summary>
-        protected virtual void SetServerTransport(TransportType _configTransport)
+        protected virtual void SetServerTransport(TransportType _configTransportType)
         {
-            // switch (_configTransport)
-            // {
-            //     case TransportType.Udp:
-            //         return; // Already set default in most NetCode
-            //     
-            //     case TransportType.Tcp:
-            //         // TODO: Set NetCode transport to TCP (Clients will connect via WS) for WebGL
-            //         return;
-            //     
-            //     case TransportType.Tls: // TODO
-            //     default:
-            //         Debug.LogError("[HathoraServerMgrBase.setServerTransport] (!) " +
-            //             $"Unsupported transport type: `{_configTransport}`");
-            //         return;
-            // }
         }
 
         /// <param name="_overrideProcIdVal">Mock a val for testing within the Editor</param>

@@ -57,8 +57,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         {
             base.SetClientTransport();
             
-            Tugboat tugboatUdp = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
-            Bayou bayouWebgl = InstanceFinder.NetworkManager.GetComponent<Bayou>();
+            Tugboat tugboatUdpTransport = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
+            Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
             
             // Default is Tugboat (UDP) >> We also want to consider WebGL builds
             string transportType = "UDP";
@@ -66,20 +66,22 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             // TODO: Use Multipass and we can support both at same time. Req's 2nd open port (eg: 7778).
             // TODO: Consider other protocols
 #if UNITY_WEBGL && !UNITY_SERVER && !UNITY_EDITOR
-            Assert.IsNotNull(bayouWebgl, "Expected `Bayou` webgl component in NetworkManager");
-            Assert.IsTrue(bayouWebgl.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
+            Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
+            Assert.IsTrue(bayouWebglTcpWsTransport.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
 
             transportType = "WebGL";
-            transport = bayouWebgl;
+            transport = bayouWebglTcpWsTransport;
             
-            Destroy(tugboatUdp); // Prevent conflicts, just in case - possibly set to same port
+            if (tugboatUdpTransport != null)
+                Destroy(tugboatUdpTransport); // Prevent conflicts, just in case - possibly set to same port
 #else
             // Tugboat already set as default
-            Assert.IsNotNull(tugboatUdp, "Expected `Tugboat` udp component in NetworkManager");
-            Assert.IsTrue(tugboatUdp.enabled, "Expected `Tugboat` udp component to be enabled in NetworkManager");
-            Assert.IsTrue(tugboatUdp.enabled);
+            Assert.IsNotNull(tugboatUdpTransport, "Expected `Tugboat` udp component in NetworkManager");
+            Assert.IsTrue(tugboatUdpTransport.enabled, "Expected `Tugboat` udp component to be enabled in NetworkManager");
+            Assert.IsTrue(tugboatUdpTransport.enabled);
             
-            Destroy(bayouWebgl); // Prevent conflicts, just in case - possibly set to same port
+            if (bayouWebglTcpWsTransport != null)
+                Destroy(bayouWebglTcpWsTransport); // Prevent conflicts, just in case - possibly set to same port
 #endif
             
             Debug.Log("[HathoraFishnetClientMgrBase.SetTransport] " +
