@@ -5,9 +5,11 @@ using FishNet;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
 using FishNet.Transporting.Bayou;
+using FishNet.Transporting.Tugboat;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 {
@@ -20,9 +22,13 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     {
         #region vars
         public static HathoraFishnetClientMgr Singleton { get; private set; }
-        
-        private Transport transport => 
-            InstanceFinder.TransportManager.Transport; 
+
+        private static Transport transport
+        {
+            get => InstanceFinder.TransportManager.Transport;
+            set => InstanceFinder.TransportManager.Transport = value;
+        }
+             
 
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;
@@ -51,17 +57,31 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         {
             base.SetClientTransport();
             
+            Tugboat tugboatUdp = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
+            Bayou bayouWebgl = InstanceFinder.NetworkManager.GetComponent<Bayou>();
+            
             // Default is Tugboat (UDP) >> We also want to consider WebGL builds
             string transportType = "UDP";
             
-#if UNITY_WEBGL
-            InstanceFinder.NetworkManager.TransportManager.Transport =
-                InstanceFinder.NetworkManager.GetComponent<Bayou>();
-            transportType = "WebGL";
-#endif // UNITY_WEBGL
-            
+            // TODO: Use Multipass and we can support both at same time. Req's 2nd open port (eg: 7778).
             // TODO: Consider other protocols
+#if UNITY_WEBGL && !UNITY_SERVER && !UNITY_EDITOR
+            Assert.IsNotNull(bayouWebgl, "Expected `Bayou` webgl component in NetworkManager");
+            Assert.IsTrue(bayouWebgl.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
 
+            transportType = "WebGL";
+            transport = bayouWebgl;
+            
+            Destroy(tugboatUdp); // Prevent conflicts, just in case - possibly set to same port
+#else
+            // Tugboat already set as default
+            Assert.IsNotNull(tugboatUdp, "Expected `Tugboat` udp component in NetworkManager");
+            Assert.IsTrue(tugboatUdp.enabled, "Expected `Tugboat` udp component to be enabled in NetworkManager");
+            Assert.IsTrue(tugboatUdp.enabled);
+            
+            Destroy(bayouWebgl); // Prevent conflicts, just in case - possibly set to same port
+#endif
+            
             Debug.Log("[HathoraFishnetClientMgrBase.SetTransport] " +
                 $"Transport set to `{transport}` ({transportType})");
         }

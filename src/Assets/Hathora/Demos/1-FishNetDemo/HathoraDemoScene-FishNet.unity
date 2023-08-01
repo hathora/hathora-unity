@@ -770,9 +770,9 @@ GameObject:
   - component: {fileID: 1194941214106636811}
   - component: {fileID: 8635938460796269348}
   - component: {fileID: 8635938460796269350}
+  - component: {fileID: 8635938460796269352}
   - component: {fileID: 8635938460796269349}
   - component: {fileID: 8635938460796269353}
-  - component: {fileID: 8635938460796269352}
   - component: {fileID: 8635938460796269351}
   m_Layer: 0
   m_Name: NetworkManager
