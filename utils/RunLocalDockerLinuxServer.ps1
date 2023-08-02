@@ -18,49 +18,56 @@ $Port = 7777
 
 #########################################################
 
-# Save current location
-$StartingDir = Get-Location
+try {
+	# Save current location
+	$StartingDir = Get-Location
 
-# Init
-cls
-Write-Host "Starting..."
+	# Init
+	cls
+	Write-Host "Starting..."
 
-# Validate paths
-if (!(Test-Path -Path $PathToBuild)) {
-  Write-Error "PathToBuild does not exist: $PathToBuild"
-  return
+	# Validate paths
+	if (!(Test-Path -Path $PathToBuild)) {
+	  Write-Error "PathToBuild does not exist: $PathToBuild"
+	  return
+	}
+
+	if (!(Test-Path -Path "$PathToBuild/$BuildName")) {
+	  Write-Error "Build file does not exist: $PathToBuild/$BuildName"
+	  return
+	}
+
+	# Check if directory exists
+	if(!(Test-Path -Path $NewContainerDir )) {
+	  # Create directory if it doesn't exist
+	  New-Item -ItemType directory -Path $NewContainerDir
+	}
+
+	Write-Host "Preparing files in LocalContainer..."
+
+	# Extract the tar file to the directory
+	tar -xf "$PathToBuild/$BuildName" -C $NewContainerDir
+
+	Write-Host "Files prepared. Building Docker image..."
+
+	# Change to the directory
+	Set-Location -Path $NewContainerDir
+
+	# Build Docker image
+	$ImageName="hathora-unity-server"
+	docker build -t $ImageName .
+
+	Write-Host "Image built. Running Docker container..."
+
+	# Return to the original directory
+	Set-Location -Path $StartingDir
+
+	# Run Docker container, after 1st removing the old
+	Write-Host "Attempting to run Docker container at localhost:$Port ..."
+	docker rm -f "$BuildNameNoExt" 2>$null
+	docker run --name "$BuildNameNoExt" -p "${Port}:${Port}" "$ImageName"
 }
-
-if (!(Test-Path -Path "$PathToBuild/$BuildName")) {
-  Write-Error "Build file does not exist: $PathToBuild/$BuildName"
-  return
+catch {
+	Write-Error "An error occurred: $_"
+    exit 1
 }
-
-# Check if directory exists
-if(!(Test-Path -Path $NewContainerDir )) {
-  # Create directory if it doesn't exist
-  New-Item -ItemType directory -Path $NewContainerDir
-}
-
-Write-Host "Preparing files in LocalContainer..."
-
-# Extract the tar file to the directory
-tar -xf "$PathToBuild/$BuildName" -C $NewContainerDir
-
-Write-Host "Files prepared. Building Docker image..."
-
-# Change to the directory
-Set-Location -Path $NewContainerDir
-
-# Build Docker image
-$ImageName="hathora-unity-server"
-docker build -t $ImageName .
-
-Write-Host "Image built. Running Docker container..."
-
-# Return to the original directory
-Set-Location -Path $StartingDir
-
-# Run Docker container
-Write-Host "Attempting to run Docker container at localhost:$Port ..."
-docker run --name "$BuildNameNoExt" -p "${Port}:${Port}" "$ImageName"
