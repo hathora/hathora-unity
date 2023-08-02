@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,18 +89,29 @@ namespace Hathora.Demos.Shared.Scripts.Common
             
             string argsStr = string.Join(" ", args.Select(kvp => $"{kvp.Key} {kvp.Value}"));
             Debug.Log($"{logPrefix} Handling args: {argsStr}");
+
+            try
+            {
+                // -scene {string} // Load scene by name
+                Debug.Log($"{logPrefix} Handling `-scene` arg, if any...");
+                if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
+                    await InitArgScene(sceneName);
             
-            // -scene {string} // Load scene by name
-            if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
-                await InitArgScene(sceneName);
+                // -_mode {server|client|host} // Logs and start netcode
+                Debug.Log($"{logPrefix} Handling `-mode` arg, if any...");
+                if (args.TryGetValue("-mode", out string mode))
+                    InitArgMode(mode);
             
-            // -_mode {server|client|host} // Logs and start netcode
-            if (args.TryGetValue("-mode", out string mode))
-                InitArgMode(mode);
-            
-            // -memo {string} // Show arbitrary text at bottom of screen
-            if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
-                InitArgMemo(memoStr);
+                // -memo {string} // Show arbitrary text at bottom of screen
+                Debug.Log($"{logPrefix} Handling `-memo` arg, if any...");
+                if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
+                    InitArgMemo(memoStr);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraArgHandlerBase.InitArgsAsync] Error: {e.Message}");
+                throw;
+            }
         }
 
         /// <summary>
@@ -127,8 +139,16 @@ namespace Hathora.Demos.Shared.Scripts.Common
                 Debug.LogWarning("[HathoraArgHandlerBase.InitMode] SceneArgConsumed, already");
                 return;
             }
-            
-            await HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync(_sceneName);
+
+            try
+            {
+                await HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync(_sceneName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraArgHandlerBase.InitArgScene] Error: {e}");
+                throw;
+            }
         }
 
         /// <summary>Override me -> Set memoStr in UI</summary>

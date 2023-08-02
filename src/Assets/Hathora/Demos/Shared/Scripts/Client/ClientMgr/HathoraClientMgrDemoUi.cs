@@ -384,7 +384,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 sdkDemoUi.authBtn.gameObject.SetActive(false); // Prevent UI overlap
             
             // Core issue
-            string netComponentPathFriendlyStr = $" HathoraManager (GameObject)'s " +
+            string netComponentPathFriendlyStr = " HathoraManager (GameObject)'s " +
                 $"{nameof(hathoraClientMgrBase)} component";
             
             if (_config == null)
