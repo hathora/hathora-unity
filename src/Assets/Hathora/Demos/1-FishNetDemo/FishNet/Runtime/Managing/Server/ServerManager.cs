@@ -211,7 +211,10 @@ namespace FishNet.Managing.Server
         /// </summary>
         internal void StartForHeadless()
         {
-            if (GetStartOnHeadless())
+            bool startForHeadless = GetStartOnHeadless();
+            Debug.Log($"[FishNet.ServerManager] startForHeadless? {startForHeadless}");
+            
+            if (startForHeadless)
             {
                 //Wrapping logic in check instead of everything so _startOnHeadless doesnt warn as unused in editor.
 #if UNITY_SERVER

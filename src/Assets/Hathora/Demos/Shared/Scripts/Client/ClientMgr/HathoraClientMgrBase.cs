@@ -61,9 +61,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected virtual void OnAwake()
         {
             SetSingleton();
-            
-            #if !UNITY_SERVER // We'll handle Server protocol type changes @ ServerMgr
-            #endif
         }
 
         /// <summary>
