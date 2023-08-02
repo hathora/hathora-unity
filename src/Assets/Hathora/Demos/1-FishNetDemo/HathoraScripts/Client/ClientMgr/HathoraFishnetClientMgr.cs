@@ -95,7 +95,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 #if UNITY_WEBGL && !UNITY_SERVER // && !UNITY_EDITOR
             mp.SetClientTransport<Bayou>();
 #else
-            mp.setClientTransport<Tugboat>();            
+            mp.SetClientTransport<Tugboat>();            
 #endif
             #endregion // Multipass
             
