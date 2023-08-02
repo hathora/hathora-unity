@@ -88,23 +88,26 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
             
             string argsStr = string.Join(" ", args.Select(kvp => $"{kvp.Key} {kvp.Value}"));
-            Debug.Log($"{logPrefix} Handling args: {argsStr}");
+            Debug.Log($"{logPrefix} Handling args: `{argsStr}`");
 
             try
             {
                 // -scene {string} // Load scene by name
-                Debug.Log($"{logPrefix} Handling `-scene` arg, if any...");
-                if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
+                bool hasSceneArg = args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName); 
+                Debug.Log($"{logPrefix} Has `-scene` arg? {hasSceneArg}");   
+                if (hasSceneArg)
                     await InitArgScene(sceneName);
             
                 // -_mode {server|client|host} // Logs and start netcode
-                Debug.Log($"{logPrefix} Handling `-mode` arg, if any...");
-                if (args.TryGetValue("-mode", out string mode))
+                bool hasModeArg = args.TryGetValue("-mode", out string mode) && !string.IsNullOrEmpty(mode);
+                Debug.Log($"{logPrefix} Has `-mode` arg? {hasModeArg}");
+                if (hasModeArg)
                     InitArgMode(mode);
             
                 // -memo {string} // Show arbitrary text at bottom of screen
-                Debug.Log($"{logPrefix} Handling `-memo` arg, if any...");
-                if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
+                bool hasMemoArg = args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr); 
+                Debug.Log($"{logPrefix} Has `-memo` arg? {hasMemoArg}");
+                if (hasMemoArg)
                     InitArgMemo(memoStr);
             }
             catch (Exception e)
