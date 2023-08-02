@@ -88,3 +88,4 @@ HathoraServerConfig*.asset*
 **/.hathora/*.tar*
 **/.hathora/*.temp*
 src/Assets/Hathora/Core/Scripts/Editor/Common/SuperSave.*
+*.*~
