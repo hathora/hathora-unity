@@ -89,3 +89,4 @@ HathoraServerConfig*.asset*
 **/.hathora/*.temp*
 src/Assets/Hathora/Core/Scripts/Editor/Common/SuperSave.*
 *.*~
+src/.hathora/LocalContainer
