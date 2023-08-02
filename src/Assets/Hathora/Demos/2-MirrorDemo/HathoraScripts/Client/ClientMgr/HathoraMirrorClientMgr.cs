@@ -85,6 +85,11 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Interactions from UI
+        /// <summary>
+        /// Starts a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// </summary>
         public override Task StartServer()
         {
             NetworkManager.singleton.StartServer();
@@ -123,12 +128,24 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Starts a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override Task StartHost()
         {
             NetworkManager.singleton.StartHost();
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override Task StopHost()
         {
             NetworkManager.singleton.StopHost();

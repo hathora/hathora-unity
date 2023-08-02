@@ -63,7 +63,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             SetSingleton();
             
             #if !UNITY_SERVER // We'll handle Server protocol type changes @ ServerMgr
-            SetClientTransport(); // Based on build settings
             #endif
         }
 
@@ -71,12 +70,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// You want other classes to easily be able to access your ClientMgr
         /// </summary>
         protected abstract void SetSingleton();
-
-        /// <summary>
-        /// For NetCode, there are generally different transports for WebGL.
-        /// Handle these with `#if UNITY_WEBGL`, perhaps. 
-        /// </summary>
-        protected virtual void SetClientTransport() { }
 
         /// <summary>Override OnStart and call this before anything.</summary>
         /// <param name="_clientMgrDemoUi"></param>
@@ -139,21 +132,34 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         #region Interactions from UI -> Required Overrides
         public abstract Task<bool> ConnectAsClient();
         
-        /// <summary>TODO: Mv to HathoraServerMgr</summary>
+        /// <summary>
+        /// Starts a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraServerMgr
+        /// </summary>
         public abstract Task StartServer();
 
-        /// <summary>TODO: Mv to HathoraServerMgr</summary>
+        /// <summary>
+        /// Stops a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraServerMgr
+        /// </summary>
         public abstract Task StopServer();
 
+        /// <summary>Starts a NetworkManager Client</summary>
         /// <param name="_hostPort">host:port provided by Hathora</param>
         public abstract Task StartClient(string _hostPort = null);
         
+        /// <summary>Stops a NetworkManager Client</summary>
+        /// <returns></returns>
         public abstract Task StopClient(); 
         
-        /// <summary>TODO: Create a `HathoraCommonMgr` and mv this</summary>
+        /// <summary>Starts a NetworkManager Host (Server+Client). TODO: Create a `HathoraCommonMgr` and mv this</summary>
         public abstract Task StartHost();
 
-        /// <summary>TODO: Create a `HathoraCommonMgr` and mv this</summary>
+        /// <summary>Stops a NetworkManager Host (Server+Client). TODO: Create a `HathoraCommonMgr` and mv this</summary>
         public abstract Task StopHost();
         #endregion // Interactions from UI -> Required Overrides
        

@@ -26,7 +26,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
     public class HathoraServerMgrBase : MonoBehaviour
     {
         // ######################################################################
-        // TODO: Mv ClientMgr.StartServer() here
         // TODO: Add a `HathoraCommonMgr` for shared code; mv StartHost() here
         // ######################################################################
         
@@ -124,16 +123,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
         protected virtual void OnStart()
-        {
-            TransportType configTransport = hathoraServerConfig.HathoraDeployOpts.SelectedTransportType;
-            SetServerTransport(configTransport); // Based on HathoraServerConfig Deploy settings
-        }
-
-        /// <summary>
-        /// Set based on HathoraServerConfig deploy settings
-        /// TODO: Fish + Mirror should inherit this
-        /// </summary>
-        protected virtual void SetServerTransport(TransportType _configTransportType)
         {
         }
 

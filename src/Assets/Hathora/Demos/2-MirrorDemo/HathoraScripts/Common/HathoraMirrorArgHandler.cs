@@ -37,7 +37,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             if (NetworkServer.active)
                 return;
 
-            Debug.Log("[HathoraMirrorArgHandler] Starting Server ...");
+            Debug.Log("[HathoraMirrorArgHandler] Starting Mirror Server ...");
             manager.StartServer();
         }
 

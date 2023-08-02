@@ -30,9 +30,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
             
             // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
             // start on headless checkbox is true
-            Debug.Log("[HathoraFishnetArgHandler] Starting Server ...");
+            Debug.Log("[HathoraFishnetArgHandler] Starting FishNet Server ...");
             
-            // Go through Hathora ServerMgr middleware to ensure the correct Transport is used
             InstanceFinder.ServerManager.StartConnection();
         }
 
@@ -45,7 +44,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
             
             Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
 
-            // Go through Hathora ClientMgr middleware to ensure the correct Transport is used
             HathoraFishnetClientMgr.Singleton.StartClient();
         }
 

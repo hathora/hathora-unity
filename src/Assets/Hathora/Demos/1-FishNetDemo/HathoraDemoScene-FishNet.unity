@@ -789,7 +789,6 @@ GameObject:
   - component: {fileID: 1194941214106636811}
   - component: {fileID: 8635938460796269348}
   - component: {fileID: 8635938460796269350}
-  - component: {fileID: 8635938460796269354}
   - component: {fileID: 8635938460796269349}
   - component: {fileID: 8635938460796269353}
   - component: {fileID: 8635938460796269351}
@@ -2876,7 +2875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e4a322dca349547989b14021da4e23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Transport: {fileID: 8635938460796269354}
+  Transport: {fileID: 8635938460796269353}
   _intermediateLayer: {fileID: 0}
   _latencySimulator:
     _enabled: 0
@@ -2919,22 +2918,6 @@ MonoBehaviour:
   _port: 7777
   _maximumClients: 2000
   _clientAddress: localhost
---- !u!114 &8635938460796269354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194941214106636804}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 314b449d3505bd24487ba69b61c2fda5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalServerActions: 1
-  _transports:
-  - {fileID: 8635938460796269349}
-  - {fileID: 8635938460796269353}
 --- !u!1001 &8791311662459583026
 PrefabInstance:
   m_ObjectHideFlags: 0

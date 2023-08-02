@@ -1,12 +1,11 @@
 // Created by dylan@hathora.dev
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FishNet;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
-using FishNet.Transporting.Bayou;
-using FishNet.Transporting.Multipass;
-using FishNet.Transporting.Tugboat;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
@@ -24,12 +23,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         #region vars
         public static HathoraFishnetClientMgr Singleton { get; private set; }
 
-        private static Transport transport
-        {
-            get => InstanceFinder.TransportManager.Transport;
-            set => InstanceFinder.TransportManager.Transport = value;
-        }
-             
+        private static Transport transport => 
+            InstanceFinder.TransportManager.Transport;
 
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;
@@ -53,57 +48,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             Singleton = this;
         }
 
-        /// <summary>We want to use a different transport !UDP, such as WebGL.</summary>
-        protected override void SetClientTransport()
-        {
-            base.SetClientTransport();
-
-            // Default is Tugboat (UDP) >> We also want to consider WebGL builds
-            string transportType = "UDP";
-            
-
-            #region bug: Changing the FishNet NetworkManager's TransportMgr.transport breaks the transport!
-//            Tugboat tugboatUdpTransport = InstanceFinder.NetworkManager.GetComponent<Tugboat>();
-//            Bayou bayouWebglTcpWsTransport = InstanceFinder.NetworkManager.GetComponent<Bayou>();
-//             // TODO: Use Multipass and we can support both at same time. Req's 2nd open port (eg: 7778).
-//             // TODO: Consider other protocols
-// #if UNITY_WEBGL && !UNITY_SERVER // && !UNITY_EDITOR
-//             Assert.IsNotNull(bayouWebglTcpWsTransport, "Expected `Bayou` webgl component in NetworkManager");
-//             Assert.IsTrue(bayouWebglTcpWsTransport.enabled, "Expected `Bayou` webgl component to be enabled in NetworkManager");
-//
-//             transportType = "WebGL";
-//             transport = bayouWebglTcpWsTransport;
-//             
-//             if (tugboatUdpTransport != null)
-//                 Destroy(tugboatUdpTransport); // Prevent conflicts, just in case - possibly set to same port
-// #else
-//             // Tugboat already set as default
-//             Assert.IsNotNull(tugboatUdpTransport, "Expected `Tugboat` udp component in NetworkManager");
-//             Assert.IsTrue(tugboatUdpTransport.enabled, "Expected `Tugboat` udp component to be enabled in NetworkManager");
-//             Assert.IsTrue(tugboatUdpTransport.enabled);
-//             
-//             if (bayouWebglTcpWsTransport != null)
-//                 Destroy(bayouWebglTcpWsTransport); // Prevent conflicts, just in case - possibly set to same port
-// #endif
-            #endregion // bug: Changing the FishNet NetworkManager's TransportMgr.transport breaks the transport!
-            
-            
-            #region Multipass
-            Multipass mp = InstanceFinder.NetworkManager.GetComponent<Multipass>();
-            Assert.IsNotNull(mp);
-            
-#if UNITY_WEBGL && !UNITY_SERVER // && !UNITY_EDITOR
-            mp.SetClientTransport<Bayou>();
-#else
-            mp.SetClientTransport<Tugboat>();            
-#endif
-            #endregion // Multipass
-            
-            
-            Debug.Log("[HathoraFishnetClientMgrBase.SetTransport] " +
-                $"Transport set to `{transport}` ({transportType})");
-        }
-
         protected override void OnStart()
         {
             base.InitOnStart(HathoraFishnetClientMgrDemoUi.Singleton);
@@ -116,18 +60,30 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         
         #region Interactions from UI
+        /// <summary>
+        /// Starts a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override async Task StartHost()
         {
             await StartServer();
             await StartClient();
         }
 
+        /// <summary>
+        /// Starts a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// </summary>
         public override Task StartServer()
         {
             InstanceFinder.ServerManager.StartConnection();
             return Task.CompletedTask;
         }
 
+        ///<summary>Starts a NetworkManager Client</summary>
         /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
         public override Task StartClient(string _hostPort = null)
         {
@@ -149,18 +105,32 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override Task StopHost()
         {
             StopServer(); // StopServer() will also stop the client
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// </summary>
         public override Task StopServer()
         {
             InstanceFinder.ServerManager.StopConnection(sendDisconnectMessage: true);
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Starts a NetworkManager Client.
+        /// </summary>
         public override Task StopClient()
         {
             InstanceFinder.ClientManager.StopConnection();
