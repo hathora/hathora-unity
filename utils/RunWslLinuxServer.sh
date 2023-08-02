@@ -41,7 +41,6 @@ exe_name="Hathora-Unity_LinuxServer.x86_64"
 path_to_linux_server="../src/Build-Server/$exe_name"
 extra_unity_args=""
 hathora_args="-mode server"
-scene_name="HathoraDemoScene-Mirror"
 ###################################################################################################
 
 # Check for -p HathoraProcessId arg
@@ -89,8 +88,8 @@ echo -e "${COLOR}-----------------------------${NC}"
 echo -e "${COLOR}Starting dedicated server: \`$LOCAL_SERVER_IP:$SERVER_PORT\`${NC}"
 echo -e "${COLOR}HATHORA_PROCESS_ID: \`$HATHORA_PROCESS_ID\`${NC}"
 echo -e "${COLOR}Starting instance @ \`$path_to_linux_server\`${NC}"
-echo -e "${COLOR}unity_args: $unity_args${NC}"
-echo -e "${COLOR}hathora_args: $hathora_args${NC}"
+echo -e "${COLOR}unity_args: \`$unity_args\`${NC}"
+echo -e "${COLOR}hathora_args: \`$hathora_args\`${NC}"
 echo -e "${COLOR}-----------------------------${NC}"
 echo ""
 
