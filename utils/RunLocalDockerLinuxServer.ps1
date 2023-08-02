@@ -4,6 +4,10 @@
 #
 # REQUIREMENTS:
 # 1. Docker-Desktop
+# 2. Use `HathoraServerConfig` to create a Unity build
+# 3. Use `HathoraServerConfig` to start a deploy
+#    (!) This only needs to create the .tar.gz @ `src/.hathora`;
+#        It's ok if the deployment is !successful
 #########################################################
 
 $PathToBuild = "../src/.hathora"
@@ -14,9 +18,23 @@ $Port = 7777
 
 #########################################################
 
+# Save current location
+$StartingDir = Get-Location
+
 # Init
 cls
 Write-Host "Starting..."
+
+# Validate paths
+if (!(Test-Path -Path $PathToBuild)) {
+  Write-Error "PathToBuild does not exist: $PathToBuild"
+  return
+}
+
+if (!(Test-Path -Path "$PathToBuild/$BuildName")) {
+  Write-Error "Build file does not exist: $PathToBuild/$BuildName"
+  return
+}
 
 # Check if directory exists
 if(!(Test-Path -Path $NewContainerDir )) {
@@ -26,23 +44,23 @@ if(!(Test-Path -Path $NewContainerDir )) {
 
 Write-Host "Preparing files in LocalContainer..."
 
-# Use Robocopy to sync directories
-robocopy $PathToBuild $NewContainerDir /mir
+# Extract the tar file to the directory
+tar -xf "$PathToBuild/$BuildName" -C $NewContainerDir
+
+Write-Host "Files prepared. Building Docker image..."
 
 # Change to the directory
 Set-Location -Path $NewContainerDir
 
-# Extract the tar file to the directory
-tar -xf "$PathToBuild\$BuildName"
-
-Write-Host "Files prepared. Building Docker image..."
-
 # Build Docker image
-docker build -t my-unity-server .
+$ImageName="hathora-unity-server"
+docker build -t $ImageName .
 
 Write-Host "Image built. Running Docker container..."
 
-# Run Docker container
-docker run -p $Port:$Port my-unity-server
+# Return to the original directory
+Set-Location -Path $StartingDir
 
-Write-Host "Docker container is running at localhost:$Port"
+# Run Docker container
+Write-Host "Attempting to run Docker container at localhost:$Port ..."
+docker run --name "$BuildNameNoExt" -p "${Port}:${Port}" "$ImageName"
