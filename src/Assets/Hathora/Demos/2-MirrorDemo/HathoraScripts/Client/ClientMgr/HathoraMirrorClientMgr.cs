@@ -56,20 +56,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             Singleton = this;
         }
 
-        /// <summary>We want to use a different transport !UDP, such as WebGL.</summary>
-        protected override void SetClientTransport()
-        {
-            base.SetClientTransport();
-            
-            // Default is Kcp (UDP) >> We also want to consider WebGL builds
-            
-// #if UNITY_WEBGL && !UNITY_SERVER && !UNITY_EDITOR
-            // NetworkManager.singleton.transport = // TODO
-// #endif
-
-            // TODO: Consider other protocols
-        }
-
         protected override void OnStart()
         {
             base.InitOnStart(HathoraMirrorClientMgrDemoUi.Singleton);
