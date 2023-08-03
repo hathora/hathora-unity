@@ -25,13 +25,12 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
         {
             base.ArgModeStartServer();
 
-            if (InstanceFinder.ServerManager.Started)
-                return;
-            
             // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
             // start on headless checkbox is true
+            if (InstanceFinder.ServerManager.Started)
+                return;
+
             Debug.Log("[HathoraFishnetArgHandler] Starting FishNet Server ...");
-            
             InstanceFinder.ServerManager.StartConnection();
         }
 
@@ -43,7 +42,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
-
             HathoraFishnetClientMgr.Singleton.StartClient();
         }
 

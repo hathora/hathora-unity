@@ -16,11 +16,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
         [SerializeField]
         private NetworkManager manager;
 
-        [SerializeField]
-        private KcpTransport kcpTransport;
-
         
-        private void Start() => base.InitArgsAsync();
+        private async void Start() => 
+            await base.InitArgsAsync();
 
         protected override void InitArgMemo(string _memoStr)
         {
@@ -48,7 +46,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             // It's very possible this already started, if Mirror's NetworkManager
             // Auto join clients checkbox is true
             if (NetworkClient.active)
-                return; // We don't want to start 2x
+                return;
 
             Debug.Log("[HathoraMirrorArgHandler] Starting Client ...");
 
@@ -63,7 +61,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
             if (NetworkServer.active)
-                return; // We don't want to start 2x
+                return;
             
             Debug.Log("[HathoraMirrorArgHandler] Starting Host (Server+Client) ...");
             manager.StartHost(); // Different from FishNet
