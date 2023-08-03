@@ -13,6 +13,8 @@ using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Editor.Server
@@ -78,6 +80,16 @@ namespace Hathora.Core.Scripts.Editor.Server
             int originalArchitecture = PlayerSettings.GetArchitecture(originalBuildTargetGroup);
             ScriptingImplementation originalScriptingBackend = PlayerSettings.GetScriptingBackend(originalBuildTargetGroup);
             ApiCompatibilityLevel originalApiCompatibility = PlayerSettings.GetApiCompatibilityLevel(originalBuildTargetGroup);
+            
+            // Sanity check: Does the 1st scene match the current scene we're on?
+            // Many devs intend to build on the scene they're working on 1st, but forget to swap the order
+            EditorBuildSettingsScene firstSceneInBuildSettings = EditorBuildSettings.scenes[0]; 
+            if (firstSceneInBuildSettings.path != SceneManager.GetActiveScene().path)
+            {
+                Debug.LogWarning($"{logPrefix} <color=orange>(!)</color> The 1st scene in build " +
+                    $"settings ({firstSceneInBuildSettings.path}) !matches the current Editor " +
+                    $"scene ({SceneManager.GetActiveScene().path}); intended?");
+            }
 
             // ----------------
             // Generate build opts
