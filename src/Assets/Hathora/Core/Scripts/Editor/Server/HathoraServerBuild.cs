@@ -70,7 +70,17 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             cleanCreateBuildDir(_serverConfig, configPaths.PathToBuildDir);
             _cancelToken.ThrowIfCancellationRequested();
+            
+            // ----------------
+            // This will change your selected build setting: Cache here, revert later
+            BuildTarget originalBuildTarget = EditorUserBuildSettings.activeBuildTarget;
+            BuildTargetGroup originalBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(originalBuildTarget);
+            int originalArchitecture = PlayerSettings.GetArchitecture(originalBuildTargetGroup);
+            ScriptingImplementation originalScriptingBackend = PlayerSettings.GetScriptingBackend(originalBuildTargetGroup);
+            ApiCompatibilityLevel originalApiCompatibility = PlayerSettings.GetApiCompatibilityLevel(originalBuildTargetGroup);
 
+            // ----------------
+            // Generate build opts
             BuildPlayerOptions buildPlayerOptions = generateBuildPlayerOptions(
                 _serverConfig,
                 configPaths.PathToBuildExe);
@@ -129,13 +139,28 @@ namespace Hathora.Core.Scripts.Editor.Server
             // Open the build directory - this will lose focus of the inspector
             // TODO: Play a small, subtle chime sfx?
             strb.AppendLine("Opening build dir ...").AppendLine();
-            Debug.Log("[HathoraServerBuild.BuildHathoraLinuxServer] " +
-                $"Build succeeded @ path: `{configPaths.PathToBuildDir}`");
+            Debug.Log($"{logPrefix} Build succeeded @ path: `{configPaths.PathToBuildDir}`");
             
             EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
-            cacheFinishedBuildReportLogs(_serverConfig, buildReport);
+            cacheFinishedBuildReportLogs(_serverConfig, buildReport);            
+            
+            // ----------------
+            // Revert build settings since we changed them to headless Linux server
+            Debug.Log($"{logPrefix} Reverting build settings to original: " +
+                $"[BuildTarget: {originalBuildTarget}, " +
+                $"BuildTargetGroup: {originalBuildTargetGroup}, " +
+                $"Architecture: {originalArchitecture}, " +
+                $"ScriptingBackend: {originalScriptingBackend}, " +
+                $"ApiCompatibility: {originalApiCompatibility}");
+            
+            EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
+            PlayerSettings.SetArchitecture(originalBuildTargetGroup, originalArchitecture);
+            PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
+            PlayerSettings.SetApiCompatibilityLevel(originalBuildTargetGroup, originalApiCompatibility);
 
-            Selection.activeObject = previousSelection; // Restore focus
+            // ----------------
+            // Restore focus and return the build report
+            Selection.activeObject = previousSelection;
             
             return buildReport;
         }
