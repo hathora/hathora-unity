@@ -785,7 +785,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1194941214106636806}
   - component: {fileID: 1194941214106636805}
-  - component: {fileID: 8635938460796269347}
   - component: {fileID: 1194941214106636811}
   - component: {fileID: 8635938460796269348}
   - component: {fileID: 8635938460796269350}
@@ -2803,23 +2802,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 3964277563861138990, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
---- !u!114 &8635938460796269347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194941214106636804}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d331f979d46e8e4a9fc90070c596d44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _useNetworkLod: 0
-  _levelOfDetailDistances: []
-  _updateHostVisibility: 1
-  _defaultConditions:
-  - {fileID: 11400000, guid: 2033f54fd2794464bae08fa5a55c8996, type: 2}
 --- !u!114 &8635938460796269348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2907,7 +2889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 362dfd7e6009fb44c90beec3df0ad853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _useWss: 0
+  _useWss: 1
   _sslConfiguration:
     Enabled: 0
     CertificatePath: 
