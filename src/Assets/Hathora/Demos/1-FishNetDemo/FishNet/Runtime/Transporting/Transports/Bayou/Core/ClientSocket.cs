@@ -1,7 +1,7 @@
-using JamesFrowen.SimpleWeb;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JamesFrowen.SimpleWeb;
 
 namespace FishNet.Transporting.Bayou.Client
 {

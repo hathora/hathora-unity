@@ -1,7 +1,6 @@
 using FishNet.Managing;
 using FishNet.Managing.Logging;
 using FishNet.Managing.Transporting;
-using JamesFrowen.SimpleWeb;
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
