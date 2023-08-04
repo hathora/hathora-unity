@@ -86,7 +86,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             EditorBuildSettingsScene firstSceneInBuildSettings = EditorBuildSettings.scenes[0]; 
             if (firstSceneInBuildSettings.path != SceneManager.GetActiveScene().path)
             {
-                Debug.LogWarning($"{logPrefix} <color=orange>(!)</color> The 1st scene in build " +
+                Debug.Log($"{logPrefix} <color=orange>(!)</color> The 1st scene in build " +
                     $"settings ({firstSceneInBuildSettings.path}) !matches the current Editor " +
                     $"scene ({SceneManager.GetActiveScene().path}); intended?");
             }
