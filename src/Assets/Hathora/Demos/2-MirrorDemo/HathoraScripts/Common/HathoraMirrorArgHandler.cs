@@ -3,8 +3,8 @@
 using Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr;
 using Mirror;
 using Hathora.Demos.Shared.Scripts.Common;
-using kcp2k;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 {
@@ -32,6 +32,15 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
+            if (manager == null)
+            {
+                // Let's see if it's in the same obj
+                manager = gameObject.GetComponent<NetworkManager>();
+            }
+                
+            Assert.IsNotNull(manager, "Expected NetworkManager to be serialized: See your 1st scene's " +
+                "NetworkManager.HathoraMirrorArgHandler and serialize in the NetworkManager");
+            
             if (manager.autoStartServerBuild || manager.isNetworkActive)
                 return;
 
