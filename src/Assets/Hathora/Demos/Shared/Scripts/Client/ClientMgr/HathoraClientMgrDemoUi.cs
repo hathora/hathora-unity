@@ -20,7 +20,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     public abstract class HathoraClientMgrDemoUi : MonoBehaviour
     {
         #region Serialized Fields
-        
         [FormerlySerializedAs("ui")]
         [SerializeField]
         private HathoraNetClientMgrUiBaseContainer sdkDemoUi;

@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using System.Text.RegularExpressions;
-using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
 using UnityEngine.Assertions;
