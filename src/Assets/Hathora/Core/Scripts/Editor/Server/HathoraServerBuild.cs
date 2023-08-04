@@ -105,6 +105,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 .AppendLine("```")
                 .AppendLine();
             
+            Debug.Log(strb.ToString());
+            await Task.Delay(100, _cancelToken); // Give the logs a chance to update
+
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
             _cancelToken.ThrowIfCancellationRequested();
             
@@ -118,8 +121,22 @@ namespace Hathora.Core.Scripts.Editor.Server
                 return buildReport; // fail
             }
             
-            strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
+            // ----------------
+            // Revert build settings since we changed them to headless Linux server -- logs go AFTER since this wipes them
+            EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
+            PlayerSettings.SetArchitecture(originalBuildTargetGroup, originalArchitecture);
+            PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
+            PlayerSettings.SetApiCompatibilityLevel(originalBuildTargetGroup, originalApiCompatibility);
+
+            Debug.Log($"{logPrefix} Reverted build settings to original: " +
+                $"[BuildTarget: {originalBuildTarget}, " +
+                $"BuildTargetGroup: {originalBuildTargetGroup}, " +
+                $"Architecture: {originalArchitecture}, " +
+                $"ScriptingBackend: {originalScriptingBackend}, " +
+                $"ApiCompatibility: {originalApiCompatibility}");
             
+            strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
+
             // ----------------
             // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
             bool existingDockerfileExists = CheckIfDockerfileExists(configPaths);
@@ -154,21 +171,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             Debug.Log($"{logPrefix} Build succeeded @ path: `{configPaths.PathToBuildDir}`");
             
             EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
-            cacheFinishedBuildReportLogs(_serverConfig, buildReport);            
-            
-            // ----------------
-            // Revert build settings since we changed them to headless Linux server
-            Debug.Log($"{logPrefix} Reverting build settings to original: " +
-                $"[BuildTarget: {originalBuildTarget}, " +
-                $"BuildTargetGroup: {originalBuildTargetGroup}, " +
-                $"Architecture: {originalArchitecture}, " +
-                $"ScriptingBackend: {originalScriptingBackend}, " +
-                $"ApiCompatibility: {originalApiCompatibility}");
-            
-            EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
-            PlayerSettings.SetArchitecture(originalBuildTargetGroup, originalArchitecture);
-            PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
-            PlayerSettings.SetApiCompatibilityLevel(originalBuildTargetGroup, originalApiCompatibility);
+            cacheFinishedBuildReportLogs(_serverConfig, buildReport);
 
             // ----------------
             // Restore focus and return the build report
