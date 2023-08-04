@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.Text.RegularExpressions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -62,13 +63,13 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             if (!string.IsNullOrEmpty(_hostPortOverride))
             {
                 // Validate input: "{ip||host}:{port}" || "localhost:7777"
-                const string pattern = @"^((localhost:[0-9]{1,5})|(([\w-]+(\.\w+)*\.[a-zA-Z]{2,})|(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)):[0-9]{1,5})$";
+                string pattern = HathoraUtils.GetHostIpPortPatternStr();
                 bool isHostIpPatternMatch = Regex.IsMatch(_hostPortOverride, pattern);
                 Assert.IsTrue(isHostIpPatternMatch, "Expected 'host:port' pattern, " +
-                    "such as '1.proxy.hathora.dev:7777' || 'localhost:7777'");    
+                    "such as '1.proxy.hathora.dev:7777' || 'localhost:7777' || '192.168.1.1:7777");    
             }
             
-            base.OnStartClientBtnClick(_hostPortOverride);
+            base.OnStartClientBtnClick(_hostPortOverride); // Logs
             HathoraClientMgr.StartClient(_hostPortOverride);
         }
 

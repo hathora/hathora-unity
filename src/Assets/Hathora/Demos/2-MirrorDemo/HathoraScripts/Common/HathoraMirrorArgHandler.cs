@@ -13,10 +13,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
     /// </summary>
     public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
-        [SerializeField]
-        private NetworkManager manager;
-
-        
         private async void Start() => 
             await base.InitArgsAsync();
 
@@ -32,20 +28,14 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
-            if (manager == null)
-            {
-                // Let's see if it's in the same obj
-                manager = gameObject.GetComponent<NetworkManager>();
-            }
-                
-            Assert.IsNotNull(manager, "Expected NetworkManager to be serialized: See your 1st scene's " +
-                "NetworkManager.HathoraMirrorArgHandler and serialize in the NetworkManager");
+            Assert.IsNotNull(NetworkManager.singleton, "Expected NetworkManager to be serialized: " +
+                "See your 1st scene's NetworkManager.HathoraMirrorArgHandler and serialize in the NetworkManager");
             
-            if (manager.autoStartServerBuild || manager.isNetworkActive)
+            if (NetworkManager.singleton.autoStartServerBuild || NetworkManager.singleton.isNetworkActive)
                 return;
 
             Debug.Log("[HathoraMirrorArgHandler] Starting Mirror Server ...");
-            manager.StartServer();
+            NetworkManager.singleton.StartServer();
         }
 
         protected override void ArgModeStartClient()
@@ -73,7 +63,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraMirrorArgHandler] Starting Host (Server+Client) ...");
-            manager.StartHost(); // Different from FishNet
+            NetworkManager.singleton.StartHost(); // Different from FishNet
         }
     }
 }

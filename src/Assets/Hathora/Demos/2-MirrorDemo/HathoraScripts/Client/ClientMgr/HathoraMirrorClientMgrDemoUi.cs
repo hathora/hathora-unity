@@ -1,8 +1,11 @@
 // Created by dylan@hathora.dev
 
+using System.Text.RegularExpressions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -52,8 +55,20 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// <param name="_hostPortOverride">host:port provided by Hathora</param>
         public override void OnStartClientBtnClick(string _hostPortOverride = null)
         {
-            base.OnStartClientBtnClick();
-            NetworkManager.singleton.StartClient();
+            // We want to override hostPort from the input field - np if null
+            _hostPortOverride = HelloWorldDemoUi.ClientConnectInputField.text.Trim();
+            
+            if (!string.IsNullOrEmpty(_hostPortOverride))
+            {
+                // Validate input: "{ip||host}:{port}" || "localhost:7777"
+                string pattern = HathoraUtils.GetHostIpPortPatternStr();
+                bool isHostIpPatternMatch = Regex.IsMatch(_hostPortOverride, pattern);
+                Assert.IsTrue(isHostIpPatternMatch, "Expected 'host:port' pattern, " +
+                    "such as '1.proxy.hathora.dev:7777' || 'localhost:7777' || '192.168.1.1:7777");    
+            }
+            
+            base.OnStartClientBtnClick(_hostPortOverride); // Logs
+            HathoraClientMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStartHostBtnClick()
