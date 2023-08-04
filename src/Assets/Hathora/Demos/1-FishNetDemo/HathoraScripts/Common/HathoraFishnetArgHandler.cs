@@ -27,7 +27,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
 
             // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
             // start on headless checkbox is true
-            if (InstanceFinder.ServerManager.Started)
+            if (InstanceFinder.ServerManager.Started || InstanceFinder.ServerManager.GetStartOnHeadless())
                 return;
 
             Debug.Log("[HathoraFishnetArgHandler] Starting FishNet Server ...");

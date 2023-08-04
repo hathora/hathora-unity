@@ -32,7 +32,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
-            if (NetworkServer.active)
+            if (manager.autoStartServerBuild || manager.isNetworkActive)
                 return;
 
             Debug.Log("[HathoraMirrorArgHandler] Starting Mirror Server ...");
