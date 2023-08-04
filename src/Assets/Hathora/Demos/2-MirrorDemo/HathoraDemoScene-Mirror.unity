@@ -1019,7 +1019,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mockArgsInEditor: 0
-  manager: {fileID: 1194941214106636809}
 --- !u!114 &1194941214106636809
 MonoBehaviour:
   m_ObjectHideFlags: 0

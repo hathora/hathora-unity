@@ -1,7 +1,5 @@
 // Created by dylan@hathora.dev
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FishNet;
 using FishNet.Managing.Client;
@@ -9,7 +7,6 @@ using FishNet.Transporting;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 {

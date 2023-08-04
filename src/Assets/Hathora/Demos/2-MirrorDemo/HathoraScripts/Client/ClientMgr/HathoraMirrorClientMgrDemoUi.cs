@@ -6,6 +6,7 @@ using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Assertions;
+using HathoraMirrorClientMgr = Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr.HathoraMirrorClientMgr;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {

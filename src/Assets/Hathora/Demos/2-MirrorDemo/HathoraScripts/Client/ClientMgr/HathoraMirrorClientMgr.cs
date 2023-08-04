@@ -8,6 +8,7 @@ using kcp2k;
 using Mirror;
 using Mirror.SimpleWeb;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -82,6 +83,22 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Only call if UNITY_WEBGL (not validated here):
+        /// This is actually pulled directly from Mirror's SimpleWebTransport.cs (!public)
+        /// </summary>
+        /// <returns>"WS" || "WSS"</returns>
+        private string GetWebglClientScheme()
+        {
+            SimpleWebTransport swt = NetworkManager.singleton.transport as SimpleWebTransport;
+            Assert.IsNotNull(swt, "Expected `SimpleWebTransport` since UNITY_WEBGL");
+
+            bool isWss = swt.sslEnabled || swt.clientUseWss; 
+            return isWss 
+                ? SimpleWebTransport.SecureScheme 
+                : SimpleWebTransport.NormalScheme;
+        }
+
         /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
         public override Task StartClient(string _hostPort = null)
         {
@@ -91,18 +108,16 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             bool hasPort = hostPortContainer.port > 0;
             string protocolStr = "";
 
-            // Start FishNet Client via selected Transport
+            // Start Mirror Client via selected Transport
             if (hasHost && hasPort)
             {
-                // UDP == KcpTransport; WebGL (WS) == SimpleWebTransport
-                
+                // UDP == KcpTransport; WebGL (WS || WSS) == SimpleWebTransport
 #if UNITY_WEBGL
-                    protocolStr = "kcp";
-#else
-                    protocolStr = "udp";
+                protocolStr = GetWebglClientScheme();
 #endif
                 
-                Uri uri = new($"{protocolStr}://{_hostPort}");
+                Uri uri = new($"{protocolStr}://{_hostPort}"); // eg: "wss://1.proxy.hathora.dev:12345"
+                Debug.Log($"[HathoraMirrorClientMgr.StartClient] uri == `{uri}`");
                 NetworkManager.singleton.StartClient(uri);
             }
             else
