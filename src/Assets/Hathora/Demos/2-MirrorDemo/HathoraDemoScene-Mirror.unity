@@ -378,6 +378,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1205016442 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4014227140309847763, guid: 0b1d560e984c97e42acb36a66f5d2105,
+    type: 3}
+  m_PrefabInstance: {fileID: 2707931863916646020}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 867cfab68ab9ae1418b2279faa960a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1503105122 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1601947993005168853, guid: e4dcbec2e4ad0514a94f944ced942c4d,
@@ -940,7 +952,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sdkDemoUi: {fileID: 6730436420086812907}
-  helloWorldDemoUi: {fileID: 0}
+  helloWorldDemoUi: {fileID: 1205016442}
 --- !u!1 &2132191630 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4194415799541431204, guid: 127b03e81323ad14ca3d3a53f8f2eded,
@@ -1089,7 +1101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   port: 7777
-  ClientUseDefaultPort: 1
+  ClientUseDefaultPort: 0
   maxMessageSize: 16384
   handshakeMaxSize: 3000
   noDelay: 1
