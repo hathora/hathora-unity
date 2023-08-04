@@ -105,6 +105,34 @@ namespace Hathora.Core.Scripts.Editor.Server
                 .AppendLine("```")
                 .AppendLine();
             
+            // ----------------
+            // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
+            // Generate before the build in case we want to  *just* generate Dockerfile then cancel (generates fast).
+            bool existingDockerfileExists = CheckIfDockerfileExists(configPaths);
+            bool genDockerfile = buildOpts.OverwriteDockerfile || !existingDockerfileExists;
+            if (genDockerfile)
+            {
+                strb.AppendLine($"Generating Dockerfile to `{configPaths.PathToDotHathoraDockerfile}` ...");
+                Debug.Log($"{logPrefix} Generating new Dockerfile (if exists: overwriting)...");
+                
+                string dockerFileContent = HathoraDocker.GenerateDockerFileStr(configPaths);
+
+                strb.AppendLine("```")
+                    .AppendLine(dockerFileContent)
+                    .AppendLine("```")
+                    .AppendLine();
+
+                await HathoraDocker.WriteDockerFileAsync(
+                    configPaths.PathToDotHathoraDockerfile,
+                    dockerFileContent,
+                    _cancelToken);    
+            }
+            else if (!buildOpts.OverwriteDockerfile)
+            {
+                Debug.LogWarning($"{logPrefix} !buildOpts.OverwriteDockerfile: Leaving Dockerfile" +
+                    "alone (to !overwrite customizations) at risk of desync, if any ServerConfig opts have changed.");
+            }
+            
             Debug.Log("BUILDING now (this may take a while): See HathoraServerConfig " +
                 "'Generate Server Build Logs'"); // To regular console
             await Task.Delay(100, _cancelToken); // Give the logs a chance to update
@@ -144,33 +172,6 @@ namespace Hathora.Core.Scripts.Editor.Server
             #endregion // bug: Recompiles - you lose all logs [including HathoraServerConfig logs]
             
             strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
-
-            // ----------------
-            // Generate the Dockerfile to `.hathora/`: Paths will be different for each collaborator
-            bool existingDockerfileExists = CheckIfDockerfileExists(configPaths);
-            bool genDockerfile = buildOpts.OverwriteDockerfile || !existingDockerfileExists;
-            if (genDockerfile)
-            {
-                strb.AppendLine($"Generating Dockerfile to `{configPaths.PathToDotHathoraDockerfile}` ...");
-                Debug.Log($"{logPrefix} Generating new Dockerfile (if exists: overwriting)...");
-                
-                string dockerFileContent = HathoraDocker.GenerateDockerFileStr(configPaths);
-
-                strb.AppendLine("```")
-                    .AppendLine(dockerFileContent)
-                    .AppendLine("```")
-                    .AppendLine();
-
-                await HathoraDocker.WriteDockerFileAsync(
-                    configPaths.PathToDotHathoraDockerfile,
-                    dockerFileContent,
-                    _cancelToken);    
-            }
-            else if (!buildOpts.OverwriteDockerfile)
-            {
-                Debug.LogWarning($"{logPrefix} !buildOpts.OverwriteDockerfile: Leaving Dockerfile" +
-                    "alone (to !overwrite customizations) at risk of desync, if any ServerConfig opts have changed.");
-            }
 
             // ----------------
             // Open the build directory - this will lose focus of the inspector
