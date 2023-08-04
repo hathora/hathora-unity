@@ -105,7 +105,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 .AppendLine("```")
                 .AppendLine();
             
-            Debug.Log(strb.ToString());
+            Debug.Log("BUILDING now (this may take a while): See HathoraServerConfig " +
+                "'Generate Server Build Logs'"); // To regular console
             await Task.Delay(100, _cancelToken); // Give the logs a chance to update
 
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
@@ -121,19 +122,26 @@ namespace Hathora.Core.Scripts.Editor.Server
                 return buildReport; // fail
             }
             
-            // ----------------
-            // Revert build settings since we changed them to headless Linux server -- logs go AFTER since this wipes them
-            EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
-            PlayerSettings.SetArchitecture(originalBuildTargetGroup, originalArchitecture);
-            PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
-            PlayerSettings.SetApiCompatibilityLevel(originalBuildTargetGroup, originalApiCompatibility);
-
-            Debug.Log($"{logPrefix} Reverted build settings to original: " +
-                $"[BuildTarget: {originalBuildTarget}, " +
-                $"BuildTargetGroup: {originalBuildTargetGroup}, " +
-                $"Architecture: {originalArchitecture}, " +
-                $"ScriptingBackend: {originalScriptingBackend}, " +
-                $"ApiCompatibility: {originalApiCompatibility}");
+            #region bug: Recompiles - you lose all logs [including HathoraServerConfig logs]
+            // // ----------------
+            // // Delay since we don't want the rest of the block to cutoff (This causes a recompile)
+            // EditorApplication.delayCall += () =>
+            // {
+            //     // Revert build settings since we changed them to headless Linux server
+            //     EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
+            //     PlayerSettings.SetArchitecture(originalBuildTargetGroup, originalArchitecture);
+            //     PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
+            //     PlayerSettings.SetApiCompatibilityLevel(originalBuildTargetGroup, originalApiCompatibility);
+            //
+            //     Debug.Log(
+            //         $"{logPrefix} Reverted build settings to original: " +
+            //         $"[BuildTarget: {originalBuildTarget}, " +
+            //         $"BuildTargetGroup: {originalBuildTargetGroup}, " +
+            //         $"Architecture: {originalArchitecture}, " +
+            //         $"ScriptingBackend: {originalScriptingBackend}, " +
+            //         $"ApiCompatibility: {originalApiCompatibility}");
+            // };
+            #endregion // bug: Recompiles - you lose all logs [including HathoraServerConfig logs]
             
             strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
 
