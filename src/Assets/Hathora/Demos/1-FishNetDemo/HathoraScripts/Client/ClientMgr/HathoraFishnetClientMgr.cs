@@ -92,12 +92,18 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             // Start FishNet Client via selected Transport
             if (hasHost && hasPort)
             {
+                Debug.Log($"[HathoraFishnetClientMgr] StartClient w/Custom hostPort: " +
+                    $"`{hostPortContainer.hostNameOrIp}:{hostPortContainer.port}`");
+                
                 InstanceFinder.ClientManager.StartConnection(
                     hostPortContainer.hostNameOrIp, 
                     hostPortContainer.port);    
             }
             else
+            {
+                Debug.Log($"[HathoraFishnetClientMgr] StartClient w/NetworkSettings config");
                 InstanceFinder.ClientManager.StartConnection();
+            }
             
             return Task.CompletedTask;
         }
