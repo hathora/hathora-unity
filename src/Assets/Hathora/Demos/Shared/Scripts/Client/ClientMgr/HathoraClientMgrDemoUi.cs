@@ -207,6 +207,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             if (string.IsNullOrEmpty(_friendlyErr))
                 return;
             
+#if UNITY_WEBGL && UNITY_EDITOR
+            _friendlyErr += " (Unity !supports WebSocket in Editor)";
+#endif
+            
             sdkDemoUi.joiningLobbyStatusErrTxt.text = $"<color=orange>{_friendlyErr}</color>";
             sdkDemoUi.joiningLobbyStatusErrTxt.gameObject.SetActive(true);
         }
