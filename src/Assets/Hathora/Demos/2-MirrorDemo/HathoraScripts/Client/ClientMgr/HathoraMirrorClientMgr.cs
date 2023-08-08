@@ -91,7 +91,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         private string GetWebglClientScheme()
         {
             SimpleWebTransport swt = NetworkManager.singleton.transport as SimpleWebTransport;
-            Assert.IsNotNull(swt, "Expected `SimpleWebTransport` since UNITY_WEBGL");
+            Assert.IsNotNull(swt, "Expected `SimpleWebTransport` in NetworkManager.Transport, " +
+                "since UNITY_WEBGL - you are trying to call WS/WSS TCP transport from a Transport that !supports this");
 
             bool isWss = swt.sslEnabled || swt.clientUseWss; 
             return isWss 
@@ -99,32 +100,50 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 : SimpleWebTransport.NormalScheme;
         }
 
-        /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
+        /// <param name="_hostPort">
+        /// host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345".
+        /// If !hostPort, we'll use the default from NetworkManager and its selected Transport.
+        /// </param>
         public override Task StartClient(string _hostPort = null)
         {
+            if (string.IsNullOrEmpty(_hostPort))
+            {
+                // No custom host:port >> Start normally with NetworkManager settings
+                NetworkManager.singleton.StartClient();
+                return Task.CompletedTask;
+            }
+            
             // Start Mirror Client via selected Transport
             (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
             bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
             bool hasPort = hostPortContainer.port > 0;
-            string protocolStr = "";
 
-            // Start Mirror Client via selected Transport
-            if (hasHost && hasPort)
+            if (!hasHost || !hasPort)
             {
-                // UDP == KcpTransport; WebGL (WS || WSS) == SimpleWebTransport
-#if UNITY_WEBGL
-                protocolStr = GetWebglClientScheme();
-#endif
+                // Has some kind of custom host:port, but is incomplete >> Start normally with NetworkManager settings
+                Debug.LogError("[HathoraMirrorClientMgr.StartClient] Invalid `host:port` provided: " +
+                    $"`{_hostPort}` -- Continuing with NetworkManager settings");
                 
-                Uri uri = new($"{protocolStr}://{_hostPort}"); // eg: "wss://1.proxy.hathora.dev:12345"
-                Debug.Log($"[HathoraMirrorClientMgr.StartClient] uri == `{uri}`");
-                NetworkManager.singleton.StartClient(uri);
-            }
-            else
                 NetworkManager.singleton.StartClient();
+                return Task.CompletedTask;
+            }
+            
+            // We have both host (or ip) && port >>
+            string uriPrefix = "kcp"; // Default UDP transport prefix using KCP Transport
+
+#if UNITY_WEBGL
+            uriPrefix = GetWebglClientScheme(); // "ws" || "wss"
+#endif
+            
+            Debug.Log($"[HathoraMirrorClientMgr.StartClient] Setting uri to `{uriPrefix}://{_hostPort}` ...");
+            Uri uri = new($"{uriPrefix}://{_hostPort}"); // eg: "wss://1.proxy.hathora.dev:12345"
+            Debug.Log($"[HathoraMirrorClientMgr.StartClient] Final uri: `{uri}`");
+            
+            // Start Mirror Client via selected Transport
+            NetworkManager.singleton.StartClient(uri); // eg: "1.proxy.hathora.dev:12345"
             
             Debug.Log("[HathoraMirrorClientMgrBase.StartClient] " +
-                $"Transport set to `{transport}` ({protocolStr})");
+                $"Transport set to `{transport}` ({uriPrefix})");
             
             return Task.CompletedTask;
         }
