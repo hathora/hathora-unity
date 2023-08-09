@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,14 +68,14 @@ namespace Hathora.Demos.Shared.Scripts.Common
         #endregion // vars
         
         
-        private async void Start() => await InitArgs();
+        private async void Start() => await InitArgsAsync();
 
         /// <summary>
         /// (!) Some args like `-scene` and `-mode` are statically consumed only once
         /// (eg: reloading the scene won't apply them).</summary>
-        protected virtual async Task InitArgs()
+        protected virtual async Task InitArgsAsync()
         {
-            string logPrefix = $"[HathoraArgHandlerBase.{nameof(InitArgs)}]";
+            string logPrefix = $"[HathoraArgHandlerBase.{nameof(InitArgsAsync)}]";
             
             Dictionary<string, string> args = GetCommandlineArgs();
 
@@ -86,20 +87,45 @@ namespace Hathora.Demos.Shared.Scripts.Common
                 args = MOCK_ARGS_DICT; // Override for debugging
             }
             
-            Debug.Log($"{logPrefix} scene: {gameObject.scene.name} " +
-                "(before consuming `-scene` arg, if exists)");
+            string argsStr = string.Join(" ", args.Select(kvp => $"{kvp.Key} {kvp.Value}"));
+            Debug.Log($"{logPrefix} Handling args: `{argsStr}`");
 
-            // -scene {string} // Load scene by name
-            if (args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName))
-                await InitArgScene(sceneName);
+            try
+            {
+                // -scene {string} // Load scene by name
+                bool hasSceneArg = args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName); 
+                    
+                if (!Application.isEditor)
+                    Debug.Log($"{logPrefix} Has `-scene` arg? {hasSceneArg}");
+                    
+                if (hasSceneArg)
+                    await InitArgScene(sceneName);
             
-            // -_mode {server|client|host} // Logs and start netcode
-            if (args.TryGetValue("-mode", out string mode))
-                InitArgMode(mode);
+                // -----------------
+                // -_mode {server|client|host} // Logs and start netcode
+                bool hasModeArg = args.TryGetValue("-mode", out string mode) && !string.IsNullOrEmpty(mode);
+                
+                if (!Application.isEditor)
+                    Debug.Log($"{logPrefix} Has `-mode` arg? {hasModeArg}");
+                
+                if (hasModeArg)
+                    InitArgMode(mode);
             
-            // -memo {string} // Show arbitrary text at bottom of screen
-            if (args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr))
-                InitArgMemo(memoStr);
+                // -----------------
+                // -memo {string} // Show arbitrary text at bottom of screen
+                bool hasMemoArg = args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr); 
+                
+                if (!Application.isEditor)
+                    Debug.Log($"{logPrefix} Has `-memo` arg? {hasMemoArg}");
+                
+                if (hasMemoArg)
+                    InitArgMemo(memoStr);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraArgHandlerBase.InitArgsAsync] Error: {e.Message}");
+                throw;
+            }
         }
 
         /// <summary>
@@ -112,13 +138,31 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// <param name="_sceneName"></param>
         protected virtual async Task InitArgScene(string _sceneName)
         {
+            Debug.Log($"[HathoraArgHandlerBase] InitArgScene: {_sceneName}");
+
+            // Get current scene name
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName == _sceneName)
+            {
+                _sceneArgConsumed = true;
+                return; // We're already in this scene
+            }
+
             if (SceneArgConsumed)
             {
                 Debug.LogWarning("[HathoraArgHandlerBase.InitMode] SceneArgConsumed, already");
                 return;
             }
-            
-            await HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync(_sceneName);
+
+            try
+            {
+                await HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync(_sceneName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[HathoraArgHandlerBase.InitArgScene] Error: {e}");
+                throw;
+            }
         }
 
         /// <summary>Override me -> Set memoStr in UI</summary>
@@ -133,6 +177,8 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// </summary>
         protected virtual void InitArgMode(string _mode)
         {
+            Debug.Log($"[HathoraArgHandlerBase] InitArgMode: {_mode}");
+
             if (ModeArgConsumed)
             {
                 Debug.LogWarning("[HathoraArgHandlerBase.InitMode] ModeArgConsumed, already");

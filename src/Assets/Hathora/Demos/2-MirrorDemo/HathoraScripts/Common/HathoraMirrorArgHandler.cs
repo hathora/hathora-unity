@@ -3,8 +3,8 @@
 using Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr;
 using Mirror;
 using Hathora.Demos.Shared.Scripts.Common;
-using kcp2k;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 {
@@ -13,19 +13,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
     /// </summary>
     public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
-        [SerializeField]
-        private NetworkManager manager;
-
-        [SerializeField]
-        private KcpTransport kcpTransport;
-
-        
-        private void Start() => base.InitArgs();
+        private async void Start() => 
+            await base.InitArgsAsync();
 
         protected override void InitArgMemo(string _memoStr)
         {
             base.InitArgMemo(_memoStr);
-            HathoraMirrorClientMgrUi.Singleton.SetShowDebugMemoTxt(_memoStr);
+            HathoraMirrorClientMgrDemoUi.Singleton.SetShowDebugMemoTxt(_memoStr);
         }
 
         protected override void ArgModeStartServer()
@@ -34,11 +28,14 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
-            if (NetworkServer.active)
+            Assert.IsNotNull(NetworkManager.singleton, "Expected NetworkManager to be serialized: " +
+                "See your 1st scene's NetworkManager.HathoraMirrorArgHandler and serialize in the NetworkManager");
+            
+            if (NetworkManager.singleton.autoStartServerBuild || NetworkManager.singleton.isNetworkActive)
                 return;
 
-            Debug.Log("[HathoraMirrorArgHandler] Starting Server ...");
-            manager.StartServer();
+            Debug.Log("[HathoraMirrorArgHandler] Starting Mirror Server ...");
+            NetworkManager.singleton.StartServer();
         }
 
         protected override void ArgModeStartClient()
@@ -48,11 +45,12 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             // It's very possible this already started, if Mirror's NetworkManager
             // Auto join clients checkbox is true
             if (NetworkClient.active)
-                return; // We don't want to start 2x
-            
-            Debug.Log("[HathoraMirrorArgHandler] Starting Client to " +
-                $"{manager.networkAddress}:{kcpTransport.Port} (TODO_PROTOCOL) ...");
-            manager.StartClient();
+                return;
+
+            Debug.Log("[HathoraMirrorArgHandler] Starting Client ...");
+
+            // Go through Hathora ClientMgr middleware to ensure the correct Transport is used
+            HathoraMirrorClientMgr.Singleton.StartClient();
         }
         
         protected override void ArgModeStartHost()
@@ -62,10 +60,10 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             // It's very possible this already started, if Mirror's NetworkManager
             // start on headless checkbox is true
             if (NetworkServer.active)
-                return; // We don't want to start 2x
+                return;
             
             Debug.Log("[HathoraMirrorArgHandler] Starting Host (Server+Client) ...");
-            manager.StartHost(); // Different from FishNet
+            NetworkManager.singleton.StartHost(); // Different from FishNet
         }
     }
 }
