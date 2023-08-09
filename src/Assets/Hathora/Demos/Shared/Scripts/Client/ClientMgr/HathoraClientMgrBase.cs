@@ -401,8 +401,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             if (_lobbies == null || numLobbiesFound == 0)
                 throw new NotImplementedException("TODO: !Lobbies handling");
 
-            List<Lobby> sortedLobbies = _lobbies.OrderBy(lobby => lobby.CreatedAt).ToList();
-            ClientMgrDemoUi.OnViewLobbies(sortedLobbies);
+            List<Lobby> sortedByNewestToOldest = _lobbies.OrderByDescending(lobby => 
+                lobby.CreatedAt).ToList();
+            
+            ClientMgrDemoUi.OnViewLobbies(sortedByNewestToOldest);
         }
         
         /// <summary>
