@@ -24,10 +24,10 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
-        protected override void OnStart()
+        protected override void Start()
         {
-            base.OnStart();
-            InitOnStart(HathoraClientMgr);
+            base.Start();
+            InitOnStart(HathoraClientMgr); // Allows logic alls on UI interactions
         }
 
         protected override void SetSingleton()

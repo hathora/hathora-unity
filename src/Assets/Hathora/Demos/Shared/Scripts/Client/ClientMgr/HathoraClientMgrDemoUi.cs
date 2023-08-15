@@ -47,22 +47,19 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
 
         #region Init
-        private void Awake() => 
-            OnAwake();
-        
-        private void Start() => 
-            OnStart();
-
-        protected virtual void OnAwake() =>
+        protected virtual void Awake() =>
             SetSingleton();
 
         /// <summary>Override + Call InitOnStart</summary>
-        protected virtual void OnStart()
+        protected virtual void Start()
         {
+            //// Call from child so UI interactions can call logic
             // InitOnStart(hathoraClientBase);
         }
 
-        /// <summary>Call me @ OnStart</summary>
+        /// <summary>
+        /// Call me @ child Start so we can call logic events on UI inputs (btn clicks, etc).
+        /// </summary>
         protected void InitOnStart(HathoraClientMgrBase _hathoraClientMgrBase)
         {
             if (_hathoraClientMgrBase == null)
