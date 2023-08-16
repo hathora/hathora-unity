@@ -84,7 +84,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         private bool hasServerDeployedProcessId =>
             !string.IsNullOrEmpty(serverDeployedProcessId);
-        protected bool HasServerDeployedProcessId => hasServerDeployedProcessId;
+        public bool HasServerDeployedProcessId => hasServerDeployedProcessId;
         #endregion // Vars
 
         
