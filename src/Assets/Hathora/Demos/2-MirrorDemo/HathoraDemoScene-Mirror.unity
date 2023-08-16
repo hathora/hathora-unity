@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   port: 7777
-  ClientUseDefaultPort: 0
+  ClientUseDefaultPort: 1
   maxMessageSize: 16384
   handshakeMaxSize: 3000
   noDelay: 1
