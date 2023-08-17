@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using FishNet;
 using FishNet.Managing.Client;
 using FishNet.Transporting;
+using FishNet.Transporting.Bayou;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 {
@@ -142,8 +144,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         /// <summary>
         /// Connect to the Server as a Client via net code. Uses cached vals.
-        /// Currently uses FishNet.Tugboat (UDP) transport.
         /// This will trigger `OnClientConnectionState(state)`
+        /// - WebGL: Asserts for `Bayou` as the NetworkManager's selected transport
+        /// - !WebGL: Asserts for `!Bayou` as the NetworkManager's selected transport (such as `Tugboat` UDP)
         /// </summary>
         /// <returns>
         /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
@@ -160,6 +163,17 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             bool isReadyToConnect = ValidateIsReadyToConnect(InstanceFinder.ClientManager, transport);
             if (!isReadyToConnect)
                 return Task.FromResult(false); // !startedConnection
+
+            Bayou bayouTransport = transport as Bayou; 
+#if UNITY_WEBGL
+            Assert.IsNotNull(bayouTransport, "Expected NetworkManager to use " +
+                $"{nameof(bayouTransport)} for WebGL build -- if more transports for WebGL " +
+                "came out later, edit this Assert script");
+#else
+            Assert.IsNull(bayouTransport, "!Expected NetworkManager to use " +
+                $"{nameof(bayouTransport)} for !WebGL build - Set NetworkManager "+
+                "transport to, for example, `Tugboat` (supporting UDP).");
+#endif
 
             // -----------------
             // Set port + host (ip)
