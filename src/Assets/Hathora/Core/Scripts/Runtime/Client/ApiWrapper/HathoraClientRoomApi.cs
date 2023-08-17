@@ -90,8 +90,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
                     break;
                 
-                pollMsg.Append(".");
                 Debug.Log(pollMsg);
+                pollMsg.Append(".");
+                
                 await Task.Delay(TimeSpan.FromSeconds(pollIntervalSecs), _cancelToken);
             }
 
