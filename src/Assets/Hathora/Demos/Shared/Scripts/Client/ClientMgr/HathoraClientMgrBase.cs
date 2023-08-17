@@ -184,7 +184,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
             Debug.Log("[HathoraClientBase.SetConnectingState] Connecting to: " + 
                 $"{hathoraClientSession.GetServerInfoIpPort()} via " +
-                $"NetworkManager.{_transportName} transport");
+                $"`NetworkManager.{_transportName}` transport");
         }
         #endregion // Interactions from UI -> Optional overrides
 

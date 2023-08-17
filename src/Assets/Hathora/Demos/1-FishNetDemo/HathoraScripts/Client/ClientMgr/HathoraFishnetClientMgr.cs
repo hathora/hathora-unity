@@ -153,10 +153,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// </returns>
         public override Task<bool> ConnectAsClient()
         {
-            Debug.Log("[HathoraFishnetClient] ConnectAsync");
-            
             // Set connecting state + log where we're connecting to
-            base.SetConnectingState(transport.name);
+            string transportName = transport.GetType().Name;
+            base.SetConnectingState(transportName);
 
             // -----------------
             // Validate; UI and err handling is handled within

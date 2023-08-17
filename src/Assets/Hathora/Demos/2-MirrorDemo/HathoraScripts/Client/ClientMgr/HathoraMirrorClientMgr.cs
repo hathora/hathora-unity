@@ -197,10 +197,11 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// </returns>
         public override Task<bool> ConnectAsClient()
         {
-            Debug.Log("[HathoraMirrorClient] ConnectAsync");
+            Debug.Log("[HathoraMirrorClient] ConnectAsClient");
 
             // Set connecting state + log where we're connecting to
-            base.SetConnectingState(transport.name);
+            string transportName = transport.GetType().Name;
+            base.SetConnectingState(transportName);
             
             // -----------------
             // Validate; UI and err handling is handled within
@@ -215,12 +216,14 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
             
 #if UNITY_WEBGL
+            Debug.Log("[HathoraMirrorClientMgr.ConnectAsClient] Validating WebGL Transport...");
             Assert.IsNotNull(webglSimpleWebTransport, "Expected NetworkManager to use " +
                 $"{nameof(webglSimpleWebTransport)} for WebGL build -- if more transports for WebGL " +
                 "came out later, edit this Assert script");
             
             webglSimpleWebTransport.port = (ushort)connectInfo.Port;       
 #else
+            Debug.Log("[HathoraMirrorClientMgr.ConnectAsClient] Validating !WebGL Transport...");
             Assert.IsNull(webglSimpleWebTransport, "!Expected NetworkManager to use " +
                 $"{nameof(webglSimpleWebTransport)} for !WebGL build - Set NetworkManager "+
                 "transport to, for example, `Kcp` (supporting UDP).");
@@ -229,7 +232,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 #endif
             
             
-            // Connect now => cb @ OnClientConnected()
+            // Connect now using NetworkManager settings we just set above => callback @ OnClientConnected()
             StartClient();
             return Task.FromResult(false); // startedConnection; continued @ OnClientConnected()
         }
@@ -267,8 +270,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         private void onMirrorClientError(TransportError _transportErr, string _extraInfo)
         {
             Debug.LogError("[HathoraMirrorClient] onMirrorClientError: " +
-                           $"_transportErr: {_transportErr}, " +
-                           $"_extraInfo: {_extraInfo}");
+                           $"transportErr: {_transportErr}, " +
+                           $"extraInfo: {_extraInfo}");
 
             base.IsConnecting = false;
         }
