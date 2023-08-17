@@ -22,10 +22,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
-        protected override void OnStart()
+        protected override void Start()
         {
-            base.OnStart();
-            InitOnStart(HathoraClientMgr);
+            base.Start();
+            InitOnStart(HathoraClientMgr); // Allows logic calls on UI interactions
         }
         
         protected override void SetSingleton()
@@ -51,6 +51,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             HathoraClientMgr.StartServer();
         }
 
+        /// <summary></summary>
         /// <param name="_hostPortOverride">
         /// Normally passes the host:port provided by Hathora, but FishNet
         /// specifically gets it from the Ui.clientConnectInputField
@@ -73,6 +74,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             HathoraClientMgr.StartClient(_hostPortOverride);
         }
 
+        
         public override void OnStartHostBtnClick()
         {
             base.OnStartHostBtnClick();

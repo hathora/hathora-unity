@@ -41,10 +41,22 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
-        /// <summary>SetSingleton(), SetTransport()</summary>
-        protected override void OnAwake() =>
-            base.OnAwake();
+        /// <summary>Be sure to override when using Start() + Awake()</summary>
+        protected override void Awake() =>
+            base.Awake();
 
+        protected override void Start()
+        {
+            base.Start();
+            base.InitOnStart(HathoraMirrorClientMgrDemoUi.Singleton); // Allows logic callbacks to trigger UI events
+
+            // This is a Client manager script; listen for relative events
+            transport.OnClientConnected += base.OnConnectSuccess;
+            transport.OnClientError += onMirrorClientError;
+            transport.OnClientDisconnected += () => 
+                base.OnConnectFailed("Disconnected");;
+        }
+        
         protected override void SetSingleton()
         {
             if (Singleton != null)
@@ -55,18 +67,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
 
             Singleton = this;
-        }
-
-        protected override void OnStart()
-        {
-            base.InitOnStart(HathoraMirrorClientMgrDemoUi.Singleton);
-            base.OnStart();
-
-            // This is a Client manager script; listen for relative events
-            transport.OnClientConnected += base.OnConnectSuccess;
-            transport.OnClientError += onMirrorClientError;
-            transport.OnClientDisconnected += () => 
-                base.OnConnectFailed("Disconnected");;
         }
         #endregion // Init
         

@@ -89,8 +89,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         
         #region Init
-        private void Awake() => OnAwake();
-        protected virtual void OnAwake()
+        protected virtual void Awake()
         {
 #if !UNITY_SERVER && !UNITY_EDITOR
             Debug.Log("(!) [HathoraServerMgrBase.Awake] Destroying - not a server");
@@ -118,14 +117,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
             _ = GetHathoraProcessFromEnvVarAsync(); // !await
         }
 
-        /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
-        private void Start() => OnStart();
-
-        /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
-        protected virtual void OnStart()
-        {
-        }
-
         /// <param name="_overrideProcIdVal">Mock a val for testing within the Editor</param>
         protected virtual string getServerDeployedProcessId(string _overrideProcIdVal = null)
         {
@@ -139,7 +130,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             return Environment.GetEnvironmentVariable("HATHORA_PROCESS_ID");
         }
 
-        // /// <summary>TODO: Mv to child</summary>
+        ///// <summary>You probably want to set this on child @ awake</summary>
         // private void setSingleton() { }
         // {
         //     if (Singleton != null)
@@ -184,7 +175,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// Gets the Server process info by a special env var that's
         /// *always* included (automatically) in Hathora deployments.
         ///
-        /// You probably want to call this @ OnAwake, then get cached ver later @ GetCachedHathoraProcessAsync()
+        /// You probably want to call this @ Awake, then get cached ver later @ GetCachedHathoraProcessAsync()
         /// </summary>
         protected virtual async Task GetHathoraProcessFromEnvVarAsync()
         {
@@ -203,7 +194,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <summary>
         /// systemHathoraProcess tries to set async @ Awake, but it could still take some time.
         /// We'll await until != null for 5s before timing out.
-        /// We initially set this @ OnAwake via getHathoraProcessFromEnvVarAsync.
+        /// We initially set this @ Awake via getHathoraProcessFromEnvVarAsync.
         /// TODO: Accept custom cancelToken
         /// </summary>
         /// <returns></returns>
@@ -253,7 +244,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             HathoraGetDeployInfoResult getDeployInfoResult = new(serverDeployedProcessId);
             
             // ----------------
-            // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ OnAwake()
+            // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ Awake()
             // We await => just in case we called this early, to prevent race conditions
             Process processInfo = await GetCachedHathoraProcessAsync();
             string procId = processInfo.ProcessId;
