@@ -12,7 +12,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
     /// </summary>
     public class HathoraFishnetServerMgr : HathoraServerMgrBase
     {
-        public static HathoraServerMgrBase Singleton { get; private set; }
+        public static HathoraFishnetServerMgr Singleton { get; private set; }
 
         /// <summary>Shortcuts to the selected Transport instance</summary>
         private static Transport transport
