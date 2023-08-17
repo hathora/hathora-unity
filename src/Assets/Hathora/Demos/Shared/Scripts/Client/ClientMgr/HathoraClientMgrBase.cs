@@ -55,12 +55,15 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         
         #region Init
-        private void Awake() => OnAwake();
-        private void Start() => OnStart();
-        
-        protected virtual void OnAwake()
+        protected virtual void Awake()
         {
             SetSingleton();
+        }
+        
+        protected virtual void Start()
+        {
+            validateReqs();
+            initApis(_hathoraSdkConfig: null); // Base will create this
         }
 
         /// <summary>
@@ -68,19 +71,16 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// </summary>
         protected abstract void SetSingleton();
 
-        /// <summary>Override OnStart and call this before anything.</summary>
+        /// <summary>
+        /// If you want to trigger UI from Mgr callbacks:
+        /// Override OnStart and call this before anything.
+        /// </summary>
         /// <param name="_clientMgrDemoUi"></param>
         protected virtual void InitOnStart(HathoraClientMgrDemoUi _clientMgrDemoUi)
         {
             ClientMgrDemoUi = _clientMgrDemoUi;
         }
 
-        protected virtual void OnStart()
-        {
-            validateReqs();
-            initApis(_hathoraSdkConfig: null); // Base will create this
-        }
-        
         /// <summary>
         /// Init all Client API wrappers. Uses serialized HathoraClientConfig
         /// </summary>

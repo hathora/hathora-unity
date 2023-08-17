@@ -22,10 +22,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
         }
 
         #region Init
-        protected override void OnAwake()
+        protected override void Awake()
         {
-            Debug.Log("[HathoraFishnetServerMgr] OnAwake");
-            base.OnAwake();
+            Debug.Log("[HathoraFishnetServerMgr] Awake");
+            base.Awake();
             setSingleton();
         }
     

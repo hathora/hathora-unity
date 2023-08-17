@@ -29,9 +29,18 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         
         #region Init
-        /// <summary>SetSingleton(), SetTransport()</summary>
-        protected override void OnAwake() =>
-            base.OnAwake();
+        /// <summary>Be sure to override when using Start() + Awake()</summary>
+        protected override void Awake() =>
+            base.Awake();
+        
+        protected override void Start()
+        {
+            base.Start();
+            base.InitOnStart(HathoraFishnetClientMgrDemoUi.Singleton); // Allows UI calls on logic callbacks
+            
+            // This is a Client manager script; listen for relative events
+            InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
+        }
 
         protected override void SetSingleton()
         {
@@ -43,15 +52,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             }
 
             Singleton = this;
-        }
-
-        protected override void OnStart()
-        {
-            base.InitOnStart(HathoraFishnetClientMgrDemoUi.Singleton);
-            base.OnStart();
-            
-            // This is a Client manager script; listen for relative events
-            InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
         }
         #endregion // Init
         
