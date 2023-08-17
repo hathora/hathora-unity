@@ -43,7 +43,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected ClientApiContainer ClientApis => clientApis;
         #endregion // Serialized Fields
 
-        private bool hasUi => netClientMgrUiBase != null;
+        private bool hasSdkDemoUi => ClientMgrDemoUi != null;
 
         
         // public static Hathora{X}Client Singleton { get; private set; } // TODO: Implement me in child
@@ -51,21 +51,28 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <summary>Updates this on state changes</summary>
         protected bool IsConnecting { get; set; }
         
-        private HathoraNetClientMgrUiBase netClientMgrUiBase { get; set; }
+        private HathoraClientMgrDemoUi ClientMgrDemoUi { get; set; }
 
         
         #region Init
         private void Awake() => OnAwake();
         private void Start() => OnStart();
+        
+        protected virtual void OnAwake()
+        {
+            SetSingleton();
+        }
 
-        /// <summary>setSingleton()</summary>
-        protected abstract void OnAwake();
+        /// <summary>
+        /// You want other classes to easily be able to access your ClientMgr
+        /// </summary>
+        protected abstract void SetSingleton();
 
         /// <summary>Override OnStart and call this before anything.</summary>
-        /// <param name="_netClientMgrUiBase"></param>
-        protected virtual void InitOnStart(HathoraNetClientMgrUiBase _netClientMgrUiBase)
+        /// <param name="_clientMgrDemoUi"></param>
+        protected virtual void InitOnStart(HathoraClientMgrDemoUi _clientMgrDemoUi)
         {
-            netClientMgrUiBase = _netClientMgrUiBase;
+            ClientMgrDemoUi = _clientMgrDemoUi;
         }
 
         protected virtual void OnStart()
@@ -95,10 +102,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             // Are we using any Client Config at all?
             bool hasConfig = hathoraClientConfig != null;
             bool hasAppId = hathoraClientConfig.HasAppId;
-            bool hasNoAppIdButHasUiInstance = !hasAppId && hasUi;
+            bool hasNoAppIdButHasUiInstance = !hasAppId && hasSdkDemoUi;
             
             if (!hasConfig || hasNoAppIdButHasUiInstance)
-                netClientMgrUiBase.SetInvalidConfig(hathoraClientConfig);
+                ClientMgrDemoUi.SetInvalidConfig(hathoraClientConfig);
         }
 
         // // TODO: implement me in child class:
@@ -121,12 +128,36 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         #region Interactions from UI -> Required Overrides
         public abstract Task<bool> ConnectAsClient();
+        
+        /// <summary>
+        /// Starts a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraServerMgr
+        /// </summary>
         public abstract Task StartServer();
-        public abstract Task StartClient();
-        public abstract Task StartHost();
-        public abstract Task StopHost();
+
+        /// <summary>
+        /// Stops a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraServerMgr
+        /// </summary>
         public abstract Task StopServer();
+
+        /// <summary>Starts a NetworkManager Client</summary>
+        /// <param name="_hostPort">host:port provided by Hathora</param>
+        public abstract Task StartClient(string _hostPort = null);
+        
+        /// <summary>Stops a NetworkManager Client</summary>
+        /// <returns></returns>
         public abstract Task StopClient(); 
+        
+        /// <summary>Starts a NetworkManager Host (Server+Client). TODO: Create a `HathoraCommonMgr` and mv this</summary>
+        public abstract Task StartHost();
+
+        /// <summary>Stops a NetworkManager Host (Server+Client). TODO: Create a `HathoraCommonMgr` and mv this</summary>
+        public abstract Task StopHost();
         #endregion // Interactions from UI -> Required Overrides
        
         
@@ -292,8 +323,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraClientBase] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
-                if (hasUi)
-                    netClientMgrUiBase.OnGetServerInfoFail();
+                if (hasSdkDemoUi)
+                    ClientMgrDemoUi.OnGetServerInfoFail();
                 return null; // fail
             }
             
@@ -310,51 +341,51 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             IsConnecting = false;
             
-            if (hasUi)
-                netClientMgrUiBase.OnJoinLobbyFailed(_friendlyReason);
+            if (hasSdkDemoUi)
+                ClientMgrDemoUi.OnJoinLobbyFailed(_friendlyReason);
         }
         
         protected virtual void OnConnectSuccess()
         {
             IsConnecting = false;
             
-            if (hasUi)
-                netClientMgrUiBase.OnJoinLobbyConnectSuccess();
+            if (hasSdkDemoUi)
+                ClientMgrDemoUi.OnJoinLobbyConnectSuccess();
         }
         
         protected virtual void OnGetActiveConnectionInfoFail()
         {
-            if (hasUi)
-                netClientMgrUiBase.OnGetServerInfoFail();
+            if (hasSdkDemoUi)
+                ClientMgrDemoUi.OnGetServerInfoFail();
         }
         
         /// <summary>AKA OnGetServerInfoSuccess - mostly UI</summary>
         protected virtual void OnGetActiveConnectionInfoComplete(ConnectionInfoV2 _connectionInfo)
         {
-            if (netClientMgrUiBase == null)
+            if (ClientMgrDemoUi == null)
                 return;
 
             if (string.IsNullOrEmpty(_connectionInfo?.ExposedPort?.Host))
             {
-                netClientMgrUiBase.OnGetServerInfoFail();
+                ClientMgrDemoUi.OnGetServerInfoFail();
                 return;
             }
             
-            netClientMgrUiBase.OnGetServerInfoSuccess(_connectionInfo);
+            ClientMgrDemoUi.OnGetServerInfoSuccess(_connectionInfo);
         }
         
         protected virtual void OnAuthLoginComplete(bool _isSuccess)
         {
-            if (netClientMgrUiBase == null)
+            if (ClientMgrDemoUi == null)
                 return;
 
             if (!_isSuccess)
             {
-                netClientMgrUiBase.OnAuthFailed();
+                ClientMgrDemoUi.OnAuthFailed();
                 return;
             }
 
-            netClientMgrUiBase.OnAuthedLoggedIn();
+            ClientMgrDemoUi.OnAuthedLoggedIn();
         }
 
         protected virtual void OnViewPublicLobbiesComplete(List<Lobby> _lobbies)
@@ -364,14 +395,16 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 $"# Lobbies found: {numLobbiesFound}");
 
             // UI >>
-            if (netClientMgrUiBase == null)
+            if (ClientMgrDemoUi == null)
                 return;
 
             if (_lobbies == null || numLobbiesFound == 0)
                 throw new NotImplementedException("TODO: !Lobbies handling");
 
-            List<Lobby> sortedLobbies = _lobbies.OrderBy(lobby => lobby.CreatedAt).ToList();
-            netClientMgrUiBase.OnViewLobbies(sortedLobbies);
+            List<Lobby> sortedByNewestToOldest = _lobbies.OrderByDescending(lobby => 
+                lobby.CreatedAt).ToList();
+            
+            ClientMgrDemoUi.OnViewLobbies(sortedByNewestToOldest);
         }
         
         /// <summary>
@@ -380,25 +413,46 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <param name="_lobby"></param>
         protected virtual void OnCreateOrJoinLobbyCompleteAsync(Lobby _lobby)
         {
-            if (netClientMgrUiBase == null)
+            if (ClientMgrDemoUi == null)
                 return;
 
                 // UI >>
             if (string.IsNullOrEmpty(_lobby?.RoomId))
             {
-                netClientMgrUiBase.OnCreatedOrJoinedLobbyFail();
+                ClientMgrDemoUi.OnCreatedOrJoinedLobbyFail();
                 return;
             }
             
             // Success >> We may not have a UI
-            if (netClientMgrUiBase == null)
+            if (ClientMgrDemoUi == null)
                 return;
 
             string friendlyRegion = _lobby.Region.ToString().SplitPascalCase();
-            netClientMgrUiBase.OnCreatedOrJoinedLobby(
+            ClientMgrDemoUi.OnCreatedOrJoinedLobby(
                 _lobby.RoomId, 
                 friendlyRegion);
         }
         #endregion // Callbacks
+        
+        
+        #region Utils
+        /// <summary>
+        /// This was likely passed in from the UI to override the default NetworkManager (often from Standalone Client).
+        /// Eg: "1.proxy.hathora.dev:12345" -> "1.proxy.hathora.dev", 12345
+        /// </summary>
+        /// <param name="_hostPort"></param>
+        /// <returns></returns>
+        protected static (string hostNameOrIp, ushort port) SplitPortFromHostOrIp(string _hostPort)
+        {
+            if (string.IsNullOrEmpty(_hostPort))
+                return default;
+            
+            string[] hostPortArr = _hostPort.Split(':');
+            string hostNameOrIp = hostPortArr[0];
+            ushort port = ushort.Parse(hostPortArr[1]);
+            
+            return (hostNameOrIp, port);
+        }
+        #endregion // Utils
     }
 }

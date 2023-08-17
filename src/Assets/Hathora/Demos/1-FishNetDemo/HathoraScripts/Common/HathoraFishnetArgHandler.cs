@@ -12,24 +12,25 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
     /// </summary>
     public class HathoraFishnetArgHandler : HathoraArgHandlerBase
     {
-        private void Start() => base.InitArgs();
+        private void Start() => 
+            _ = base.InitArgsAsync();
 
         protected override void InitArgMemo(string _memoStr)
         {
             base.InitArgMemo(_memoStr);
-            HathoraFishnetClientMgrUi.Singleton.SetShowDebugMemoTxt(_memoStr);
+            HathoraFishnetClientMgrDemoUi.Singleton.SetShowDebugMemoTxt(_memoStr);
         }
 
         protected override void ArgModeStartServer()
         {
             base.ArgModeStartServer();
 
-            if (InstanceFinder.ServerManager.Started)
-                return;
-            
             // It's very possible this already started, if FishNet's NetworkManager.ServerMgr
             // start on headless checkbox is true
-            Debug.Log("[HathoraFishnetArgHandler] Starting Server ...");
+            if (InstanceFinder.ServerManager.Started || InstanceFinder.ServerManager.GetStartOnHeadless())
+                return;
+
+            Debug.Log("[HathoraFishnetArgHandler] Starting FishNet Server ...");
             InstanceFinder.ServerManager.StartConnection();
         }
 
@@ -41,7 +42,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
-            InstanceFinder.ClientManager.StartConnection();
+            HathoraFishnetClientMgr.Singleton.StartClient();
         }
 
         protected override void ArgModeStartHost()
@@ -52,7 +53,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraFishnetArgHandler] Starting host (server+client) ...");
-            
         }
     }
 }

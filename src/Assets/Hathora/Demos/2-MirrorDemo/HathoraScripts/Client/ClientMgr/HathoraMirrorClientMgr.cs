@@ -1,11 +1,14 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using kcp2k;
 using Mirror;
+using Mirror.SimpleWeb;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -38,26 +41,25 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
-        protected override void OnAwake()
-        {
-            setSingleton();
-        }
+        /// <summary>SetSingleton(), SetTransport()</summary>
+        protected override void OnAwake() =>
+            base.OnAwake();
 
-        private void setSingleton()
+        protected override void SetSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraMirrorClient]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraMirrorClient]**ERR @ SetSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }
 
             Singleton = this;
         }
-        
+
         protected override void OnStart()
         {
-            base.InitOnStart(HathoraMirrorClientMgrUi.Singleton);
+            base.InitOnStart(HathoraMirrorClientMgrDemoUi.Singleton);
             base.OnStart();
 
             // This is a Client manager script; listen for relative events
@@ -70,24 +72,100 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Interactions from UI
+        /// <summary>
+        /// Starts a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// </summary>
         public override Task StartServer()
         {
             NetworkManager.singleton.StartServer();
             return Task.CompletedTask;
         }
 
-        public override Task StartClient()
+        /// <summary>
+        /// Only call if UNITY_WEBGL (not validated here):
+        /// This is actually pulled directly from Mirror's SimpleWebTransport.cs (!public)
+        /// </summary>
+        /// <returns>"WS" || "WSS"</returns>
+        private string GetWebglClientScheme()
         {
-            NetworkManager.singleton.StartClient();
+            SimpleWebTransport swt = NetworkManager.singleton.transport as SimpleWebTransport;
+            Assert.IsNotNull(swt, "Expected `SimpleWebTransport` in NetworkManager.Transport, " +
+                "since UNITY_WEBGL - you are trying to call WS/WSS TCP transport from a Transport that !supports this");
+
+            bool isWss = swt.sslEnabled || swt.clientUseWss; 
+            return isWss 
+                ? SimpleWebTransport.SecureScheme 
+                : SimpleWebTransport.NormalScheme;
+        }
+
+        /// <param name="_hostPort">
+        /// host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345".
+        /// If !hostPort, we'll use the default from NetworkManager and its selected Transport.
+        /// </param>
+        public override Task StartClient(string _hostPort = null)
+        {
+            if (string.IsNullOrEmpty(_hostPort))
+            {
+                // No custom host:port >> Start normally with NetworkManager settings
+                NetworkManager.singleton.StartClient();
+                return Task.CompletedTask;
+            }
+            
+            // Start Mirror Client via selected Transport
+            (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
+            bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
+            bool hasPort = hostPortContainer.port > 0;
+
+            if (!hasHost || !hasPort)
+            {
+                // Has some kind of custom host:port, but is incomplete >> Start normally with NetworkManager settings
+                Debug.LogError("[HathoraMirrorClientMgr.StartClient] Invalid `host:port` provided: " +
+                    $"`{_hostPort}` -- Continuing with NetworkManager settings");
+                
+                NetworkManager.singleton.StartClient();
+                return Task.CompletedTask;
+            }
+            
+            // We have both host (or ip) && port >>
+            string uriPrefix = "kcp"; // Default UDP transport prefix using KCP Transport
+
+#if UNITY_WEBGL
+            uriPrefix = GetWebglClientScheme(); // "ws" || "wss"
+#endif
+            
+            Debug.Log($"[HathoraMirrorClientMgr.StartClient] Setting uri to `{uriPrefix}://{_hostPort}` ...");
+            Uri uri = new($"{uriPrefix}://{_hostPort}"); // eg: "wss://1.proxy.hathora.dev:12345"
+            Debug.Log($"[HathoraMirrorClientMgr.StartClient] Final uri: `{uri}`");
+            
+            // Start Mirror Client via selected Transport
+            NetworkManager.singleton.StartClient(uri); // eg: "1.proxy.hathora.dev:12345"
+            
+            Debug.Log("[HathoraMirrorClientMgrBase.StartClient] " +
+                $"Transport set to `{transport}` ({uriPrefix})");
+            
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Starts a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override Task StartHost()
         {
             NetworkManager.singleton.StartHost();
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override Task StopHost()
         {
             NetworkManager.singleton.StopHost();

@@ -19,9 +19,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     {
         #region vars
         public static HathoraFishnetClientMgr Singleton { get; private set; }
-        
-        private Transport transport => 
-            InstanceFinder.TransportManager.Transport; 
+
+        private static Transport transport => 
+            InstanceFinder.TransportManager.Transport;
 
         /// <summary>Updates @ OnClientConnectionState</summary>
         private LocalConnectionState localConnectionState;
@@ -29,26 +29,25 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         
         #region Init
-        protected override void OnAwake()
-        {
-            setSingleton();
-        }
+        /// <summary>SetSingleton(), SetTransport()</summary>
+        protected override void OnAwake() =>
+            base.OnAwake();
 
-        private void setSingleton()
+        protected override void SetSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraFishnetClient]**ERR @ setSingleton: Destroying dupe");
+                Debug.LogError("[HathoraFishnetClient]**ERR @ SetSingleton: Destroying dupe");
                 Destroy(gameObject);
                 return;
             }
 
             Singleton = this;
         }
-        
+
         protected override void OnStart()
         {
-            base.InitOnStart(HathoraFishnetClientMgrUi.Singleton);
+            base.InitOnStart(HathoraFishnetClientMgrDemoUi.Singleton);
             base.OnStart();
             
             // This is a Client manager script; listen for relative events
@@ -58,36 +57,83 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         
         #region Interactions from UI
+        /// <summary>
+        /// Starts a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override async Task StartHost()
         {
             await StartServer();
             await StartClient();
         }
 
+        /// <summary>
+        /// Starts a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// </summary>
         public override Task StartServer()
         {
             InstanceFinder.ServerManager.StartConnection();
             return Task.CompletedTask;
         }
 
-        public override Task StartClient()
+        ///<summary>Starts a NetworkManager Client</summary>
+        /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
+        public override Task StartClient(string _hostPort = null)
         {
-            InstanceFinder.ClientManager.StartConnection();
+            Debug.Log("[HathoraFishnetClientMgr] StartClient");
+            (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
+            bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
+            bool hasPort = hostPortContainer.port > 0;
+
+            // Start FishNet Client via selected Transport
+            if (hasHost && hasPort)
+            {
+                Debug.Log($"[HathoraFishnetClientMgr] StartClient w/Custom hostPort: " +
+                    $"`{hostPortContainer.hostNameOrIp}:{hostPortContainer.port}`");
+                
+                InstanceFinder.ClientManager.StartConnection(
+                    hostPortContainer.hostNameOrIp, 
+                    hostPortContainer.port);    
+            }
+            else
+            {
+                Debug.Log($"[HathoraFishnetClientMgr] StartClient w/NetworkSettings config");
+                InstanceFinder.ClientManager.StartConnection();
+            }
+            
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops a NetworkManager local Server *and* Client at the same time.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// TODO: Mv to HathoraHostMgr
+        /// </summary>
         public override Task StopHost()
         {
             StopServer(); // StopServer() will also stop the client
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops a NetworkManager local Server.
+        /// This is in ClientMgr since it involves NetworkManager Net code,
+        /// and does not require ServerMgr or secret keys to manage the net server.
+        /// </summary>
         public override Task StopServer()
         {
             InstanceFinder.ServerManager.StopConnection(sendDisconnectMessage: true);
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Starts a NetworkManager Client.
+        /// </summary>
         public override Task StopClient()
         {
             InstanceFinder.ClientManager.StopConnection();
