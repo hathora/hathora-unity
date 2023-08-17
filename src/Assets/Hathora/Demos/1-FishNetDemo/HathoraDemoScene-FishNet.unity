@@ -2333,8 +2333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugEditorMockProcId: 
-  hathoraServerConfig: {fileID: 11400000, guid: dd5f324711ba543478ebad7b0003f326,
-    type: 2}
+  hathoraServerConfig: {fileID: 0}
 --- !u!1001 &6730436420086812906
 PrefabInstance:
   m_ObjectHideFlags: 0
