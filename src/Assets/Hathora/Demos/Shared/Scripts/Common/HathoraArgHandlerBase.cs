@@ -128,14 +128,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
         }
 
-        /// <summary>
-        /// For the demo:
-        /// - "HathoraDemoScene-Menu"
-        /// - "HathoraDemoScene-FishNet"
-        /// - "HathoraDemoScene-Mirror"
-        /// - "HathoraDemoScene-UnityNGO"
-        /// </summary>
-        /// <param name="_sceneName"></param>
         protected virtual async Task InitArgScene(string _sceneName)
         {
             Debug.Log($"[HathoraArgHandlerBase] InitArgScene: {_sceneName}");
@@ -156,13 +148,40 @@ namespace Hathora.Demos.Shared.Scripts.Common
 
             try
             {
-                await HathoraNetPlatformSelector.LoadSceneOnceFromArgAsync(_sceneName);
+                await loadSceneOnceFromArgAsync(_sceneName);
             }
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraArgHandlerBase.InitArgScene] Error: {e}");
                 throw;
             }
+        }
+        
+        /// <summary>
+        /// After using this once, you won't be able to do it again
+        /// (to prevent multiple arg handling stack overflows).
+        /// 
+        /// Mostly used for args or initial scene selection.
+        /// </summary>
+        /// <param name="_sceneName">CLI Arg passed from `-scene {sceneName}`.</param>
+        private static async Task loadSceneOnceFromArgAsync(string _sceneName)
+        {
+            string logPrefix = $"[HathoraArgHandlerBase.{nameof(loadSceneOnceFromArgAsync)}]";
+            Debug.Log($"{logPrefix} sceneName: {_sceneName}");
+
+            if (SceneArgConsumed)
+            {
+                Debug.LogWarning($"{logPrefix} LoadSceneOnceAsync already consumed! Aborting.");
+                return;
+            }
+
+            SceneArgConsumed = true;
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(
+                _sceneName, 
+                LoadSceneMode.Single);
+
+            while (!asyncLoad.isDone)
+                await Task.Yield();
         }
 
         /// <summary>Override me -> Set memoStr in UI</summary>

@@ -84,7 +84,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         private bool hasServerDeployedProcessId =>
             !string.IsNullOrEmpty(serverDeployedProcessId);
-        protected bool HasServerDeployedProcessId => hasServerDeployedProcessId;
+        public bool HasServerDeployedProcessId => hasServerDeployedProcessId;
         #endregion // Vars
 
         
@@ -147,14 +147,30 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         protected virtual bool ValidateReqs()
         {
-            if (hathoraServerConfig == null)
+// #if UNITY_WEBGL
+//             return false; // Unity limitation - can't run server on webgl
+// #endif // UNITY_SERVER
+            
+            string errMsg = "[HathoraServerMgrBase] !HathoraServerConfig; " +
+                $"Serialize to {gameObject.name}.{nameof(HathoraServerMgrBase)} (if you want " +
+                "Hathora server runtime calls from Server standalone || Editor)";
+
+            bool hasValidServerConfig = hathoraServerConfig != null && !string.IsNullOrEmpty(
+                    hathoraServerConfig.HathoraCoreOpts?.DevAuthOpts?.DevAuthToken);
+            
+            if (!hasValidServerConfig)
             {
-                Debug.LogError("[HathoraServerMgrBase] !HathoraServerConfig; " +
-                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgrBase)} (if you want " +
-                    "server runtime calls from Server standalone || Editor)");
+#if UNITY_SERVER
+                Debug.LogError(errMsg); // We're 100% a server; potential for critical err
+#else
+                Debug.Log($"(!) {errMsg}"); // Light warning; we *may* be a server
+#endif
+                
+                // !hathoraServerConfig - we cannot call Server runtime calls (since !devKey to auth)
                 return false;
             }
 
+            // !Server, !WebGL, *and* has a server config
             return true;
         }
         

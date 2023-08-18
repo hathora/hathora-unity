@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   port: 7777
-  ClientUseDefaultPort: 0
+  ClientUseDefaultPort: 1
   maxMessageSize: 16384
   handshakeMaxSize: 3000
   noDelay: 1
@@ -1704,6 +1704,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[5].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4014227140309847763, guid: 0b1d560e984c97e42acb36a66f5d2105,
+        type: 3}
+      propertyPath: netStartServerBtn
+      value: 
+      objectReference: {fileID: 658118718}
     - target: {fileID: 6653614975494333692, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

@@ -33,10 +33,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         private static Transport transport => 
             Mirror.NetworkManager.singleton.transport;
 
-        /// <summary>Req'd to set port</summary>
-        private static KcpTransport kcpTransport =>
-            (KcpTransport)transport;
+        /// <summary>Req'd to set port for UDP protocol (!WebGL)</summary>
+        private static KcpTransport udpKcpTransport =>
+            transport as KcpTransport;
 
+        /// <summary>Req'd to set port for !UDP protocol (WebGL for WSS/TLS)</summary>
+        private static SimpleWebTransport webglSimpleWebTransport =>
+            transport as SimpleWebTransport;
         #endregion // vars
         
 
@@ -186,17 +189,19 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
         /// <summary>
         /// Connect to the Server as a Client via net code. Uses cached vals.
-        /// Currently uses Mirror.Kcp (UDP) transport.
+        /// - WebGL: Asserts for `SimpleWebTransport` as the NetworkManager's selected transport
+        /// - !WebGL: Asserts for `!SimpleWebTransport` as the NetworkManager's selected transport (such as `Kcp` UDP)
         /// </summary>
         /// <returns>
         /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
         /// </returns>
         public override Task<bool> ConnectAsClient()
         {
-            Debug.Log("[HathoraMirrorClient] ConnectAsync (expecting `Kcp` transport)");
+            Debug.Log("[HathoraMirrorClient] ConnectAsClient");
 
             // Set connecting state + log where we're connecting to
-            base.SetConnectingState(transport.name);
+            string transportName = transport.GetType().Name;
+            base.SetConnectingState(transportName);
             
             // -----------------
             // Validate; UI and err handling is handled within
@@ -208,9 +213,26 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             // Set port + host (ip)
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
             NetworkManager.singleton.networkAddress = connectInfo.Host; // host address (eg: `localhost`); not an IP address
-            kcpTransport.port = (ushort)connectInfo.Port;
+        
             
-            // Connect now => cb @ OnClientConnected()
+#if UNITY_WEBGL
+            Debug.Log("[HathoraMirrorClientMgr.ConnectAsClient] Validating WebGL Transport...");
+            Assert.IsNotNull(webglSimpleWebTransport, "Expected NetworkManager to use " +
+                $"{nameof(webglSimpleWebTransport)} for WebGL build -- if more transports for WebGL " +
+                "came out later, edit this Assert script");
+            
+            webglSimpleWebTransport.port = (ushort)connectInfo.Port;       
+#else
+            Debug.Log("[HathoraMirrorClientMgr.ConnectAsClient] Validating !WebGL Transport...");
+            Assert.IsNull(webglSimpleWebTransport, "!Expected NetworkManager to use " +
+                $"{nameof(webglSimpleWebTransport)} for !WebGL build - Set NetworkManager "+
+                "transport to, for example, `Kcp` (supporting UDP).");
+            
+            udpKcpTransport.port = (ushort)connectInfo.Port;
+#endif
+            
+            
+            // Connect now using NetworkManager settings we just set above => callback @ OnClientConnected()
             StartClient();
             return Task.FromResult(false); // startedConnection; continued @ OnClientConnected()
         }
@@ -248,8 +270,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         private void onMirrorClientError(TransportError _transportErr, string _extraInfo)
         {
             Debug.LogError("[HathoraMirrorClient] onMirrorClientError: " +
-                           $"_transportErr: {_transportErr}, " +
-                           $"_extraInfo: {_extraInfo}");
+                           $"transportErr: {_transportErr}, " +
+                           $"extraInfo: {_extraInfo}");
 
             base.IsConnecting = false;
         }

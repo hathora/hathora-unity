@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 namespace Hathora.Demos.Shared.Scripts.Common
 {
     /// <summary>
-    /// "Select a NetCode Platform": Fishnet | Mirror | NGO
+    /// "Select a NetCode Platform": Fishnet | Mirror
     /// </summary>
     public class HathoraNetPlatformSelector : MonoBehaviour
     {
@@ -17,7 +17,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
         {
             FishNet,
             Mirror,
-            NGO, // TODO
         }
         
         public void OnFishnetBtnClick() => 
@@ -25,9 +24,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
         
         public void OnMirrorBtnClick() => 
             OnPlatformSelectBtnClick(NetPlatform.Mirror);
-        
-        public void OnNGOBtnClick() =>
-            OnPlatformSelectBtnClick(NetPlatform.NGO);
 
         private void OnPlatformSelectBtnClick(NetPlatform _platform)
         {
@@ -43,12 +39,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
                 case NetPlatform.Mirror:
                     Debug.Log($"{logPrefix} Mirror");
                     _ = LoadSceneOnceFromArgAsync("HathoraDemoScene-Mirror");
-                    break;
-
-                case NetPlatform.NGO:
-                    Debug.Log($"{logPrefix} NGO");
-                    // loadSceneAsync("HathoraDemoScene-UnityNGO");
-                    throw new NotImplementedException("TODO");
                     break;
 
                 default:
