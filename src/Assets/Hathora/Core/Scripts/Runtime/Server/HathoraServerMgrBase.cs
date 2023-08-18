@@ -58,8 +58,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
         }
         
-        [Header("API Wrappers for Hathora SDK - See ServerApiContainer.cs")]
-        [SerializeField]
         private ServerApiContainer serverApis;
         
         /// <summary>
