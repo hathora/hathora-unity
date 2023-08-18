@@ -233,6 +233,17 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 
             base.OnNetStartClientFail(friendlyReason);
         }
+
+        private void OnDestroy()
+        {
+            if (transport == null)
+                return;
+            
+            transport.OnClientConnected -= OnNetClientStarted;
+            transport.OnClientError -= onMirrorClientError;
+            transport.OnClientDisconnected -= () => 
+                base.OnNetStartClientFail("Disconnected");;
+        }
         #endregion // Callbacks
     }
 }
