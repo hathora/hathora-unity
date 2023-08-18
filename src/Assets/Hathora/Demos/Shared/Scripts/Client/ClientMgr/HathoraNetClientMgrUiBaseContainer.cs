@@ -14,7 +14,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// don't have to set it each time for every demo.
     /// </summary>
     [Serializable]
-    public class HathoraNetClientMgrUiBaseContainer : MonoBehaviour
+    public class HathoraNetClientMgrUiBaseContainer
     {
         #region Serialized Fields
         // TODO: Make these fields private with a public getter prop
