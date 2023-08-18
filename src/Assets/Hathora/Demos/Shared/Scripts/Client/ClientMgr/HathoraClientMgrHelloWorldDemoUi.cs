@@ -20,9 +20,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         public TMP_InputField ClientConnectInputField => clientConnectInputField;
 
         [SerializeField, Tooltip("WebGL builds should hide this")]
-        private Button netStartHostBtn;
-        
-        [SerializeField, Tooltip("WebGL builds should hide this")]
         private Button netStartServerBtn;
         #endregion // Vars
 
@@ -35,7 +32,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 "netStartHostBtn and server btn for WebGL builds - note that clipboard " +
                 "btns will !work unless using a custom type made to work with webgl");
             
-            netStartHostBtn.gameObject.SetActive(false);
             netStartServerBtn.gameObject.SetActive(false);
             #endif
         }

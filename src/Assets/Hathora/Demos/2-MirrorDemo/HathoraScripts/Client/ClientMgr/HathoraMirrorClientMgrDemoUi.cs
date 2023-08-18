@@ -16,7 +16,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// - UI OnEvent entry points from Buttons start here.
     /// - This particular child should be used for both Mirror.
     /// </summary>
-    public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi, IHathoraNetClientMgrUi
+    public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi
     {
         public static HathoraMirrorClientMgrDemoUi Singleton { get; private set; }
         private static HathoraMirrorClientMgr HathoraClientMgr => 
@@ -27,7 +27,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         protected override void Start()
         {
             base.Start();
-            InitOnStart(HathoraClientMgr); // Allows logic alls on UI interactions
         }
 
         protected override void SetSingleton()
@@ -69,7 +68,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartClient(_hostPortOverride);
+            HathoraClientMgr.StartNetClient(_hostPortOverride);
         }
 
         public override void OnStartHostBtnClick()
@@ -99,11 +98,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            Connect();
+            HathoraClientMgr.StartNetClientFromNetworkMgrCache();
         }
-        
-        public void Connect() => 
-            HathoraClientMgr.ConnectAsClient();
         #endregion /Dynamic UI
     }
 }

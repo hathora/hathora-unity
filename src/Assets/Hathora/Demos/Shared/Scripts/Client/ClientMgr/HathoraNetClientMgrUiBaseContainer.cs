@@ -18,65 +18,97 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     {
         #region Serialized Fields
         // TODO: Make these fields private with a public getter prop
-        [FormerlySerializedAs("InvalidConfigPnl")]
+        [FormerlySerializedAs("InvalidConfigTemplatePnl")]
         [Header("Help")]
         [SerializeField]
-        public GameObject InvalidConfigTemplatePnl;
+        private GameObject invalidConfigTemplatePnl;
+        public GameObject InvalidConfigTemplatePnl => invalidConfigTemplatePnl;
         
+        [FormerlySerializedAs("InvalidConfigPnl")]
         [SerializeField]
-        public GameObject InvalidConfigPnl;
-        
-        [Header("CLI")]
-        [SerializeField]
-        public TextMeshProUGUI debugMemoTxt;
+        private GameObject invalidConfigPnl;
+        public GameObject InvalidConfigPnl => invalidConfigPnl;
         
         [Header("Auth")]
         [SerializeField]
-        public Button authBtn;
+        private Button authBtn;
+        public Button AuthBtn => authBtn;
+        
         [SerializeField]
-        public TextMeshProUGUI authTxt;
+        private TextMeshProUGUI authTxt;
+        public TextMeshProUGUI AuthTxt => authTxt;
 
         [Header("Lobby (Before Exists)")]
         [SerializeField]
-        public Button createLobbyBtn;
+        private Button createLobbyBtn;
+        public Button CreateLobbyBtn => createLobbyBtn;
+        
         [SerializeField]
-        public Button getLobbyInfoBtn;
+        private Button getLobbyInfoBtn;
+        public Button GetLobbyInfoBtn => getLobbyInfoBtn;
+        
         [SerializeField]
-        public TMP_InputField getLobbyInfoInput;
-
+        private TMP_InputField getLobbyInfoInput;
+        public TMP_InputField GetLobbyInfoInput => getLobbyInfoInput;
+        
         [Header("Lobby (After Exists)")]
         [SerializeField]
-        public TextMeshProUGUI lobbyRoomIdTxt;
+        private TextMeshProUGUI lobbyRoomIdTxt;
+        public TextMeshProUGUI LobbyRoomIdTxt => lobbyRoomIdTxt;
+        
         [SerializeField]
-        public Button viewLobbiesBtn;
+        private Button viewLobbiesBtn;
+        public Button ViewLobbiesBtn => viewLobbiesBtn;
+        
         [SerializeField]
-        public Button copyLobbyRoomIdBtn;
+        private Button copyLobbyRoomIdBtn;
+        public Button CopyLobbyRoomIdBtn => copyLobbyRoomIdBtn;
+        
         [SerializeField]
-        public TextMeshProUGUI copiedRoomIdFadeTxt;
+        private TextMeshProUGUI copiedRoomIdFadeTxt;
+        public TextMeshProUGUI CopiedRoomIdFadeTxt => copiedRoomIdFadeTxt;
+        
         [SerializeField]
-        public TextMeshProUGUI createOrGetLobbyInfoErrTxt;
+        private TextMeshProUGUI createOrGetLobbyInfoErrTxt;
+        public TextMeshProUGUI CreateOrGetLobbyInfoErrTxt => createOrGetLobbyInfoErrTxt;
+        
         [SerializeField]
-        public TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
+        private TextMeshProUGUI viewLobbiesSeeLogsFadeTxt;
+        public TextMeshProUGUI ViewLobbiesSeeLogsFadeTxt => viewLobbiesSeeLogsFadeTxt;
         
         [Header("Room (Get Server/Connection Info)")]
         [SerializeField]
-        public Button getServerInfoBtn;
+        private Button getServerInfoBtn;
+        public Button GetServerInfoBtn => getServerInfoBtn;
+        
         [SerializeField]
-        public TextMeshProUGUI getServerInfoTxt;
+        private TextMeshProUGUI getServerInfoTxt;
+        public TextMeshProUGUI GetServerInfoTxt => getServerInfoTxt;
+        
         [SerializeField]
-        public Button copyServerInfoBtn;
+        private Button copyServerInfoBtn;
+        public Button CopyServerInfoBtn => copyServerInfoBtn;
+        
         [SerializeField]
-        public TextMeshProUGUI copiedServerInfoFadeTxt;
+        private TextMeshProUGUI copiedServerInfoFadeTxt;
+        public TextMeshProUGUI CopiedServerInfoFadeTxt => copiedServerInfoFadeTxt;
+        
         [SerializeField]
-        public TextMeshProUGUI getServerInfoErrTxt;
+        private TextMeshProUGUI getServerInfoErrTxt;
+        public TextMeshProUGUI GetServerInfoErrTxt => getServerInfoErrTxt;
         
         [Header("NetCode Transport: Join Lobby [as Client]")]
         [SerializeField]
-        public Button joinLobbyAsClientBtn;
+        private Button joinLobbyAsClientBtn;
+        public Button JoinLobbyAsClientBtn => joinLobbyAsClientBtn;
+        
         [SerializeField]
-        public TextMeshProUGUI joiningLobbyStatusTxt;
+        private TextMeshProUGUI joiningLobbyStatusTxt;
+        public TextMeshProUGUI JoiningLobbyStatusTxt => joiningLobbyStatusTxt;
+        
         [SerializeField, Tooltip("This will show while you still see the Join button returned")]
-        public TextMeshProUGUI joiningLobbyStatusErrTxt;
+        private TextMeshProUGUI joiningLobbyStatusErrTxt;
+        public TextMeshProUGUI JoiningLobbyStatusErrTxt => joiningLobbyStatusErrTxt;
         #endregion // Serialized Fields
     }
 }

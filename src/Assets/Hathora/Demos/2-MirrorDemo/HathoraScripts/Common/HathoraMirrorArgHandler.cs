@@ -16,12 +16,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
         private async void Start() => 
             await base.InitArgsAsync();
 
-        protected override void InitArgMemo(string _memoStr)
-        {
-            base.InitArgMemo(_memoStr);
-            HathoraMirrorClientMgrDemoUi.Singleton.SetShowDebugMemoTxt(_memoStr);
-        }
-
         protected override void ArgModeStartServer()
         {
             base.ArgModeStartServer();
@@ -50,7 +44,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             Debug.Log("[HathoraMirrorArgHandler] Starting Client ...");
 
             // Go through Hathora ClientMgr middleware to ensure the correct Transport is used
-            HathoraMirrorClientMgr.Singleton.StartClient();
+            HathoraMirrorClientMgr.Singleton.StartNetClient();
         }
         
         protected override void ArgModeStartHost()

@@ -31,14 +31,12 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         
         #region Init
-        /// <summary>Be sure to override when using Start() + Awake()</summary>
         protected override void Awake() =>
-            base.Awake();
+            base.Awake(); // Triggers SetSingleton()
         
         protected override void Start()
         {
             base.Start();
-            base.InitOnStart(HathoraFishnetClientMgrDemoUi.Singleton); // Allows UI calls on logic callbacks
             
             // This is a Client manager script; listen for relative events
             InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
@@ -46,6 +44,8 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
 
         protected override void SetSingleton()
         {
+            base.SetSingleton();
+            
             if (Singleton != null)
             {
                 Debug.LogError("[HathoraFishnetClient]**ERR @ SetSingleton: Destroying dupe");
@@ -60,66 +60,87 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         #region Interactions from UI
         /// <summary>
-        /// Starts a NetworkManager local Server *and* Client at the same time.
-        /// This is in ClientMgr since it involves NetworkManager Net code,
-        /// and does not require ServerMgr or secret keys to manage the net server.
-        /// TODO: Mv to HathoraHostMgr
-        /// </summary>
-        public override async Task StartHost()
-        {
-            await StartServer();
-            await StartClient();
-        }
-
-        /// <summary>
         /// Starts a NetworkManager local Server.
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require ServerMgr or secret keys to manage the net server.
         /// </summary>
-        public override Task StartServer()
+        public override Task StartNetServer()
         {
             InstanceFinder.ServerManager.StartConnection();
             return Task.CompletedTask;
         }
 
-        ///<summary>Starts a NetworkManager Client</summary>
-        /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
-        public override Task StartClient(string _hostPort = null)
+        /// <summary>
+        /// Connect with info `from HathoraClientSession.ServerConnectionInfo.ExposedPort`,
+        /// replacing the NetworkManager host:port.
+        /// </summary>
+        /// <returns></returns>
+        public Task StartNetClientFromHathoraLastQueriedLobbyInfo()
         {
-            Debug.Log("[HathoraFishnetClientMgr] StartClient");
+            ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
+            string hostPort = $"{connectInfo.Host}:{connectInfo.Port}";
+            
+            return StartNetClient(hostPort);
+        }
+
+        ///<summary>Sets NetworkManager -> StartNetClientFromNetworkMgrCache()</summary>
+        /// <param name="_hostPort">host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345"</param>
+        public override Task StartNetClient(string _hostPort = null)
+        {
+            string logPrefix = $"[HathoraFishnetClientMgr] {nameof(StartNetClient)}]"; 
+            Debug.Log($"{logPrefix} Start");
+            
             (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
             bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
             bool hasPort = hostPortContainer.port > 0;
 
             // Start FishNet Client via selected Transport
-            if (hasHost && hasPort)
+            if (!hasHost || !hasPort)
             {
-                Debug.Log($"[HathoraFishnetClientMgr] StartClient w/Custom hostPort: " +
-                    $"`{hostPortContainer.hostNameOrIp}:{hostPortContainer.port}`");
-                
-                InstanceFinder.ClientManager.StartConnection(
-                    hostPortContainer.hostNameOrIp, 
-                    hostPortContainer.port);    
+                // Just use vals from the NetworkMgr
+                Debug.Log($"{logPrefix} w/NetworkSettings config");
             }
             else
             {
-                Debug.Log($"[HathoraFishnetClientMgr] StartClient w/NetworkSettings config");
-                InstanceFinder.ClientManager.StartConnection();
+                // Set custom host:port 1st
+                Debug.Log($"{logPrefix} w/Custom hostPort: " +
+                    $"`{hostPortContainer.hostNameOrIp}:{hostPortContainer.port}`");
+
+                InstanceFinder.TransportManager.Transport.SetClientAddress(hostPortContainer.hostNameOrIp);
+                InstanceFinder.TransportManager.Transport.SetPort(hostPortContainer.port);
             }
             
+            StartNetClientFromNetworkMgrCache();
             return Task.CompletedTask;
         }
-
+        
         /// <summary>
-        /// Stops a NetworkManager local Server *and* Client at the same time.
-        /// This is in ClientMgr since it involves NetworkManager Net code,
-        /// and does not require ServerMgr or secret keys to manage the net server.
-        /// TODO: Mv to HathoraHostMgr
+        /// Connect to the NetServer as a NetClient.
+        /// Unlike StartNetClient (that takes host:port args), we'll use cached vals from NetworkManager.
+        /// This will trigger `OnClientConnectionState(state)`
+        /// - WebGL: Asserts for `Bayou` as the NetworkManager's selected transport
+        /// - !WebGL: Asserts for `!Bayou` as the NetworkManager's selected transport (such as `Tugboat` UDP)
         /// </summary>
-        public override Task StopHost()
+        /// <returns>
+        /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
+        /// </returns>
+        public bool StartNetClientFromNetworkMgrCache()
         {
-            StopServer(); // StopServer() will also stop the client
-            return Task.CompletedTask;
+            Debug.Log("[HathoraFishnetClient] StartNetClientFromNetworkMgrCache");
+
+            // Set connecting state + log where we're connecting to
+            string transportName = transport.GetType().Name;
+            base.SetConnectingState(transportName);
+
+            // -----------------
+            // Validate; UI and err handling is handled within
+            bool isReadyToConnect = validateIsReadyToConnect();
+            if (!isReadyToConnect)
+                return false; // !startedConnection
+            
+            // Connect now using NetworkManager settings we just set above
+            bool startedConnection = InstanceFinder.ClientManager.StartConnection();
+            return startedConnection; // startedConnection => callback @ OnClientConected()0
         }
 
         /// <summary>
@@ -127,7 +148,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require ServerMgr or secret keys to manage the net server.
         /// </summary>
-        public override Task StopServer()
+        public override Task StopNetServer()
         {
             InstanceFinder.ServerManager.StopConnection(sendDisconnectMessage: true);
             return Task.CompletedTask;
@@ -136,33 +157,36 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// <summary>
         /// Starts a NetworkManager Client.
         /// </summary>
-        public override Task StopClient()
+        public override Task StopNetClient()
         {
             InstanceFinder.ClientManager.StopConnection();
             return Task.CompletedTask;
         }
-
+        
         /// <summary>
-        /// Connect to the Server as a Client via net code. Uses cached vals.
-        /// This will trigger `OnClientConnectionState(state)`
-        /// - WebGL: Asserts for `Bayou` as the NetworkManager's selected transport
-        /// - !WebGL: Asserts for `!Bayou` as the NetworkManager's selected transport (such as `Tugboat` UDP)
+        /// We're about to connect to a server as a Client - ensure we're ready.
         /// </summary>
-        /// <returns>
-        /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
-        /// </returns>
-        public override Task<bool> ConnectAsClient()
+        /// <returns></returns>
+        private bool validateIsReadyToConnect()
         {
-            // Set connecting state + log where we're connecting to
-            string transportName = transport.GetType().Name;
-            base.SetConnectingState(transportName);
+            Debug.Log("[HathoraFishnetClientMgr] validateIsReadyToConnect");
+            
+            if (InstanceFinder.NetworkManager == null)
+            {
+                base.OnNetStartClientFail("!NetworkManager");
+                return false; // !isSuccess
+            }
 
-            // -----------------
-            // Validate; UI and err handling is handled within
-            bool isReadyToConnect = ValidateIsReadyToConnect(InstanceFinder.ClientManager, transport);
-            if (!isReadyToConnect)
-                return Task.FromResult(false); // !startedConnection
-
+            // Validate state
+            LocalConnectionState currentState = transport.GetConnectionState(server: false);
+            if (currentState != LocalConnectionState.Stopped)
+            {
+                InstanceFinder.ClientManager.StopConnection();
+                base.OnNetStartClientFail("Prior connection !stopped: Try again soon");
+                return false; // !isSuccess
+            }
+            
+            // Validate transport
             Bayou bayouTransport = transport as Bayou; 
 #if UNITY_WEBGL
             Assert.IsNotNull(bayouTransport, "Expected NetworkManager to use " +
@@ -173,39 +197,6 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
                 $"{nameof(bayouTransport)} for !WebGL build - Set NetworkManager "+
                 "transport to, for example, `Tugboat` (supporting UDP).");
 #endif
-
-            // -----------------
-            // Set port + host (ip)
-            ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
-            transport.SetPort((ushort)connectInfo.Port);
-            transport.SetClientAddress(connectInfo.Host);
-            
-            // Connect now => cb @ OnClientConnected()
-            bool startedConnection = InstanceFinder.ClientManager.StartConnection();
-            return Task.FromResult(startedConnection);
-        }
-
-        private bool ValidateIsReadyToConnect(
-            ClientManager _clientMgr, 
-            Transport _transport)
-        {
-            if (!ValidateServerConfigConnectionInfo())
-                return false;
-
-            if (InstanceFinder.NetworkManager == null)
-            {
-                base.OnConnectFailed("!NetworkManager");
-                return false; // !isSuccess
-            }
-
-            // Validate state
-            LocalConnectionState currentState = _transport.GetConnectionState(server: false);
-            if (currentState != LocalConnectionState.Stopped)
-            {
-                _clientMgr.StopConnection();
-                base.OnConnectFailed("Prior connection !stopped: Try again soon");
-                return false; // !isSuccess
-            }
             
             // Success - ready to connect
             return true;
@@ -217,15 +208,23 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             Debug.Log($"[HathoraFishnetClient.OnClientConnectionState] " +
                 $"New state: {localConnectionState}");
             
-            // onConnectSuccess?
-            if (localConnectionState == LocalConnectionState.Started)
-                base.OnConnectSuccess();
-            
-            // onConnectFailed?
+            switch (localConnectionState)
+            {
+                case LocalConnectionState.Starting:
+                    OnNetClientStarting();
+                    break;
+
+                // onConnectSuccess?
+                case LocalConnectionState.Started:
+                    base.OnNetClientStarted();
+                    break;
+            }
+
+            // OnNetStartClientFail?
             bool stopped = localConnectionState == LocalConnectionState.Stopped; 
-            bool stoppedConnecting = stopped && IsConnecting;
+            bool stoppedConnecting = stopped && IsConnectingAsClient;
             if (stoppedConnecting)
-                base.OnConnectFailed("Connection stopped");
+                base.OnNetStartClientFail("Connection stopped");
         }
         #endregion // Callbacks
     }

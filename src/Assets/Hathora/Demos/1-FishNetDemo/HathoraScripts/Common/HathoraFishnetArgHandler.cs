@@ -8,18 +8,12 @@ using UnityEngine;
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
 {
     /// <summary>
-    /// Commandline helper - run via `-mode {server|client|host} -memo {someStr}`
+    /// Commandline helper - run via `-mode {server|client|host}`.
     /// </summary>
     public class HathoraFishnetArgHandler : HathoraArgHandlerBase
     {
         private void Start() => 
             _ = base.InitArgsAsync();
-
-        protected override void InitArgMemo(string _memoStr)
-        {
-            base.InitArgMemo(_memoStr);
-            HathoraFishnetClientMgrDemoUi.Singleton.SetShowDebugMemoTxt(_memoStr);
-        }
 
         protected override void ArgModeStartServer()
         {
@@ -42,7 +36,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
-            HathoraFishnetClientMgr.Singleton.StartClient();
+            HathoraFishnetClientMgr.Singleton.StartNetClient();
         }
 
         protected override void ArgModeStartHost()

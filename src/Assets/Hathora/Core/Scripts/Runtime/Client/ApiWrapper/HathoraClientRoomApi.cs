@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using System;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
@@ -58,11 +57,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             int pollTimeoutSecs = 15,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[NetHathoraClientLobbyApi.{nameof(ClientGetConnectionInfoAsync)}]";
-            Debug.Log($"{logPrefix} <color=yellow>roomId: {roomId}</color> - Timeout in {pollTimeoutSecs}s");
-            
             // Poll until we get the `Active` status.
-            StringBuilder pollMsg = new($"{logPrefix} Awaiting `Active` status ...");
             int pollSecondsTicked; // Duration to be logged later
             ConnectionInfoV2 connectionInfoResponse = null;
             
@@ -90,9 +85,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
                     break;
                 
-                Debug.Log(pollMsg);
-                pollMsg.Append(".");
-                
                 await Task.Delay(TimeSpan.FromSeconds(pollIntervalSecs), _cancelToken);
             }
 
@@ -100,12 +92,14 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             // We're done polling -- sucess or timeout?
             if (connectionInfoResponse?.Status != ConnectionInfoV2.StatusEnum.Active)
             {
-                Debug.LogError($"{logPrefix} Error: Timed out");
+                Debug.LogError("[NetHathoraClientAuthApi.ClientGetConnectionInfoAsync] " +
+                    "Error: Timed out");
                 return null;
             }
 
             // Success
-            Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
+            Debug.Log($"[NetHathoraClientRoomApi.ClientGetConnectionInfoAsync] Success " +
+                $"(after {pollSecondsTicked}s polling): <color=yellow>" +
                 $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
 
             return connectionInfoResponse;

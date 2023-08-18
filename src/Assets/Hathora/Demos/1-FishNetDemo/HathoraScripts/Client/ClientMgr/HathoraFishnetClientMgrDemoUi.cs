@@ -14,7 +14,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// - UI OnEvent entry points from Buttons start here.
     /// - This particular child should be used for FishNet.
     /// </summary>
-    public class HathoraFishnetClientMgrDemoUi : HathoraClientMgrDemoUi, IHathoraNetClientMgrUi
+    public class HathoraFishnetClientMgrDemoUi : HathoraClientMgrDemoUi
     {
         public static HathoraFishnetClientMgrDemoUi Singleton { get; private set; }
         private static HathoraFishnetClientMgr HathoraClientMgr => 
@@ -22,10 +22,13 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
 
         #region Init
+        protected override void Awake() =>
+            base.Awake(); // Triggers SetSingleton()
+        
         protected override void Start()
         {
             base.Start();
-            InitOnStart(HathoraClientMgr); // Allows logic calls on UI interactions
+            // TODO: We probably want to sub to OnConnected transport events later
         }
         
         protected override void SetSingleton()
@@ -48,7 +51,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public override void OnStartServerBtnClick()
         {
             base.OnStartServerBtnClick();
-            HathoraClientMgr.StartServer();
+            HathoraClientMgr.StartNetServer();
         }
 
         /// <summary></summary>
@@ -71,42 +74,26 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartClient(_hostPortOverride);
-        }
-
-        
-        public override void OnStartHostBtnClick()
-        {
-            base.OnStartHostBtnClick();
-            _ = HathoraClientMgr.StartHost();
+            HathoraClientMgr.StartNetClient(_hostPortOverride);
         }
 
         public override void OnStopServerBtnClick()
         {
             base.OnStopServerBtnClick();
-            HathoraClientMgr.StopServer();
+            HathoraClientMgr.StopNetServer();
         }
         
         public override void OnStopClientBtnClick()
         {
             base.OnStopClientBtnClick();
-            HathoraClientMgr.StopClient();
-        }
-        
-        public override void OnStopHostBtnClick()
-        {
-            base.OnStopHostBtnClick();
-            HathoraClientMgr.StopHost();
+            HathoraClientMgr.StopNetClient();
         }
 
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            Connect();
+            HathoraClientMgr.StartNetClientFromNetworkMgrCache();
         }
-
-        public void Connect() => 
-            HathoraClientMgr.ConnectAsClient();
         #endregion /Dynamic UI
     }
 }

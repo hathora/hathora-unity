@@ -21,15 +21,15 @@ namespace Hathora.Core.Scripts.Runtime.Server
     /// 
     /// Unlike HathoraClientMgrBase, we don't need a parent since Server is lower-level
     /// than Client (eg: No UI, Session or net code specific to a platform).
-    /// TODO: If this gets more complex, make it an abstract base class; parity with Client.
+    /// 
+    /// (!) Unlike HathoraClientMgr, there's no current need to be abstract,
+    /// although you're encouraged to create a child for your own project. 
     /// </summary>
     public class HathoraServerMgrBase : MonoBehaviour
     {
-        // ######################################################################
-        // TODO: Add a `HathoraCommonMgr` for shared code; mv StartHost() here
-        // ######################################################################
-        
         #region Vars
+        public static HathoraServerMgrBase Singleton { get; private set; }
+        
         /// <summary>Set null/empty to !fake a procId in the Editor</summary>
         [SerializeField, Tooltip("When in the Editor, we'll get this Hathora ProcessInfo " +
              "as if deployed on Hathora; useful for debugging")]
@@ -63,7 +63,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         private ServerApiContainer serverApis;
         
         /// <summary>
-        /// Get the Hathora Server SDK API wrappers for all Server APIs.
+        /// Get the Hathora Server SDK API wrappers for all wrapped Server APIs.
         /// (!) There may be high-level variants of the calls here; check 1st!
         /// </summary>
         public ServerApiContainer ServerApis => serverApis;
@@ -99,10 +99,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             
 
             Debug.Log("[HathoraServerMgrBase] Awake");
-            // setSingleton(); // TODO: Mv to child
-            
-            if (!ValidateReqs())
-                return;
+            SetSingleton();
 
             // Unlike Client calls, we can init immediately @ Awake
             InitApis(_hathoraSdkConfig: null); // Base will create this
@@ -115,6 +112,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
 #endif
             
             _ = GetHathoraProcessFromEnvVarAsync(); // !await
+        }
+        
+        /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
+        protected virtual void Start()
+        {
         }
 
         /// <param name="_overrideProcIdVal">Mock a val for testing within the Editor</param>
@@ -130,57 +132,60 @@ namespace Hathora.Core.Scripts.Runtime.Server
             return Environment.GetEnvironmentVariable("HATHORA_PROCESS_ID");
         }
 
-        ///// <summary>You probably want to set this on child @ awake</summary>
-        // private void setSingleton() { }
-        // {
-        //     if (Singleton != null)
-        //     {
-        //         Debug.LogError("[HathoraServerMgrBase.setSingleton] Error: " +
-        //             "setSingleton: Destroying dupe");
-        //         
-        //         Destroy(gameObject);
-        //         return;
-        //     }
-        //
-        //     Singleton = this;
-        // }
+        /// <summary>
+        /// Set a singleton instance - we'll only ever have one serverMgr.
+        /// Children probably want to override this and, additionally, add a Child singleton
+        /// </summary>
+        protected virtual void SetSingleton()
+        {
+            if (Singleton != null)
+            {
+                Debug.LogError("[HathoraServerMgrBase.SetSingleton] Error: " +
+                    "setSingleton: Destroying dupe");
+                
+                Destroy(gameObject);
+                return;
+            }
+            
+            Singleton = this;
+        }
 
         protected virtual bool ValidateReqs()
         {
-// #if UNITY_WEBGL
-//             return false; // Unity limitation - can't run server on webgl
-// #endif // UNITY_SERVER
+            string logPrefix = $"[HathoraServerMgrBase{nameof(ValidateReqs)}]";
             
-            string errMsg = "[HathoraServerMgrBase] !HathoraServerConfig; " +
-                $"Serialize to {gameObject.name}.{nameof(HathoraServerMgrBase)} (if you want " +
-                "Hathora server runtime calls from Server standalone || Editor)";
-
-            bool hasValidServerConfig = hathoraServerConfig != null && !string.IsNullOrEmpty(
-                    hathoraServerConfig.HathoraCoreOpts?.DevAuthOpts?.DevAuthToken);
-            
-            if (!hasValidServerConfig)
+            if (hathoraServerConfig == null)
             {
 #if UNITY_SERVER
-                Debug.LogError(errMsg); // We're 100% a server; potential for critical err
+                Debug.LogError($"{logPrefix} !HathoraServerConfig: " +
+                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgrBase)} (if you want " +
+                    "server runtime calls from Server standalone || Editor)");
+                return false;
+#elif UNITY_EDITOR
+                Debug.Log($"<color=orange>(!)</color> {logPrefix} !HathoraServerConfig: Np in Editor, " +
+                    "but if you want server runtime calls when you build as UNITY_SERVER, " +
+                    $"serialize {gameObject.name}.{nameof(HathoraServerMgrBase)}");
+
 #else
-                Debug.Log($"(!) {errMsg}"); // Light warning; we *may* be a server
+                // We're probably a Client - just silently stop this. Clients don't have a dev key.
 #endif
-                
-                // !hathoraServerConfig - we cannot call Server runtime calls (since !devKey to auth)
                 return false;
             }
 
-            // !Server, !WebGL, *and* has a server config
             return true;
         }
         
         /// <summary>
+        /// Call this when you 1st know well run Server runtime events.
         /// Init all Server [runtime] API wrappers. Passes serialized HathoraServerConfig.
         /// (!) Unlike ClientMgr that are Mono-derived, we init via Constructor instead of Init().
         /// </summary>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
         protected virtual void InitApis(Configuration _hathoraSdkConfig = null)
         {
+            if (!ValidateReqs())
+                return;
+            
             serverApis.ServerAppApi = new HathoraServerAppApi(hathoraServerConfig, _hathoraSdkConfig);
             serverApis.ServerLobbyApi = new HathoraServerLobbyApi(hathoraServerConfig, _hathoraSdkConfig);
             serverApis.ServerProcessApi = new HathoraServerProcessApi(hathoraServerConfig, _hathoraSdkConfig);
@@ -190,19 +195,19 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <summary>
         /// Gets the Server process info by a special env var that's
         /// *always* included (automatically) in Hathora deployments.
-        ///
         /// You probably want to call this @ Awake, then get cached ver later @ GetCachedHathoraProcessAsync()
         /// </summary>
         protected virtual async Task GetHathoraProcessFromEnvVarAsync()
         {
-            Debug.Log($"[getHathoraProcessAsync.getHathoraProcessAsync] " +
+            Debug.Log($"[HathoraServerMgrBase.getHathoraProcessAsync] " +
                 $"HATHORA_PROCESS_ID: `{serverDeployedProcessId}`");
             
             bool hasHathoraProcId = !string.IsNullOrEmpty(serverDeployedProcessId);
             if (!hasHathoraProcId)
                 return;
             
-            this.cachedDeployedHathoraProcess = await serverApis.ServerProcessApi.GetProcessInfoAsync(serverDeployedProcessId);
+            this.cachedDeployedHathoraProcess = await serverApis.ServerProcessApi
+                .GetProcessInfoAsync(serverDeployedProcessId);
         }
         #endregion // Init
         
@@ -260,7 +265,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             HathoraGetDeployInfoResult getDeployInfoResult = new(serverDeployedProcessId);
             
             // ----------------
-            // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ Awake()
+            // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ )
             // We await => just in case we called this early, to prevent race conditions
             Process processInfo = await GetCachedHathoraProcessAsync();
             string procId = processInfo.ProcessId;

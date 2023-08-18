@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 namespace Hathora.Demos.Shared.Scripts.Common
 {
     /// <summary>
-    /// Commandline helper - run via `-_mode {server|client|host} -memo {someStr}`.
+    /// Commandline helper - run via `-_mode {server|client|host}`.
     /// (!) `-scene` is loaded / awaited before any other cmd.
     /// Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
     /// </summary>
