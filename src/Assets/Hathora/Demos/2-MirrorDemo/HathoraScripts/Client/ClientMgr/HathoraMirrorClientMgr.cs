@@ -1,10 +1,8 @@
 // Created by dylan@hathora.dev
 
-using System;
 using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
-using kcp2k;
 using Mirror;
 using Mirror.SimpleWeb;
 using UnityEngine;
@@ -22,6 +20,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// - Mirror.NetworkManager.singleton
     /// - Mirror.NetworkManager.ConnectState is INTERNAL, but broken up into individual props
     /// </summary>
+    /// - TODO: Detach from HathoraClientMgrBase - this will be mostly for NetCode. 
     public class HathoraMirrorClientMgr : HathoraClientMgrBase
     {
         #region vars

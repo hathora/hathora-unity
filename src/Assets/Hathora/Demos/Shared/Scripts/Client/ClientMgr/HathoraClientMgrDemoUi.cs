@@ -23,7 +23,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         #region Vars
         #region Vars -> Serialized Fields
         [FormerlySerializedAs("sdkDemoUi")]
-        [FormerlySerializedAs("ui")]
         [SerializeField]
         private HathoraClientMgrUiBaseContainer uiContainer;
         protected HathoraClientMgrUiBaseContainer UIContainer => uiContainer;
@@ -51,10 +50,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             SetSingleton();
         }
 
-        protected virtual void Start()
-        {
+        protected virtual void Start() =>
             subToClientMgrEvents();
-        }
         
         /// <summary>Override this and set your singleton instance</summary>
         protected abstract void SetSingleton();
@@ -65,9 +62,9 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             HathoraClientMgrBase.OnAuthLoginDoneEvent += OnAuthLoginDone;
             HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent += OnGetActivePublicLobbiesDone;
-            HathoraClientMgrBase.OnNetCreateLobbyDoneEvent += OnNetCreateLobbyDone;
+            HathoraClientMgrBase.OnCreateLobbyDoneEvent += OnCreateLobbyDone;
             HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent += OnGetActiveConnectionInfoDone;
-            HathoraClientMgrBase.OnNetStartClientFailEvent += OnNetStartClientFail;
+            HathoraClientMgrBase.OnStartClientFailEvent += OnStartClientFail;
         }
         #endregion // Init
         
@@ -111,7 +108,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         /// <summary>ClientMgr callback</summary>
         /// <param name="_lobby"></param>
-        protected virtual void OnNetCreateLobbyDone(Lobby _lobby)
+        protected virtual void OnCreateLobbyDone(Lobby _lobby)
         {
             if (_lobby == null)
                 OnCreatedOrJoinedLobbyFail();
@@ -136,7 +133,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         /// <summary>Failed, after a callback from clicking a "Client" net code btn.</summary>
         /// <param name="_friendlyErr"></param>
-        protected virtual void OnNetStartClientFail(string _friendlyErr)
+        protected virtual void OnStartClientFail(string _friendlyErr)
         {
             Debug.Log($"[HathoraNetUiBase] OnNetStartClientFail: {_friendlyErr}");
 
@@ -540,7 +537,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             HathoraClientMgrBase.OnAuthLoginDoneEvent -= OnAuthLoginDone;
             HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent -= OnGetActivePublicLobbiesDone;
-            HathoraClientMgrBase.OnNetCreateLobbyDoneEvent -= OnNetCreateLobbyDone;
+            HathoraClientMgrBase.OnCreateLobbyDoneEvent -= OnCreateLobbyDone;
         }
 
         private void OnDestroy() => UnsubToClientMgrEvents();

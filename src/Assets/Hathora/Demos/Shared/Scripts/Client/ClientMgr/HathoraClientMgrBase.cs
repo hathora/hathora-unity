@@ -22,10 +22,11 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
     /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events.
     /// 
-    /// - Available Events:
+    /// - Available Events to subscribe to:
     ///     * OnAuthLoginDoneEvent
     ///     * OnClientStartingEvent
     ///     * OnStartClientFailEvent
+    ///     * OnClientStoppedEvent
     ///     * OnGetActiveConnectionInfoFailEvent
     ///     * OnGetActiveConnectionInfoDoneEvent
     ///     * OnGetActivePublicLobbiesDoneEvent
@@ -59,18 +60,26 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
 
         #region Public Events
+        /// <summary>Event triggers when auth is done (check isSuccess)</summary>
         /// <returns>isSuccess</returns>
         public static event Action<bool> OnAuthLoginDoneEvent;
         
+        /// <summary>Event triggers when a net client is starting</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public static event Action OnClientStartingEvent;
         
+        /// <summary>Event triggers when a net client started</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public static event Action OnClientStartedEvent;
+
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public static Action OnClientStoppedEvent;
         
         /// <summary>lobby</summary>
-        public static event Action<Lobby> OnNetCreateLobbyDoneEvent;
+        public static event Action<Lobby> OnCreateLobbyDoneEvent;
         
         /// <summary>friendlyReason</summary>
-        public static event Action<string> OnNetStartClientFailEvent;
+        public static event Action<string> OnStartClientFailEvent;
         
         /// <summary>connectionInfo:ConnectionInfoV2</summary>
         public static event Action<ConnectionInfoV2> OnGetActiveConnectionInfoDoneEvent;
@@ -137,6 +146,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require ServerMgr or secret keys to manage the net server.
         /// </summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StartServer();
 
         /// <summary>
@@ -144,10 +154,12 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require HathoraServerMgr or secret keys to manage the net server.
         /// </summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StopServer();
 
         /// <summary>Starts a NetworkManager Client</summary>
         /// <param name="_hostPort">host:port provided by Hathora</param>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StartClient(string _hostPort = null);
 
         /// <summary>
@@ -157,6 +169,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// </summary>
         /// <param name="_roomId">Known from invite code, server list cache, or Lobby query</param>
         /// <returns>isSuccess</returns>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers. " +
+            "Instead, await GetActiveConnectionInfo().")]
         public virtual async Task<bool> StartClientByRoomIdAsync(string _roomId)
         {
             // Logs + Validate
@@ -175,6 +189,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 return false;
 
             // ---------
+            // [DEPRECATED - This part will soon be detached from Hathora managers]
             // Connect as Client via net code =>
             string hostPost = $"{exposedPort.Host}:{exposedPort.Port}";
             await StartClient(hostPost);
@@ -183,6 +198,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         }
         
         /// <summary>Stops a NetworkManager Client</summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StopClient();
         #endregion // Interactions from UI -> Required Overrides
        
@@ -358,29 +374,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected virtual void OnAuthLoginDone(bool _isSuccess) =>
             OnAuthLoginDoneEvent?.Invoke(_isSuccess);
         
-        /// <summary>
-        /// OnClientConnectionState() success callback when state == Started. Before this:
-        /// - We already called StartClient() || StartClientToLastCachedRoom()
-        /// - IsConnectingAsClient == true
-        /// </summary>
-        protected virtual void OnClientStarting()
-        {
-            IsConnectingAsClient = false;
-            OnClientStartingEvent?.Invoke();
-        }
-        
-        /// <summary>We just started and can now run net code</summary>
-        protected virtual void OnClientStarted() =>
-            OnClientStartedEvent?.Invoke();
-        
-        /// <summary>Tried to connect to a Server as a Client, but failed</summary>
-        /// <param name="_friendlyReason"></param>
-        protected virtual void OnStartClientFail(string _friendlyReason)
-        {
-            IsConnectingAsClient = false;
-            OnNetStartClientFailEvent?.Invoke(_friendlyReason);
-        }
-        
         /// <summary>GetActiveConnectionInfo() done callback (not necessarily successful).</summary>
         protected virtual void OnGetActiveConnectionInfoDone(ConnectionInfoV2 _connectionInfo) =>
             OnGetActiveConnectionInfoDoneEvent?.Invoke(_connectionInfo);
@@ -401,7 +394,39 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// </summary>
         /// <param name="_lobby"></param>
         protected virtual void OnCreateLobbyDoneAsync(Lobby _lobby) => 
-            OnNetCreateLobbyDoneEvent?.Invoke(_lobby);
+            OnCreateLobbyDoneEvent?.Invoke(_lobby);
+
+        #region Virtual callbacks w/events -> NetworkManager Callbacks (!) To be moved later away from HathoraMgrs
+        /// <summary>
+        /// OnClientConnectionState() success callback when state == Started. Before this:
+        /// - We already called StartClient() || StartClientToLastCachedRoom()
+        /// - IsConnectingAsClient == true
+        /// </summary>
+        protected virtual void OnClientStarting()
+        {
+            IsConnectingAsClient = false;
+            OnClientStartingEvent?.Invoke();
+        }
+        
+        /// <summary>We just started and can now run net code</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        protected virtual void OnClientStarted() =>
+            OnClientStartedEvent?.Invoke();
+
+        /// <summary>We were disconnected from net code</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        protected virtual void OnClientStopped() =>
+            OnClientStoppedEvent?.Invoke();
+        
+        /// <summary>Tried to connect to a Server as a Client, but failed</summary>
+        /// <param name="_friendlyReason"></param>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        protected virtual void OnStartClientFail(string _friendlyReason)
+        {
+            IsConnectingAsClient = false;
+            OnStartClientFailEvent?.Invoke(_friendlyReason);
+        }
+        #endregion // Virtual callbacks w/events -> // NetworkManager Callbacks (!) To be moved later away from HathoraMgrs
         #endregion // Virtual callbacks w/Events
         
         

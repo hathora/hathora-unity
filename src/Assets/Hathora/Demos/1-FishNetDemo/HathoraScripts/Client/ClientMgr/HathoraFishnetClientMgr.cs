@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using FishNet;
-using FishNet.Managing.Client;
 using FishNet.Transporting;
 using FishNet.Transporting.Bayou;
 using Hathora.Cloud.Sdk.Model;
@@ -16,6 +15,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// - This spawns BEFORE the player, or even connected to the network.
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
     /// - To add API scripts: Add to the `ClientApis` serialized field.
+    /// - TODO: Detach from HathoraClientMgrBase - this will be mostly for NetCode. 
     /// </summary>
     public class HathoraFishnetClientMgr : HathoraClientMgrBase
     {
@@ -217,6 +217,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
                 // onConnectSuccess?
                 case LocalConnectionState.Started:
                     base.OnClientStarted();
+                    break;
+                
+                case LocalConnectionState.Stopped:
+                    base.OnClientStopped();
                     break;
             }
 
