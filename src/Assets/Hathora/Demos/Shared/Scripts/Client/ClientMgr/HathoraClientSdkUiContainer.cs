@@ -107,13 +107,5 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         private TextMeshProUGUI joiningLobbyStatusErrTxt;
         public TextMeshProUGUI JoiningLobbyStatusErrTxt => joiningLobbyStatusErrTxt;
         #endregion // Serialized Fields
-
-
-        public void Awake() =>
-            Debug.Log("[HathoraClientMgrUiBaseContainer] OnAwake");
-        public void OnDisable() =>
-            Debug.Log("[HathoraClientMgrUiBaseContainer] OnDisable");
-        public void OnDestroy()=>
-            Debug.Log("[HathoraClientMgrUiBaseContainer] OnDestroy");
     }
 }

@@ -4,9 +4,7 @@ using System.Text.RegularExpressions;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using Mirror;
-using UnityEngine;
 using UnityEngine.Assertions;
-using HathoraMirrorClientMgr = Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr.HathoraMirrorClientMgr;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -18,7 +16,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// </summary>
     public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi
     {
-        public static HathoraMirrorClientMgrDemoUi Singleton { get; private set; }
         private static HathoraMirrorClientMgr HathoraClientMgr => 
             HathoraMirrorClientMgr.Singleton;
         
@@ -27,20 +24,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         protected override void Start()
         {
             base.Start();
-        }
-
-        protected override void SetSingleton()
-        {
-            if (Singleton != null)
-            {
-                Debug.LogError("[HathoraMirrorClientMgrUi]**ERR @ setSingleton: " +
-                    "Destroying dupe");
-                
-                Destroy(gameObject);
-                return;
-            }
-
-            Singleton = this;
         }
         #endregion // Init
         

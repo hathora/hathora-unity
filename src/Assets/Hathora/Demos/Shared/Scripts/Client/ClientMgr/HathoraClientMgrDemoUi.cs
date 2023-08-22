@@ -44,17 +44,11 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
 
         #region Init
-        protected virtual void Awake()
-        {
-            Debug.Log($"[HathoraClientMgrDemoUi.Awake] InstanceId={GetInstanceID()}");
-            SetSingleton();
-        }
+        protected virtual void Awake() =>
+            Debug.Log($"[HathoraClientMgrDemoUi] Awake");
 
         protected virtual void Start() =>
             subToClientMgrEvents();
-        
-        /// <summary>Override this and set your singleton instance</summary>
-        protected abstract void SetSingleton();
 
         private void subToClientMgrEvents()
         {
@@ -553,9 +547,12 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             HathoraClientMgrBase.OnAuthLoginDoneEvent -= OnAuthLoginDone;
             HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent -= OnGetActivePublicLobbiesDone;
             HathoraClientMgrBase.OnCreateLobbyDoneEvent -= OnCreateLobbyDone;
+            HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent -= OnGetActiveConnectionInfoDone;
+            HathoraClientMgrBase.OnClientStoppedEvent -= OnClientStopped;
+            HathoraClientMgrBase.OnStartClientFailEvent -= OnStartClientFail;
         }
 
-        private void OnDestroy() => UnsubToClientMgrEvents();
+        protected virtual void OnDestroy() => UnsubToClientMgrEvents();
         #endregion // Cleanup
     }
 }

@@ -3,7 +3,6 @@
 using System.Text.RegularExpressions;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
-using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
@@ -16,33 +15,18 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// </summary>
     public class HathoraFishnetClientMgrDemoUi : HathoraClientMgrDemoUi
     {
-        public static HathoraFishnetClientMgrDemoUi Singleton { get; private set; }
         private static HathoraFishnetClientMgr HathoraClientMgr => 
             HathoraFishnetClientMgr.Singleton;
         
 
         #region Init
         protected override void Awake() =>
-            base.Awake(); // Triggers SetSingleton()
+            base.Awake();
         
         protected override void Start()
         {
             base.Start();
             // TODO: We probably want to sub to OnConnected transport events later
-        }
-        
-        protected override void SetSingleton()
-        {
-            if (Singleton != null)
-            {
-                Debug.LogError("[HathoraFishnetClientMgrUi]**ERR @ SetSingleton: " +
-                    "Destroying dupe");
-                
-                Destroy(gameObject);
-                return;
-            }
-
-            Singleton = this;
         }
         #endregion // Init
         
