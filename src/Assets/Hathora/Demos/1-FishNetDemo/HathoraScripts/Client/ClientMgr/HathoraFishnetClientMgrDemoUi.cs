@@ -92,7 +92,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartClientFromNetworkMgr();
+            HathoraClientMgr.StartClientFromHathoraLobbyCache();
         }
         #endregion /Dynamic UI
     }

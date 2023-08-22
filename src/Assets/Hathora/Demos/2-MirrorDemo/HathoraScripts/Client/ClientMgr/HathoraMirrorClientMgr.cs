@@ -80,22 +80,18 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             NetworkManager.singleton.StartServer();
             return Task.CompletedTask;
         }
-
+        
         /// <summary>
-        /// Only call if UNITY_WEBGL (not validated here):
-        /// This is actually pulled directly from Mirror's SimpleWebTransport.cs (!public)
+        /// Connect with info `from HathoraClientSession.ServerConnectionInfo.ExposedPort`,
+        /// replacing the NetworkManager host:port.
         /// </summary>
-        /// <returns>"WS" || "WSS"</returns>
-        private string GetWebglClientScheme()
+        /// <returns></returns>
+        public Task StartClientFromHathoraLobbyCache()
         {
-            SimpleWebTransport swt = NetworkManager.singleton.transport as SimpleWebTransport;
-            Assert.IsNotNull(swt, "Expected `SimpleWebTransport` in NetworkManager.Transport, " +
-                "since UNITY_WEBGL - you are trying to call WS/WSS TCP transport from a Transport that !supports this");
-
-            bool isWss = swt.sslEnabled || swt.clientUseWss; 
-            return isWss 
-                ? SimpleWebTransport.SecureScheme 
-                : SimpleWebTransport.NormalScheme;
+            ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
+            string hostPort = $"{connectInfo.Host}:{connectInfo.Port}";
+            
+            return StartClient(hostPort);
         }
 
         /// <param name="_hostPort">

@@ -98,7 +98,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartClientFromNetworkMgr();
+            HathoraClientMgr.StartClientFromHathoraLobbyCache();
         }
         #endregion /Dynamic UI
     }

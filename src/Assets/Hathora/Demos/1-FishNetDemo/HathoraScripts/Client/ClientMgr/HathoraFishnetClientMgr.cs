@@ -75,7 +75,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// replacing the NetworkManager host:port.
         /// </summary>
         /// <returns></returns>
-        public Task StartClientFromHathoraLastQueriedLobbyInfo()
+        public Task StartClientFromHathoraLobbyCache()
         {
             ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
             string hostPort = $"{connectInfo.Host}:{connectInfo.Port}";

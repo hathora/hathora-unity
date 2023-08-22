@@ -396,6 +396,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             // The ServerConnectionInfo should already be cached
             try
             {
+                // TODO: While we await this, update status text to append a "." with StringBuilder every second !ready (await status)
                 await clientMgrBase.GetActiveConnectionInfo(HathoraClientSession.RoomId);
             }
             catch (Exception e)
@@ -424,7 +425,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         }
 
         /// <summary>
-        /// Clicked a "Client" net code btn.
+        /// Sets UI only: Override to call logic
         /// TODO: Rename to OnNetJoinLobbyAsClientBtnClick()
         /// </summary>
         public virtual void OnJoinLobbyAsClientBtnClick()
