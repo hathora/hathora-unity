@@ -68,7 +68,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartNetClient(_hostPortOverride);
+            HathoraClientMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStartHostBtnClick()
@@ -98,7 +98,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartNetClientFromNetworkMgrCache();
+            HathoraClientMgr.StartClientFromNetworkMgr();
         }
         #endregion /Dynamic UI
     }

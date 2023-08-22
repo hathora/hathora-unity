@@ -25,8 +25,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         [FormerlySerializedAs("sdkDemoUi")]
         [FormerlySerializedAs("ui")]
         [SerializeField]
-        private HathoraNetClientMgrUiBaseContainer uiContainer;
-        protected HathoraNetClientMgrUiBaseContainer UIContainer => uiContainer;
+        private HathoraClientMgrUiBaseContainer uiContainer;
+        protected HathoraClientMgrUiBaseContainer UIContainer => uiContainer;
         
         [SerializeField]
         private HathoraClientMgrHelloWorldDemoUi helloWorldDemoUi;

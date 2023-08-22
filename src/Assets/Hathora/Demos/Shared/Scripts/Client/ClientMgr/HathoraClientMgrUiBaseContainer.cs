@@ -9,15 +9,14 @@ using UnityEngine.UI;
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
     /// <summary>
-    /// Contains containers for UI elements for HathoraNetClientMgrUiBase.
+    /// Contains containers for UI elements for HathoraClientMgrUiBase.
     /// The purpose of this is to be able to set this in a parent GameObj so we
     /// don't have to set it each time for every demo.
     /// </summary>
     [Serializable]
-    public class HathoraNetClientMgrUiBaseContainer
+    public class HathoraClientMgrUiBaseContainer
     {
         #region Serialized Fields
-        // TODO: Make these fields private with a public getter prop
         [FormerlySerializedAs("InvalidConfigTemplatePnl")]
         [Header("Help")]
         [SerializeField]

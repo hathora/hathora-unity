@@ -48,10 +48,10 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             base.Start();
 
             // This is a Client manager script; listen for relative events
-            transport.OnClientConnected += OnNetClientStarted;
+            transport.OnClientConnected += OnClientStarted;
             transport.OnClientError += onMirrorClientError;
             transport.OnClientDisconnected += () => 
-                base.OnNetStartClientFail("Disconnected");;
+                base.OnStartClientFail("Disconnected");;
         }
         
         protected override void SetSingleton()
@@ -76,7 +76,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require ServerMgr or secret keys to manage the net server.
         /// </summary>
-        public override Task StartNetServer()
+        public override Task StartServer()
         {
             NetworkManager.singleton.StartServer();
             return Task.CompletedTask;
@@ -103,9 +103,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         /// host:port provided by Hathora; eg: "1.proxy.hathora.dev:12345".
         /// If !hostPort, we'll use the default from NetworkManager and its selected Transport.
         /// </param>
-        public override Task StartNetClient(string _hostPort = null)
+        public override Task StartClient(string _hostPort = null)
         {
-            string logPrefix = $"[HathoraMirrorClientMgr.{nameof(StartNetClient)}]";
+            string logPrefix = $"[HathoraMirrorClientMgr.{nameof(StartClient)}]";
             Debug.Log($"{logPrefix} Start");
             
             (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
@@ -128,22 +128,22 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 // InstanceFinder.TransportManager.Transport.SetPort(hostPortContainer.port);
             }
 
-            StartNetClientFromNetworkMgrCache();
+            StartClientFromNetworkMgr();
             return Task.CompletedTask;
         }
         
-           /// <summary>
-        /// Connect to the NetServer as a NetClient.
-        /// Unlike StartNetClient (that takes host:port args), we'll use cached vals from NetworkManager.
+        /// <summary>
+        /// Connect to the NetworkManager Server as a NetworkManager Client.
+        /// Unlike StartClient (that takes host:port args), we'll use cached vals from NetworkManager.
         /// - WebGL: Asserts for `SimpleWebTransport` as the NetworkManager's selected transport
         /// - !WebGL: Asserts for `!SimpleWebTransport` as the NetworkManager's selected transport (such as `Kcp` UDP)
         /// </summary>
         /// <returns>
         /// startedConnection; to ATTEMPT the connection (isValid pre-connect vals); we're not connected yet.
         /// </returns>
-        public bool StartNetClientFromNetworkMgrCache()
+        public bool StartClientFromNetworkMgr()
         {
-            string logPrefix = $"[HathoraMirrorClientMgr.{nameof(StartNetClientFromNetworkMgrCache)}]";
+            string logPrefix = $"[HathoraMirrorClientMgr.{nameof(StartClientFromNetworkMgr)}]";
             Debug.Log($"{logPrefix} Start");
 
             // Set connecting state + log where we're connecting to
@@ -167,13 +167,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             return true; // startedConnection => callback @ OnClientConected()
         }
 
-        public override Task StopNetServer()
+        public override Task StopServer()
         {
             NetworkManager.singleton.StopServer();
             return Task.CompletedTask;
         }
 
-        public override Task StopNetClient()
+        public override Task StopClient()
         {
             NetworkManager.singleton.StopClient();
             return Task.CompletedTask;
@@ -189,7 +189,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
             if (NetworkManager.singleton == null)
             {
-                OnNetStartClientFail("!NetworkManager");
+                OnStartClientFail("!NetworkManager");
                 return false; // !isSuccess
             }
 
@@ -197,7 +197,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             if (isConnected || isConnecting)
             {
                 NetworkClient.Disconnect();
-                OnNetStartClientFail("Prior connection still active: Disconnecting... " +
+                OnStartClientFail("Prior connection still active: Disconnecting... " +
                     "Try again soon");
                 
                 return false; // !isSuccess
@@ -231,7 +231,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 $"transportErr={_transportErr}, " +
                 $"extraInfo={_extraInfo}";
                 
-            base.OnNetStartClientFail(friendlyReason);
+            base.OnStartClientFail(friendlyReason);
         }
 
         private void OnDestroy()
@@ -239,10 +239,10 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             if (transport == null)
                 return;
             
-            transport.OnClientConnected -= OnNetClientStarted;
+            transport.OnClientConnected -= OnClientStarted;
             transport.OnClientError -= onMirrorClientError;
             transport.OnClientDisconnected -= () => 
-                base.OnNetStartClientFail("Disconnected");;
+                base.OnStartClientFail("Disconnected");;
         }
         #endregion // Callbacks
     }

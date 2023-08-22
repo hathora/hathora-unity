@@ -36,7 +36,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
                 return;
             
             Debug.Log("[HathoraFishnetArgHandler] Starting Client ...");
-            HathoraFishnetClientMgr.Singleton.StartNetClient();
+            HathoraFishnetClientMgr.Singleton.StartClient();
         }
 
         protected override void ArgModeStartHost()

@@ -51,7 +51,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public override void OnStartServerBtnClick()
         {
             base.OnStartServerBtnClick();
-            HathoraClientMgr.StartNetServer();
+            HathoraClientMgr.StartServer();
         }
 
         /// <summary></summary>
@@ -74,25 +74,25 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartNetClient(_hostPortOverride);
+            HathoraClientMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStopServerBtnClick()
         {
             base.OnStopServerBtnClick();
-            HathoraClientMgr.StopNetServer();
+            HathoraClientMgr.StopServer();
         }
         
         public override void OnStopClientBtnClick()
         {
             base.OnStopClientBtnClick();
-            HathoraClientMgr.StopNetClient();
+            HathoraClientMgr.StopClient();
         }
 
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartNetClientFromNetworkMgrCache();
+            HathoraClientMgr.StartClientFromNetworkMgr();
         }
         #endregion /Dynamic UI
     }

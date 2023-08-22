@@ -24,8 +24,8 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// 
     /// - Available Events:
     ///     * OnAuthLoginDoneEvent
-    ///     * OnNetClientStartingEvent
-    ///     * OnNetStartClientFailEvent
+    ///     * OnClientStartingEvent
+    ///     * OnStartClientFailEvent
     ///     * OnGetActiveConnectionInfoFailEvent
     ///     * OnGetActiveConnectionInfoDoneEvent
     ///     * OnGetActivePublicLobbiesDoneEvent
@@ -62,9 +62,9 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <returns>isSuccess</returns>
         public static event Action<bool> OnAuthLoginDoneEvent;
         
-        public static event Action OnNetClientStartingEvent;
+        public static event Action OnClientStartingEvent;
         
-        public static event Action OnNetClientStartedEvent;
+        public static event Action OnClientStartedEvent;
         
         /// <summary>lobby</summary>
         public static event Action<Lobby> OnNetCreateLobbyDoneEvent;
@@ -137,30 +137,30 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require ServerMgr or secret keys to manage the net server.
         /// </summary>
-        public abstract Task StartNetServer();
+        public abstract Task StartServer();
 
         /// <summary>
         /// Stops a NetworkManager local Server.
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require HathoraServerMgr or secret keys to manage the net server.
         /// </summary>
-        public abstract Task StopNetServer();
+        public abstract Task StopServer();
 
         /// <summary>Starts a NetworkManager Client</summary>
         /// <param name="_hostPort">host:port provided by Hathora</param>
-        public abstract Task StartNetClient(string _hostPort = null);
+        public abstract Task StartClient(string _hostPort = null);
 
         /// <summary>
-        /// If you want to StartNetClient() but only have a roomId:
+        /// If you want to StartClient() but only have a roomId:
         /// - Query Room api's GetConnectionInfo for host:port =>
-        /// - StartNetClient()
+        /// - StartClient()
         /// </summary>
         /// <param name="_roomId">Known from invite code, server list cache, or Lobby query</param>
         /// <returns>isSuccess</returns>
-        public virtual async Task<bool> StartNetClientByRoomIdAsync(string _roomId)
+        public virtual async Task<bool> StartClientByRoomIdAsync(string _roomId)
         {
             // Logs + Validate
-            string logPrefix = $"[HathoraClientMgr.{nameof(StartNetClientByRoomIdAsync)}]";
+            string logPrefix = $"[HathoraClientMgr.{nameof(StartClientByRoomIdAsync)}]";
 
             Debug.Log($"{logPrefix} Joining room `{_roomId}` ...");
 
@@ -177,13 +177,13 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             // ---------
             // Connect as Client via net code =>
             string hostPost = $"{exposedPort.Host}:{exposedPort.Port}";
-            await StartNetClient(hostPost);
+            await StartClient(hostPost);
             
             return true; // isSuccess
         }
         
         /// <summary>Stops a NetworkManager Client</summary>
-        public abstract Task StopNetClient();
+        public abstract Task StopClient();
         #endregion // Interactions from UI -> Required Overrides
        
         
@@ -199,7 +199,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             if (hathoraClientSession.CheckIsValidServerConnectionInfo())
                 return true; // success
             
-            OnNetStartClientFail("Invalid ServerConnectionInfo");
+            OnStartClientFail("Invalid ServerConnectionInfo");
             return false; // !success
         }
 
@@ -363,19 +363,19 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// - We already called StartClient() || StartClientToLastCachedRoom()
         /// - IsConnectingAsClient == true
         /// </summary>
-        protected virtual void OnNetClientStarting()
+        protected virtual void OnClientStarting()
         {
             IsConnectingAsClient = false;
-            OnNetClientStartingEvent?.Invoke();
+            OnClientStartingEvent?.Invoke();
         }
         
         /// <summary>We just started and can now run net code</summary>
-        protected virtual void OnNetClientStarted() =>
-            OnNetClientStartedEvent?.Invoke();
+        protected virtual void OnClientStarted() =>
+            OnClientStartedEvent?.Invoke();
         
         /// <summary>Tried to connect to a Server as a Client, but failed</summary>
         /// <param name="_friendlyReason"></param>
-        protected virtual void OnNetStartClientFail(string _friendlyReason)
+        protected virtual void OnStartClientFail(string _friendlyReason)
         {
             IsConnectingAsClient = false;
             OnNetStartClientFailEvent?.Invoke(_friendlyReason);
