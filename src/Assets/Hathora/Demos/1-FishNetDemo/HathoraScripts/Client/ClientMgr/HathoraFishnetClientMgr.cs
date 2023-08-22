@@ -139,6 +139,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
                 return false; // !startedConnection
             
             // Connect now using NetworkManager settings we just set above
+            Debug.Log("[HathoraFishnetClientMgr] Connecting to `" +
+                $"{transport.GetClientAddress()}:" +
+                $"{transport.GetPort()}`");
+            
             bool startedConnection = InstanceFinder.ClientManager.StartConnection();
             return startedConnection; // startedConnection => callback @ OnClientConected()0
         }
