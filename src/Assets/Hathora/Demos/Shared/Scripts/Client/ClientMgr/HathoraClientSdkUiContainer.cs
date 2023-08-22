@@ -14,6 +14,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// </summary>
     public class HathoraClientSdkUiContainer : MonoBehaviour
     {
+        #region Serialized Fields
         [FormerlySerializedAs("InvalidConfigTemplatePnl")]
         [Header("Help")]
         [SerializeField]
@@ -105,6 +106,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         [SerializeField, Tooltip("This will show while you still see the Join button returned")]
         private TextMeshProUGUI joiningLobbyStatusErrTxt;
         public TextMeshProUGUI JoiningLobbyStatusErrTxt => joiningLobbyStatusErrTxt;
+        #endregion // Serialized Fields
 
 
         public void Awake() =>

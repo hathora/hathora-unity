@@ -951,27 +951,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a22588ece320345b622d8ebffc2a3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invalidConfigTemplatePnl: {fileID: 1503105122}
-  invalidConfigPnl: {fileID: 727292837}
-  authBtn: {fileID: 2014960692}
-  authTxt: {fileID: 279724575}
-  createLobbyBtn: {fileID: 35030803}
-  getLobbyInfoBtn: {fileID: 1921181672}
-  getLobbyInfoInput: {fileID: 2014448122}
-  lobbyRoomIdTxt: {fileID: 91788744}
-  viewLobbiesBtn: {fileID: 1776381565}
-  copyLobbyRoomIdBtn: {fileID: 517745251}
-  copiedRoomIdFadeTxt: {fileID: 1154261510}
-  createOrGetLobbyInfoErrTxt: {fileID: 636035973}
-  viewLobbiesSeeLogsFadeTxt: {fileID: 1965055321}
-  getServerInfoBtn: {fileID: 94108197}
-  getServerInfoTxt: {fileID: 479177086}
-  copyServerInfoBtn: {fileID: 1536258306}
-  copiedServerInfoFadeTxt: {fileID: 133096628}
-  getServerInfoErrTxt: {fileID: 304178566}
-  joinLobbyAsClientBtn: {fileID: 243870214}
-  joiningLobbyStatusTxt: {fileID: 837139004}
-  joiningLobbyStatusErrTxt: {fileID: 6730436420086812907}
+  sdkDemoUi: {fileID: 6730436420086812907}
   helloWorldDemoUi: {fileID: 1205016442}
 --- !u!1 &2132191630 stripped
 GameObject:
@@ -2634,14 +2614,14 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
 --- !u!114 &6730436420086812907 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3449535441441275434, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+  m_CorrespondingSourceObject: {fileID: 2086546613057634195, guid: e4dcbec2e4ad0514a94f944ced942c4d,
     type: 3}
   m_PrefabInstance: {fileID: 6730436420086812906}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 6730436420086812908}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 62d38579494d78a4da2e60be45bff4c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6730436420086812908 stripped
