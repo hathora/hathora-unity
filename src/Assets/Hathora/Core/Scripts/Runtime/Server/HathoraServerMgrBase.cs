@@ -83,6 +83,10 @@ namespace Hathora.Core.Scripts.Runtime.Server
         private bool hasServerDeployedProcessId =>
             !string.IsNullOrEmpty(serverDeployedProcessId);
         public bool HasServerDeployedProcessId => hasServerDeployedProcessId;
+        
+        #region Vars -> Events
+        // public static event OnInitialized<HathoraGetDeployInfoResult>();
+        #endregion Vars -> // Events
         #endregion // Vars
 
         
@@ -249,18 +253,21 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         #region Chained API calls
         /// <summary>
-        /// Servers deployed in Hathora will have a special env var containing the ProcessId.
-        /// From this, we can get Process, Room and Lobby info.
-        /// - Note the GetLobbyInitConfig() call: Parse this `object` to your own model.
+        /// If Deployed (not localhost), get HathoraServerContext: { Room, Process, [Lobby], utils }.
+        /// - Servers deployed in Hathora will have a special env var containing the ProcessId (HATHORA_PROCESS_ID).
+        /// - If env var exists, we're deployed in Hathora.
+        /// - Note the GetLobbyInitConfig() util: Parse this `object` to your own model.
         /// </summary>
+        /// <param name="_expectLobby">Throw an err if no Lobby?</param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<HathoraGetDeployInfoResult> ServerGetDeployedInfoAsync(
+        public async Task<HathoraServerContext> GetHathoraServerContext(
+            bool _expectLobby,
             CancellationToken _cancelToken = default)
         {
             Debug.Log("[HathoraServerMgrBase] ServerGetDeployedInfoAsync");
 
-            HathoraGetDeployInfoResult getDeployInfoResult = new(serverDeployedProcessId);
+            HathoraServerContext serverContext = new(serverDeployedProcessId);
             
             // ----------------
             // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ )
@@ -270,7 +277,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             if (string.IsNullOrEmpty(procId) || _cancelToken.IsCancellationRequested)
                 return null;
             
-            getDeployInfoResult.ProcessInfo = processInfo;
+            serverContext.ProcessInfo = processInfo;
 
             // ----------------
             // Get all active Rooms by ProcessId =>
@@ -285,24 +292,27 @@ namespace Hathora.Core.Scripts.Runtime.Server
                 return null;
             }
 
-            getDeployInfoResult.ActiveRoomsForProcess = activeRooms;
+            serverContext.ActiveRoomsForProcess = activeRooms;
 			
             // ----------------
-            // We have Room info, but we need Lobby: Get from RoomId =>
-            Lobby lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
-                firstActiveRoom.RoomId,
-                _cancelToken);
-
-            if (lobby == null || _cancelToken.IsCancellationRequested)
+            if (_expectLobby)
             {
-                Debug.LogError(_cancelToken.IsCancellationRequested ? "Cancelled" : "!lobby");
-                return null;
+                // We have Room info, but we need Lobby: Get from RoomId =>
+                Lobby lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
+                    firstActiveRoom.RoomId,
+                    _cancelToken);
+
+                if (lobby == null || _cancelToken.IsCancellationRequested)
+                {
+                    Debug.LogError(_cancelToken.IsCancellationRequested ? "Cancelled" : "!lobby");
+                    return null;
+                }
+                
+                serverContext.Lobby = lobby;
             }
 
-            getDeployInfoResult.Lobby = lobby;
-
             // Done
-            return getDeployInfoResult;
+            return serverContext;
         }
         #endregion // Chained API calls
     }

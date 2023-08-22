@@ -16,7 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     /// <summary>
     /// For use with HathoraServerLobbyApi.ServerGetDeployedInfoAsync.
     /// </summary>
-    public class HathoraGetDeployInfoResult
+    public class HathoraServerContext
     {
         #region Vars
         public string EnvVarProcessId { get; private set; }
@@ -116,12 +116,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
         
         #region Constructors
-        public HathoraGetDeployInfoResult(string _envVarProcessId)
+        public HathoraServerContext(string _envVarProcessId)
         {
             this.EnvVarProcessId = _envVarProcessId;
         }
 
-        public HathoraGetDeployInfoResult(
+        public HathoraServerContext(
             string _envVarProcessId,
             Process _processInfo,
             List<PickRoomExcludeKeyofRoomAllocations> _activeRoomsForProcess,
