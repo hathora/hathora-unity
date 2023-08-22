@@ -68,7 +68,7 @@ export HATHORA_PROCESS_ID
 
 # Get the "real" IP of the Wsl2 IP (essentially 'localhost' ported through)
 echo "Current directory: $(pwd)"
-export LOCAL_SERVER_IP=$(./reveal_wsl_vm_ip.sh)
+export LOCAL_SERVER_IP=$(./RevealWslVmIp.sh)
 
 # ====================================================================
 # Set the expected args + cmd early so we may log it
