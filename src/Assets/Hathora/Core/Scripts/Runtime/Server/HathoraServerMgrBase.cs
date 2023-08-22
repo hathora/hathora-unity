@@ -206,7 +206,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
             if (!hasHathoraProcessIdEnvVar)
             {
-                #if UNITY_SERVER
+                #if UNITY_SERVER && !UNITY_EDITOR
                 Debug.LogError($"{logPrefix} !serverDeployedProcessId; ensure: " +
                     "(1) HathoraServerConfig is serialized to a scene HathoraServerMgr, " +
                     "(2) We're deployed to Hathora (if testing locally, ignore this err)");

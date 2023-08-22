@@ -139,6 +139,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected virtual void OnClientStopped()
         {
             uiContainer.JoiningLobbyStatusErrTxt.text = "Stopped (See Logs)";
+            uiContainer.JoiningLobbyStatusTxt.gameObject.SetActive(false);
             uiContainer.JoinLobbyAsClientBtn.gameObject.SetActive(true);
         }
 
