@@ -64,6 +64,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent += OnGetActivePublicLobbiesDone;
             HathoraClientMgrBase.OnCreateLobbyDoneEvent += OnCreateLobbyDone;
             HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent += OnGetActiveConnectionInfoDone;
+            HathoraClientMgrBase.OnClientStoppedEvent += OnClientStopped;
             HathoraClientMgrBase.OnStartClientFailEvent += OnStartClientFail;
         }
         #endregion // Init
@@ -130,7 +131,17 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             else
                 onGetActiveConnectionInfoFail();
         }
-        
+
+        /// <summary>
+        /// This will show the Join Lobby btn again, hide the status txt (behind the btn),
+        /// then show an orange err txt below the join lobby btn.
+        /// </summary>
+        protected virtual void OnClientStopped()
+        {
+            uiContainer.JoiningLobbyStatusErrTxt.text = "Stopped (See Logs)";
+            uiContainer.JoinLobbyAsClientBtn.gameObject.SetActive(true);
+        }
+
         /// <summary>Failed, after a callback from clicking a "Client" net code btn.</summary>
         /// <param name="_friendlyErr"></param>
         protected virtual void OnStartClientFail(string _friendlyErr)
