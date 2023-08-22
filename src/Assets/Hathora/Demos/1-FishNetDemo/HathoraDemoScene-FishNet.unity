@@ -1317,7 +1317,7 @@ PrefabInstance:
     - target: {fileID: 2707931863469968433, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_Name
-      value: NetStartClientBtn
+      value: StartClientBtn
       objectReference: {fileID: 0}
     - target: {fileID: 2707931863469968434, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
@@ -1649,7 +1649,7 @@ PrefabInstance:
     - target: {fileID: 2707931864174298624, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
       propertyPath: m_Name
-      value: NetStartServerBtn
+      value: StartServerBtn
       objectReference: {fileID: 0}
     - target: {fileID: 2707931864174298624, guid: 0b1d560e984c97e42acb36a66f5d2105,
         type: 3}
@@ -2479,8 +2479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugEditorMockProcId: 
-  hathoraServerConfig: {fileID: 11400000, guid: 18b51cabe31a4ef428485a8db42c6a1a,
-    type: 2}
+  hathoraServerConfig: {fileID: 0}
 --- !u!1001 &6730436420086812906
 PrefabInstance:
   m_ObjectHideFlags: 0

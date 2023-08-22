@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 486194836770922884}
   - component: {fileID: 8375416862907882896}
   m_Layer: 5
-  m_Name: NetStopHostBtn
+  m_Name: StopHostBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,7 +520,7 @@ GameObject:
   - component: {fileID: 8864332408005048742}
   - component: {fileID: 3206447031202257702}
   m_Layer: 5
-  m_Name: NetStartHostBtn
+  m_Name: StartHostBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1015,7 +1015,7 @@ GameObject:
   - component: {fileID: 2707931863147780690}
   - component: {fileID: 2707931863147780689}
   m_Layer: 5
-  m_Name: NetStartClientLblTxt
+  m_Name: StartClientLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1227,7 +1227,7 @@ GameObject:
   - component: {fileID: 2707931863469968444}
   - component: {fileID: 2707931863469968435}
   m_Layer: 5
-  m_Name: NetStartClientBtn
+  m_Name: StartClientBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1488,7 +1488,7 @@ GameObject:
   - component: {fileID: 2707931864174298627}
   - component: {fileID: 2707931864174298626}
   m_Layer: 5
-  m_Name: NetStartServerBtn
+  m_Name: StartServerBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1671,7 +1671,7 @@ GameObject:
   - component: {fileID: 2707931864296491009}
   - component: {fileID: 2707931864296491008}
   m_Layer: 5
-  m_Name: NetStartServerLblTxt
+  m_Name: StartServerLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1858,7 +1858,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clientConnectInputField: {fileID: 4590142681494354275}
-  netStartHostBtn: {fileID: 3206447031202257702}
   netStartServerBtn: {fileID: 0}
 --- !u!1 &2751645769972722236
 GameObject:
@@ -2412,7 +2411,7 @@ GameObject:
   - component: {fileID: 4573085717632850749}
   - component: {fileID: 3408159397730756698}
   m_Layer: 5
-  m_Name: NetStartHostLblTxt
+  m_Name: StartHostLblTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2818,7 +2817,7 @@ GameObject:
   - component: {fileID: 4543525525547469626}
   - component: {fileID: 6653614975494333692}
   m_Layer: 5
-  m_Name: NetStopClientBtn
+  m_Name: StopClientBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4114,7 +4113,7 @@ GameObject:
   - component: {fileID: 410659608838449662}
   - component: {fileID: 1418363420796170145}
   m_Layer: 5
-  m_Name: NetStopServerBtn
+  m_Name: StopServerBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
