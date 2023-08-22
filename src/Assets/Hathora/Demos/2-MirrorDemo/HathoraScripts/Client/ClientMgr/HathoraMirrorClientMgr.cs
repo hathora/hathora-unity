@@ -119,8 +119,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
                 Debug.Log($"{logPrefix} w/Custom hostPort: " +
                     $"`{hostPortContainer.hostNameOrIp}:{hostPortContainer.port}`");
 
-                // InstanceFinder.TransportManager.Transport.SetClientAddress(hostPortContainer.hostNameOrIp);
-                // InstanceFinder.TransportManager.Transport.SetPort(hostPortContainer.port);
+                NetworkManager.singleton.networkAddress = hostPortContainer.hostNameOrIp;
+                portTransport.Port = hostPortContainer.port;
             }
 
             StartClientFromNetworkMgr();
@@ -150,12 +150,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             bool isReadyToConnect = validateIsReadyToConnect(); // Handles UI + logs within
             if (!isReadyToConnect)
                 return false; // !startedConnection
-
-            // -----------------
-            // Set port + host (ip)
-            ExposedPort connectInfo = HathoraClientSession.ServerConnectionInfo.ExposedPort;
-            NetworkManager.singleton.networkAddress = connectInfo.Host; // host address (eg: `localhost`); not an IP address
-            portTransport.Port = (ushort)connectInfo.Port;
             
             // Connect now using NetworkManager settings we just set above
             NetworkManager.singleton.StartClient();
@@ -178,9 +172,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         {
             string logPrefix = $"[HathoraMirrorClientMgr.{nameof(validateIsReadyToConnect)}]";
             Debug.Log($"{logPrefix} Start");
-            
-            if (!ValidateLastQueriedConnectionInfo())
-                return false;
 
             if (NetworkManager.singleton == null)
             {

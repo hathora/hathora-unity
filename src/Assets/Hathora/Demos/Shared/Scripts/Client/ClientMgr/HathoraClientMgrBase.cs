@@ -244,9 +244,9 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             IsConnectingAsClient = true;
 
-            Debug.Log("[HathoraClientBase.SetConnectingState] Connecting to: " + 
-                $"{hathoraClientSession.GetServerInfoIpPort()} via " +
-                $"NetworkManager.{_transportName} transport");
+            Debug.Log("[HathoraClientBase.SetConnectingState] Connecting to " + 
+                $"`{hathoraClientSession.GetServerInfoIpPort()}` via " +
+                $"`NetworkManager.{_transportName}` transport");
         }
         #endregion // Interactions from UI -> Optional overrides
 
