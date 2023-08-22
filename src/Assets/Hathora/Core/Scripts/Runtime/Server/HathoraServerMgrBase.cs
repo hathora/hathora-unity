@@ -100,7 +100,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             // Optional mocked ID for debugging: Create a Room manually in Hathora console => paste ProcessId @ debugEditorMockProcId
             hathoraProcessIdEnvVar = getServerDeployedProcessId(debugEditorMockProcId);
 #else
-            serverDeployedProcessId = getServerDeployedProcessId();
+            hathoraProcessIdEnvVar = getServerDeployedProcessId();
 #endif
             
             _ = GetHathoraServerContext(_throwErrIfNoLobby: false); // !await; sets `HathoraServerContext ServerContext` ^
