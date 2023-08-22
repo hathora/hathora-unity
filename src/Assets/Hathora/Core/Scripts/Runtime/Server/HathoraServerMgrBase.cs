@@ -66,32 +66,22 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// </summary>
         public ServerApiContainer ServerApis => serverApis;
 
-        // /// <summary>TODO: Mv to child</summary>
-        // public static HathoraServerMgrBase Singleton { get; private set; }
-
-        /// <summary>
-        /// (!) This is set async on Awake; check for null.
-        /// For the public accessor, `see GetSystemHathoraProcessAsync()`.
-        /// </summary>
-        private volatile Process cachedDeployedHathoraProcess;
-        protected Process CachedDeployedHathoraProcess => cachedDeployedHathoraProcess;
+        /// <summary>(!) This is set async on Awake; check for null</summary>
+        private volatile HathoraServerContext serverContext;
+        public HathoraServerContext ServerContext => serverContext;
         
         /// <summary>Set @ Awake, and only if deployed on Hathora</summary>
-        private string serverDeployedProcessId;
-        protected string ServerDeployedProcessId => serverDeployedProcessId;
+        private string hathoraProcessIdEnvVar;
         
-        private bool hasServerDeployedProcessId =>
-            !string.IsNullOrEmpty(serverDeployedProcessId);
-        public bool HasServerDeployedProcessId => hasServerDeployedProcessId;
+        private bool hasHathoraProcessIdEnvVar =>
+            !string.IsNullOrEmpty(hathoraProcessIdEnvVar);
         
-        #region Vars -> Events
-        // public static event OnInitialized<HathoraGetDeployInfoResult>();
-        #endregion Vars -> // Events
+        public static event Action<HathoraServerContext> OnInitializedEvent;
         #endregion // Vars
 
         
         #region Init
-        protected virtual void Awake()
+        protected virtual async void Awake()
         {
 #if !UNITY_SERVER && !UNITY_EDITOR
             Debug.Log("(!) [HathoraServerMgrBase.Awake] Destroying - not a server");
@@ -106,14 +96,14 @@ namespace Hathora.Core.Scripts.Runtime.Server
             // Unlike Client calls, we can init immediately @ Awake
             InitApis(_hathoraSdkConfig: null); // Base will create this
 
-            
 #if (UNITY_EDITOR)
-            serverDeployedProcessId = getServerDeployedProcessId(debugEditorMockProcId);
+            // Optional mocked ID for debugging: Create a Room manually in Hathora console => paste ProcessId @ debugEditorMockProcId
+            hathoraProcessIdEnvVar = getServerDeployedProcessId(debugEditorMockProcId);
 #else
             serverDeployedProcessId = getServerDeployedProcessId();
 #endif
             
-            _ = GetHathoraProcessFromEnvVarAsync(); // !await
+            _ = GetHathoraServerContext(_throwErrIfNoLobby: false); // !await; sets `HathoraServerContext ServerContext` ^
         }
         
         /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
@@ -193,86 +183,47 @@ namespace Hathora.Core.Scripts.Runtime.Server
             serverApis.ServerProcessApi = new HathoraServerProcessApi(hathoraServerConfig, _hathoraSdkConfig);
             serverApis.ServerRoomApi = new HathoraServerRoomApi(hathoraServerConfig, _hathoraSdkConfig);
         }
-        
-        /// <summary>
-        /// Gets the Server process info by a special env var that's
-        /// *always* included (automatically) in Hathora deployments.
-        /// You probably want to call this @ Awake, then get cached ver later @ GetCachedHathoraProcessAsync()
-        /// </summary>
-        protected virtual async Task GetHathoraProcessFromEnvVarAsync()
-        {
-            Debug.Log($"[HathoraServerMgrBase.getHathoraProcessAsync] " +
-                $"HATHORA_PROCESS_ID: `{serverDeployedProcessId}`");
-            
-            bool hasHathoraProcId = !string.IsNullOrEmpty(serverDeployedProcessId);
-            if (!hasHathoraProcId)
-                return;
-            
-            this.cachedDeployedHathoraProcess = await serverApis.ServerProcessApi
-                .GetProcessInfoAsync(serverDeployedProcessId);
-        }
         #endregion // Init
         
         
-        /// <summary>
-        /// systemHathoraProcess tries to set async @ Awake, but it could still take some time.
-        /// We'll await until != null for 5s before timing out.
-        /// We initially set this @ Awake via getHathoraProcessFromEnvVarAsync.
-        /// TODO: Accept custom cancelToken
-        /// </summary>
-        /// <returns></returns>
-        public async Task<Process> GetCachedHathoraProcessAsync()
-        {
-            if (hathoraServerConfig == null || !hasServerDeployedProcessId)
-                return null;
-
-            // If we already have a cached Process, return it now ->
-            if (cachedDeployedHathoraProcess != null)
-                return cachedDeployedHathoraProcess;
-            
-            // ------------
-            // Await up to 5s to become !null =>
-            CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(5));
-            await HathoraTaskUtils.WaitUntil(() => 
-                cachedDeployedHathoraProcess != null, 
-                _cancelToken: cancellationTokenSource.Token);
-
-            while (cachedDeployedHathoraProcess == null)
-            {
-                if (cancellationTokenSource.IsCancellationRequested)
-                    throw new TimeoutException($"[HathoraServerMgrBase.{nameof(GetCachedHathoraProcessAsync)}] Timed out");
-
-                await Task.Delay(
-                    TimeSpan.FromMilliseconds(100), 
-                    cancellationTokenSource.Token);
-            }
-
-            return cachedDeployedHathoraProcess;
-        }        
-        
-        
-        #region Chained API calls
+        #region Chained API calls outside Init
         /// <summary>
         /// If Deployed (not localhost), get HathoraServerContext: { Room, Process, [Lobby], utils }.
         /// - Servers deployed in Hathora will have a special env var containing the ProcessId (HATHORA_PROCESS_ID).
         /// - If env var exists, we're deployed in Hathora.
         /// - Note the GetLobbyInitConfig() util: Parse this `object` to your own model.
+        /// - Calls automatically @ Awake => triggers `OnInitializedEvent` on success.
         /// </summary>
-        /// <param name="_expectLobby">Throw an err if no Lobby?</param>
+        /// <param name="_throwErrIfNoLobby"></param>
         /// <param name="_cancelToken"></param>
-        /// <returns></returns>
+        /// <returns>Triggers `OnInitializedEvent` event on success</returns>
         public async Task<HathoraServerContext> GetHathoraServerContext(
-            bool _expectLobby,
+            bool _throwErrIfNoLobby,
             CancellationToken _cancelToken = default)
         {
-            Debug.Log("[HathoraServerMgrBase] ServerGetDeployedInfoAsync");
+            string logPrefix = $"[HathoraServerMgrBase] {nameof(GetHathoraServerContext)}";
+            Debug.Log($"{logPrefix} Start");
 
-            HathoraServerContext serverContext = new(serverDeployedProcessId);
+            if (!hasHathoraProcessIdEnvVar)
+            {
+                #if UNITY_SERVER
+                Debug.LogError($"{logPrefix} !serverDeployedProcessId; ensure: " +
+                    "(1) HathoraServerConfig is serialized to a scene HathoraServerMgr, " +
+                    "(2) We're deployed to Hathora (if testing locally, ignore this err)");
+                #endif // UNITY_SERVER
+                
+                return null;
+            }
+            
+            serverContext = new HathoraServerContext(hathoraProcessIdEnvVar);
             
             // ----------------
             // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ )
             // We await => just in case we called this early, to prevent race conditions
-            Process processInfo = await GetCachedHathoraProcessAsync();
+            Process processInfo = await ServerApis.ServerProcessApi.GetProcessInfoAsync(
+                hathoraProcessIdEnvVar, 
+                _cancelToken);
+            
             string procId = processInfo.ProcessId;
             if (string.IsNullOrEmpty(procId) || _cancelToken.IsCancellationRequested)
                 return null;
@@ -295,25 +246,28 @@ namespace Hathora.Core.Scripts.Runtime.Server
             serverContext.ActiveRoomsForProcess = activeRooms;
 			
             // ----------------
-            if (_expectLobby)
-            {
-                // We have Room info, but we need Lobby: Get from RoomId =>
-                Lobby lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
-                    firstActiveRoom.RoomId,
-                    _cancelToken);
+            // We have Room info, but we need Lobby: Get from RoomId =>
+            Lobby lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
+                firstActiveRoom.RoomId,
+                _cancelToken);
 
-                if (lobby == null || _cancelToken.IsCancellationRequested)
-                {
-                    Debug.LogError(_cancelToken.IsCancellationRequested ? "Cancelled" : "!lobby");
-                    return null;
-                }
-                
-                serverContext.Lobby = lobby;
+            if (_cancelToken.IsCancellationRequested)
+            {
+                Debug.LogError("Cancelled");
+                return null;
             }
+            if (lobby == null && _throwErrIfNoLobby)
+            {
+                Debug.LogError("!lobby");
+                return null;
+            }
+            
+            serverContext.Lobby = lobby;
 
             // Done
+            OnInitializedEvent?.Invoke(serverContext);
             return serverContext;
         }
-        #endregion // Chained API calls
+        #endregion // Chained API calls outside Init
     }
 }
