@@ -2152,7 +2152,7 @@ GameObject:
   - component: {fileID: 6730436419547317145}
   - component: {fileID: 6730436419547317144}
   m_Layer: 5
-  m_Name: copyLobbyRoomIdBtn
+  m_Name: copyRoomIdBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6004,8 +6004,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d38579494d78a4da2e60be45bff4c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invalidConfigTemplatePnl: {fileID: 1601947993005168853}
-  invalidConfigPnl: {fileID: 8186817548413202485}
+  InvalidConfigTemplatePnl: {fileID: 1601947993005168853}
+  InvalidConfigPnl: {fileID: 8186817548413202485}
+  debugMemoTxt: {fileID: 6730436419656526884}
   authBtn: {fileID: 6730436420034938640}
   authTxt: {fileID: 6730436420155423856}
   createLobbyBtn: {fileID: 6730436420694237204}
