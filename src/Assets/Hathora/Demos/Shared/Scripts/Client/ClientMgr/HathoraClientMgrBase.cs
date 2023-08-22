@@ -10,6 +10,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
+using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -69,17 +70,19 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         public static event Action OnClientStartingEvent;
         
         /// <summary>Event triggers when a net client started</summary>
+        /// <returns>roomId, friendlyRegion</returns>
         [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public static event Action OnClientStartedEvent;
 
         [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public static Action OnClientStoppedEvent;
         
+        /// <summary>friendlyReason</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public static event Action<string> OnStartClientFailEvent;
+        
         /// <summary>lobby</summary>
         public static event Action<Lobby> OnCreateLobbyDoneEvent;
-        
-        /// <summary>friendlyReason</summary>
-        public static event Action<string> OnStartClientFailEvent;
         
         /// <summary>connectionInfo:ConnectionInfoV2</summary>
         public static event Action<ConnectionInfoV2> OnGetActiveConnectionInfoDoneEvent;
@@ -426,7 +429,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             IsConnectingAsClient = false;
             OnClientStartingEvent?.Invoke();
         }
-        
+
         /// <summary>We just started and can now run net code</summary>
         [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         protected virtual void OnClientStarted() =>

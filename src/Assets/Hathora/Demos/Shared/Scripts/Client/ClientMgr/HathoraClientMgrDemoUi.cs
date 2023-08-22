@@ -54,12 +54,17 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             Debug.Log("[HathoraClientMgrDemoUI] subToClientMgrEvents");
             
+            // Sub to Hathora events
             HathoraClientMgrBase.OnAuthLoginDoneEvent += OnAuthLoginDone;
             HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent += OnGetActivePublicLobbiesDone;
             HathoraClientMgrBase.OnCreateLobbyDoneEvent += OnCreateLobbyDone;
             HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent += OnGetActiveConnectionInfoDone;
+            
+            // Sub to NetworkManager events
+            HathoraClientMgrBase.OnClientStartedEvent += OnClientStarted;
             HathoraClientMgrBase.OnClientStoppedEvent += OnClientStopped;
             HathoraClientMgrBase.OnStartClientFailEvent += OnStartClientFail;
+            // TODO: OnClientStartingEvent to show a "Starting..." text before fully loaded
         }
         #endregion // Init
         
@@ -109,7 +114,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 OnCreatedOrJoinedLobbyFail();
             else
             {
-                onCreatedOrJoinedLobbySuccess(
+                OnCreatedLobby(
                     _lobby.RoomId, 
                     _lobby.Region.ToString().SplitPascalCase());
             }
@@ -124,6 +129,11 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 onGetActiveConnectionInfoSuccess(_connectionInfo);
             else
                 onGetActiveConnectionInfoFail();
+        }
+        
+        protected virtual void OnClientStarted()
+        {
+            sdkDemoUi.JoiningLobbyStatusTxt.text = "<color=green>Connected</color>";
         }
 
         /// <summary>
@@ -465,7 +475,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             setInitLobbyUi(true);
             setShowCreateOrJoinLobbyErrTxt("<color=orange>Failed to Get Lobby info - see logs</color>");
         }
-
+        
         private void onGetActiveConnectionInfoSuccess(ConnectionInfoV2 _connectionInfo)
         {
             Debug.Log(
@@ -490,7 +500,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             setGetServerInfoErrTxt("<color=orange>Failed to Get Server Info - see logs</color>");
         }
 
-        private void onCreatedOrJoinedLobbySuccess(string _roomId, string _friendlyRegionStr)
+        protected virtual void OnCreatedLobby(string _roomId, string _friendlyRegionStr)
         {
             // Hide all init lobby UI except the txt + view lobbies
             setInitLobbyUi(false);
@@ -544,10 +554,14 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         #region Cleanup
         private void UnsubToClientMgrEvents()
         {
+            // Unsub to Hathora events
             HathoraClientMgrBase.OnAuthLoginDoneEvent -= OnAuthLoginDone;
             HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent -= OnGetActivePublicLobbiesDone;
             HathoraClientMgrBase.OnCreateLobbyDoneEvent -= OnCreateLobbyDone;
             HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent -= OnGetActiveConnectionInfoDone;
+            
+            // Unsub to NetworkManager events
+            HathoraClientMgrBase.OnClientStartedEvent -= OnClientStarted;
             HathoraClientMgrBase.OnClientStoppedEvent -= OnClientStopped;
             HathoraClientMgrBase.OnStartClientFailEvent -= OnStartClientFail;
         }
