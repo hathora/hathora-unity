@@ -161,7 +161,33 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <param name="_hostPort">host:port provided by Hathora</param>
         [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StartClient(string _hostPort = null);
+        
+        /// <summary>Stops a NetworkManager Client</summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public abstract Task StopClient();
+        #endregion // Interactions from UI -> Required Overrides
+       
+        
+        #region Interactions from UI -> Optional overrides
+        /// <summary>Both Server+Client at the same time:
+        /// Essentially the same as StartServer() -> StartClient().
+        /// Some NetworkManagers will have an actual StartHost() method; some do not.
+        /// </summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public virtual Task StartHost()
+        {
+            StartServer();
+            StartClient();
+            return Task.CompletedTask;
+        }
 
+        public virtual Task StopHost()
+        {
+            StopServer(); // Sometimes just this is enough
+            StopClient();
+            return Task.CompletedTask;
+        }
+        
         /// <summary>
         /// If you want to StartClient() but only have a roomId:
         /// - Query Room api's GetConnectionInfo for host:port =>
@@ -197,13 +223,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             return true; // isSuccess
         }
         
-        /// <summary>Stops a NetworkManager Client</summary>
-        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
-        public abstract Task StopClient();
-        #endregion // Interactions from UI -> Required Overrides
-       
-        
-        #region Interactions from UI -> Optional overrides
         /// <summary>
         /// Call this if we just got a Hathora ActiveConnectionInfo and we're about to connect to that host:port.
         /// - If !success, call OnConnectFailed().
