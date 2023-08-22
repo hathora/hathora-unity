@@ -13,8 +13,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// The purpose of this is to be able to set this in a parent GameObj so we
     /// don't have to set it each time for every demo.
     /// </summary>
-    [Serializable]
-    public class HathoraClientMgrUiBaseContainer
+    public class HathoraClientMgrUiBaseContainer : MonoBehaviour
     {
         #region Serialized Fields
         [FormerlySerializedAs("InvalidConfigTemplatePnl")]
