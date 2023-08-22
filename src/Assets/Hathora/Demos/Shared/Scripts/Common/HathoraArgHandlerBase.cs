@@ -110,16 +110,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
                 
                 if (hasModeArg)
                     InitArgMode(mode);
-            
-                // -----------------
-                // -memo {string} // Show arbitrary text at bottom of screen
-                bool hasMemoArg = args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr); 
-                
-                if (!Application.isEditor)
-                    Debug.Log($"{logPrefix} Has `-memo` arg? {hasMemoArg}");
-                
-                if (hasMemoArg)
-                    InitArgMemo(memoStr);
             }
             catch (Exception e)
             {
@@ -183,11 +173,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
             while (!asyncLoad.isDone)
                 await Task.Yield();
         }
-
-        /// <summary>Override me -> Set memoStr in UI</summary>
-        /// <param name="_memoStr"></param>
-        protected virtual void InitArgMemo(string _memoStr) =>
-            Debug.Log($"[HathoraArgHandler.InitMemo] {_memoStr}");
         
         /// <summary>
         /// - "server" -> StartServer()
