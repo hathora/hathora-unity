@@ -2228,7 +2228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca51f816b3dffa4994b701d450859a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiContainer: {fileID: 6730436420086812907}
+  sdkDemoUi: {fileID: 6730436420086812907}
   helloWorldDemoUi: {fileID: 1566488625}
 --- !u!114 &5455464064443103605
 MonoBehaviour:

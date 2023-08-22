@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,7 +12,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// The purpose of this is to be able to set this in a parent GameObj so we
     /// don't have to set it each time for every demo.
     /// </summary>
-    public class HathoraClientMgrUiBaseContainer : MonoBehaviour
+    public class HathoraClientSdkUiContainer : MonoBehaviour
     {
         #region Serialized Fields
         [FormerlySerializedAs("InvalidConfigTemplatePnl")]
@@ -108,5 +107,13 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         private TextMeshProUGUI joiningLobbyStatusErrTxt;
         public TextMeshProUGUI JoiningLobbyStatusErrTxt => joiningLobbyStatusErrTxt;
         #endregion // Serialized Fields
+
+
+        public void Awake() =>
+            Debug.Log("[HathoraClientMgrUiBaseContainer] OnAwake");
+        public void OnDisable() =>
+            Debug.Log("[HathoraClientMgrUiBaseContainer] OnDisable");
+        public void OnDestroy()=>
+            Debug.Log("[HathoraClientMgrUiBaseContainer] OnDestroy");
     }
 }
