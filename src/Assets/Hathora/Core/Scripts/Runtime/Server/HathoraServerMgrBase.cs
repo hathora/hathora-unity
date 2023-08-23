@@ -89,8 +89,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
 #endif
             
 
-            Debug.Log("[HathoraServerMgrBase] Awake");
-            SetSingleton();
+            Debug.Log($"[{nameof(HathoraServerMgrBase)}] Awake");
+            setSingleton();
 
             // Unlike Client calls, we can init immediately @ Awake
             InitApis(_hathoraSdkConfig: null); // Base will create this
@@ -115,8 +115,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
         {
             if (!string.IsNullOrEmpty(_overrideProcIdVal))
             {
-                Debug.Log("[HathoraServerMgrBase.getServerDeployedProcessId] (!) Overriding " +
-                    $"HATHORA_PROCESS_ID with mock val: `{_overrideProcIdVal}`");
+                Debug.Log($"[{nameof(HathoraServerMgrBase)}.{nameof(getServerDeployedProcessId)}] " +
+                    $"(!) Overriding HATHORA_PROCESS_ID with mock val: `{_overrideProcIdVal}`");
 
                 return _overrideProcIdVal;
             }
@@ -127,12 +127,12 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// Set a singleton instance - we'll only ever have one serverMgr.
         /// Children probably want to override this and, additionally, add a Child singleton
         /// </summary>
-        protected virtual void SetSingleton()
+        private void setSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraServerMgrBase.SetSingleton] Error: " +
-                    "setSingleton: Destroying dupe");
+                Debug.LogError($"[{nameof(HathoraServerMgrBase)}.{nameof(setSingleton)}] " +
+                    "Error: Destroying dupe");
                 
                 Destroy(gameObject);
                 return;
@@ -143,7 +143,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         protected virtual bool ValidateReqs()
         {
-            string logPrefix = $"[HathoraServerMgrBase{nameof(ValidateReqs)}]";
+            string logPrefix = $"[{nameof(HathoraServerMgrBase)}.{nameof(ValidateReqs)}]";
             
             if (hathoraServerConfig == null)
             {
@@ -200,7 +200,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             bool _throwErrIfNoLobby,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[HathoraServerMgrBase] {nameof(GetHathoraServerContext)}";
+            string logPrefix = $"[{nameof(HathoraServerMgrBase)}.{nameof(GetHathoraServerContext)}";
             Debug.Log($"{logPrefix} Start");
 
             if (!hasHathoraProcessIdEnvVar)
@@ -238,7 +238,10 @@ namespace Hathora.Core.Scripts.Runtime.Server
             PickRoomExcludeKeyofRoomAllocations firstActiveRoom = activeRooms?.FirstOrDefault();
             if (firstActiveRoom == null || _cancelToken.IsCancellationRequested)
             {
-                Debug.LogError(_cancelToken.IsCancellationRequested ? "Cancelled" : "!firstActiveRoom");
+                Debug.LogError(_cancelToken.IsCancellationRequested 
+                    ? "Cancelled" 
+                    : "!firstActiveRoom");
+                
                 return null;
             }
 
