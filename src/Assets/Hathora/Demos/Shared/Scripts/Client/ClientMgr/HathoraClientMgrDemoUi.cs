@@ -33,7 +33,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected HathoraClientMgrHelloWorldDemoUi HelloWorldDemoUi => helloWorldDemoUi;
         #endregion // Vars -> Serialized Fields
 
-        private HathoraClientMgrBase clientMgrBase => HathoraClientMgrBase.Singleton;
+        private HathoraClientMgr ClientMgr => HathoraClientMgr.Singleton;
         private const float FADE_TXT_DISPLAY_DURATION_SECS = 0.5f;
         private const string HATHORA_VIOLET_COLOR_HEX = "#EEDDFF";
         private static string headerBoldColorBegin => $"<b><color={HATHORA_VIOLET_COLOR_HEX}>";
@@ -56,10 +56,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Debug.Log("[HathoraClientMgrDemoUI] subToClientMgrEvents");
             
             // Sub to Hathora events
-            HathoraClientMgrBase.OnAuthLoginDoneEvent += OnAuthLoginDone;
-            HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent += OnGetActivePublicLobbiesDone;
-            HathoraClientMgrBase.OnCreateLobbyDoneEvent += OnCreateLobbyDone;
-            HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent += OnGetActiveConnectionInfoDone;
+            HathoraClientMgr.OnAuthLoginDoneEvent += OnAuthLoginDone;
+            HathoraClientMgr.OnGetActivePublicLobbiesDoneEvent += OnGetActivePublicLobbiesDone;
+            HathoraClientMgr.OnCreateLobbyDoneEvent += OnCreateLobbyDone;
+            HathoraClientMgr.OnGetActiveConnectionInfoDoneEvent += OnGetActiveConnectionInfoDone;
             
             // Sub to NetworkManager events
             // NetworkMgrStateTracker.OnClientStartingEvent -= OnClientStarting; // TODO: Add to OnDestroy, if implemented
@@ -187,10 +187,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         public async void OnAuthLoginBtnClick()
         {
-            if (!clientMgrBase.CheckIsValidToAuth())
+            if (!ClientMgr.CheckIsValidToAuth())
             {
                 OnAuthFailed("Invalid AppId");
-                onInvalidClientConfig(HathoraClientMgrBase.Singleton.HathoraClientConfig);
+                onInvalidClientConfig(HathoraClientMgr.Singleton.HathoraClientConfig);
                 return;
             }
                 
@@ -198,7 +198,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
             try
             {
-                await clientMgrBase.AuthLoginAsync(); // => Callback @ onAuthDone()
+                await ClientMgr.AuthLoginAsync(); // => Callback @ onAuthDone()
             }
             catch (Exception e)
             {
@@ -216,7 +216,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
             try
             {
-                await clientMgrBase.CreateLobbyAsync(_region); // public lobby
+                await ClientMgr.CreateLobbyAsync(_region); // public lobby
             }
             catch (Exception e)
             {
@@ -245,7 +245,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
             try
             {
-                await clientMgrBase.GetLobbyInfoAsync(roomIdInputStr);
+                await ClientMgr.GetLobbyInfoAsync(roomIdInputStr);
             }
             catch (Exception e)
             {
@@ -276,7 +276,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             try
             {
-                await clientMgrBase.GetActivePublicLobbiesAsync(region); // => Callback @ onRefreshActiveLobbiesDone
+                await ClientMgr.GetActivePublicLobbiesAsync(region); // => Callback @ onRefreshActiveLobbiesDone
             }
             catch (Exception e)
             {
@@ -313,7 +313,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             try
             {
                 // TODO: While we await this, update status text to append a "." with StringBuilder every second !ready (await status)
-                await clientMgrBase.GetActiveConnectionInfo(HathoraClientSession.RoomId);
+                await ClientMgr.GetActiveConnectionInfo(HathoraClientSession.RoomId);
             }
             catch (Exception e)
             {
@@ -521,21 +521,21 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             // Core issue
             string netComponentPathFriendlyStr = " HathoraManager (GameObject)'s " +
-                $"{nameof(clientMgrBase)} component";
+                $"{nameof(ClientMgr)} component";
             
             if (_config == null)
             {
                 sdkDemoUi.AuthBtn.gameObject.SetActive(false);
                 sdkDemoUi.InvalidConfigPnl.SetActive(true);
 
-                throw new Exception($"[{nameof(clientMgrBase)}] !{nameof(HathoraClientConfig)} - " +
+                throw new Exception($"[{nameof(ClientMgr)}] !{nameof(HathoraClientConfig)} - " +
                     $"Serialize one at {netComponentPathFriendlyStr}");
             }
             
             if (!_config.HasAppId)
             {
                 sdkDemoUi.InvalidConfigPnl.SetActive(true);
-                throw new Exception($"[{nameof(clientMgrBase)}] !HathoraClientConfig.AppId - " +
+                throw new Exception($"[{nameof(ClientMgr)}] !HathoraClientConfig.AppId - " +
                     "Set one at Assets/Hathora/HathoraClientConfig. **Headless servers may ignore this**");
             }
             
@@ -556,10 +556,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         private void UnsubToClientMgrEvents()
         {
             // Unsub to Hathora events
-            HathoraClientMgrBase.OnAuthLoginDoneEvent -= OnAuthLoginDone;
-            HathoraClientMgrBase.OnGetActivePublicLobbiesDoneEvent -= OnGetActivePublicLobbiesDone;
-            HathoraClientMgrBase.OnCreateLobbyDoneEvent -= OnCreateLobbyDone;
-            HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent -= OnGetActiveConnectionInfoDone;
+            HathoraClientMgr.OnAuthLoginDoneEvent -= OnAuthLoginDone;
+            HathoraClientMgr.OnGetActivePublicLobbiesDoneEvent -= OnGetActivePublicLobbiesDone;
+            HathoraClientMgr.OnCreateLobbyDoneEvent -= OnCreateLobbyDone;
+            HathoraClientMgr.OnGetActiveConnectionInfoDoneEvent -= OnGetActiveConnectionInfoDone;
             
             // Unsub to NetworkManager events
             // NetworkMgrStateTracker.OnClientStartingEvent -= OnClientStarting; // TODO 

@@ -18,22 +18,22 @@ using UnityEngine.Serialization;
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
     /// <summary>
-    /// - This spawns BEFORE the player, or even connected to the network.
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
-    /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events.
+    /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events + session.
+    /// - Every SDK call caches the result in `hathoraClientSession`.
+    /// - If you have a UI script, subscribe to the events above to handle them ^
+    /// - To add API scripts: Add to the `ClientApis` serialized field.
+    /// - Ready to be inheritted with protected virtual members, should you want to!
     /// 
     /// - Available Events to subscribe to:
     ///     * OnAuthLoginDoneEvent
     ///     * OnGetActiveConnectionInfoFailEvent
     ///     * OnGetActiveConnectionInfoDoneEvent
     ///     * OnGetActivePublicLobbiesDoneEvent
-    ///
-    /// - If you have a UI script, subscribe to the events above to handle them ^
-    /// - To add API scripts: Add to the `ClientApis` serialized field.
     /// </summary>
-    public class HathoraClientMgrBase : MonoBehaviour
+    public class HathoraClientMgr : MonoBehaviour
     {
-        public static HathoraClientMgrBase Singleton { get; private set; }
+        public static HathoraClientMgr Singleton { get; private set; }
         
         
         #region Serialized Fields
@@ -96,7 +96,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             if (Singleton != null)
             {
-                Debug.LogError($"[{nameof(HathoraClientMgrBase)}.{nameof(setSingleton)}] " +
+                Debug.LogError($"[{nameof(HathoraClientMgr)}.{nameof(setSingleton)}] " +
                     "Error: Destroying dupe");
                 
                 Destroy(gameObject);
@@ -250,7 +250,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             catch (Exception e)
             {
                 Debug.LogError(
-                    $"[{nameof(HathoraClientMgrBase)}.{nameof(GetActiveConnectionInfo)}] " +
+                    $"[{nameof(HathoraClientMgr)}.{nameof(GetActiveConnectionInfo)}] " +
                     $"ClientGetConnectionInfoAsync => Error: {e}");
 
                 throw;

@@ -15,19 +15,14 @@ namespace Hathora.Core.Scripts.Runtime.Server
 {
     /// <summary>
     /// Inits and centralizes all Hathora Server [runtime] API wrappers.
-    /// (!) If you are inheritting this, child should likely have setSingleton().
-    ///     (CTRL+F here for template)
-    /// 
-    /// Unlike HathoraClientMgrBase, we don't need a parent since Server is lower-level
-    /// than Client (eg: No UI, Session or net code specific to a platform).
-    /// 
-    /// (!) Unlike HathoraClientMgr, there's no current need to be abstract,
-    /// although you're encouraged to create a child for your own project. 
+    /// - This is the entry point to call Hathora SDK: Auth, process, rooms, etc.
+    /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events.
+    /// - Ready to be inheritted with protected virtual members, should you want to!
     /// </summary>
-    public class HathoraServerMgrBase : MonoBehaviour
+    public class HathoraServerMgr : MonoBehaviour
     {
         #region Vars
-        public static HathoraServerMgrBase Singleton { get; private set; }
+        public static HathoraServerMgr Singleton { get; private set; }
         
         /// <summary>Set null/empty to !fake a procId in the Editor</summary>
         [SerializeField, Tooltip("When in the Editor, we'll get this Hathora ProcessInfo " +
@@ -83,13 +78,13 @@ namespace Hathora.Core.Scripts.Runtime.Server
         protected virtual async void Awake()
         {
 #if !UNITY_SERVER && !UNITY_EDITOR
-            Debug.Log("(!) [HathoraServerMgrBase.Awake] Destroying - not a server");
+            Debug.Log("(!) [HathoraServerMgr.Awake] Destroying - not a server");
             Destroy(this);
             return;
 #endif
             
 
-            Debug.Log($"[{nameof(HathoraServerMgrBase)}] Awake");
+            Debug.Log($"[{nameof(HathoraServerMgr)}] Awake");
             setSingleton();
 
             // Unlike Client calls, we can init immediately @ Awake
@@ -115,7 +110,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         {
             if (!string.IsNullOrEmpty(_overrideProcIdVal))
             {
-                Debug.Log($"[{nameof(HathoraServerMgrBase)}.{nameof(getServerDeployedProcessId)}] " +
+                Debug.Log($"[{nameof(HathoraServerMgr)}.{nameof(getServerDeployedProcessId)}] " +
                     $"(!) Overriding HATHORA_PROCESS_ID with mock val: `{_overrideProcIdVal}`");
 
                 return _overrideProcIdVal;
@@ -131,7 +126,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         {
             if (Singleton != null)
             {
-                Debug.LogError($"[{nameof(HathoraServerMgrBase)}.{nameof(setSingleton)}] " +
+                Debug.LogError($"[{nameof(HathoraServerMgr)}.{nameof(setSingleton)}] " +
                     "Error: Destroying dupe");
                 
                 Destroy(gameObject);
@@ -143,19 +138,19 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         protected virtual bool ValidateReqs()
         {
-            string logPrefix = $"[{nameof(HathoraServerMgrBase)}.{nameof(ValidateReqs)}]";
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(ValidateReqs)}]";
             
             if (hathoraServerConfig == null)
             {
 #if UNITY_SERVER
                 Debug.LogError($"{logPrefix} !HathoraServerConfig: " +
-                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgrBase)} (if you want " +
+                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} (if you want " +
                     "server runtime calls from Server standalone || Editor)");
                 return false;
 #elif UNITY_EDITOR
                 Debug.Log($"<color=orange>(!)</color> {logPrefix} !HathoraServerConfig: Np in Editor, " +
                     "but if you want server runtime calls when you build as UNITY_SERVER, " +
-                    $"serialize {gameObject.name}.{nameof(HathoraServerMgrBase)}");
+                    $"serialize {gameObject.name}.{nameof(HathoraServerMgr)}");
 
 #else
                 // We're probably a Client - just silently stop this. Clients don't have a dev key.
@@ -200,7 +195,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             bool _throwErrIfNoLobby,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerMgrBase)}.{nameof(GetHathoraServerContext)}";
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetHathoraServerContext)}";
             Debug.Log($"{logPrefix} Start");
 
             if (!hasHathoraProcessIdEnvVar)
