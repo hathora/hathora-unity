@@ -31,7 +31,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// - If you have a UI script, subscribe to the events above to handle them ^
     /// - To add API scripts: Add to the `ClientApis` serialized field.
     /// </summary>
-    public abstract class HathoraClientMgrBase : MonoBehaviour
+    public class HathoraClientMgrBase : MonoBehaviour
     {
         public static HathoraClientMgrBase Singleton { get; private set; }
         
