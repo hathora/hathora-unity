@@ -29,7 +29,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 
         /// <summary>Get specific transport info. For setting the port, see portTransport.</summary>
         private static Transport transport => 
-            Mirror.NetworkManager.singleton.transport;
+            Mirror.NetworkManager.singleton == null 
+                ? null 
+                : Mirror.NetworkManager.singleton.transport;
         
         /// <summary>Use this to set the `Port` prop of the transport.</summary>
         private static PortTransport portTransport => 
