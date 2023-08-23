@@ -95,6 +95,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// </returns>
         public bool StartClient(string _hostPort)
         {
+            // Wrong overload?
+            if (string.IsNullOrEmpty(_hostPort))
+                return StartClient();
+            
             string logPrefix = $"[{nameof(FishnetStateMgr)}] {nameof(StartClient)}]"; 
             Debug.Log($"{logPrefix} Start");
             
