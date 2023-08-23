@@ -2436,8 +2436,7 @@ PrefabInstance:
         type: 3}
       propertyPath: hathoraServerConfig
       value: 
-      objectReference: {fileID: 11400000, guid: 18b51cabe31a4ef428485a8db42c6a1a,
-        type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 6730436419053282267, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
