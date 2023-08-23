@@ -16,8 +16,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// </summary>
     public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi
     {
-        private static HathoraMirrorClientMgr HathoraClientMgr => 
-            HathoraMirrorClientMgr.Singleton;
+        private static MirrorStateMgr StateMgr => 
+            MirrorStateMgr.Singleton;
         
 
         #region Init
@@ -41,6 +41,10 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             // We want to override hostPort from the input field - np if null
             _hostPortOverride = HelloWorldDemoUi.ClientConnectInputField.text.Trim();
             
+            // Cleanup, if empty string, since we have 2 overloads later
+            if (_hostPortOverride == "")
+                _hostPortOverride = null;
+            
             if (!string.IsNullOrEmpty(_hostPortOverride))
             {
                 // Validate input: "{ip||host}:{port}" || "localhost:7777"
@@ -51,7 +55,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartClient(_hostPortOverride);
+            StateMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStartHostBtnClick()
@@ -81,7 +85,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartClientFromHathoraLobbyCache();
+            StateMgr.StartClientFromHathoraLobbySession();
         }
         #endregion /Dynamic UI
     }

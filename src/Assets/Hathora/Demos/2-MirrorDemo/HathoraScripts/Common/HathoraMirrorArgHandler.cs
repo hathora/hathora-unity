@@ -44,7 +44,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
             Debug.Log("[HathoraMirrorArgHandler] Starting Client ...");
 
             // Go through Hathora ClientMgr middleware to ensure the correct Transport is used
-            HathoraMirrorClientMgr.Singleton.StartClient();
+            MirrorStateMgr.Singleton.StartClient();
         }
         
         protected override void ArgModeStartHost()
