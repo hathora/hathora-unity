@@ -7,6 +7,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
+using Hathora.Demos.Shared.Scripts.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -61,10 +62,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent += OnGetActiveConnectionInfoDone;
             
             // Sub to NetworkManager events
-            HathoraClientMgrBase.OnClientStartedEvent += OnClientStarted;
-            HathoraClientMgrBase.OnClientStoppedEvent += OnClientStopped;
-            HathoraClientMgrBase.OnStartClientFailEvent += OnStartClientFail;
-            // TODO: OnClientStartingEvent to show a "Starting..." text before fully loaded
+            // NetworkMgrStateTracker.OnClientStartingEvent -= OnClientStarting; // TODO: Add to OnDestroy, if implemented
+            NetworkMgrStateTracker.OnClientStartedEvent += OnClientStarted;
+            NetworkMgrStateTracker.OnClientStoppedEvent += OnClientStopped;
+            NetworkMgrStateTracker.OnStartClientFailEvent += OnStartClientFail;
         }
         #endregion // Init
         
@@ -561,9 +562,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             HathoraClientMgrBase.OnGetActiveConnectionInfoDoneEvent -= OnGetActiveConnectionInfoDone;
             
             // Unsub to NetworkManager events
-            HathoraClientMgrBase.OnClientStartedEvent -= OnClientStarted;
-            HathoraClientMgrBase.OnClientStoppedEvent -= OnClientStopped;
-            HathoraClientMgrBase.OnStartClientFailEvent -= OnStartClientFail;
+            // NetworkMgrStateTracker.OnClientStartingEvent -= OnClientStarting; // TODO 
+            NetworkMgrStateTracker.OnClientStartedEvent -= OnClientStarted;
+            NetworkMgrStateTracker.OnClientStoppedEvent -= OnClientStopped;
+            NetworkMgrStateTracker.OnStartClientFailEvent -= OnStartClientFail;
         }
 
         protected virtual void OnDestroy() => UnsubToClientMgrEvents();

@@ -15,19 +15,16 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// </summary>
     public class HathoraFishnetClientMgrDemoUi : HathoraClientMgrDemoUi
     {
-        private static HathoraFishnetClientMgr HathoraClientMgr => 
-            HathoraFishnetClientMgr.Singleton;
+        private static FishnetStateMgr StateMgr => 
+            FishnetStateMgr.Singleton;
         
 
         #region Init
         protected override void Awake() =>
             base.Awake();
         
-        protected override void Start()
-        {
+        protected override void Start() =>
             base.Start();
-            // TODO: We probably want to sub to OnConnected transport events later
-        }
         #endregion // Init
         
         
@@ -35,7 +32,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         public override void OnStartServerBtnClick()
         {
             base.OnStartServerBtnClick();
-            HathoraClientMgr.StartServer();
+            StateMgr.StartServer();
         }
 
         /// <summary></summary>
@@ -58,25 +55,25 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartClient(_hostPortOverride);
+            StateMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStopServerBtnClick()
         {
             base.OnStopServerBtnClick();
-            HathoraClientMgr.StopServer();
+            StateMgr.StopServer();
         }
         
         public override void OnStopClientBtnClick()
         {
             base.OnStopClientBtnClick();
-            HathoraClientMgr.StopClient();
+            StateMgr.StopClient();
         }
 
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartClientFromHathoraLobbyCache();
+            StateMgr.StartClientFromHathoraLobbySession();
         }
         #endregion /Dynamic UI
     }

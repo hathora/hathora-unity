@@ -27,12 +27,16 @@ namespace Hathora.Demos.Shared.Scripts.Common
         #endregion // Uncomment for child architecture guide
         
         
+        #region Core vars
+        public static NetworkMgrStateTracker Singleton { get; private set; }
+
         [SerializeField, Tooltip("Log all client state changes")]
         private bool verboseLogs = true;
         public bool VerboseLogs => verboseLogs;
-        
+
         /// <summary>When a connection stops, errs out or we get d/c'd, what should we show to clients?</summary>
-        protected string ConnectionStoppedFriendlyStr = "Connection Stopped";
+        protected const string CONNECTION_STOPPED_FRIENDLY_STR = "Connection Stopped";
+        #endregion // Core vars
 
         
         #region Client Events
@@ -53,6 +57,31 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// <returns>friendlyReason</returns>
         public static event Action<string> OnStartClientFailEvent;
         #endregion // Client Events
+        
+        
+        #region Init
+        /// <summary>Sets base Singleton instance</summary>
+        protected virtual void Awake() =>
+            setSingleton();
+
+        /// <summary>Placeholder for future additions</summary>
+        protected virtual void Start() { }
+        
+        /// <summary>Allow this script to be called from anywhere.</summary>
+        private void setSingleton()
+        {
+            if (Singleton != null)
+            {
+                Debug.LogError($"[{nameof(NetworkMgrStateTracker)}]**ERR @ " +
+                    $"{nameof(setSingleton)}: Destroying dupe");
+                
+                Destroy(gameObject);
+                return;
+            }
+
+            Singleton = this;
+        }
+        #endregion // Init
         
         
         #region Client State

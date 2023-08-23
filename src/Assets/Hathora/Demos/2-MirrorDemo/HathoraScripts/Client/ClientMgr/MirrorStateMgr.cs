@@ -1,13 +1,12 @@
 // Created by dylan@hathora.dev
 
-using FishNet;
-using FishNet.Transporting;
-using FishNet.Transporting.Bayou;
 using Hathora.Demos.Shared.Scripts.Common;
+using Mirror;
+using Mirror.SimpleWeb;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
+namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
     /// <summary>
     /// Acts as the liason between NetworkManager and HathoraClientMgr.
@@ -20,27 +19,28 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
     /// - Base contains events like: OnClientStarted, OnClientStopped.
     /// - Base tracks `ClientState` like: Stopped, Starting, Started.
     /// </summary>
-    public class FishnetStateMgr : NetworkMgrStateTracker
+    public class MirrorStateMgr : NetworkMgrStateTracker
     {
         #region vars
         /// <summary>
         /// `New` keyword overrides base Singleton when accessing child directly.
         /// </summary>
-        public new static FishnetStateMgr Singleton { get; private set; }
+        public new static MirrorStateMgr Singleton { get; private set; }
 
+        /// <summary>Get specific transport info. For setting the port, see portTransport.</summary>
         private static Transport transport => 
-            InstanceFinder.TransportManager.Transport;
-
-        /// <summary>Updates @ OnClientConnectionState</summary>
-        private LocalConnectionState localConnectionState;
-        #endregion // vars
-
+            Mirror.NetworkManager.singleton.transport;
         
+        /// <summary>Use this to set the `Port` prop of the transport.</summary>
+        private static PortTransport portTransport => 
+            NetworkManager.singleton.transport as PortTransport;
+        #endregion // vars
+        
+
         #region Init
-        /// <summary>Set Singleton instance</summary>
         protected override void Awake()
         {
-            base.Awake(); // Sets base singleton
+            base.Awake(); // Sets base Singleton
             setSingleton();
         }
 
@@ -48,19 +48,23 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         protected override void Start()
         {
             base.Start();
-            subToFishnetStateEvents();
+            subToMirrorStateEvents();
         }
 
-        /// <summary>FishNet has a singular event tracker enum.</summary>
-        private void subToFishnetStateEvents() =>
-            InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
-
-        /// <summary>Allow this script to be called from anywhere.</summary>
+        /// <summary>Mirror has no singular event tracker enum; track individual events.</summary>
+        private void subToMirrorStateEvents()
+        {
+            transport.OnClientConnected += OnClientStarted;
+            transport.OnClientError += onMirrorClientError;
+            transport.OnClientDisconnected += () => 
+                base.OnStartClientFail(CONNECTION_STOPPED_FRIENDLY_STR);;
+        }
+        
         private void setSingleton()
         {
             if (Singleton != null)
             {
-                Debug.LogError($"[{nameof(FishnetStateMgr)}]**ERR @ " +
+                Debug.LogError($"[{nameof(MirrorStateMgr)}]**ERR @ " +
                     $"{nameof(setSingleton)}: Destroying dupe");
                 
                 Destroy(gameObject);
@@ -71,20 +75,19 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         }
         #endregion // Init
         
-        
+
         #region NetworkManager Server
         /// <summary>Starts a NetworkManager local Server.</summary>
         public void StartServer() =>
-            InstanceFinder.ServerManager.StartConnection();
+            NetworkManager.singleton.StartServer();
         
         /// <summary>Stops a NetworkManager local Server.</summary>
         public void StopServer() =>
-            InstanceFinder.ServerManager.StopConnection(sendDisconnectMessage: true);
-        #endregion // NetworkManager Server
+            NetworkManager.singleton.StopServer();
+        #endregion
         
         
         #region NetworkManager Client
-        
         ///<summary>
         /// Connect to the NetworkManager Server as a NetworkManager Client using custom host:ip.
         /// We'll set the host:ip to the NetworkManger -> then call StartClientFromNetworkMgr().
@@ -95,14 +98,14 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// </returns>
         public bool StartClient(string _hostPort)
         {
-            string logPrefix = $"[{nameof(FishnetStateMgr)}] {nameof(StartClient)}]"; 
+            string logPrefix = $"[{nameof(MirrorStateMgr)}.{nameof(StartClient)}]";
             Debug.Log($"{logPrefix} Start");
             
             (string hostNameOrIp, ushort port) hostPortContainer = SplitPortFromHostOrIp(_hostPort);
             bool hasHost = !string.IsNullOrEmpty(hostPortContainer.hostNameOrIp);
             bool hasPort = hostPortContainer.port > 0;
 
-            // Start FishNet Client via selected Transport
+            // Start Mirror Client via selected Transport
             if (!hasHost)
             {
                 Debug.LogError($"{logPrefix} !hasHost (from provided `{_hostPort}`): " +
@@ -119,10 +122,10 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
                 Debug.Log($"{logPrefix} w/Custom hostPort: " +
                     $"`{hostPortContainer.hostNameOrIp}:{hostPortContainer.port}`");
 
-                InstanceFinder.TransportManager.Transport.SetClientAddress(hostPortContainer.hostNameOrIp);
-                InstanceFinder.TransportManager.Transport.SetPort(hostPortContainer.port);
+                NetworkManager.singleton.networkAddress = hostPortContainer.hostNameOrIp;
+                portTransport.Port = hostPortContainer.port;
             }
-            
+
             return StartClient();
         }
         
@@ -131,30 +134,30 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         /// This will trigger `OnClientConnecting()` related events.
         ///
         /// TRANSPORT VALIDATION:
-        /// - WebGL: Asserts for `Bayou` as the NetworkManager's selected transport
-        /// - !WebGL: Asserts for `!Bayou` as the NetworkManager's selected transport (such as `Tugboat` UDP)
+        /// - WebGL: Asserts for `SimpleWebTransport` as the NetworkManager's selected transport
+        /// - !WebGL: Asserts for `!SimpleWebTransport` as the NetworkManager's selected transport (such as `Kcp` UDP)
         /// </summary>
         /// <returns>
         /// startedConnection; to *attempt* the connection (isValid pre-connect vals); we're not connected yet.
         /// </returns>
         public bool StartClient()
         {
-            string logPrefix = $"[{nameof(FishnetStateMgr)}.{nameof(StartClient)}";
+            string logPrefix = $"[{nameof(MirrorStateMgr)}.{nameof(StartClient)}]";
             Debug.Log($"{logPrefix} Start");
             
             // Validate
-            bool isReadyToConnect = validateIsReadyToConnect();
+            bool isReadyToConnect = validateIsReadyToConnect(); // Handles UI + logs within
             if (!isReadyToConnect)
                 return false; // !startedConnection
             
             // Log "host:port (transport)" -> Connect using NetworkManager settings
             string transportName = transport.GetType().Name;
-            Debug.Log($"[{logPrefix} Connecting to {transport.GetClientAddress()}:" +
-                $"{transport.GetPort()}` via `{transportName}` transport");
+            Debug.Log($"[{logPrefix} Connecting to {NetworkManager.singleton.networkAddress}:" +
+                $"{portTransport.Port}` via `{transportName}` transport");
             
             base.OnClientConnecting(); // => callback @ OnClientConected() || OnStartClientFail()
-            bool startedConnection = InstanceFinder.ClientManager.StartConnection();
-            return startedConnection;
+            NetworkManager.singleton.StartClient();
+            return true; // startedConnection => callback @ OnClientConected()
         }
         
         /// <summary>
@@ -173,36 +176,38 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         
         /// <summary>Starts a NetworkManager Client.</summary>
         public void StopClient() =>
-            InstanceFinder.ClientManager.StopConnection();
+            NetworkManager.singleton.StopClient();
         
         /// <summary>We're about to connect to a server as a Client - ensure we're ready.</summary>
         /// <returns>isValid</returns>
         private bool validateIsReadyToConnect()
         {
-            Debug.Log($"[{nameof(FishnetStateMgr)}] {nameof(validateIsReadyToConnect)}");
-            
-            if (InstanceFinder.NetworkManager == null)
+            string logPrefix = $"[{nameof(MirrorStateMgr)}.{nameof(validateIsReadyToConnect)}]";
+            Debug.Log($"{logPrefix} Start");
+
+            if (NetworkManager.singleton == null)
             {
-                base.OnStartClientFail("!NetworkManager");
+                OnStartClientFail("!NetworkManager");
                 return false; // !isSuccess
             }
 
             // Validate state: Stop connection 1st, if necessary
-            LocalConnectionState currentState = transport.GetConnectionState(server: false);
-            if (currentState != LocalConnectionState.Stopped)
-                InstanceFinder.ClientManager.StopConnection();
+            if (base.ClientState != ClientTrackedState.Stopped)
+                NetworkClient.Disconnect();
             
             // Validate transport
-            Bayou bayouTransport = transport as Bayou; 
+            SimpleWebTransport webglSimpleWebTransport = transport as SimpleWebTransport;
             
 #if UNITY_WEBGL
-            Assert.IsNotNull(bayouTransport, "Expected NetworkManager to use " +
-                $"{nameof(bayouTransport)} for WebGL build -- if more transports for WebGL " +
+            Debug.Log($"{logPrefix} Validating WebGL Transport...");
+            Assert.IsNotNull(webglSimpleWebTransport, $"{logPrefix} Expected NetworkManager to use " +
+                $"{nameof(webglSimpleWebTransport)} for WebGL build -- if more transports for WebGL " +
                 "came out later, edit this Assert script");
 #else
-            Assert.IsNull(bayouTransport, "!Expected NetworkManager to use " +
-                $"{nameof(bayouTransport)} for !WebGL build - Set NetworkManager "+
-                "transport to, for example, `Tugboat` (supporting UDP).");
+            Debug.Log($"{logPrefix} Validating !WebGL Transport...");
+            Assert.IsNull(webglSimpleWebTransport, "!Expected NetworkManager to use " +
+                $"{nameof(webglSimpleWebTransport)} for !WebGL build - Set NetworkManager "+
+                "transport to, for example, `Kcp` (supporting UDP).");
 #endif
             
             // Success - ready to connect
@@ -210,45 +215,28 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Client.ClientMgr
         }
         #endregion // NetworkManager Client
         
-
-        #region Common Utils
-        private void OnClientConnectionState(ClientConnectionStateArgs _state)
+        
+        /// <summary>Client connection err</summary>
+        /// <param name="_transportErr"></param>
+        /// <param name="_extraInfo">This is a complete guess of what it is; we just know it's a string</param>
+        private void onMirrorClientError(TransportError _transportErr, string _extraInfo)
         {
-            localConnectionState = _state.ConnectionState;
-            Debug.Log($"[HathoraFishnetClient.OnClientConnectionState] " +
-                $"New state: {localConnectionState}");
-            
-            switch (localConnectionState)
-            {
-                case LocalConnectionState.Starting:
-                    base.OnClientStarting();
-                    break;
-
-                // onConnectSuccess?
-                case LocalConnectionState.Started:
-                    base.OnClientStarted();
-                    break;
+            string friendlyReason = "onMirrorClientErr: " +
+                $"transportErr={_transportErr}, " +
+                $"extraInfo={_extraInfo}";
                 
-                case LocalConnectionState.Stopped:
-                    // Failed to connect, or stopped cleanly?
-                    if (base.ClientState == ClientTrackedState.Connecting)
-                        base.OnStartClientFail(CONNECTION_STOPPED_FRIENDLY_STR);
-                    else
-                        base.OnClientStopped();
-                    
-                    break;
-            }
+            base.OnStartClientFail(friendlyReason);
         }
-        #endregion // Common Utils
-
 
         private void OnDestroy()
         {
-            if (InstanceFinder.ClientManager == null)
+            if (transport == null)
                 return; // Perhaps already destroyed
             
-            // Unsub to events
-            InstanceFinder.ClientManager.OnClientConnectionState -= OnClientConnectionState;
+            transport.OnClientConnected -= OnClientStarted;
+            transport.OnClientError -= onMirrorClientError;
+            transport.OnClientDisconnected -= () => 
+                base.OnStartClientFail(CONNECTION_STOPPED_FRIENDLY_STR);
         }
     }
 }

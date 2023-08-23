@@ -16,8 +16,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// </summary>
     public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi
     {
-        private static HathoraMirrorClientMgr HathoraClientMgr => 
-            HathoraMirrorClientMgr.Singleton;
+        private static MirrorStateMgr StateMgr => 
+            MirrorStateMgr.Singleton;
         
 
         #region Init
@@ -51,7 +51,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
             }
             
             base.OnStartClientBtnClick(_hostPortOverride); // Logs
-            HathoraClientMgr.StartClient(_hostPortOverride);
+            StateMgr.StartClient(_hostPortOverride);
         }
 
         public override void OnStartHostBtnClick()
@@ -81,7 +81,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            HathoraClientMgr.StartClientFromHathoraLobbyCache();
+            StateMgr.StartClientFromHathoraLobbySession();
         }
         #endregion /Dynamic UI
     }
