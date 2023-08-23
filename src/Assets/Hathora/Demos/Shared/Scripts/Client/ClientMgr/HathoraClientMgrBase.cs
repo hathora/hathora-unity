@@ -13,6 +13,7 @@ using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
 namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
@@ -20,16 +21,31 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     /// <summary>
     /// - This spawns BEFORE the player, or even connected to the network.
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
+    /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events.
+    /// 
+    /// - Available Events to subscribe to:
+    ///     * OnAuthLoginDoneEvent
+    ///     * OnClientStartingEvent
+    ///     * OnStartClientFailEvent
+    ///     * OnClientStoppedEvent
+    ///     * OnGetActiveConnectionInfoFailEvent
+    ///     * OnGetActiveConnectionInfoDoneEvent
+    ///     * OnGetActivePublicLobbiesDoneEvent
+    ///     * OnCreateLobbyDoneAsyncEvent
+    ///
+    /// - If you have a UI script, subscribe to the events above to handle them ^
     /// - To add API scripts: Add to the `ClientApis` serialized field.
     /// </summary>
     public abstract class HathoraClientMgrBase : MonoBehaviour
     {
+        public static HathoraClientMgrBase Singleton { get; private set; }
+        
+        
         #region Serialized Fields
-        [FormerlySerializedAs("HathoraClientConfig")]
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         private HathoraClientConfig hathoraClientConfig;
-        protected HathoraClientConfig HathoraClientConfig => hathoraClientConfig;
+        public HathoraClientConfig HathoraClientConfig => hathoraClientConfig;
 
         [FormerlySerializedAs("HathoraClientSession")]
         [Header("Session, APIs")]
@@ -43,42 +59,68 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         protected ClientApiContainer ClientApis => clientApis;
         #endregion // Serialized Fields
 
-        private bool hasSdkDemoUi => ClientMgrDemoUi != null;
 
+        #region Public Events
+        /// <summary>Event triggers when auth is done (check isSuccess)</summary>
+        /// <returns>isSuccess</returns>
+        public static event Action<bool> OnAuthLoginDoneEvent;
         
-        // public static Hathora{X}Client Singleton { get; private set; } // TODO: Implement me in child
+        /// <summary>Event triggers when a net client is starting</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public static event Action OnClientStartingEvent;
+        
+        /// <summary>Event triggers when a net client started</summary>
+        /// <returns>roomId, friendlyRegion</returns>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public static event Action OnClientStartedEvent;
+
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public static Action OnClientStoppedEvent;
+        
+        /// <summary>friendlyReason</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public static event Action<string> OnStartClientFailEvent;
+        
+        /// <summary>lobby</summary>
+        public static event Action<Lobby> OnCreateLobbyDoneEvent;
+        
+        /// <summary>connectionInfo:ConnectionInfoV2</summary>
+        public static event Action<ConnectionInfoV2> OnGetActiveConnectionInfoDoneEvent;
+        
+        /// <summary>lobbies:List (sorted by Newest @ top)</summary>
+        public static event Action<List<Lobby>> OnGetActivePublicLobbiesDoneEvent;
+        #endregion // Public Events
         
         /// <summary>Updates this on state changes</summary>
-        protected bool IsConnecting { get; set; }
+        protected bool IsConnectingAsClient { get; set; }
         
-        private HathoraClientMgrDemoUi ClientMgrDemoUi { get; set; }
-
         
         #region Init
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() =>
             SetSingleton();
-        }
         
-        protected virtual void Start()
-        {
-            validateReqs();
+        protected virtual void Start() =>
             initApis(_hathoraSdkConfig: null); // Base will create this
-        }
 
         /// <summary>
         /// You want other classes to easily be able to access your ClientMgr
         /// </summary>
-        protected abstract void SetSingleton();
-
         /// <summary>
-        /// If you want to trigger UI from Mgr callbacks:
-        /// Override OnStart and call this before anything.
+        /// Set a singleton instance - we'll only ever have one serverMgr.
+        /// Children probably want to override this and, additionally, add a Child singleton
         /// </summary>
-        /// <param name="_clientMgrDemoUi"></param>
-        protected virtual void InitOnStart(HathoraClientMgrDemoUi _clientMgrDemoUi)
+        protected virtual void SetSingleton()
         {
-            ClientMgrDemoUi = _clientMgrDemoUi;
+            if (Singleton != null)
+            {
+                Debug.LogError("[HathoraClientMgrBase.SetSingleton] Error: " +
+                    "setSingleton: Destroying dupe");
+                
+                Destroy(gameObject);
+                return;
+            }
+            
+            Singleton = this;
         }
 
         /// <summary>
@@ -96,94 +138,117 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             if (clientApis.ClientRoomApi != null)
                 clientApis.ClientRoomApi.Init(hathoraClientConfig, _hathoraSdkConfig);
         }
-
-        public virtual void validateReqs()
-        {
-            // Are we using any Client Config at all?
-            bool hasConfig = hathoraClientConfig != null;
-            bool hasAppId = hathoraClientConfig.HasAppId;
-            bool hasNoAppIdButHasUiInstance = !hasAppId && hasSdkDemoUi;
-            
-            if (!hasConfig || hasNoAppIdButHasUiInstance)
-                ClientMgrDemoUi.SetInvalidConfig(hathoraClientConfig);
-        }
-
-        // // TODO: implement me in child class:
-        // protected virtual void setSingleton()
-        // {
-        //     if (Singleton != null)
-        //     {
-        //         Debug.LogError("[HathoraClientBase]**ERR @ setSingleton: Destroying dupe");
-        //         Destroy(gameObject);
-        //         return;
-        //     }
-        //     
-        //     Singleton = this;
-        // }
         #endregion // Init
         
         
         #region Interactions from UI
-        
-        
         #region Interactions from UI -> Required Overrides
-        public abstract Task<bool> ConnectAsClient();
-        
+
         /// <summary>
         /// Starts a NetworkManager local Server.
         /// This is in ClientMgr since it involves NetworkManager Net code,
         /// and does not require ServerMgr or secret keys to manage the net server.
-        /// TODO: Mv to HathoraServerMgr
         /// </summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StartServer();
 
         /// <summary>
         /// Stops a NetworkManager local Server.
         /// This is in ClientMgr since it involves NetworkManager Net code,
-        /// and does not require ServerMgr or secret keys to manage the net server.
-        /// TODO: Mv to HathoraServerMgr
+        /// and does not require HathoraServerMgr or secret keys to manage the net server.
         /// </summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StopServer();
 
         /// <summary>Starts a NetworkManager Client</summary>
         /// <param name="_hostPort">host:port provided by Hathora</param>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
         public abstract Task StartClient(string _hostPort = null);
         
         /// <summary>Stops a NetworkManager Client</summary>
-        /// <returns></returns>
-        public abstract Task StopClient(); 
-        
-        /// <summary>Starts a NetworkManager Host (Server+Client). TODO: Create a `HathoraCommonMgr` and mv this</summary>
-        public abstract Task StartHost();
-
-        /// <summary>Stops a NetworkManager Host (Server+Client). TODO: Create a `HathoraCommonMgr` and mv this</summary>
-        public abstract Task StopHost();
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public abstract Task StopClient();
         #endregion // Interactions from UI -> Required Overrides
        
         
         #region Interactions from UI -> Optional overrides
-        /// <summary>If !success, call OnConnectFailed().</summary>
+        /// <summary>Both Server+Client at the same time:
+        /// Essentially the same as StartServer() -> StartClient().
+        /// Some NetworkManagers will have an actual StartHost() method; some do not.
+        /// </summary>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        public virtual Task StartHost()
+        {
+            StartServer();
+            StartClient();
+            return Task.CompletedTask;
+        }
+
+        public virtual Task StopHost()
+        {
+            StopServer(); // Sometimes just this is enough
+            StopClient();
+            return Task.CompletedTask;
+        }
+        
+        /// <summary>
+        /// If you want to StartClient() but only have a roomId:
+        /// - Query Room api's GetConnectionInfo for host:port =>
+        /// - StartClient()
+        /// </summary>
+        /// <param name="_roomId">Known from invite code, server list cache, or Lobby query</param>
+        /// <returns>isSuccess</returns>
+        [Obsolete("NetworkManager 'Net Code' will soon be detached from Hathora managers. " +
+            "Instead, await GetActiveConnectionInfo().")]
+        public virtual async Task<bool> StartClientByRoomIdAsync(string _roomId)
+        {
+            // Logs + Validate
+            string logPrefix = $"[HathoraClientMgr.{nameof(StartClientByRoomIdAsync)}]";
+
+            Debug.Log($"{logPrefix} Joining room `{_roomId}` ...");
+
+            if (string.IsNullOrEmpty(_roomId))
+                return false; // !isSuccess
+
+            ConnectionInfoV2 connectionInfo = await GetActiveConnectionInfo(_roomId);
+            
+            ExposedPort exposedPort = connectionInfo?.ExposedPort;
+            bool hasHost = !string.IsNullOrEmpty(exposedPort?.Host);
+            if (!hasHost)
+                return false;
+
+            // ---------
+            // [DEPRECATED - This part will soon be detached from Hathora managers]
+            // Connect as Client via net code =>
+            string hostPost = $"{exposedPort.Host}:{exposedPort.Port}";
+            await StartClient(hostPost);
+            
+            return true; // isSuccess
+        }
+        
+        /// <summary>
+        /// Call this if we just got a Hathora ActiveConnectionInfo and we're about to connect to that host:port.
+        /// - If !success, call OnConnectFailed().
+        /// </summary>
         /// <returns>isValid</returns>
-        protected virtual bool ValidateServerConfigConnectionInfo()
+        protected virtual bool ValidateLastQueriedConnectionInfo()
         {
             // Validate host:port connection info
-            if (!hathoraClientSession.CheckIsValidServerConnectionInfo())
-            {
-                OnConnectFailed("Invalid ServerConnectionInfo");
-                return false; // !success
-            }
+            if (hathoraClientSession.CheckIsValidServerConnectionInfo())
+                return true; // success
             
-            return true; // success
+            OnStartClientFail("Invalid ServerConnectionInfo");
+            return false; // !success
         }
 
         /// <summary>Sets `IsConnecting` + logs ip:port (transport).</summary>
         /// <param name="_transportName"></param>
         protected virtual void SetConnectingState(string _transportName)
         {
-            IsConnecting = true;
+            IsConnectingAsClient = true;
 
-            Debug.Log("[HathoraClientBase.SetConnectingState] Connecting to: " + 
-                $"{hathoraClientSession.GetServerInfoIpPort()} via " +
+            Debug.Log("[HathoraClientBase.SetConnectingState] Connecting to " + 
+                $"`{hathoraClientSession.GetServerInfoIpPort()}` via " +
                 $"`NetworkManager.{_transportName}` transport");
         }
         #endregion // Interactions from UI -> Optional overrides
@@ -191,32 +256,30 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         /// <summary>
         /// Auths anonymously => Creates new hathoraClientSession.
+        /// - Resets cache completely on done (not necessarily success)
+        /// - Sets `PlayerAuthToken` cache
+        /// - Callback @ virtual OnAuthLoginComplete(isSuccess)
         /// </summary>
         public async Task<AuthResult> AuthLoginAsync(CancellationToken _cancelToken = default)
         {
-            AuthResult result;
-            try
-            {
-                result = await clientApis.ClientAuthApi.ClientAuthAsync(_cancelToken);
-            }
-            catch
-            {
-                OnAuthLoginComplete(_isSuccess:false);
-                return null;
-            }
-           
-            hathoraClientSession.InitNetSession(result.PlayerAuthToken);
-            OnAuthLoginComplete(result.IsSuccess);
+            AuthResult authResult = await clientApis.ClientAuthApi.ClientAuthAsync(_cancelToken);
 
-            return result;
+            hathoraClientSession.InitNetSession(authResult.PlayerAuthToken);
+            OnAuthLoginDone(authResult.IsSuccess);
+
+            return authResult;
         }
 
         /// <summary>
-        /// Creates lobby => caches Lobby info @ hathoraClientSession
+        /// Creates lobby => caches Lobby info @ hathoraClientSession.
+        /// - Sets `Lobby` cache on done (not necessarily success)
+        /// - Callback @ virtual OnCreateLobbyCompleteAsync(lobby)
+        /// - Asserts IsAuthed
         /// </summary>
         /// <param name="_region"></param>
         /// <param name="_visibility"></param>
         /// <param name="_initConfigJsonStr"></param>
+        /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
         public async Task<Lobby> CreateLobbyAsync(
             Region _region,
@@ -225,220 +288,175 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             string _roomId = null,
             CancellationToken _cancelToken = default)
         {
-            Lobby lobby;
-            try
-            {
-                lobby = await clientApis.ClientLobbyApi.ClientCreateLobbyAsync(
-                    hathoraClientSession.PlayerAuthToken,
-                    _visibility,
-                    _region,
-                    _initConfigJsonStr,
-                    _roomId,
-                    _cancelToken);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyCompleteAsync(null);
-                return null;
-            }
+            Assert.IsTrue(hathoraClientSession.IsAuthed, "expected hathoraClientSession.IsAuthed");
+
+            Lobby lobby = await clientApis.ClientLobbyApi.ClientCreateLobbyAsync(
+                hathoraClientSession.PlayerAuthToken,
+                _visibility,
+                _region,
+                _initConfigJsonStr,
+                _roomId,
+                _cancelToken);
             
             hathoraClientSession.Lobby = lobby;
-            OnCreateOrJoinLobbyCompleteAsync(lobby);
+            OnCreateLobbyDoneAsync(lobby);
 
             return lobby;
         }
 
         /// <summary>
-        /// Gets lobby info, if you arleady know the roomId.
-        /// (!) Creating a lobby will automatically return the lobbyInfo (along with the roomId).
+        /// Gets lobby info by roomId.
+        /// - Asserts IsAuthed
+        /// - Sets `Lobby` cache on done (not necessarily success)
+        /// - Callback @ virtual OnCreateLobbyCompleteAsync(lobby)
         /// </summary>
         public async Task<Lobby> GetLobbyInfoAsync(
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
-            Lobby lobby;
-            try
-            {
-                lobby = await clientApis.ClientLobbyApi.ClientGetLobbyInfoAsync(
-                    _roomId,
-                    _cancelToken);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                OnCreateOrJoinLobbyCompleteAsync(null);
-                return null;
-            }
+            Assert.IsTrue(hathoraClientSession.IsAuthed, "expected hathoraClientSession.IsAuthed");
 
+            Lobby lobby = await clientApis.ClientLobbyApi.ClientGetLobbyInfoAsync(
+                _roomId,
+                _cancelToken);
+        
             hathoraClientSession.Lobby = lobby;
-            OnCreateOrJoinLobbyCompleteAsync(lobby);
+            OnCreateLobbyDoneAsync(lobby);
 
             return lobby;
         }
 
-        /// <summary>Public lobbies only.</summary>
-        /// <param name="_region">
-        /// TODO (to confirm): null region returns *all* region lobbies?
-        /// </param>
+        /// <summary>
+        /// Gets Public+active lobbies.
+        /// - Asserts IsAuthed
+        /// - Sets `Lobbies` cache on done (not necessarily success)
+        /// - Callback @ virtual OnViewPublicLobbiesComplete(lobbies)
+        /// </summary>
+        /// <param name="_region">null returns all regions</param>
         /// <param name="_cancelToken"></param>
-        public async Task<List<Lobby>> ViewPublicLobbies(
+        public async Task<List<Lobby>> GetActivePublicLobbiesAsync(
             Region? _region = null,
             CancellationToken _cancelToken = default)
         {
-            List<Lobby> lobbies;
-            try
-            {
-                lobbies = await clientApis.ClientLobbyApi.ClientListPublicLobbiesAsync(
-                    _region,
-                    _cancelToken);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e.Message);
-                throw new NotImplementedException("TODO: Get lobbies err handling UI");
-            }
+            Assert.IsTrue(hathoraClientSession.IsAuthed, "expected hathoraClientSession.IsAuthed");
+            
+            List<Lobby> lobbies = await clientApis.ClientLobbyApi.ClientListPublicLobbiesAsync(
+                _region,
+                _cancelToken);
 
             hathoraClientSession.Lobbies = lobbies;
-            OnViewPublicLobbiesComplete(lobbies);
+            OnGetActivePublicLobbiesDone(lobbies);
 
             return lobbies;
         }
         
         /// <summary>
-        /// Gets ip:port (+transport type) info so we can connect the Client via the selected transport (eg: Fishnet).
-        /// AKA "GetServerInfo" (from UI). Polls until status is `Active`: May take a bit!
+        /// Gets ip:port (+transport type) info so we can connect the Client
+        /// via the selected transport (eg: Fishnet).
+        /// - Asserts IsAuthed
+        /// - Polls until status is `Active`: May take a bit!
+        /// - Sets `ServerConnectionInfo` cache on done (not necessarily success)
+        /// - Callback @ virtual OnGetActiveConnectionInfoComplete(connectionInfo)
         /// </summary>
         public async Task<ConnectionInfoV2> GetActiveConnectionInfo(
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
-            ConnectionInfoV2 connectionInfo;
+            Assert.IsTrue(hathoraClientSession.IsAuthed, "expected hathoraClientSession.IsAuthed");
+            ConnectionInfoV2 connectionInfo = null;
+            
             try
             {
                 connectionInfo = await clientApis.ClientRoomApi.ClientGetConnectionInfoAsync(
-                    _roomId, 
+                    _roomId,
                     _cancelToken: _cancelToken);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraClientBase] OnCreateOrJoinLobbyCompleteAsync: {e.Message}");
-                if (hasSdkDemoUi)
-                    ClientMgrDemoUi.OnGetServerInfoFail();
-                return null; // fail
+                Debug.LogError(
+                    $"[HathoraClientMgrBase.GetActiveConnectionInfo] " +
+                    $"ClientGetConnectionInfoAsync => Error: {e}");
+
+                throw;
+            }
+            finally
+            {
+                hathoraClientSession.ServerConnectionInfo = connectionInfo;
+                OnGetActiveConnectionInfoDone(connectionInfo);
             }
             
-            hathoraClientSession.ServerConnectionInfo = connectionInfo;
-            OnGetActiveConnectionInfoComplete(connectionInfo);
-
             return connectionInfo;
         }
         #endregion // Interactions from UI
         
         
-        #region Callbacks
-        protected virtual void OnConnectFailed(string _friendlyReason)
-        {
-            IsConnecting = false;
-            
-            if (hasSdkDemoUi)
-                ClientMgrDemoUi.OnJoinLobbyFailed(_friendlyReason);
-        }
+        #region Virtual callbacks w/Events
+        /// <summary>AuthLogin() callback.</summary>
+        /// <param name="_isSuccess"></param>
+        protected virtual void OnAuthLoginDone(bool _isSuccess) =>
+            OnAuthLoginDoneEvent?.Invoke(_isSuccess);
         
-        protected virtual void OnConnectSuccess()
+        /// <summary>GetActiveConnectionInfo() done callback (not necessarily successful).</summary>
+        protected virtual void OnGetActiveConnectionInfoDone(ConnectionInfoV2 _connectionInfo) =>
+            OnGetActiveConnectionInfoDoneEvent?.Invoke(_connectionInfo);
+
+        /// <summary>GetActivePublicLobbies() callback.</summary>
+        /// <param name="_lobbies"></param>
+        protected virtual void OnGetActivePublicLobbiesDone(List<Lobby> _lobbies)
         {
-            IsConnecting = false;
-            
-            if (hasSdkDemoUi)
-                ClientMgrDemoUi.OnJoinLobbyConnectSuccess();
-        }
-        
-        protected virtual void OnGetActiveConnectionInfoFail()
-        {
-            if (hasSdkDemoUi)
-                ClientMgrDemoUi.OnGetServerInfoFail();
-        }
-        
-        /// <summary>AKA OnGetServerInfoSuccess - mostly UI</summary>
-        protected virtual void OnGetActiveConnectionInfoComplete(ConnectionInfoV2 _connectionInfo)
-        {
-            if (ClientMgrDemoUi == null)
-                return;
-
-            if (string.IsNullOrEmpty(_connectionInfo?.ExposedPort?.Host))
-            {
-                ClientMgrDemoUi.OnGetServerInfoFail();
-                return;
-            }
-            
-            ClientMgrDemoUi.OnGetServerInfoSuccess(_connectionInfo);
-        }
-        
-        protected virtual void OnAuthLoginComplete(bool _isSuccess)
-        {
-            if (ClientMgrDemoUi == null)
-                return;
-
-            if (!_isSuccess)
-            {
-                ClientMgrDemoUi.OnAuthFailed();
-                return;
-            }
-
-            ClientMgrDemoUi.OnAuthedLoggedIn();
-        }
-
-        protected virtual void OnViewPublicLobbiesComplete(List<Lobby> _lobbies)
-        {
-            int numLobbiesFound = _lobbies?.Count ?? 0;
-            Debug.Log("[NetHathoraPlayer] OnViewPublicLobbiesComplete: " +
-                $"# Lobbies found: {numLobbiesFound}");
-
-            // UI >>
-            if (ClientMgrDemoUi == null)
-                return;
-
-            if (_lobbies == null || numLobbiesFound == 0)
-                throw new NotImplementedException("TODO: !Lobbies handling");
-
-            List<Lobby> sortedByNewestToOldest = _lobbies.OrderByDescending(lobby => 
+            // Sort lobbies by create date -> Pass to UI
+            List<Lobby> sortedFromNewestToOldest = _lobbies.OrderByDescending(lobby => 
                 lobby.CreatedAt).ToList();
             
-            ClientMgrDemoUi.OnViewLobbies(sortedByNewestToOldest);
+            OnGetActivePublicLobbiesDoneEvent?.Invoke(sortedFromNewestToOldest);
         }
         
         /// <summary>
         /// On success, most users will want to call GetActiveConnectionInfo().
         /// </summary>
         /// <param name="_lobby"></param>
-        protected virtual void OnCreateOrJoinLobbyCompleteAsync(Lobby _lobby)
+        protected virtual void OnCreateLobbyDoneAsync(Lobby _lobby) => 
+            OnCreateLobbyDoneEvent?.Invoke(_lobby);
+
+        #region Virtual callbacks w/events -> NetworkManager Callbacks (!) To be moved later away from HathoraMgrs
+        /// <summary>
+        /// OnClientConnectionState() success callback when state == Started. Before this:
+        /// - We already called StartClient() || StartClientToLastCachedRoom()
+        /// - IsConnectingAsClient == true
+        /// </summary>
+        protected virtual void OnClientStarting()
         {
-            if (ClientMgrDemoUi == null)
-                return;
-
-                // UI >>
-            if (string.IsNullOrEmpty(_lobby?.RoomId))
-            {
-                ClientMgrDemoUi.OnCreatedOrJoinedLobbyFail();
-                return;
-            }
-            
-            // Success >> We may not have a UI
-            if (ClientMgrDemoUi == null)
-                return;
-
-            string friendlyRegion = _lobby.Region.ToString().SplitPascalCase();
-            ClientMgrDemoUi.OnCreatedOrJoinedLobby(
-                _lobby.RoomId, 
-                friendlyRegion);
+            IsConnectingAsClient = false;
+            OnClientStartingEvent?.Invoke();
         }
-        #endregion // Callbacks
+
+        /// <summary>We just started and can now run net code</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        protected virtual void OnClientStarted() =>
+            OnClientStartedEvent?.Invoke();
+
+        /// <summary>We were disconnected from net code</summary>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        protected virtual void OnClientStopped() =>
+            OnClientStoppedEvent?.Invoke();
+        
+        /// <summary>Tried to connect to a Server as a Client, but failed</summary>
+        /// <param name="_friendlyReason"></param>
+        [Obsolete("This Event may be moved: NetworkManager 'Net Code' will soon be detached from Hathora managers")]
+        protected virtual void OnStartClientFail(string _friendlyReason)
+        {
+            IsConnectingAsClient = false;
+            OnStartClientFailEvent?.Invoke(_friendlyReason);
+        }
+        #endregion // Virtual callbacks w/events -> // NetworkManager Callbacks (!) To be moved later away from HathoraMgrs
+        #endregion // Virtual callbacks w/Events
         
         
         #region Utils
         /// <summary>
-        /// This was likely passed in from the UI to override the default NetworkManager (often from Standalone Client).
-        /// Eg: "1.proxy.hathora.dev:12345" -> "1.proxy.hathora.dev", 12345
+        /// This was likely passed in from the UI to override the default
+        /// NetworkManager (often from Standalone Client). Eg:
+        /// "1.proxy.hathora.dev:12345" -> "1.proxy.hathora.dev", 12345
         /// </summary>
         /// <param name="_hostPort"></param>
         /// <returns></returns>
@@ -453,6 +471,14 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             return (hostNameOrIp, port);
         }
+        
+        /// <summary>
+        /// We just need HathoraClientConfig serialized to a scene NetworkManager, with `AppId` set.
+        /// - Does not throw, so you can properly handle UI on err.
+        /// </summary>
+        /// <returns>isValid</returns>
+        public bool CheckIsValidToAuth() =>
+            hathoraClientConfig != null && hathoraClientConfig.HasAppId;
         #endregion // Utils
     }
 }

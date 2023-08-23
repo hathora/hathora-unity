@@ -34,6 +34,7 @@
 #
 # -------------------------------------------------------------------------------------
 # Created by dylan@hathora.dev @ 7/11/2023
+# v1.0.1
 ###################################################################################################
 # CUSTOMIZABLE >>
 export SERVER_PORT=7777 # Arbitrary, but client must match server
@@ -67,7 +68,7 @@ export HATHORA_PROCESS_ID
 
 # Get the "real" IP of the Wsl2 IP (essentially 'localhost' ported through)
 echo "Current directory: $(pwd)"
-export LOCAL_SERVER_IP=$(./reveal_wsl_vm_ip.sh)
+export LOCAL_SERVER_IP=$(./RevealWslVmIp.sh)
 
 # ====================================================================
 # Set the expected args + cmd early so we may log it

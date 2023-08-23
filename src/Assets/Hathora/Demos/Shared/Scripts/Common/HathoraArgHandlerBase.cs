@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 namespace Hathora.Demos.Shared.Scripts.Common
 {
     /// <summary>
-    /// Commandline helper - run via `-_mode {server|client|host} -memo {someStr}`.
+    /// Commandline helper - run via `-_mode {server|client|host}`.
     /// (!) `-scene` is loaded / awaited before any other cmd.
     /// Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
     /// </summary>
@@ -110,16 +110,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
                 
                 if (hasModeArg)
                     InitArgMode(mode);
-            
-                // -----------------
-                // -memo {string} // Show arbitrary text at bottom of screen
-                bool hasMemoArg = args.TryGetValue("-memo", out string memoStr) && !string.IsNullOrEmpty(memoStr); 
-                
-                if (!Application.isEditor)
-                    Debug.Log($"{logPrefix} Has `-memo` arg? {hasMemoArg}");
-                
-                if (hasMemoArg)
-                    InitArgMemo(memoStr);
             }
             catch (Exception e)
             {
@@ -183,11 +173,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
             while (!asyncLoad.isDone)
                 await Task.Yield();
         }
-
-        /// <summary>Override me -> Set memoStr in UI</summary>
-        /// <param name="_memoStr"></param>
-        protected virtual void InitArgMemo(string _memoStr) =>
-            Debug.Log($"[HathoraArgHandler.InitMemo] {_memoStr}");
         
         /// <summary>
         /// - "server" -> StartServer()

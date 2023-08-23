@@ -4,9 +4,7 @@ using System.Text.RegularExpressions;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client.ClientMgr;
 using Mirror;
-using UnityEngine;
 using UnityEngine.Assertions;
-using HathoraMirrorClientMgr = Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr.HathoraMirrorClientMgr;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
 {
@@ -16,9 +14,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
     /// - UI OnEvent entry points from Buttons start here.
     /// - This particular child should be used for both Mirror.
     /// </summary>
-    public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi, IHathoraNetClientMgrUi
+    public class HathoraMirrorClientMgrDemoUi : HathoraClientMgrDemoUi
     {
-        public static HathoraMirrorClientMgrDemoUi Singleton { get; private set; }
         private static HathoraMirrorClientMgr HathoraClientMgr => 
             HathoraMirrorClientMgr.Singleton;
         
@@ -27,21 +24,6 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         protected override void Start()
         {
             base.Start();
-            InitOnStart(HathoraClientMgr); // Allows logic alls on UI interactions
-        }
-
-        protected override void SetSingleton()
-        {
-            if (Singleton != null)
-            {
-                Debug.LogError("[HathoraMirrorClientMgrUi]**ERR @ setSingleton: " +
-                    "Destroying dupe");
-                
-                Destroy(gameObject);
-                return;
-            }
-
-            Singleton = this;
         }
         #endregion // Init
         
@@ -99,11 +81,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Client.ClientMgr
         public override void OnJoinLobbyAsClientBtnClick()
         {
             base.OnJoinLobbyAsClientBtnClick();
-            Connect();
+            HathoraClientMgr.StartClientFromHathoraLobbyCache();
         }
-        
-        public void Connect() => 
-            HathoraClientMgr.ConnectAsClient();
         #endregion /Dynamic UI
     }
 }

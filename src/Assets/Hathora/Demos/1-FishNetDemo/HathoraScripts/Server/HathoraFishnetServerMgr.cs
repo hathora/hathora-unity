@@ -9,31 +9,24 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
 {
     /// <summary>
     /// Child of HathoraServerMgrBase to handle FishNet-specific runtime server logic.
+    /// On virtual base.OnAwake, if we're deloyed to a Hathora server, well get the Process info.
     /// </summary>
     public class HathoraFishnetServerMgr : HathoraServerMgrBase
     {
-        public static HathoraFishnetServerMgr Singleton { get; private set; }
+        public static HathoraServerMgrBase Singleton { get; private set; }
 
         /// <summary>Shortcuts to the selected Transport instance</summary>
-        private static Transport transport
-        {
-            get => InstanceFinder.TransportManager.Transport;
-            set => InstanceFinder.TransportManager.Transport = value;
-        }
+        private static Transport transport =>
+            InstanceFinder.TransportManager.Transport;
 
         #region Init
-        protected override void Awake()
+        protected override void SetSingleton()
         {
-            Debug.Log("[HathoraFishnetServerMgr] Awake");
-            base.Awake();
-            setSingleton();
-        }
-    
-        private void setSingleton()
-        {
+            base.SetSingleton();
+
             if (Singleton != null)
             {
-                Debug.LogError("[HathoraServerMgrBase.setSingleton] Error: " +
+                Debug.LogError("[HathoraFishnetServerMgr.setSingleton] Error: " +
                     "setSingleton: Destroying dupe");
             
                 Destroy(gameObject);
@@ -43,10 +36,5 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Server
             Singleton = this;
         }
         #endregion // Init
-
-        
-        #region FishNet-Specific Server Handling
-        // TODO
-        #endregion // FishNet-Specific Server Handling
     }
 }

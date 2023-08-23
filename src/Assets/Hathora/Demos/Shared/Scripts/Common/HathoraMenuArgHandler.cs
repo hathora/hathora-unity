@@ -25,11 +25,6 @@ namespace Hathora.Demos.Shared.Scripts.Common
         {
             // base.ArgModeStartHost();
         }
-
-        protected override void InitArgMemo(string _memoStr)
-        {
-            // base.InitArgMemo(_memoStr);
-        }
         #endregion // Arg handler overrides
     }
 }
