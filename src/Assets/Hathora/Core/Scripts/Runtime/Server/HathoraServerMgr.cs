@@ -62,7 +62,40 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         /// <summary>(!) This is set async on Awake; check for null</summary>
         private volatile HathoraServerContext serverContext;
-        public HathoraServerContext ServerContext => serverContext;
+        
+        /// <summary>
+        /// Set @ Awake async, chained through 3 API calls -- this is async to prevent race conditions.
+        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
+        /// - If !UNITY_SERVER: Return null - this is only for deployed Hathora servers
+        /// - Timeout after 10s
+        /// </summary>
+        /// <returns></returns>
+        public async Task<HathoraServerContext> GetCachedServerContextAsync()
+        {
+            CancellationTokenSource cts = new();
+            cts.CancelAfter(TimeSpan.FromSeconds(10));
+            
+            if (serverContext != null)
+                return serverContext;
+
+            // We're probably still gathering the data => await for up to 10s
+            string logPrefix = "[HathoraServerMgr.GetCachedServerContextAsync]";
+            Debug.Log($"{logPrefix} <color=orange>(!)</color> serverContext == null: " +
+                "Awaiting up to 10s for val set async");
+            
+            while (serverContext == null)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    Debug.LogError($"{logPrefix} Timed out after 10s");
+                    return null;
+                }
+                
+                await Task.Delay(TimeSpan.FromSeconds(0.5), cts.Token);
+            }
+
+            return serverContext;
+        }        
         
         /// <summary>Set @ Awake, and only if deployed on Hathora</summary>
         private string hathoraProcessIdEnvVar;
