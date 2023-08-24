@@ -303,11 +303,30 @@ namespace Hathora.Core.Scripts.Runtime.Server
             // We await => just in case we called this early, to prevent race conditions
             Process processInfo = await ServerApis.ServerProcessApi.GetProcessInfoAsync(
                 hathoraProcessIdEnvVar, 
+                _returnNullOnStoppedProcess: true,
                 _cancelToken);
             
-            string procId = processInfo.ProcessId;
-            if (string.IsNullOrEmpty(procId) || _cancelToken.IsCancellationRequested)
+            string procId = processInfo?.ProcessId;
+            
+            if (_cancelToken.IsCancellationRequested)
+            {
+                Debug.LogError($"{logPrefix} Cancelled - `OnInitialized` event will !trigger");
                 return null;
+            }
+            if (string.IsNullOrEmpty(procId))
+            {
+                string errMsg = $"{logPrefix} !Process";
+
+                // Are we debugging in the Editor? Add +info
+                bool isMockDebuggingInEditor = UnityEngine.Application.isEditor && 
+                    !string.IsNullOrEmpty(debugEditorMockProcId);
+                if (isMockDebuggingInEditor)
+                    errMsg += " <b>Since isEditor && debugEditorMockProcId, `your HathoraServerMgr.debugEditorMockProcId` " +
+                        "is likely stale.</b> Create a new Room -> Update your `debugEditorMockProcId` -> try again.";
+                
+                Debug.LogError(errMsg);
+                return null;
+            }
             
             tempServerContext.ProcessInfo = processInfo;
 
@@ -326,15 +345,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
             if (firstActiveRoom == null)
             {
-                string errMsg = $"{logPrefix} !firstActiveRoom: There may be an active Process, but !Room";
-
-                bool isMockDebuggingInEditor = UnityEngine.Application.isEditor && 
-                    !string.IsNullOrEmpty(debugEditorMockProcId);
-
-                if (isMockDebuggingInEditor)
-                    errMsg += " <b>Since (isEditor && debugEditorMockProcId): The Room you manually created likely expired.</b>";
-                
-                Debug.LogError(errMsg);
+                Debug.LogError($"{logPrefix} !Room");
                 return null;
             }
 
