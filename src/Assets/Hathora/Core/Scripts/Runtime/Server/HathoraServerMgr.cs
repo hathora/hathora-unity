@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -63,44 +64,14 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <summary>(!) This is set async on Awake; check for null</summary>
         private volatile HathoraServerContext serverContext;
         
-        /// <summary>
-        /// Set @ Awake async, chained through 3 API calls -- this is async to prevent race conditions.
-        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
-        /// - If !UNITY_SERVER: Return null - this is only for deployed Hathora servers
-        /// - Timeout after 10s
-        /// </summary>
-        /// <returns></returns>
-        public async Task<HathoraServerContext> GetCachedServerContextAsync()
-        {
-            CancellationTokenSource cts = new();
-            cts.CancelAfter(TimeSpan.FromSeconds(10));
-            
-            if (serverContext != null)
-                return serverContext;
-
-            // We're probably still gathering the data => await for up to 10s
-            string logPrefix = "[HathoraServerMgr.GetCachedServerContextAsync]";
-            Debug.Log($"{logPrefix} <color=orange>(!)</color> serverContext == null: " +
-                "Awaiting up to 10s for val set async");
-            
-            while (serverContext == null)
-            {
-                if (cts.IsCancellationRequested)
-                {
-                    Debug.LogError($"{logPrefix} Timed out after 10s");
-                    return null;
-                }
-                
-                await Task.Delay(TimeSpan.FromSeconds(0.5), cts.Token);
-            }
-
-            return serverContext;
-        }        
-        
         /// <summary>Set @ Awake, and only if deployed on Hathora</summary>
         private string hathoraProcessIdEnvVar;
         
-        private bool hasHathoraProcessIdEnvVar =>
+        /// <summary>
+        /// This will only be true if we're deployed on Hathora, by verifying
+        /// a special env var ("HATHORA_PROCESS_ID").
+        /// </summary>
+        public bool IsDeployedOnHathora =>
             !string.IsNullOrEmpty(hathoraProcessIdEnvVar);
         
         public static event Action<HathoraServerContext> OnInitializedEvent;
@@ -130,7 +101,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             hathoraProcessIdEnvVar = getServerDeployedProcessId();
 #endif
             
-            _ = GetHathoraServerContext(_throwErrIfNoLobby: false); // !await; sets `HathoraServerContext ServerContext` ^
+            _ = GetHathoraServerContextAsync(_throwErrIfNoLobby: false); // !await; sets `HathoraServerContext ServerContext` ^
         }
         
         /// <summary>If we were not server || editor, we'd already be destroyed @ Awake</summary>
@@ -213,25 +184,107 @@ namespace Hathora.Core.Scripts.Runtime.Server
         #endregion // Init
         
         
+        #region ServerContext Getters
+        /// <summary>
+        /// Set @ Awake async, chained through 3 API calls - async to prevent race conditions.
+        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
+        /// - If !UNITY_SERVER: Return cached null - this is only for deployed Hathora servers
+        /// - Timeout after 10s
+        /// </summary>
+        /// <returns></returns>
+        public async Task<HathoraServerContext> GetCachedServerContextAsync(
+            CancellationToken _cancelToken = default)
+        {
+#if !UNITY_SERVER
+            bool isMockTesting = !string.IsNullOrEmpty(debugEditorMockProcId);
+            if (!isMockTesting)
+                return null; // For headless servers deployed on Hathora only (and !debugEditorMockProcId)
+#endif
+            
+            using CancellationTokenSource cts = new();
+            cts.CancelAfter(TimeSpan.FromSeconds(10));
+            
+            if (serverContext != null)
+                return serverContext;
+
+            // We're probably still gathering the data => await for up to 10s
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetCachedServerContextAsync)}]";
+            Debug.Log($"{logPrefix} <color=orange>(!)</color> serverContext == null: " +
+                "Awaiting up to 10s for val set async");
+            
+            return await waitForServerContextAsync(cts.Token);
+        }
+        
+        /// <summary>
+        /// [Coroutine alternative to async/await] Set @ Awake async, chained through 3 API calls -
+        /// Async to prevent race conditions.
+        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
+        /// - If !UNITY_SERVER: Return null - this is only for deployed Hathora servers
+        /// - Timeout after 10s
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator GetCachedServerContextCoroutine(Action<HathoraServerContext> _callback)
+        {
+            Task<HathoraServerContext> task = GetCachedServerContextAsync();
+
+            // Wait until the task is completed
+            while (!task.IsCompleted)
+                yield return null; // Wait for the next frame
+
+            // Handle any exceptions that were thrown by the task
+            if (task.IsFaulted)
+            {
+                string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetCachedServerContextCoroutine)}]";
+                Debug.LogError($"{logPrefix} An error occurred while getting the server context: {task.Exception}");
+            }
+            else
+            {
+                // Retrieve the result and invoke the callback
+                HathoraServerContext result = task.Result;
+                _callback?.Invoke(result);
+            }
+        }
+
+        private async Task<HathoraServerContext> waitForServerContextAsync(CancellationToken _cancelToken)
+        {
+            while (serverContext == null)
+            {
+                if (_cancelToken.IsCancellationRequested)
+                {
+                    string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetCachedServerContextCoroutine)}]";
+                    Debug.LogError($"{logPrefix} Timed out after 10s");
+                    return null;
+                }
+                
+                await Task.Delay(TimeSpan.FromSeconds(0.1), _cancelToken);
+            }
+
+            return serverContext;
+        }
+        #endregion // ServerContext Getters
+        
+        
         #region Chained API calls outside Init
         /// <summary>
         /// If Deployed (not localhost), get HathoraServerContext: { Room, Process, [Lobby], utils }.
+        /// - (!) If cached info is ok, instead call `GetCachedHathoraServerContextAsync()`.
         /// - Servers deployed in Hathora will have a special env var containing the ProcessId (HATHORA_PROCESS_ID).
         /// - If env var exists, we're deployed in Hathora.
-        /// - Note the GetLobbyInitConfig() util: Parse this `object` to your own model.
+        /// - Note the result GetLobbyInitConfig() util: Parse this `object` to your own model.
         /// - Calls automatically @ Awake => triggers `OnInitializedEvent` on success.
+        /// - Caches locally @ serverContext; public get via GetCachedServerContextAsync().
         /// </summary>
-        /// <param name="_throwErrIfNoLobby"></param>
+        /// <param name="_throwErrIfNoLobby">Be extra sure to try/catch this, if true</param>
         /// <param name="_cancelToken"></param>
         /// <returns>Triggers `OnInitializedEvent` event on success</returns>
-        public async Task<HathoraServerContext> GetHathoraServerContext(
+        public async Task<HathoraServerContext> GetHathoraServerContextAsync(
             bool _throwErrIfNoLobby,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetHathoraServerContext)}";
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetHathoraServerContextAsync)}]";
             Debug.Log($"{logPrefix} Start");
 
-            if (!hasHathoraProcessIdEnvVar)
+            if (!IsDeployedOnHathora)
             {
                 #if UNITY_SERVER && !UNITY_EDITOR
                 Debug.LogError($"{logPrefix} !serverDeployedProcessId; ensure: " +
@@ -242,7 +295,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
                 return null;
             }
             
-            serverContext = new HathoraServerContext(hathoraProcessIdEnvVar);
+            // GetCachedServerContext() will await !null, so we don't want to the main var *yet*
+            HathoraServerContext tempServerContext = new HathoraServerContext(hathoraProcessIdEnvVar);
             
             // ----------------
             // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ )
@@ -255,7 +309,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             if (string.IsNullOrEmpty(procId) || _cancelToken.IsCancellationRequested)
                 return null;
             
-            serverContext.ProcessInfo = processInfo;
+            tempServerContext.ProcessInfo = processInfo;
 
             // ----------------
             // Get all active Rooms by ProcessId =>
@@ -264,39 +318,65 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
             // Get 1st Room -> validate
             PickRoomExcludeKeyofRoomAllocations firstActiveRoom = activeRooms?.FirstOrDefault();
-            if (firstActiveRoom == null || _cancelToken.IsCancellationRequested)
+            
+            if (_cancelToken.IsCancellationRequested)
             {
-                Debug.LogError(_cancelToken.IsCancellationRequested 
-                    ? "Cancelled" 
-                    : "!firstActiveRoom");
+                Debug.LogError($"{logPrefix} Cancelled - `OnInitialized` event will !trigger");
+                return null;
+            }
+            if (firstActiveRoom == null)
+            {
+                string errMsg = $"{logPrefix} !firstActiveRoom: There may be an active Process, but !Room";
+
+                bool isMockDebuggingInEditor = UnityEngine.Application.isEditor && 
+                    !string.IsNullOrEmpty(debugEditorMockProcId);
+
+                if (isMockDebuggingInEditor)
+                    errMsg += " <b>Since (isEditor && debugEditorMockProcId): The Room you manually created likely expired.</b>";
                 
+                Debug.LogError(errMsg);
                 return null;
             }
 
-            serverContext.ActiveRoomsForProcess = activeRooms;
+            tempServerContext.ActiveRoomsForProcess = activeRooms;
 			
             // ----------------
-            // We have Room info, but we need Lobby: Get from RoomId =>
-            Lobby lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
-                firstActiveRoom.RoomId,
-                _cancelToken);
+            // We have Room info, but we *may* need Lobby: Get from RoomId =>
+            Lobby lobby = null;
+            try
+            {
+                // Try catch since we may not have a Lobby, which could be ok
+                lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
+                    firstActiveRoom.RoomId,
+                    _cancelToken);
+            }
+            catch (Exception e)
+            {
+                // Should 404 if !Lobby, returning null
+                if (_throwErrIfNoLobby)
+                {
+                    Debug.LogError($"Error: {e}");
+                    throw;
+                }
+                
+                Debug.Log($"{logPrefix} <b>!Lobby, but likely expected</b> " +
+                    "(since !_throwErrIfNoLobby) - continuing...");
+            }
 
             if (_cancelToken.IsCancellationRequested)
             {
                 Debug.LogError("Cancelled");
                 return null;
             }
-            if (lobby == null && _throwErrIfNoLobby)
-            {
-                Debug.LogError("!lobby");
-                return null;
-            }
             
-            serverContext.Lobby = lobby;
+            tempServerContext.Lobby = lobby;
 
+            // ----------------
             // Done
-            OnInitializedEvent?.Invoke(serverContext);
-            return serverContext;
+            Debug.Log($"{logPrefix} Done");
+            this.serverContext = tempServerContext;
+            OnInitializedEvent?.Invoke(tempServerContext);
+            return tempServerContext;
         }
         #endregion // Chained API calls outside Init
     }
