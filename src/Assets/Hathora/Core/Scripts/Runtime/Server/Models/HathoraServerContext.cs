@@ -9,12 +9,14 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
     /// <summary>
-    /// For use with HathoraServerLobbyApi.ServerGetDeployedInfoAsync.
+    /// Result model for HathoraServerMgr.GetHathoraServerContextAsync().
+    /// - Can get Hathora Process, Room, [Lobby].
+    /// - Can quick check if valid via `CheckIsValid`.
+    /// - Contains utils to get "host:port" || "ip:port".
     /// </summary>
     public class HathoraServerContext
     {
@@ -50,32 +52,43 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// <returns></returns>
         public async Task<(IPAddress ip, ushort port)> GetHathoraServerIpPortAsync()
         {
+            string logPrefix = $"[{nameof(HathoraServerContext)}.{nameof(GetHathoraServerIpPortAsync)}]";
+            
             (IPAddress ip, ushort port) ipPort;
             
             ExposedPort connectInfo = ProcessInfo?.ExposedPort;
 
             if (connectInfo == null)
             {
-                UnityEngine.Debug.LogError("[HathoraGetDeployInfoResult.GetHathoraServerIpPortAsync] " +
-                    "!connectInfo from ProcessInfo.ExposedPort");
+                Debug.LogError($"{logPrefix} !connectInfo from ProcessInfo.ExposedPort");
                 return default;
             }
-
-            ipPort.ip = await HathoraUtils.ConvertHostToIpAddress(connectInfo.Host);
+            
             ipPort.port = (ushort)connectInfo.Port;
+
+            try
+            {
+                ipPort.ip = await HathoraUtils.ConvertHostToIpAddress(connectInfo.Host);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{logPrefix} ConvertHostToIpAddress => Error: {e}");
+                throw;
+            }
 
             return ipPort;
         }
         
         public PickRoomExcludeKeyofRoomAllocations FirstActiveRoomForProcess => 
             ActiveRoomsForProcess?.FirstOrDefault();
-        
+
         /// <summary>Checks for (Process, Room and Lobby) != null.</summary>
         /// <returns>isValid</returns>
-        public bool CheckIsValid() => 
-            ProcessInfo != null && 
-            Lobby != null && 
-            FirstActiveRoomForProcess != null;
+        public bool CheckIsValid(bool _expectingLobby) =>
+            ProcessInfo != null &&
+            ProcessInfo.StoppingAt == null &&
+            FirstActiveRoomForProcess != null &&
+            (!_expectingLobby || Lobby != null);
 
         /// <summary>
         /// You probably want to parse the InitialConfig to your own model.
@@ -84,7 +97,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// <returns></returns>
         public TInitConfig GetLobbyInitConfig<TInitConfig>()
         {
-            string logPrefix = $"[HathoraGetDeployInfoResult.{nameof(GetLobbyInitConfig)}]";
+            string logPrefix = $"[{nameof(HathoraServerContext)}.{nameof(GetLobbyInitConfig)}]";
 
             object initConfigObj = Lobby?.InitialConfig;
             if (initConfigObj == null)
