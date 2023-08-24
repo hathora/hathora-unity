@@ -63,40 +63,6 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <summary>(!) This is set async on Awake; check for null</summary>
         private volatile HathoraServerContext serverContext;
         
-        /// <summary>
-        /// Set @ Awake async, chained through 3 API calls -- this is async to prevent race conditions.
-        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
-        /// - If !UNITY_SERVER: Return null - this is only for deployed Hathora servers
-        /// - Timeout after 10s
-        /// </summary>
-        /// <returns></returns>
-        public async Task<HathoraServerContext> GetCachedServerContextAsync()
-        {
-            CancellationTokenSource cts = new();
-            cts.CancelAfter(TimeSpan.FromSeconds(10));
-            
-            if (serverContext != null)
-                return serverContext;
-
-            // We're probably still gathering the data => await for up to 10s
-            string logPrefix = "[HathoraServerMgr.GetCachedServerContextAsync]";
-            Debug.Log($"{logPrefix} <color=orange>(!)</color> serverContext == null: " +
-                "Awaiting up to 10s for val set async");
-            
-            while (serverContext == null)
-            {
-                if (cts.IsCancellationRequested)
-                {
-                    Debug.LogError($"{logPrefix} Timed out after 10s");
-                    return null;
-                }
-                
-                await Task.Delay(TimeSpan.FromSeconds(0.5), cts.Token);
-            }
-
-            return serverContext;
-        }        
-        
         /// <summary>Set @ Awake, and only if deployed on Hathora</summary>
         private string hathoraProcessIdEnvVar;
         
@@ -211,6 +177,80 @@ namespace Hathora.Core.Scripts.Runtime.Server
             serverApis.ServerRoomApi = new HathoraServerRoomApi(hathoraServerConfig, _hathoraSdkConfig);
         }
         #endregion // Init
+        
+        
+        #region ServerContext Getters
+        /// <summary>
+        /// Set @ Awake async, chained through 3 API calls - async to prevent race conditions.
+        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
+        /// - If !UNITY_SERVER: Return null - this is only for deployed Hathora servers
+        /// - Timeout after 10s
+        /// </summary>
+        /// <returns></returns>
+        public async Task<HathoraServerContext> GetCachedServerContextAsync(
+            CancellationToken _cancelToken = default)
+        {
+            using CancellationTokenSource cts = new();
+            cts.CancelAfter(TimeSpan.FromSeconds(10));
+            
+            if (serverContext != null)
+                return serverContext;
+
+            // We're probably still gathering the data => await for up to 10s
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetCachedServerContextAsync)}]";
+            Debug.Log($"{logPrefix} <color=orange>(!)</color> serverContext == null: " +
+                "Awaiting up to 10s for val set async");
+            
+            return await waitForServerContextAsync(cts.Token);
+        }
+        
+        /// <summary>
+        /// [Coroutine alternative to async/await] Set @ Awake async, chained through 3 API calls -
+        /// Async to prevent race conditions.
+        /// - If UNITY_SERVER: While !null, delay 0.1s until !null
+        /// - If !UNITY_SERVER: Return null - this is only for deployed Hathora servers
+        /// - Timeout after 10s
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator GetCachedServerContextCoroutine(Action<HathoraServerContext> _callback)
+        {
+            Task<HathoraServerContext> task = GetCachedServerContextAsync();
+
+            // Wait until the task is completed
+            while (!task.IsCompleted)
+                yield return null; // Wait for the next frame
+
+            // Handle any exceptions that were thrown by the task
+            if (task.IsFaulted)
+            {
+                string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetCachedServerContextCoroutine)}]";
+                Debug.LogError($"{logPrefix} An error occurred while getting the server context: {task.Exception}");
+            }
+            else
+            {
+                // Retrieve the result and invoke the callback
+                HathoraServerContext result = task.Result;
+                _callback?.Invoke(result);
+            }
+        }
+
+        private async Task<HathoraServerContext> waitForServerContextAsync(CancellationToken _cancelToken)
+        {
+            while (serverContext == null)
+            {
+                if (_cancelToken.IsCancellationRequested)
+                {
+                    string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(GetCachedServerContextCoroutine)}]";
+                    Debug.LogError($"{logPrefix} Timed out after 10s");
+                    return null;
+                }
+                
+                await Task.Delay(TimeSpan.FromSeconds(0.5), _cancelToken);
+            }
+
+            return serverContext;
+        }
+        #endregion // ServerContext Getters
         
         
         #region Chained API calls outside Init
