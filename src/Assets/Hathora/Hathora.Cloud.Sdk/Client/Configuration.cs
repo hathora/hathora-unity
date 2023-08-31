@@ -110,7 +110,8 @@ namespace Hathora.Cloud.Sdk.Client
         {
             Proxy = null;
             UserAgent = WebUtility.UrlEncode("OpenAPI-Generator/1.0.0/csharp");
-            BasePath = "https://api.hathora.dev";
+            // BasePath = "https://api.hathora.dev";
+            BasePath = "https://api.hathora.io"; // TODO: remove this
             DefaultHeaders = new ConcurrentDictionary<string, string>();
             ApiKey = new ConcurrentDictionary<string, string>();
             ApiKeyPrefix = new ConcurrentDictionary<string, string>();

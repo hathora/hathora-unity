@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,12 @@ using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Hathora2;
+using Hathora2.Models.Operations;
+using Hathora2.Models.Shared;
+using ConnectionInfoV2 = Hathora.Cloud.Sdk.Model.ConnectionInfoV2;
+using CreateRoomRequest = Hathora2.Models.Operations.CreateRoomRequest;
+using Region = Hathora.Cloud.Sdk.Model.Region;
 
 namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 {
@@ -417,47 +424,117 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// </summary>
         private async Task onCreateRoomBtnClick()
         {
-            isCreatingRoomAwaitingActiveStatus = true;
-            resetLastCreatedRoom(); // Both UI + ServerConfig
-
-            Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.HathoraRegion;
-            createNewCreateRoomCancelToken();
-            HathoraServerRoomApi serverRoomApi = new(ServerConfig);
-
-            (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
-
-            try
-            {
-                if (MOCK_CREATE_ROOM_ERR)
-                {
-                    Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomBtnClick] " +
-                        "`MOCK_CREATE_ROOM_ERR` == true; simulating error...");
-                    throw new Exception("MOCK_CREATE_ROOM_ERR (Simulated Err)");
-                }
-                
-                roomConnInfoTuple = await serverRoomApi.CreateRoomAwaitActiveAsync(
-                    _cancelToken: CreateRoomCancelTokenSrc.Token);
-            }
-            // catch (TaskCanceledException e)
-            // {
-            // }
-            catch (Exception e)
-            {
-                // Could be a TaskCanceledException
-                onCreateRoomDone();
-                onCreateRoomFail(_reason: e.Message);
-                return;
-            }
+            // From Tristan:
+            var sdk = new HathoraSDK();
             
+            // THIS IS JUST A SANITY TEST (simple get request)
+            using(var resApps = await sdk.AppV1.GetAppsAsync(new GetAppsSecurity() {
+                      Auth0 = "<see_token_shared>",
+                  }))
+            {
+                Debug.Log("SPEAKEASY SDK TESTING - if you see this it worked!!");
+                Debug.Log(resApps.ApplicationWithDeployments.Count);
+                Debug.Log(resApps.StatusCode);
+            }
+
+            // THIS IS THE ONE WITH ISSUES
+            var res = await sdk.RoomV2.CreateRoomAsync(
+                new Hathora2.Models.Operations.CreateRoomSecurity()
+                {
+                    Auth0 = "<see_token_shared>",
+                },
+                new Hathora2.Models.Operations.CreateRoomRequest()
+                {
+                    AppId = "app-1743a6ef-06c2-4cb4-be54-2f8f2940048f",
+                    // AppId = ServerConfig.HathoraCoreOpts.AppId,
+                    CreateRoomRequestValue = new Hathora2.Models.Shared.CreateRoomRequest()
+                    {
+                        Region = Hathora2.Models.Shared.Region.Seattle,
+                        RoomConfig = "{\"name\":\"my-room\"}"
+                    }
+                }
+            );
+
+            Debug.Log("SPEAKEASY SDK TESTING - if you see this it worked!!");
+            Debug.Log(res.StatusCode);
+            
+            
+            
+            
+            
+            // isCreatingRoomAwaitingActiveStatus = true;
+            // resetLastCreatedRoom(); // Both UI + ServerConfig
+            //
+            // Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.HathoraRegion;
+            // createNewCreateRoomCancelToken();
+            // var sdk = new HathoraSDK();
+            //
+            // Debug.Log("Starting create room req");
+            // CreateRoomResponse res = await sdk.RoomV2.CreateRoomAsync(new CreateRoomSecurity()
+            // {
+            //     Auth0 = "Bearer " + ServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+            // }, new CreateRoomRequest()
+            // {
+            //     CreateRoomRequestInner = new CreateRoomRequestInner()
+            //     {
+            //         Region = Hathora2.Models.Shared.Region.Tokyo,
+            //     },
+            //     AppId = ServerConfig.HathoraCoreOpts.AppId,
+            // });
+            // // handle response
+            // Debug.Log(res.RawResponse);
+            //
+            // onCreateRoomDone(); // Asserts
+            // HathoraCachedRoomConnection roomConnInfo = new(
+            //     ServerConfig.HathoraLobbyRoomOpts.HathoraRegion,
+            //     null, 
+            //     null);
+            // onCreateRoomSuccess(roomConnInfo);
+
             // Parse to helper class containing extra parsing
             // We can also save to ServerConfig as this type
-            HathoraCachedRoomConnection roomConnInfo = new(
-                lastRegion,
-                roomConnInfoTuple.room, 
-                roomConnInfoTuple.connInfo);
+            // HathoraCachedRoomConnection roomConnInfo = new(
+            //     ServerConfig.HathoraLobbyRoomOpts.HathoraRegion,
+            //     ServerConfig.regi, 
+            //     res.ConnectionInfoV2);
             
-            onCreateRoomDone(roomConnInfo); // Asserts
-            onCreateRoomSuccess(roomConnInfo);
+            
+            // HathoraServerRoomApi serverRoomApi = new(ServerConfig);
+            //
+            // (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
+            //
+            // try
+            // {
+            //     if (MOCK_CREATE_ROOM_ERR)
+            //     {
+            //         Debug.LogError("[HathoraConfigPostAuthBodyRoomUI.onCreateRoomBtnClick] " +
+            //             "`MOCK_CREATE_ROOM_ERR` == true; simulating error...");
+            //         throw new Exception("MOCK_CREATE_ROOM_ERR (Simulated Err)");
+            //     }
+            //     
+            //     roomConnInfoTuple = await serverRoomApi.CreateRoomAwaitActiveAsync(
+            //         _cancelToken: CreateRoomCancelTokenSrc.Token);
+            // }
+            // // catch (TaskCanceledException e)
+            // // {
+            // // }
+            // catch (Exception e)
+            // {
+            //     // Could be a TaskCanceledException
+            //     onCreateRoomDone();
+            //     onCreateRoomFail(_reason: e.Message);
+            //     return;
+            // }
+            //
+            // // Parse to helper class containing extra parsing
+            // // We can also save to ServerConfig as this type
+            // HathoraCachedRoomConnection roomConnInfo = new(
+            //     lastRegion,
+            //     roomConnInfoTuple.room, 
+            //     roomConnInfoTuple.connInfo);
+            
+            // onCreateRoomDone(roomConnInfo); // Asserts
+            // onCreateRoomSuccess(roomConnInfo);
         }
 
         private void onCreateRoomFail(string _reason)

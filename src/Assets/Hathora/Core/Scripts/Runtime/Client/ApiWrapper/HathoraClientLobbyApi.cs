@@ -7,6 +7,7 @@ using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using Hathora2;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -69,6 +70,24 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
                 $"<color=yellow>request: {request.ToJson()}</color>");
 
+            // From Tristan:
+            var sdk = new HathoraSDK();
+
+            var res = await sdk.LobbyV2.CreateLobbyAsync(
+                new Hathora2.Models.Operations.CreateLobbyRequest()
+                {
+                    AppId = "app-1743a6ef-06c2-4cb4-be54-2f8f2940048f",
+                    // AppId = HathoraClientConfig.AppId,
+                    CreateLobbyRequestValue = new Hathora2.Models.Shared.CreateLobbyRequest()
+                    {
+                        Region = Hathora2.Models.Shared.Region.Seattle,
+                        Visibility = Hathora2.Models.Shared.LobbyVisibility.Public
+                    }
+                }
+            );
+            Debug.Log("SPEAKEASY SDK TESTING - if you see this it worked!!");
+            Debug.Log(res.StatusCode);
+            
             Lobby lobby;
             try
             {
