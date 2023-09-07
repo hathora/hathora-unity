@@ -38,6 +38,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         [FormerlySerializedAs("hathoraRegionSelectedIndexUi")]
         [SerializeField]
         private int _hathoraRegionSelectedIndexUi = (int)Region.Seattle;
+        #endregion // Hathora Region
         
         /// <summary>
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
@@ -50,6 +51,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         }
 
 
+        
+        #region Cached Room Connection
         // [SerializeField] // While Rooms last only 5m, don't actually persist this
         private HathoraCachedRoomConnection _lastCreatedRoomConnection;
         public HathoraCachedRoomConnection LastCreatedRoomConnection
@@ -58,6 +61,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _lastCreatedRoomConnection = value;
         }
 
+        
         /// <summary>
         /// We check if there's a RoomId, and null checking leading up to it.
         /// </summary>
@@ -69,7 +73,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// Checks if room has IsError *only*. Returns false if connection is null.
         /// </summary>
         public bool HasLastCreatedRoomConnectionErr => _lastCreatedRoomConnection?.IsError ?? false;
-        #endregion // Hathora Region
+        #endregion // Cached Room Connection
     }
 }
  
