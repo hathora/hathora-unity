@@ -27,7 +27,7 @@ namespace Hathora.Cloud.Sdk.Model
     /// <summary>
     /// DeploymentConfigEnvInner
     /// </summary>
-    [DataContract(Name = "DeploymentConfig_env_inner")]
+    [DataContract(Name = "DeploymentConfig_env_inner"), Obsolete("Use `DeploymentEnvInner` instead")]
     public partial class DeploymentConfigEnvInner : IEquatable<DeploymentConfigEnvInner>
     {
         /// <summary>
