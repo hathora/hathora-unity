@@ -62,7 +62,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             // insertTODOHorizGroup(); // TODO
 
-            EndFieldIndent();        }
+            EndFieldIndent();        
+        }
         #endregion // UI Draw
 
         
