@@ -240,29 +240,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 }
 
                 // Logs from server
-                strb.AppendLine("<color=white>");
-                strb.AppendLine("<b>===== [Server response START] =====</b>");
-                buildWithLogs.logChunks.ForEach(
-                    log =>
-                    {
-                        // Make an error stand out
-                        bool hasErr = log.StartsWith("Error");
-                        if (hasErr)
-                            strb.Append($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>");
-                            
-                        // No matter what, add the log here
-                        strb.AppendLine(log);
-
-                        if (hasErr)
-                            strb.Append("</color>");
-                    });
-                strb.AppendLine("<b>===== [Server response END] =====</b>")
-                    .AppendLine("</color>");
-                
-                Assert.AreEqual(
-                    buildWithLogs.build?.Status,
-                    Build.StatusEnum.Succeeded,
-                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
+                appendServerLogOutput(strb, buildWithLogs);
 
                 OnUploadComplete?.Invoke();
                 _cancelToken.ThrowIfCancellationRequested();
@@ -333,6 +311,36 @@ namespace Hathora.Core.Scripts.Editor.Server
                 Debug.Log($"{logPrefix} Done");
                 DeploymentStep = DeploymentSteps.Done;
             }
+        }
+
+        private static void appendServerLogOutput(
+            StringBuilder _strb,
+            (Build build, List<string> logChunks) _buildWithLogs)
+        {
+            _strb.AppendLine("<color=white>");
+            _strb.AppendLine("<b>===== [Server response START] =====</b>");
+            _buildWithLogs.logChunks.ForEach(
+                log =>
+                {
+                    // Make an error stand out
+                    bool hasErr = log.StartsWith("Error");
+                    if (hasErr)
+                        _strb.Append($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>");
+                            
+                    // No matter what, add the log here
+                    _strb.AppendLine(log);
+
+                    if (hasErr)
+                        _strb.Append("</color>");
+                });
+            _strb.AppendLine("<b>===== [Server response END] =====</b>")
+                .AppendLine("</color>");
+                
+            Assert.AreEqual(
+                _buildWithLogs.build?.Status,
+                Build.StatusEnum.Succeeded,
+                $"[{nameof(HathoraServerDeploy)}.{nameof(appendServerLogOutput)}] " +
+                    "buildWithLogs.build?.Status != Succeeded");
         }
 
         /// <summary>
