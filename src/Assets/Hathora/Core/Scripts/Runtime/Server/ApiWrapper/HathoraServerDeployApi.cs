@@ -42,7 +42,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
         /// <param name="_buildId"></param>
-        /// <param name="_env">Optional - _env vars</param>
+        /// <param name="_env">
+        /// Optional - env vars. We recommend you pass the ones from your previous
+        /// build, via `deployApi.GetDeploymentsAsync()`.
+        /// </param>
         /// <param name="_additionalContainerPorts">
         /// Optional - For example, you may want to expose 2 ports to support both UDP and
         /// TLS transports simultaneously (eg: FishNet's `Multipass` transport)
@@ -68,9 +71,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // #######################################################################################
                 // (!) Hathora SDK's DeploymentConfigEnvInner is Obsolete for DeploymentEnvInner
                 // (!) These two are identical in properties: For now, we'll re-serialize
-                string envWorkaroundJson = JsonConvert.SerializeObject(_env);
-                List<DeploymentConfigEnvInner> envWorkaround = JsonConvert
-                    .DeserializeObject<List<DeploymentConfigEnvInner>>(envWorkaroundJson);
+                List<DeploymentConfigEnvInner> envWorkaround = null;
+                if (_env?.Count > 0)
+                {
+                    string envWorkaroundJson = JsonConvert.SerializeObject(_env);
+                    envWorkaround = JsonConvert.DeserializeObject<List<DeploymentConfigEnvInner>>(envWorkaroundJson);    
+                }
                 // #######################################################################################
                 #endregion DeploymentEnvConfigInner Workaround
                 
@@ -92,7 +98,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 throw;
             }
 
-            Deployment createDeploymentResult;
+            Deployment createDeploymentResult = null;
             try
             {
                 createDeploymentResult = await deployApi.CreateDeploymentAsync(

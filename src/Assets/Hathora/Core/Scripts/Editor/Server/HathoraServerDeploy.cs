@@ -170,7 +170,7 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                 // Get the most-recent deployments env vars + additional ports, if any
                 List<DeploymentEnvInner> envVars = null;
-                List<ContainerPort> additionalPorts = null;
+                List<ContainerPort> additionalContainerPorts = null;
                 if (oldDeployments.Count > 0)
                 {
                     // The order is unknown - sort by create date and get the latest one
@@ -179,8 +179,8 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                     // Get the latest deployments env vars + additional ports
                     // to prevent the new deployment from overriding them.
-                    envVars = lastDeployment.Env;
-                    additionalPorts = lastDeployment.AdditionalContainerPorts;
+                    envVars = lastDeployment?.Env;
+                    additionalContainerPorts = lastDeployment?.AdditionalContainerPorts;
                 }
                 
                 // ----------------------------------------------
@@ -258,6 +258,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 {
                     deployment = await deployApi.CreateDeploymentAsync(
                         buildInfo.BuildId, 
+                        envVars,
+                        additionalContainerPorts,
                         _cancelToken);
                 }
                 catch (TaskCanceledException e)
