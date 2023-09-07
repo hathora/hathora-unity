@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -154,6 +155,36 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                 #region Request to build
                 // ----------------------------------------------
+                // Get all Deployments -> Get the most recent -> Use their env vars / additional ports
+                List<Deployment> oldDeployments = null;
+                try
+                {
+                    oldDeployments = await deployApi.GetDeploymentsAsync(_cancelToken);
+                }
+                catch (TaskCanceledException e)
+                {
+                    Debug.Log($"{logPrefix} GetDeploymentsAsync => Task Cancelled");
+                    throw;
+                }
+                catch (Exception e) { return null; }
+
+                // Get the most-recent deployments env vars + additional ports, if any
+                List<DeploymentEnvInner> envVars = null;
+                List<ContainerPort> additionalPorts = null;
+                if (oldDeployments.Count > 0)
+                {
+                    // The order is unknown - sort by create date and get the latest one
+                    Deployment lastDeployment = oldDeployments.OrderByDescending(item => 
+                        item.CreatedAt).FirstOrDefault();
+
+                    // Get the latest deployments env vars + additional ports
+                    // to prevent the new deployment from overriding them.
+                    envVars = lastDeployment.Env;
+                    additionalPorts = lastDeployment.AdditionalContainerPorts;
+                }
+                
+                // ----------------------------------------------
+                // Create a Hathora build (request a buildId)
                 DeploymentStep = DeploymentSteps.RequestingUploadPerm;
                 strb.AppendLine(GetDeployFriendlyStatus());
 
