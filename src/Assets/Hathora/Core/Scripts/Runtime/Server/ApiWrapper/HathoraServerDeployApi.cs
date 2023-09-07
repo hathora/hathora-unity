@@ -41,14 +41,19 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
         /// <param name="buildId"></param>
+        /// <param name="env">Optional - env vars</param>
+        /// <param name="_additionalContainerPorts">
+        /// Optional - For example, you may want to expose 2 ports to support both UDP and
+        /// TLS transports simultaneously (eg: FishNet's `Multipass` transport)
+        /// </param>
         /// <param name="_cancelToken"></param>
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(
             double buildId,
+            List<DeploymentConfigEnvInner> env = null,
+            List<ContainerPort> _additionalContainerPorts = null,
             CancellationToken _cancelToken = default)
         {
-            List<ContainerPort> extraContainerPorts = 
-                deployOpts.AdvancedDeployOpts.GetExtraContainerPorts();
             string logPrefix = $"[{nameof(HathoraServerDeployApi)}.{nameof(CreateDeploymentAsync)}]";
             
             // (!) Throws on constructor Exception - fallback to new objects on null
@@ -59,12 +64,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 TransportType selectedTransportType = deployOpts.SelectedTransportType;
                 
                 deployConfig = new DeploymentConfig(
-                    parseEnvFromConfig() ?? new List<DeploymentConfigEnvInner>(),
+                    env ?? new List<DeploymentConfigEnvInner>(),
                     deployOpts.RoomsPerProcess, 
                     deployOpts.SelectedPlanName, 
-                    extraContainerPorts,
+                    _additionalContainerPorts ?? new List<ContainerPort>(),
                     selectedTransportType,
-                    deployOpts. ContainerPortWrapper.PortNumber 
+                    deployOpts. ContainerPortWrapper.PortNumber
                 );
                 
                 Debug.Log($"{logPrefix} <color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
@@ -129,22 +134,23 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         #endregion // Server Deploy Async Hathora SDK Calls
 
 
-        /// <summary>
-        /// Convert List of HathoraEnvVars to List of DeploymentConfigEnvInner.
-        /// </summary>
-        /// <returns>
-        /// Returns empty list (NOT null) on empty, since Env is required for DeploymentConfig.
-        /// </returns>
-        private List<DeploymentConfigEnvInner> parseEnvFromConfig()
-        {
-            // Validate
-            List<HathoraEnvVars> envVars = HathoraServerConfig.HathoraDeployOpts.EnvVars;
-            if (envVars == null || envVars.Count == 0) 
-                return new List<DeploymentConfigEnvInner>();
-            
-            // Parse
-            return HathoraServerConfig.HathoraDeployOpts.EnvVars.Select(env => 
-                new DeploymentConfigEnvInner(env.Key, env.StrVal)).ToList();
-        }
+        // /// TODO
+        // /// <summary>
+        // /// Convert List of HathoraEnvVars to List of DeploymentConfigEnvInner.
+        // /// </summary>
+        // /// <returns>
+        // /// Returns empty list (NOT null) on empty, since Env is required for DeploymentConfig.
+        // /// </returns>
+        // private List<DeploymentConfigEnvInner> parseEnvFromConfig()
+        // {
+        //     // Validate
+        //     List<HathoraEnvVars> envVars = HathoraServerConfig.HathoraDeployOpts.EnvVars;
+        //     if (envVars == null || envVars.Count == 0) 
+        //         return new List<DeploymentConfigEnvInner>();
+        //     
+        //     // Parse
+        //     return HathoraServerConfig.HathoraDeployOpts.EnvVars.Select(env => 
+        //         new DeploymentConfigEnvInner(env.Key, env.StrVal)).ToList();
+        // }
     }
 }
