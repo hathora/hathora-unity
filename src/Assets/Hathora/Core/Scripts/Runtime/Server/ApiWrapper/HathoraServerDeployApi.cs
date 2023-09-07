@@ -49,8 +49,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             List<ContainerPort> extraContainerPorts = 
                 deployOpts.AdvancedDeployOpts.GetExtraContainerPorts();
+            string logPrefix = $"[{nameof(HathoraServerDeployApi)}.{nameof(CreateDeploymentAsync)}]";
             
-            // (!) Throws on constructor Exception
+            // (!) Throws on constructor Exception - fallback to new objects on null
             DeploymentConfig deployConfig = null;
             try
             {
@@ -66,12 +67,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     deployOpts. ContainerPortWrapper.PortNumber 
                 );
                 
-                Debug.Log("[HathoraServerDeploy.CreateDeploymentAsync] " +
-                    $"<color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
+                Debug.Log($"{logPrefix} <color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error: {e}");
+                Debug.LogError($"{logPrefix} Error: {e}");
                 throw;
             }
 
@@ -93,8 +93,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log("[HathoraServerDeploy.CreateDeploymentAsync] <color=yellow>" +
-                $"createDeploymentResult: {createDeploymentResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>createDeploymentResult: " +
+                $"{createDeploymentResult.ToJson()}</color>");
 
             return createDeploymentResult;
         }
@@ -107,6 +107,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         public async Task<List<Deployment>> GetDeploymentsAsync(
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerDeployApi)}.{nameof(CreateDeploymentAsync)}]";
+            
             List<Deployment> getDeploymentsResult;
             try
             {
@@ -121,9 +123,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerDeployApi.GetDeploymentsAsync] " +
-                $"<color=yellow>num: '{getDeploymentsResult?.Count}'</color>");
-
+            Debug.Log($"{logPrefix} <color=yellow>num: '{getDeploymentsResult?.Count}'</color>");
             return getDeploymentsResult;
         }
         #endregion // Server Deploy Async Hathora SDK Calls
