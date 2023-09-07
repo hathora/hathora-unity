@@ -10,6 +10,7 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -40,8 +41,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
-        /// <param name="env">Optional - env vars</param>
         /// <param name="_buildId"></param>
+        /// <param name="_env">Optional - _env vars</param>
         /// <param name="_additionalContainerPorts">
         /// Optional - For example, you may want to expose 2 ports to support both UDP and
         /// TLS transports simultaneously (eg: FishNet's `Multipass` transport)
@@ -49,8 +50,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_cancelToken"></param>
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(
-            List<DeploymentConfigEnvInner> env = null,
             double _buildId,
+            List<DeploymentEnvInner> _env = null,
             List<ContainerPort> _additionalContainerPorts = null,
             CancellationToken _cancelToken = default)
         {
@@ -63,8 +64,19 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // Hathora SDK's TransportType enum's index starts at 1: But so does deployOpts to match
                 TransportType selectedTransportType = deployOpts.SelectedTransportType;
                 
+                #region DeploymentEnvConfigInner Workaround
+                // #######################################################################################
+                // (!) Hathora SDK's DeploymentConfigEnvInner is Obsolete for DeploymentEnvInner
+                // (!) These two are identical in properties: For now, we'll re-serialize
+                string envWorkaroundJson = JsonConvert.SerializeObject(_env);
+                List<DeploymentConfigEnvInner> envWorkaround = JsonConvert
+                    .DeserializeObject<List<DeploymentConfigEnvInner>>(envWorkaroundJson);
+                // #######################################################################################
+                #endregion DeploymentEnvConfigInner Workaround
+                
                 deployConfig = new DeploymentConfig(
-                    _env ?? new List<DeploymentConfigEnvInner>(),
+                    envWorkaround ?? new List<DeploymentConfigEnvInner>(),  // DEPRECATED: To be replaced by below line
+                    // _env ?? new List<DeploymentEnvInner>(),              // TODO: To replace the above line
                     deployOpts.RoomsPerProcess, 
                     deployOpts.SelectedPlanName, 
                     _additionalContainerPorts ?? new List<ContainerPort>(),
