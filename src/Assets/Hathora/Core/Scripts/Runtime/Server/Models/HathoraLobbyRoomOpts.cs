@@ -11,46 +11,26 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     public class HathoraLobbyRoomOpts
     {
         #region Hathora Region
-        /// <summary>
-        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
-        /// Since this Enum isn't alphabatized, also care if you Sort() the list.
-        /// </summary>
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
+        [FormerlySerializedAs("_hathoraRegionSelectedIndexUi")]
         [SerializeField]
-        private Region _hathoraRegion = Region.Seattle;
-        
-        /// <summary>
-        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
-        /// Since this Enum isn't alphabatized, also care if you Sort() the list.
-        /// </summary>
-        public Region HathoraRegion
+        private int _hathoraRegionSelectedIndex = (int)Region.Seattle;
+
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
+        public int HathoraRegionSelectedIndex
         {
-            get => (int)_hathoraRegion == 0
-                ? Region.Seattle // Fallback for 0-based index
-                : _hathoraRegion;
-            
-            set => _hathoraRegion = value;
+            get => _hathoraRegionSelectedIndex;
+            set => _hathoraRegionSelectedIndex = value;
         }
 
         /// <summary>
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
         /// Since this Enum isn't alphabatized, also care if you Sort() the list.
         /// </summary>
-        [FormerlySerializedAs("hathoraRegionSelectedIndexUi")]
-        [SerializeField]
-        private int _hathoraRegionSelectedIndexUi = (int)Region.Seattle;
+        public Region SelectedHathoraRegion => 
+            (Region)_hathoraRegionSelectedIndex;
         #endregion // Hathora Region
         
-        /// <summary>
-        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
-        /// Since this Enum isn't alphabatized, also care if you Sort() the list.
-        /// </summary>
-        public int SortedRegionSelectedIndexUi
-        {
-            get => _hathoraRegionSelectedIndexUi;
-            set => _hathoraRegionSelectedIndexUi = value;
-        }
-
-
         
         #region Cached Room Connection
         // [SerializeField] // While Rooms last only 5m, don't actually persist this

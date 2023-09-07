@@ -82,8 +82,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <returns></returns>
         public bool MeetsCreateRoomBtnReqs() =>
             HathoraCoreOpts.HasAppId &&
-            HathoraLobbyRoomOpts.SortedRegionSelectedIndexUi > -1 &&
-            HathoraLobbyRoomOpts.HathoraRegion > 0;
+            HathoraLobbyRoomOpts.HathoraRegionSelectedIndex > -1 &&
+            HathoraLobbyRoomOpts.SelectedHathoraRegion > 0;
 
         /// <summary>
         /// Combines path, then normalizes
