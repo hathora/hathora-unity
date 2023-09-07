@@ -12,7 +12,6 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
-using UnityEditor;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
@@ -22,6 +21,9 @@ namespace Hathora.Core.Scripts.Editor.Server
     public delegate void OnBuildReqComplete(Build _buildInfo);
     public delegate void OnUploadComplete();
     
+    /// <summary>
+    /// Deployment wrapper using a chain of events, gathering data from HathoraServerConfig.
+    /// </summary>
     public static class HathoraServerDeploy
     {   
         /// <summary>
@@ -119,6 +121,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // Prepare paths and file names that we didn't get from UserConfig  
                 HathoraServerPaths serverPaths = new(_serverConfig);
 
+                // Prepare APIs
+                HathoraServerBuildApi buildApi = new(_serverConfig);
+                HathoraServerDeployApi deployApi = new(_serverConfig);
 
                 #region Dockerfile >> Compress to .tar.gz
                 // ----------------------------------------------
@@ -153,14 +158,15 @@ namespace Hathora.Core.Scripts.Editor.Server
                 strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Get a buildId from Hathora
-                HathoraServerBuildApi buildApi = new(_serverConfig);
-
                 Build buildInfo = null;
 
-                try { buildInfo = await getBuildInfoAsync(buildApi, _cancelToken); }
+                try
+                {
+                    buildInfo = await buildApi.CreateBuildAsync(_cancelToken);
+                }
                 catch (TaskCanceledException e)
                 {
-                    Debug.Log($"{logPrefix} getBuildInfoAsync => Task Cancelled");
+                    Debug.Log($"{logPrefix} CreateBuildAsync => Task Cancelled");
                     throw;
                 }
                 catch (Exception e) { return null; }
@@ -237,13 +243,13 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // Deploy the build
                 DeploymentStep = DeploymentSteps.Deploying;
                 strb.AppendLine(GetDeployFriendlyStatus());
-
-                HathoraServerDeployApi deployApi = new(_serverConfig);
-
+                
                 Deployment deployment = null;
                 try
                 {
-                    deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+                    deployment = await deployApi.CreateDeploymentAsync(
+                        buildInfo.BuildId, 
+                        _cancelToken);
                 }
                 catch (TaskCanceledException e)
                 {
@@ -298,26 +304,6 @@ namespace Hathora.Core.Scripts.Editor.Server
             }
         }
 
-        private static async Task<Deployment> deployBuildAsync(
-            HathoraServerDeployApi _deployApi, 
-            double _buildInfoBuildId)
-        {
-            Debug.Log("[HathoraServerDeploy.deployBuildAsync] " +
-                $"Deploying the uploaded build (_buildId #{_buildInfoBuildId}) ...");
-            
-            Deployment createDeploymentResult = null;
-            try
-            {
-                createDeploymentResult = await _deployApi.CreateDeploymentAsync(_buildInfoBuildId);
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-            return createDeploymentResult;
-        }
-
         /// <summary>
         /// High-level func, running 2 Tasks:
         /// 1. RunCloudBuildAsync
@@ -370,31 +356,6 @@ namespace Hathora.Core.Scripts.Editor.Server
             }
             
             return (build, logChunks);
-        }
-
-        private static async Task<Build> getBuildInfoAsync(
-            HathoraServerBuildApi _buildApi,
-            CancellationToken _cancelToken = default)
-        {
-            Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] " +
-                "Getting build info (notably for _buildId)...");
-            
-            Build createBuildResult = null;
-            try
-            {
-                createBuildResult = await _buildApi.CreateBuildAsync(_cancelToken);
-            }
-            catch (TaskCanceledException e)
-            {
-                Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] Task Cancelled");
-                throw;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-            return createBuildResult;
         }
     }
 }
