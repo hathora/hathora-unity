@@ -40,8 +40,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
-        /// <param name="buildId"></param>
         /// <param name="env">Optional - env vars</param>
+        /// <param name="_buildId"></param>
         /// <param name="_additionalContainerPorts">
         /// Optional - For example, you may want to expose 2 ports to support both UDP and
         /// TLS transports simultaneously (eg: FishNet's `Multipass` transport)
@@ -49,8 +49,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_cancelToken"></param>
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(
-            double buildId,
             List<DeploymentConfigEnvInner> env = null,
+            double _buildId,
             List<ContainerPort> _additionalContainerPorts = null,
             CancellationToken _cancelToken = default)
         {
@@ -64,7 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 TransportType selectedTransportType = deployOpts.SelectedTransportType;
                 
                 deployConfig = new DeploymentConfig(
-                    env ?? new List<DeploymentConfigEnvInner>(),
+                    _env ?? new List<DeploymentConfigEnvInner>(),
                     deployOpts.RoomsPerProcess, 
                     deployOpts.SelectedPlanName, 
                     _additionalContainerPorts ?? new List<ContainerPort>(),
@@ -85,7 +85,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 createDeploymentResult = await deployApi.CreateDeploymentAsync(
                     AppId,
-                    buildId,
+                    _buildId,
                     deployConfig,
                     _cancelToken);
             }
@@ -149,8 +149,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         //         return new List<DeploymentConfigEnvInner>();
         //     
         //     // Parse
-        //     return HathoraServerConfig.HathoraDeployOpts.EnvVars.Select(env => 
-        //         new DeploymentConfigEnvInner(env.Key, env.StrVal)).ToList();
+        //     return HathoraServerConfig.HathoraDeployOpts.EnvVars.Select(_env => 
+        //         new DeploymentConfigEnvInner(_env.Key, _env.StrVal)).ToList();
         // }
     }
 }
