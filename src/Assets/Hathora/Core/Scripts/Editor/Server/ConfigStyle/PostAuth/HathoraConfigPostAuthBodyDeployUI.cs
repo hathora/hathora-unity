@@ -107,7 +107,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             if (isCancellingDeployment)
                 insertDeployAppCancellingDisabledBtn();
-            else if (HathoraServerDeploy.IsDeploying && cancelBuildTokenSrc.Token.CanBeCanceled)
+            else if (HathoraServerDeploy.IsDeploying && cancelBuildTokenSrc is { Token: { CanBeCanceled: true } })
                 insertDeployAppCancelBtn();
         }
 
