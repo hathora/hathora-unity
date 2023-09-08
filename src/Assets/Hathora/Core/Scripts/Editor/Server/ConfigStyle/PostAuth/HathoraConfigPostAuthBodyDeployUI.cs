@@ -87,19 +87,19 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             insertTransportTypeHorizRadioBtnGroup();
             // _advancedDeployUI.Draw();
 
-            bool enableDeployBtn = checkIsReadyToEnableToDeployBtn();
-            insertDeployBtnHelpbox(enableDeployBtn);
-            insertDeployAndOrCancelBtn();
+            bool deployBtnMeetsReqs = checkIsReadyToEnableToDeployBtn();
+            insertDeployBtnHelpbox(deployBtnMeetsReqs);
+            insertDeployAndOrCancelBtn(deployBtnMeetsReqs);
         }
 
         /// <summary>
         /// If deploying, we'll disable the btn and show a cancel btn.
         /// On cancel btn click, we'll disable until done ("Cancelling...") -> have a 2s cooldown.
         /// </summary>
-        private void insertDeployAndOrCancelBtn()
+        private void insertDeployAndOrCancelBtn(bool _deployBtnMeetsReqs)
         {
             // Deploy btn - active if !deploying
-            insertDeployAppBtn();
+            insertDeployAppBtn(_deployBtnMeetsReqs);
             insertCancelOrCancellingBtn(); // Show cancel btn separately (below)
         }
 
@@ -111,13 +111,16 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 insertDeployAppCancelBtn();
         }
 
-        private void insertDeployAppBtn()
+        private void insertDeployAppBtn(bool _deployBtnMeetsReqs)
         {
             string btnLabelStr = HathoraServerDeploy.IsDeploying 
                 ? HathoraServerDeploy.GetDeployFriendlyStatus()
                 : "Deploy Application";
             
-            EditorGUI.BeginDisabledGroup(disabled: HathoraServerDeploy.IsDeploying || isCancellingDeployment);
+            EditorGUI.BeginDisabledGroup(disabled: 
+                HathoraServerDeploy.IsDeploying || 
+                isCancellingDeployment || 
+                !_deployBtnMeetsReqs);
 
             // USER INPUT >>
             bool clickedDeployBtn = InsertLeftGeneralBtn(btnLabelStr);
