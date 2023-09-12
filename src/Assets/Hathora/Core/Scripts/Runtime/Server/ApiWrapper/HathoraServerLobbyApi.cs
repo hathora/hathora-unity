@@ -21,10 +21,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </summary>
         /// <param name="_hathoraServerConfig"></param>
         public HathoraServerLobbyApi( 
-            HathoraServerConfig _hathoraServerConfig)
-            // Configuration _hathoraSdkConfig = null)
-            // : base(_hathoraServerConfig, _hathoraSdkConfig)
-            : base(_hathoraServerConfig)
+            HathoraServerConfig _hathoraServerConfig,
+            SDKConfig _hathoraSdkConfig = null)
+            : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerLobbyApi] Initializing API...");
             
@@ -76,8 +75,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"{logPrefix} Success: <color=yellow>getLobbyInfoResult: " +
-                $"{getLobbyInfoResult.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: <color=yellow>getLobbyInfoResult: " +
+            //     $"{getLobbyInfoResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
 
             return getLobbyInfoResult;
         }

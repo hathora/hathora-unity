@@ -2,6 +2,7 @@
 
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Models;
+using HathoraSdk;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -22,7 +23,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// </summary>
     public abstract class HathoraClientApiWrapperBase : MonoBehaviour, IHathoraApiBase
     {
-        // public Configuration HathoraSdkConfig { get; set; }
+        public SDKConfig HathoraSdkConfig { get; set; }
         protected HathoraClientConfig HathoraClientConfig { get; private set; }
         
         // Shortcuts
@@ -38,26 +39,14 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// </param>
         /// <param name="_hathoraSdkConfig">SDKConfig that we pass to Hathora API calls</param>
         public virtual void Init(
-            HathoraClientConfig _hathoraClientConfig)
-            // Configuration _hathoraSdkConfig = null)
+            HathoraClientConfig _hathoraClientConfig,
+            SDKConfig _hathoraSdkConfig = null)
         {
             this.HathoraClientConfig = _hathoraClientConfig;
-            // this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
+            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
         }
         
-        // public Configuration GenerateSdkConfig() => new();
+        public SDKConfig GenerateSdkConfig() => new();
         #endregion // Init
-
-        
-        // public void HandleApiException(
-        //     string _className,
-        //     string _funcName)
-        //     // ApiException _apiException)
-        // {
-        //     // Debug.LogError($"[{_className}.{_funcName}] API Error: " +
-        //     //     $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
-        //
-        //     throw _apiException;
-        // }
     }
 }

@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Core.Scripts.Runtime.Common.Models;
+using HathoraSdk;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -9,12 +10,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.
     /// Server APIs can inherit from this.
     /// Unlike Client API wrappers (since !Mono), we init via Constructor instead of Init().
-    /// 
-    /// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
     /// </summary>
     public abstract class HathoraServerApiWrapperBase : IHathoraApiBase
     {
-        // public Configuration HathoraSdkConfig { get; set; }
+        public SDKConfig HathoraSdkConfig { get; set; }
         protected HathoraServerConfig HathoraServerConfig { get; private set; }
 
         // Shortcuts
@@ -58,17 +57,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// Find via Unity editor top menu: Hathora >> Find Configs
         /// </param>
         protected HathoraServerApiWrapperBase(
-            HathoraServerConfig _hathoraServerConfig)
-            // Configuration _hathoraSdkConfig = null)
+            HathoraServerConfig _hathoraServerConfig,
+            SDKConfig _hathoraSdkConfig = null)
         {
             this.HathoraServerConfig = _hathoraServerConfig;
-            // this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
+            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
         }
         
-        // public Configuration GenerateSdkConfig() => new()
-        // {
-        //     AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-        // };        
+        public SDKConfig GenerateSdkConfig() => new()
+        {
+            // TODO: The new `SDKConfig` is empty, but previously passed AccessToken; how does the new SDK handle this if we don't pass the token?
+            // AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+        };        
         #endregion // Init
         
 

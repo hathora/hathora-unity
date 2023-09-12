@@ -28,7 +28,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         public HathoraServerDeployApi( 
             HathoraServerConfig _hathoraServerConfig,
-            Configuration _hathoraSdkConfig = null)
+            SDKConfig _hathoraSdkConfig = null)
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
@@ -90,7 +90,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     deployOpts. ContainerPortWrapper.PortNumber
                 );
                 
-                Debug.Log($"{logPrefix} <color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
+                // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+                // Debug.Log($"{logPrefix} <color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
+                Debug.Log($"{logPrefix} Success");
             }
             catch (Exception e)
             {
@@ -116,8 +118,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"{logPrefix} <color=yellow>createDeploymentResult: " +
-                $"{createDeploymentResult.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} <color=yellow>createDeploymentResult: " +
+            //     $"{createDeploymentResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
 
             return createDeploymentResult;
         }

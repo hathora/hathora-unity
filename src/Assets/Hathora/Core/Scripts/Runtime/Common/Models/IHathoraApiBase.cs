@@ -1,5 +1,7 @@
 // Created by dylan@hathora.dev
 
+using HathoraSdk;
+
 namespace Hathora.Core.Scripts.Runtime.Common.Models
 {
     /// <summary>
@@ -7,11 +9,10 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
     /// </summary>
     public interface IHathoraApiBase
     {
-        //// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-        // Configuration HathoraSdkConfig { get; set; }
+        SDKConfig HathoraSdkConfig { get; set; }
         string AppId { get; }
         
-        //// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-        // Configuration GenerateSdkConfig();
+        /// <summary>Creates a default SDK Config</summary>
+        SDKConfig GenerateSdkConfig();
     }
 }

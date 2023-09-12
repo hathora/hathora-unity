@@ -27,9 +27,10 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <summary>
         /// </summary>
         /// <param name="_hathoraClientConfig"></param>
+        /// <param name="_hathoraSdkConfig"></param>
         public override void Init(
-            HathoraClientConfig _hathoraClientConfig) 
-            // Configuration _hathoraSdkConfig = null)
+            HathoraClientConfig _hathoraClientConfig,
+            SDKConfig _hathoraSdkConfig = null)
         {
             Debug.Log($"[{nameof(HathoraClientAuthApi)}] Initializing API...");
             
@@ -49,7 +50,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <returns>Returns AuthResult on success</returns>
         public async Task<AuthResult> ClientAuthAsync(CancellationToken _cancelToken = default)
         {
-            Debug.Log("[HathoraNetClientAuthApi] ClientAuthAsync");
+            string logPrefix = $"[{nameof(HathoraClientAuthApi)}.{nameof(ClientAuthAsync)}]"; 
+            Debug.Log($"{logPrefix} Start");
             
             LoginResponse anonLoginResult;
             try
@@ -72,10 +74,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             
 #if UNITY_EDITOR
             // For security, we probably only want to log this in the editor
-            Debug.Log($"[NetHathoraClientAuthApi] isAuthed: {isAuthed}, " +
-                $"<color=yellow>anonLoginResult: {anonLoginResult?.ToJson()}</color>");
+            
+            //// TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} isAuthed: {isAuthed}, " +
+            //     $"<color=yellow>anonLoginResult: {anonLoginResult?.ToJson()}</color>");
+            Debug.Log($"{logPrefix} isAuthed: {isAuthed}");
 #else
-            Debug.Log($"[NetHathoraClientAuthApi] isAuthed: {isAuthed}");
+            Debug.Log($"{logPrefix} isAuthed: {isAuthed}");
 #endif
             
             

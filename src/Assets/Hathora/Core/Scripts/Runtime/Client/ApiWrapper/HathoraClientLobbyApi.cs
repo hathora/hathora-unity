@@ -30,7 +30,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <param name="_hathoraClientConfig"></param>
         public override void Init(
             HathoraClientConfig _hathoraClientConfig)
-            // Configuration _hathoraSdkConfig = null)
+            // SDKConfig _hathoraSdkConfig = null)
         {
             Debug.Log($"[{nameof(HathoraClientLobbyApi)}] Initializing API...");
             
@@ -71,7 +71,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 _initConfigJsonStr, 
                 _region);
 
-            Debug.Log($"{logPrefix} <color=yellow>request: {request.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} <color=yellow>request: {request.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Start");
 
             Lobby lobby;
 
@@ -99,8 +101,10 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
-                $"<color=yellow>lobby: {lobby.ToJson()}</color>");
+            //// TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
+            //     $"<color=yellow>lobby: {lobby.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
             
             return lobby;
         }
@@ -117,8 +121,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string roomId,
             CancellationToken _cancelToken = default)
         {
-            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
-                $"<color=yellow>roomId: {roomId}</color>");
+            string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
+            Debug.Log($"{logPrefix} <color=yellow>roomId: {roomId}</color>");
             
             Lobby lobby;
             try
@@ -138,14 +142,17 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     apiException);
                 
                 if (apiException.ErrorCode == 404)
-                    Debug.LogError("[404] Tip: If a server made a Room without a lobby, " +
+                {
+                    Debug.LogError($"{logPrefix} 404 - Tip: If a server made a Room without a lobby, " +
                         "instead use the Room api (rather than Lobby api)");
+                }
                 
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientAuthApi.ClientGetLobbyInfoAsync] Success: " +
-                $"<color=yellow>lobby: {lobby.ToJson()}</color>");            
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: <color=yellow>lobby: {lobby.ToJson()}</color>");      
+            Debug.Log($"{logPrefix} Success");      
             
             return lobby;
         }

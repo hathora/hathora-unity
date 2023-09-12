@@ -30,12 +30,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <summary>
         /// </summary>
         /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
-        public override void Init(
+        /// <param name="_hathoraSdkConfig">blic override void Init(
             HathoraClientConfig _hathoraClientConfig) 
-            // Configuration _hathoraSdkConfig = null)
+            // SDKConfig _hathoraSdkConfig = null)
         {
             Debug.Log($"[{nameof(HathoraClientRoomApi)}] Initializing API...");
             

@@ -27,7 +27,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         public HathoraServerBuildApi(
             HathoraServerConfig _hathoraServerConfig,
-            Configuration _hathoraSdkConfig = null) 
+            SDKConfig _hathoraSdkConfig = null) 
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
@@ -44,6 +44,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <returns>Returns Build on success >> Pass this info to RunCloudBuildAsync()</returns>
         public async Task<Build> CreateBuildAsync(CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(CreateBuildAsync)}]";
+            
             Build createCloudBuildResult;
             
             try
@@ -61,8 +63,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerRoomApi.CreateBuildAsync] Success: " +
-                $"<color=yellow>createCloudBuildResult: {createCloudBuildResult.ToJson()}</color>");
+            // // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: " +
+            //     $"<color=yellow>createCloudBuildResult: {createCloudBuildResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
 
             return createCloudBuildResult;
         }
@@ -188,6 +192,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             double _buildId,
             CancellationToken _cancelToken)
         {
+            string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(GetBuildInfoAsync)}]";
+            
             Build getBuildInfoResult;
             
             try
@@ -210,8 +216,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
             bool isSuccess = true;
             
-            Debug.Log($"[HathoraServerRoomApi.GetBuildInfoAsync] Success? {isSuccess}, " +
-                $"<color=yellow>createCloudBuildResult: {getBuildInfoResult.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success? {isSuccess}, " +
+            //     $"<color=yellow>createCloudBuildResult: {getBuildInfoResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
+            
 
             return getBuildInfoResult;
         }

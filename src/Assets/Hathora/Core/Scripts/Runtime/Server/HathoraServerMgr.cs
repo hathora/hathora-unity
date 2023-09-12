@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
@@ -170,7 +171,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// (!) Unlike ClientMgr that are Mono-derived, we init via Constructor instead of Init().
         /// </summary>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        protected virtual void InitApis(Configuration _hathoraSdkConfig = null)
+        protected virtual void InitApis(SDKConfig _hathoraSdkConfig = null)
         {
             if (!ValidateReqs())
                 return;

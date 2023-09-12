@@ -26,7 +26,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         public HathoraServerRoomApi( 
             HathoraServerConfig _hathoraServerConfig,
-            Configuration _hathoraSdkConfig = null)
+            SDKConfig _hathoraSdkConfig = null)
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerRoomApi] Initializing API...");
@@ -52,6 +52,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _customCreateRoomId = null,
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAwaitActiveAsync)}]";
+            
             // (1/3) Create Room
             string newlyCreatedRoomId = null;
             try
@@ -64,8 +66,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] " +
-                    $"Error => CreateRoomAsync: {e}");
+                Debug.LogError($"{logPrefix} CreateRoomAsync => Error: {e.Message}");
                 throw;
             }
             
@@ -122,8 +123,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // ----------
             // Success
-            Debug.Log($"[HathoraServerRoomApi.CreateRoomAwaitActiveAsync] Success: " +
-                $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
+            
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: " +
+            //     $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
 
             return (activeRoom, activeConnectionInfo);
         }
@@ -138,14 +142,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _customCreateRoomId = null,
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAsync)}]";
+            
             // Prep request data
             CreateRoomRequest createRoomReq = null;
+            
             try
             {
                 createRoomReq = new CreateRoomRequest(roomOpts.SelectedHathoraRegion);
                 
-                Debug.Log("[HathoraServerRoom.CreateRoomAwaitActiveAsync] " +
-                    $"<color=yellow>roomConfig: {createRoomReq.ToJson()}</color>");
+                // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+                // Debug.Log($"{logPrefix} <color=yellow>roomConfig: {createRoomReq.ToJson()}</color>");
+                Debug.Log($"{logPrefix} Success");
             }
             catch (Exception e)
             {
@@ -168,7 +176,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             catch (TaskCanceledException)
             {
                 // The user explicitly cancelled, or the Task timed out
-                Debug.Log("[HathoraServerRoomApi.CreateRoomAsync] Task cancelled");
+                Debug.Log($"{logPrefix} Task cancelled");
                 return null;
             }
             catch (ApiException apiErr)
@@ -181,8 +189,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
             
-            Debug.Log($"[HathoraServerRoomApi.CreateRoomAsync] Success: <color=yellow>" +
-                $"createRoomResultWithNullPort: {createRoomResultWithNullPort.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: <color=yellow>" +
+            //     $"createRoomResultWithNullPort: {createRoomResultWithNullPort.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             return createRoomResultWithNullPort.RoomId;
@@ -199,6 +209,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(GetRoomInfoAsync)}]";
+            
             Room getRoomInfoResult;
 
             try
@@ -211,7 +223,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             catch (TaskCanceledException)
             {
                 // The user explicitly cancelled, or the Task timed out
-                Debug.Log("[HathoraServerRoomApi.GetRoomInfoAsync] Task cancelled");
+                Debug.Log($"{logPrefix} Task cancelled");
                 return null;
             }
             catch (ApiException apiErr)
@@ -224,8 +236,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            Debug.Log($"[HathoraServerRoomApi] Success: " +
-                $"<color=yellow>getRoomInfoResult: {getRoomInfoResult.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: <color=yellow>getRoomInfoResult: {getRoomInfoResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success");
 
             return getRoomInfoResult;
         }
@@ -293,6 +306,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(GetConnectionInfoAsync)}]";
+            
             ConnectionInfoV2 getConnectionInfoResult;
 
             try
@@ -323,9 +338,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // getConnectionInfoResult.Status == ConnectionInfoV2.StatusEnum.Active && 
                 getConnectionInfoResult.ExposedPort != null;
 
-            Debug.Log($"[HathoraServerRoomApi] Success: " +
-                $"isActiveWithExposedPort? {isActiveWithExposedPort}, " +
-                $"<color=yellow>getConnectionInfoResult: {getConnectionInfoResult.ToJson()}</color>");
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success: <color=yellow>getConnectionInfoResult: {getConnectionInfoResult.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success: isActiveWithExposedPort? {isActiveWithExposedPort}");
 
             return getConnectionInfoResult;
         }

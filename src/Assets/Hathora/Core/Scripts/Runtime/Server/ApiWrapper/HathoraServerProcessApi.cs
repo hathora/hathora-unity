@@ -23,7 +23,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         public HathoraServerProcessApi(
             HathoraServerConfig _hathoraServerConfig,
-            Configuration _hathoraSdkConfig = null)
+            SDKConfig _hathoraSdkConfig = null)
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         { 
             Debug.Log("[HathoraServerProcessApi] Initializing API..."); 

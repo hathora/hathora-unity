@@ -9,6 +9,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demos.Shared.Scripts.Client.Models;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -109,7 +110,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// Init all Client API wrappers. Uses serialized HathoraClientConfig
         /// </summary>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        private void initApis(Configuration _hathoraSdkConfig = null)
+        private void initApis(SDKConfig _hathoraSdkConfig = null)
         {
             if (clientApis.ClientAuthApi != null)
                 clientApis.ClientAuthApi.Init(hathoraClientConfig, _hathoraSdkConfig);
