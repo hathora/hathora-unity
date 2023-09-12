@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     public class HathoraServerBuildApi : HathoraServerApiWrapperBase
     {
-        private readonly BuildV1Api buildApi;
+        private readonly BuildV1SDK buildApi;
         private volatile bool uploading;
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
-            this.buildApi = new BuildV1Api(base.HathoraSdkConfig);
+            this.buildApi = new BuildV1SDK(base.HathoraSdkConfig);
         }
         
         
@@ -88,7 +89,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             Configuration highTimeoutConfig = HathoraUtils.DeepCopy(base.HathoraSdkConfig);
             highTimeoutConfig.Timeout = (int)TimeSpan.FromMinutes(15).TotalMilliseconds;
 
-            BuildV1Api highTimeoutBuildApi = new(highTimeoutConfig);
+            BuildV1SDK highTimeoutBuildApi = new(highTimeoutConfig);
             #endregion // Timeout Workaround
          
             uploading = true;
@@ -205,7 +206,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
 
-            bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
+            // // TODO: `StatusEnum` to check for `Active` status no longer exists in the new SDK - how to check for status?
+            // bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
+            bool isSuccess = true;
+            
             Debug.Log($"[HathoraServerRoomApi.GetBuildInfoAsync] Success? {isSuccess}, " +
                 $"<color=yellow>createCloudBuildResult: {getBuildInfoResult.ToJson()}</color>");
 

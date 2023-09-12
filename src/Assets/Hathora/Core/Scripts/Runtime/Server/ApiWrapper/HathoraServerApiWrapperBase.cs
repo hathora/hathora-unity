@@ -9,10 +9,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     /// This allows the API to view UserConfig (eg: AppId), set session and auth tokens.
     /// Server APIs can inherit from this.
     /// Unlike Client API wrappers (since !Mono), we init via Constructor instead of Init().
+    /// 
+    /// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
     /// </summary>
     public abstract class HathoraServerApiWrapperBase : IHathoraApiBase
     {
-        public Configuration HathoraSdkConfig { get; set; }
+        // public Configuration HathoraSdkConfig { get; set; }
         protected HathoraServerConfig HathoraServerConfig { get; private set; }
 
         // Shortcuts
@@ -55,33 +57,37 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_hathoraServerConfig">
         /// Find via Unity editor top menu: Hathora >> Find Configs
         /// </param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in children.
-        /// </param>
         protected HathoraServerApiWrapperBase(
-            HathoraServerConfig _hathoraServerConfig,
-            Configuration _hathoraSdkConfig = null)
+            HathoraServerConfig _hathoraServerConfig)
+            // Configuration _hathoraSdkConfig = null)
         {
             this.HathoraServerConfig = _hathoraServerConfig;
-            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
+            // this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
         }
         
-        public Configuration GenerateSdkConfig() => new()
-        {
-            AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-        };        
+        // public Configuration GenerateSdkConfig() => new()
+        // {
+        //     AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+        // };        
         #endregion // Init
         
 
-        public void HandleApiException(
-            string _className, 
-            string _funcName,
-            ApiException _apiException)
-        {
-            UnityEngine.Debug.LogError($"[{_className}.{_funcName}] API Error: " +
-                $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
-
-            throw _apiException;
-        }
+        // /// <summary>
+        // /// (!) `ApiException` Missing in v2 Hathora SDK
+        // /// </summary>
+        // /// <param name="_className"></param>
+        // /// <param name="_funcName"></param>
+        // /// <param name="_apiException"></param>
+        // /// <exception cref="ApiException"></exception>
+        // public void HandleApiException(
+        //     string _className, 
+        //     string _funcName,
+        //     ApiException _apiException)
+        // {
+        //     UnityEngine.Debug.LogError($"[{_className}.{_funcName}] API Error: " +
+        //         $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
+        //
+        //     throw _apiException;
+        // }
     }
 }

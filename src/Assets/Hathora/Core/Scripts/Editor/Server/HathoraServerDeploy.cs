@@ -169,7 +169,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 catch (Exception e) { return null; }
 
                 // Get the most-recent deployments env vars + additional ports, if any
-                List<DeploymentEnvInner> envVars = null;
+                List<DeploymentEnv> envVars = null;
                 List<ContainerPort> additionalContainerPorts = null;
                 if (oldDeployments.Count > 0)
                 {
@@ -337,12 +337,13 @@ namespace Hathora.Core.Scripts.Editor.Server
                 });
             _strb.AppendLine("<b>===== [Server response END] =====</b>")
                 .AppendLine("</color>");
-                
-            Assert.AreEqual(
-                _buildWithLogs.build?.Status,
-                Build.StatusEnum.Succeeded,
-                $"[{nameof(HathoraServerDeploy)}.{nameof(appendServerLogOutput)}] " +
-                    "buildWithLogs.build?.Status != Succeeded");
+
+            // // TODO: `StatusEnum` to check for `Active` status no longer exists in the new SDK - how to check for status?
+            // Assert.AreEqual(
+            //     _buildWithLogs.build?.Status,
+            //     Build.StatusEnum.Succeeded,
+            //     $"[{nameof(HathoraServerDeploy)}.{nameof(appendServerLogOutput)}] " +
+            //         "buildWithLogs.build?.Status != Succeeded");
         }
 
         /// <summary>

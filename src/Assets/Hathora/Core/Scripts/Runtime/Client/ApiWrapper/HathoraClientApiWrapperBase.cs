@@ -16,10 +16,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// * Call Init() to pass HathoraClientConfig + Hathora SDK Config (see HathoraClientMgr).
     /// * Does not handle UI (see HathoraClientMgrUi).
     /// * Does not handle Session caching (see HathoraClientSession).
+    ///
+    /// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+    /// TODO: `ApiException` is missing in the new SDK - cleanup, if permanently gone. 
     /// </summary>
     public abstract class HathoraClientApiWrapperBase : MonoBehaviour, IHathoraApiBase
     {
-        public Configuration HathoraSdkConfig { get; set; }
+        // public Configuration HathoraSdkConfig { get; set; }
         protected HathoraClientConfig HathoraClientConfig { get; private set; }
         
         // Shortcuts
@@ -35,26 +38,26 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// </param>
         /// <param name="_hathoraSdkConfig">SDKConfig that we pass to Hathora API calls</param>
         public virtual void Init(
-            HathoraClientConfig _hathoraClientConfig,
-            Configuration _hathoraSdkConfig = null)
+            HathoraClientConfig _hathoraClientConfig)
+            // Configuration _hathoraSdkConfig = null)
         {
             this.HathoraClientConfig = _hathoraClientConfig;
-            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
+            // this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
         }
         
-        public Configuration GenerateSdkConfig() => new();
+        // public Configuration GenerateSdkConfig() => new();
         #endregion // Init
 
         
-        public void HandleApiException(
-            string _className,
-            string _funcName,
-            ApiException _apiException)
-        {
-            Debug.LogError($"[{_className}.{_funcName}] API Error: " +
-                $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
-
-            throw _apiException;
-        }
+        // public void HandleApiException(
+        //     string _className,
+        //     string _funcName)
+        //     // ApiException _apiException)
+        // {
+        //     // Debug.LogError($"[{_className}.{_funcName}] API Error: " +
+        //     //     $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
+        //
+        //     throw _apiException;
+        // }
     }
 }

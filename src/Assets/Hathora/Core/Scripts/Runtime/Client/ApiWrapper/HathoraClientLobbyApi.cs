@@ -1,9 +1,11 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
@@ -21,22 +23,25 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// </summary>
     public class HathoraClientLobbyApi : HathoraClientApiWrapperBase
     {
-        private LobbyV2Api lobbyApi;
+        private LobbyV2SDK lobbyApi;
 
         /// <summary>
         /// </summary>
         /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
         public override void Init(
-            HathoraClientConfig _hathoraClientConfig,
-            Configuration _hathoraSdkConfig = null)
+            HathoraClientConfig _hathoraClientConfig)
+            // Configuration _hathoraSdkConfig = null)
         {
-            Debug.Log("[NetHathoraClientLobbyApi] Initializing API...");
+            Debug.Log($"[{nameof(HathoraClientLobbyApi)}] Initializing API...");
             
-            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
-            this.lobbyApi = new LobbyV2Api(base.HathoraSdkConfig);
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+            // base.Init(_hathoraClientConfig, _hathoraSdkConfig);
+            // this.lobbyApi = new LobbyV2SDK(base.HathoraSdkConfig);
+            
+            base.Init(_hathoraClientConfig);
+            
+            // TODO: Manually init w/out constructor, or add constructor support to model
+            this.lobbyApi = new LobbyV2SDK();
         }
 
 
@@ -59,23 +64,31 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string roomId = null,
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
+            
             CreateLobbyRequest request = new(
                 lobbyVisibility, 
                 _initConfigJsonStr, 
                 _region);
 
-            Debug.Log("[NetHathoraClientLobbyApi.ClientCreateLobbyAsync] " +
-                $"<color=yellow>request: {request.ToJson()}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>request: {request.ToJson()}</color>");
 
             Lobby lobby;
+
             try
             {
+                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
+                // TODO: Manually init w/out constructor, or add constructor support to model
                 lobby = await lobbyApi.CreateLobbyAsync(
                     HathoraClientConfig.AppId,
                     _playerAuthToken, // Player token; not dev
                     request,
                     roomId,
                     _cancelToken);
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"{logPrefix}");
             }
             catch (ApiException apiException)
             {
@@ -110,6 +123,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             Lobby lobby;
             try
             {
+                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
+                // TODO: Manually init w/out constructor, or add constructor support to model
                 lobby = await lobbyApi.GetLobbyInfoAsync(
                     HathoraClientConfig.AppId,
                     roomId,
@@ -153,6 +168,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             List<Lobby> lobbies;
             try
             {
+                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
+                // TODO: Manually init w/out constructor, or add constructor support to model
                 lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
                     HathoraClientConfig.AppId,
                     region: _region,

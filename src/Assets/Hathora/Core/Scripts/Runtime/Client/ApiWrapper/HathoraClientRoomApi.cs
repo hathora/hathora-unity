@@ -3,7 +3,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Cloud.Sdk.Api;
+using Hathora.Cloud.Sdk.Client;
+using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
@@ -21,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// </summary>
     public class HathoraClientRoomApi : HathoraClientApiWrapperBase
     {
-        private RoomV2Api roomApi;
+        private RoomV2SDK roomApi;
 
         /// <summary>
         /// </summary>
@@ -30,12 +34,19 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
         /// </param>
         public override void Init(
-            HathoraClientConfig _hathoraClientConfig, 
-            Configuration _hathoraSdkConfig = null)
+            HathoraClientConfig _hathoraClientConfig) 
+            // Configuration _hathoraSdkConfig = null)
         {
-            Debug.Log("[NetHathoraClientRoomApi] Initializing API...");
-            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
-            this.roomApi = new RoomV2Api(base.HathoraSdkConfig);
+            Debug.Log($"[{nameof(HathoraClientRoomApi)}] Initializing API...");
+            
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+            // base.Init(_hathoraClientConfig, _hathoraSdkConfig);
+            // this.roomApi = new RoomV2SDK(base.HathoraSdkConfig);
+            
+            base.Init(_hathoraClientConfig);
+            
+            // TODO: Manually init w/out constructor, or add constructor support to model
+            this.roomApi = new RoomV2SDK();
         }
 
 
@@ -55,50 +66,55 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             int pollTimeoutSecs = 15,
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraClientRoomApi)}.{nameof(ClientGetConnectionInfoAsync)}]";
+            
             // Poll until we get the `Active` status.
             int pollSecondsTicked; // Duration to be logged later
             ConnectionInfoV2 connectionInfoResponse = null;
             
+            // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
             for (pollSecondsTicked = 0; pollSecondsTicked < pollTimeoutSecs; pollSecondsTicked++)
             {
                 _cancelToken.ThrowIfCancellationRequested();
                 
                 try
                 {
+                    // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
+                    // TODO: Manually init w/out constructor, or add constructor support to model
                     connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
                         HathoraClientConfig.AppId, 
                         roomId,
                         _cancelToken);
                 }
-                catch(ApiException apiException)
+                catch(Exception e)
                 {
-                    HandleApiException(
-                        nameof(HathoraClientRoomApi),
-                        nameof(ClientGetConnectionInfoAsync), 
-                        apiException);
+                    Debug.LogError($"{logPrefix} ");
                     return null; // fail
                 }
 
                 
-                if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
-                    break;
+                // // TODO: `StatusEnum` to check for `Active` status no longer exists in the new SDK - how to check for status?
+                // if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
+                //     break;
                 
                 await Task.Delay(TimeSpan.FromSeconds(pollIntervalSecs), _cancelToken);
             }
 
             // -----------------------------------------
             // We're done polling -- sucess or timeout?
-            if (connectionInfoResponse?.Status != ConnectionInfoV2.StatusEnum.Active)
-            {
-                Debug.LogError("[NetHathoraClientAuthApi.ClientGetConnectionInfoAsync] " +
-                    "Error: Timed out");
-                return null;
-            }
+            // // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
+            // if (connectionInfoResponse?.Status != ConnectionInfoV2.StatusEnum.Active)
+            // {
+            //     Debug.LogError($"{logPrefix} Error: Timed out");
+            //     return null;
+            // }
 
             // Success
-            Debug.Log($"[NetHathoraClientRoomApi.ClientGetConnectionInfoAsync] Success " +
-                $"(after {pollSecondsTicked}s polling): <color=yellow>" +
-                $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
+            
+            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
+            // Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
+            //     $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
+            Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling)");
 
             return connectionInfoResponse;
         }

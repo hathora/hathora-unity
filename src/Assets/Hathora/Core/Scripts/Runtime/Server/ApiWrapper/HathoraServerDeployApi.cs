@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     public class HathoraServerDeployApi : HathoraServerApiWrapperBase
     {
-        private readonly DeploymentV1Api deployApi;
+        private readonly DeploymentV1SDK deployApi;
         private HathoraDeployOpts deployOpts => HathoraServerConfig.HathoraDeployOpts;
 
         
@@ -31,7 +32,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
-            this.deployApi = new DeploymentV1Api(base.HathoraSdkConfig);
+            this.deployApi = new DeploymentV1SDK(base.HathoraSdkConfig);
         }
         
         
@@ -52,7 +53,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(
             double _buildId,
-            List<DeploymentEnvInner> _env = null,
+            List<DeploymentEnv> _env = null,
             List<ContainerPort> _additionalContainerPorts = null,
             CancellationToken _cancelToken = default)
         {
@@ -69,17 +70,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // #######################################################################################
                 // (!) Hathora SDK's DeploymentConfigEnvInner is Obsolete for DeploymentEnvInner
                 // (!) These two are identical in properties: For now, we'll re-serialize
-                List<DeploymentConfigEnvInner> envWorkaround = null;
+                List<DeploymentConfigEnv> envWorkaround = null;
                 if (_env?.Count > 0)
                 {
                     string envWorkaroundJson = JsonConvert.SerializeObject(_env);
-                    envWorkaround = JsonConvert.DeserializeObject<List<DeploymentConfigEnvInner>>(envWorkaroundJson);    
+                    envWorkaround = JsonConvert.DeserializeObject<List<DeploymentConfigEnv>>(envWorkaroundJson);    
                 }
                 // #######################################################################################
                 #endregion DeploymentEnvConfigInner Workaround
                 
+                // TODO: Manually init w/out constructor, or add constructor support to model
                 deployConfig = new DeploymentConfig(
-                    envWorkaround ?? new List<DeploymentConfigEnvInner>(),  // DEPRECATED: To be replaced by below line
+                    envWorkaround ?? new List<DeploymentEnv>(),  // DEPRECATED: To be replaced by below line
                     // _env ?? new List<DeploymentEnvInner>(),              // TODO: To replace the above line
                     deployOpts.RoomsPerProcess, 
                     deployOpts.SelectedPlanName, 

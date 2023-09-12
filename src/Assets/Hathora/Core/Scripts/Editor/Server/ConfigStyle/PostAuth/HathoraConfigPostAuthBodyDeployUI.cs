@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Editor.Common;
-using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using HathoraSdk.Models.Shared;
@@ -452,8 +451,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// <param name="_deployment"></param>
         private void onDeployAppSuccess(Deployment _deployment)
         {
+            // TODO: Manually init w/out constructor, or add constructor support to model
             ServerConfig.HathoraDeployOpts.LastDeployment = 
-                new DeploymentWrapper(_deployment);
+                new Deployment(_deployment);
         }
         #endregion // Event Logic
         

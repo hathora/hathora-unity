@@ -2,6 +2,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,21 +14,23 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     /// </summary>
     public class HathoraServerLobbyApi : HathoraServerApiWrapperBase
     {
-        private readonly LobbyV2Api lobbyApi;
+        private readonly LobbyV2SDK lobbyApi;
         
         /// <summary>
+        /// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
         /// </summary>
         /// <param name="_hathoraServerConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
         public HathoraServerLobbyApi( 
-            HathoraServerConfig _hathoraServerConfig,
-            Configuration _hathoraSdkConfig = null)
-            : base(_hathoraServerConfig, _hathoraSdkConfig)
+            HathoraServerConfig _hathoraServerConfig)
+            // Configuration _hathoraSdkConfig = null)
+            // : base(_hathoraServerConfig, _hathoraSdkConfig)
+            : base(_hathoraServerConfig)
         {
             Debug.Log("[HathoraServerLobbyApi] Initializing API...");
-            this.lobbyApi = new LobbyV2Api(base.HathoraSdkConfig);
+            
+            // TODO: Manually init w/out constructor, or add constructor support to model
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+            // this.lobbyApi = new LobbyV2SDK(base.HathoraSdkConfig);
         }
         
         
@@ -48,6 +51,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             try
             {
+                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
+                // TODO: Manually init w/out constructor, or add constructor support to model
                 getLobbyInfoResult = await lobbyApi.GetLobbyInfoAsync(
                     AppId,
                     _lobbyId,

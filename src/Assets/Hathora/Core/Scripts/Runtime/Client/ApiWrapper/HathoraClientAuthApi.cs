@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
@@ -21,22 +22,25 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// </summary>
     public class HathoraClientAuthApi : HathoraClientApiWrapperBase
     {
-        private AuthV1Api authApi;
+        private AuthV1SDK authApi;
 
-        
         /// <summary>
         /// </summary>
         /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
         public override void Init(
-            HathoraClientConfig _hathoraClientConfig, 
-            Configuration _hathoraSdkConfig = null)
+            HathoraClientConfig _hathoraClientConfig) 
+            // Configuration _hathoraSdkConfig = null)
         {
-            Debug.Log("[NetHathoraClientAuthApi] Initializing API...");
-            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
-            this.authApi = new AuthV1Api(base.HathoraSdkConfig);
+            Debug.Log($"[{nameof(HathoraClientAuthApi)}] Initializing API...");
+            
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+            // base.Init(_hathoraClientConfig, _hathoraSdkConfig);
+            // this.authApi = new AuthV1SDK(base.HathoraSdkConfig);
+            
+            base.Init(_hathoraClientConfig);
+            
+            // TODO: Manually init w/out constructor, or add constructor support to model
+            this.authApi = new AuthV1SDK();
         }
 
 

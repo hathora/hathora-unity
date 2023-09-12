@@ -35,9 +35,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
         [SerializeField]
-        private List<ApplicationWithDeploymentWrapper> _existingAppsWithDeploymentWrapper = new();
+        private List<ApplicationWithDeployment> _existingAppsWithDeploymentWrapper = new();
         
-        public List<ApplicationWithDeploymentWrapper> ExistingAppsWithDeploymentWrapper
+        public List<ApplicationWithDeployment> ExistingAppsWithDeploymentWrapper
         {
             get => _existingAppsWithDeploymentWrapper;
             set => _existingAppsWithDeploymentWrapper = value;
@@ -63,7 +63,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
                 if (value == null)
                     return;
                 
-                List<ApplicationWithDeploymentWrapper> parsedList = _existingAppsWithDeploymentWrapper = value
+                List<ApplicationWithDeployment> parsedList = _existingAppsWithDeploymentWrapper = value
                     .Select(app => new ApplicationWithDeploymentWrapper(app))
                     .ToList();
 

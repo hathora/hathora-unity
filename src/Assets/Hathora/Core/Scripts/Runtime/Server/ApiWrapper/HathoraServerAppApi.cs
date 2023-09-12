@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using Debug = UnityEngine.Debug;
 
@@ -10,7 +11,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     public class HathoraServerAppApi : HathoraServerApiWrapperBase
     {
-        private readonly AppV1Api appApi;
+        private readonly AppV1SDK appApi;
 
         
         /// <summary>
@@ -25,7 +26,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         { 
             Debug.Log("[HathoraServerAppApi] Initializing API..."); 
-            this.appApi = new AppV1Api(base.HathoraSdkConfig);
+            this.appApi = new AppV1SDK(base.HathoraSdkConfig);
         }
         
         

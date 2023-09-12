@@ -1,19 +1,17 @@
 // Created by dylan@hathora.dev
 
-
 namespace Hathora.Core.Scripts.Runtime.Common.Models
 {
     /// <summary>
-    /// Common reqs for HathoraServerApiBase || HathoraClientApiBase
+    /// Common reqs for HathoraServerApiWrapperBase || HathoraClientApiWrapperBase.
     /// </summary>
     public interface IHathoraApiBase
     {
-        Configuration HathoraSdkConfig { get; set; }
+        //// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+        // Configuration HathoraSdkConfig { get; set; }
         string AppId { get; }
-        Configuration GenerateSdkConfig();
-        void HandleApiException(
-            string _className,
-            string _funcName,
-            ApiException _apiException);
+        
+        //// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+        // Configuration GenerateSdkConfig();
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraSdk;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,7 +14,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     public class HathoraServerRoomApi : HathoraServerApiWrapperBase
     {
-        private readonly RoomV2Api roomApi;
+        private readonly RoomV2SDK roomApi;
         private HathoraLobbyRoomOpts roomOpts => HathoraServerConfig.HathoraLobbyRoomOpts;
         public bool IsPollingForActiveConnInfo { get; private set; }
         
@@ -29,7 +30,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerRoomApi] Initializing API...");
-            this.roomApi = new RoomV2Api(base.HathoraSdkConfig);
+            this.roomApi = new RoomV2SDK(base.HathoraSdkConfig);
         }
         
         
@@ -78,9 +79,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     newlyCreatedRoomId,
                     _cancelToken);
 
-                Assert.IsTrue(
-                    activeConnectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active,
-                    "activeConnectionInfo !Active status (expected Active since room is Active");
+                //// TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
+                // Assert.IsTrue(
+                //     activeConnectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active,
+                //     "activeConnectionInfo !Active status (expected Active since room is Active");
             }
             catch (TaskCanceledException e)
             {
@@ -316,8 +318,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null;
             }
             
+            // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
             bool isActiveWithExposedPort = 
-                getConnectionInfoResult.Status == ConnectionInfoV2.StatusEnum.Active && 
+                // getConnectionInfoResult.Status == ConnectionInfoV2.StatusEnum.Active && 
                 getConnectionInfoResult.ExposedPort != null;
 
             Debug.Log($"[HathoraServerRoomApi] Success: " +
@@ -330,56 +333,59 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         // ------------------------------------------
         // Utils >>
         
-        /// <summary>ETA 5 seconds; poll once/second.</summary>
-        /// <param name="_roomId"></param>
-        /// <param name="_cancelToken"></param>
-        /// <returns></returns>
-        public async Task<ConnectionInfoV2> PollConnectionInfoUntilActiveAsync(
-            string _roomId,
-            CancellationToken _cancelToken = default)
-        {
-            ConnectionInfoV2 connectionInfo = null;
-            int attemptNum = 0;
-            IsPollingForActiveConnInfo = true;
-            
-            while (connectionInfo is not { Status: ConnectionInfoV2.StatusEnum.Active })
-            {
-                // Check for cancel + await 1s
-                if (_cancelToken.IsCancellationRequested)
-                {
-                    IsPollingForActiveConnInfo = false;
-                    _cancelToken.ThrowIfCancellationRequested();
-                }
-                
-                await Task.Delay(TimeSpan.FromSeconds(1), _cancelToken);
-
-                // ---------------
-                // Try again
-                attemptNum++;
-                Debug.Log("[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
-                    $"Attempt #{attemptNum} ...");
-                
-                connectionInfo = await GetConnectionInfoAsync(
-                    _roomId,
-                    _cancelToken: _cancelToken);
-                
-                // ---------------
-                if (connectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active)
-                    break; // Success
-                
-                // ---------------
-                // Still !Active -- log, then try again
-                Debug.LogWarning("[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
-                    "Room !Active (yet) - attempting to poll again ...");
-            }
-            
-            
-            Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
-                $"Success: <color=yellow>{nameof(connectionInfo)}: {connectionInfo.ToJson()}</color>");
-
-            IsPollingForActiveConnInfo = false;
-            return connectionInfo;
-        }
+        // /// <summary>
+        // /// ETA 5 seconds; poll once/second.
+        // /// TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
+        // /// </summary>
+        // /// <param name="_roomId"></param>
+        // /// <param name="_cancelToken"></param>
+        // /// <returns></returns>
+        // public async Task<ConnectionInfoV2> PollConnectionInfoUntilActiveAsync(
+        //     string _roomId,
+        //     CancellationToken _cancelToken = default)
+        // {
+        //     ConnectionInfoV2 connectionInfo = null;
+        //     int attemptNum = 0;
+        //     IsPollingForActiveConnInfo = true;
+        //     
+        //     while (connectionInfo is not { Status: ConnectionInfoV2.StatusEnum.Active })
+        //     {
+        //         // Check for cancel + await 1s
+        //         if (_cancelToken.IsCancellationRequested)
+        //         {
+        //             IsPollingForActiveConnInfo = false;
+        //             _cancelToken.ThrowIfCancellationRequested();
+        //         }
+        //         
+        //         await Task.Delay(TimeSpan.FromSeconds(1), _cancelToken);
+        //
+        //         // ---------------
+        //         // Try again
+        //         attemptNum++;
+        //         Debug.Log("[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
+        //             $"Attempt #{attemptNum} ...");
+        //         
+        //         connectionInfo = await GetConnectionInfoAsync(
+        //             _roomId,
+        //             _cancelToken: _cancelToken);
+        //         
+        //         // ---------------
+        //         if (connectionInfo?.Status == ConnectionInfoV2.StatusEnum.Active)
+        //             break; // Success
+        //         
+        //         // ---------------
+        //         // Still !Active -- log, then try again
+        //         Debug.LogWarning("[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
+        //             "Room !Active (yet) - attempting to poll again ...");
+        //     }
+        //     
+        //     
+        //     Debug.Log($"[HathoraConfigPostAuthBodyRoomUI.PollConnectionInfoUntilActiveAsync] " +
+        //         $"Success: <color=yellow>{nameof(connectionInfo)}: {connectionInfo.ToJson()}</color>");
+        //
+        //     IsPollingForActiveConnInfo = false;
+        //     return connectionInfo;
+        // }
         #endregion // Server Room Async Hathora SDK Calls
     }
 }

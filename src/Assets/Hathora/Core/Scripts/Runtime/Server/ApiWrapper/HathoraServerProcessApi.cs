@@ -2,6 +2,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using HathoraSdk;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -12,7 +13,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     /// </summary>
     public class HathoraServerProcessApi : HathoraServerApiWrapperBase
     {
-        private ProcessesV1Api processesApi;
+        private ProcessesV1SDK processesApi;
 
         /// <summary>
         /// </summary>
@@ -26,7 +27,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         { 
             Debug.Log("[HathoraServerProcessApi] Initializing API..."); 
-            this.processesApi = new ProcessesV1Api(base.HathoraSdkConfig);
+            this.processesApi = new ProcessesV1SDK(base.HathoraSdkConfig);
         }
         
         

@@ -22,7 +22,6 @@ namespace HathoraSdk.Models.Shared
     [Serializable]
     public class ConnectionInfoV2
     {
-        [SerializeField]
         [JsonProperty("additionalExposedPorts")]
         public List<ExposedPort> AdditionalExposedPorts { get; set; } = default!;
         
