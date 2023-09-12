@@ -30,6 +30,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerRoomApi] Initializing API...");
+            
+            // TODO: Manually init w/out constructor, or add constructor support to model
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
             this.roomApi = new RoomV2SDK(base.HathoraSdkConfig);
         }
         

@@ -17,9 +17,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     /// * Call Init() to pass HathoraClientConfig + Hathora SDK Config (see HathoraClientMgr).
     /// * Does not handle UI (see HathoraClientMgrUi).
     /// * Does not handle Session caching (see HathoraClientSession).
-    ///
-    /// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-    /// TODO: `ApiException` is missing in the new SDK - cleanup, if permanently gone. 
     /// </summary>
     public abstract class HathoraClientApiWrapperBase : MonoBehaviour, IHathoraApiBase
     {

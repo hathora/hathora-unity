@@ -17,7 +17,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         private readonly LobbyV2SDK lobbyApi;
         
         /// <summary>
-        /// TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
         /// </summary>
         /// <param name="_hathoraServerConfig"></param>
         public HathoraServerLobbyApi( 
@@ -29,7 +28,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             // TODO: Manually init w/out constructor, or add constructor support to model
             // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            // this.lobbyApi = new LobbyV2SDK(base.HathoraSdkConfig);
+            this.lobbyApi = new LobbyV2SDK(base.HathoraSdkConfig);
         }
         
         

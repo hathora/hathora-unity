@@ -30,20 +30,18 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <summary>
         /// </summary>
         /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_hathoraSdkConfig">blic override void Init(
-            HathoraClientConfig _hathoraClientConfig) 
-            // SDKConfig _hathoraSdkConfig = null)
+        /// <param name="_hathoraSdkConfig"></param>
+        public override void Init(
+            HathoraClientConfig _hathoraClientConfig, 
+            SDKConfig _hathoraSdkConfig = null)
         {
             Debug.Log($"[{nameof(HathoraClientRoomApi)}] Initializing API...");
             
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            // base.Init(_hathoraClientConfig, _hathoraSdkConfig);
-            // this.roomApi = new RoomV2SDK(base.HathoraSdkConfig);
-            
-            base.Init(_hathoraClientConfig);
+            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
             
             // TODO: Manually init w/out constructor, or add constructor support to model
-            this.roomApi = new RoomV2SDK();
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+            this.roomApi = new RoomV2SDK(base.HathoraSdkConfig);
         }
 
 

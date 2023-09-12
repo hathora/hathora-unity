@@ -34,14 +34,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         {
             Debug.Log($"[{nameof(HathoraClientAuthApi)}] Initializing API...");
             
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            // base.Init(_hathoraClientConfig, _hathoraSdkConfig);
-            // this.authApi = new AuthV1SDK(base.HathoraSdkConfig);
-            
-            base.Init(_hathoraClientConfig);
+            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
             
             // TODO: Manually init w/out constructor, or add constructor support to model
-            this.authApi = new AuthV1SDK();
+            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
+            this.authApi = new AuthV1SDK(base.HathoraSdkConfig);
         }
 
 
