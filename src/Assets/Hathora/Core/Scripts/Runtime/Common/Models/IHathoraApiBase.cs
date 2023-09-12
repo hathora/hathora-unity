@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Cloud.Sdk.Client;
 
 namespace Hathora.Core.Scripts.Runtime.Common.Models
 {

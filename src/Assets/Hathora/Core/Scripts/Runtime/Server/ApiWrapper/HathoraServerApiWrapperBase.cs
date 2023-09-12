@@ -1,6 +1,5 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Cloud.Sdk.Client;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Debug = UnityEngine.Debug;
 

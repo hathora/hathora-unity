@@ -2,9 +2,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Cloud.Sdk.Api;
-using Hathora.Cloud.Sdk.Client;
-using Hathora.Cloud.Sdk.Model;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper

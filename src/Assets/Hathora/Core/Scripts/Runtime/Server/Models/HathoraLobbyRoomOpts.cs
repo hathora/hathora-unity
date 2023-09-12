@@ -1,6 +1,5 @@
 // dylan@hathora.dev
 
-using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 using System;
 using HathoraSdk.Models.Shared;

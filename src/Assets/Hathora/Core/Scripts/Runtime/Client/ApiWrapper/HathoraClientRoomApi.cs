@@ -3,9 +3,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Cloud.Sdk.Api;
-using Hathora.Cloud.Sdk.Client;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using HathoraSdk.Models.Shared;
 using UnityEngine;

@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using System;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
 using HathoraSdk.Models.Shared;
 using UnityEngine;

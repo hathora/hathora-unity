@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using HathoraSdk.Models.Shared;
