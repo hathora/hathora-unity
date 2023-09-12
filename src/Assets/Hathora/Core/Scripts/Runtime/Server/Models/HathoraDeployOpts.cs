@@ -6,6 +6,7 @@ using System.Text;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models

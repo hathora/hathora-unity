@@ -3,6 +3,7 @@
 using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 using System;
+using HathoraSdk.Models.Shared;
 using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models

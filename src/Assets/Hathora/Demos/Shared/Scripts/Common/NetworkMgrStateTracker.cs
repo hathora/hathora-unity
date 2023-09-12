@@ -3,6 +3,7 @@
 using System;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Demos.Shared.Scripts.Common

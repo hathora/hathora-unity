@@ -10,6 +10,7 @@ using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraSdk.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 

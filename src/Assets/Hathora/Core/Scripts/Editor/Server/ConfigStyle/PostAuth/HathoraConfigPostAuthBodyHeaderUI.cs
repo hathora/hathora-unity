@@ -9,6 +9,7 @@ using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
+using HathoraSdk.Models.Shared;
 using UnityEditor;
 using UnityEngine;
 

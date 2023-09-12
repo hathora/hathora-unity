@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 

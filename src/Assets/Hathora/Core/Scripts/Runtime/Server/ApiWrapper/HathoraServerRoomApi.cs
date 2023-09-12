@@ -8,6 +8,7 @@ using Hathora.Cloud.Sdk.Api;
 using Hathora.Cloud.Sdk.Client;
 using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 

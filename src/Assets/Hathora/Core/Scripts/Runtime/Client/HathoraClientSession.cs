@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Hathora.Cloud.Sdk.Model;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client

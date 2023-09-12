@@ -8,6 +8,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Common;
+using HathoraSdk.Models.Shared;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;

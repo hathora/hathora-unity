@@ -11,6 +11,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demos.Shared.Scripts.Client.Models;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
