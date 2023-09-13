@@ -84,7 +84,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 
                 // TODO: Manually init w/out constructor, or add constructor support to model
                 deployConfig = new DeploymentConfig(
-                    envWorkaround ?? new List<DeploymentEnv>(),  // DEPRECATED: To be replaced by below line
+                    envWorkaround ?? new List<DeploymentConfigEnv>(),  // DEPRECATED: To be replaced by below line
                     // _env ?? new List<DeploymentEnvInner>(),              // TODO: To replace the above line
                     deployOpts.RoomsPerProcess, 
                     deployOpts.SelectedPlanName, 

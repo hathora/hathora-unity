@@ -154,7 +154,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <param name="_cancelToken"></param>
         public async Task<Lobby> CreateLobbyAsync(
             Region _region,
-            CreateLobbyRequest.VisibilityEnum _visibility = CreateLobbyRequest.VisibilityEnum.Public,
+            LobbyVisibility _visibility = LobbyVisibility.Public,
             string _initConfigJsonStr = "{}",
             string _roomId = null,
             CancellationToken _cancelToken = default)

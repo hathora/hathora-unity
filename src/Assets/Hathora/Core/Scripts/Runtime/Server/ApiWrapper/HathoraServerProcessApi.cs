@@ -3,6 +3,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using HathoraSdk;
+using HathoraSdk.Models.Shared;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper

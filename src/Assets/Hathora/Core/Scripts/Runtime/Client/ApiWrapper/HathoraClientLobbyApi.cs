@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
+using CreateLobbyRequest = HathoraSdk.Models.Shared.CreateLobbyRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 {
@@ -56,7 +58,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
             string _playerAuthToken,
-            CreateLobbyRequest.VisibilityEnum lobbyVisibility,
+            LobbyVisibility lobbyVisibility,
             Region _region = Region.WashingtonDC,
             string _initConfigJsonStr = "{}",
             string roomId = null,
@@ -122,7 +124,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
             Debug.Log($"{logPrefix} <color=yellow>roomId: {roomId}</color>");
             
-            Lobby lobby;
+            GetLobbyInfoResponse lobby;
             try
             {
                 // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
@@ -132,7 +134,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     roomId,
                     _cancelToken);
             }
-            catch (ApiException apiException)
+            catch (Exception apiException)
             {
                 HandleApiException(
                     nameof(HathoraClientLobbyApi),
@@ -147,6 +149,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 
                 return null; // fail
             }
+            
+            if (!lobby.GetLobbyInfo404ApplicationJSONString // TODO
 
             // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
             // Debug.Log($"{logPrefix} Success: <color=yellow>lobby: {lobby.ToJson()}</color>");      

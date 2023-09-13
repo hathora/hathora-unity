@@ -35,6 +35,8 @@ namespace HathoraSdk
     
     public class SDKConfig
     {
+        public string DeveloperToken { get; private set; }
+        public string AppId { get; private set; }
     }
 
     public class HathoraSDK: IHathoraSDK
