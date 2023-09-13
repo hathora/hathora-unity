@@ -9,9 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
 using UnityEngine;
+using CreateBuildRequest = HathoraSdk.Models.Shared.CreateBuildRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
@@ -54,14 +56,20 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         public async Task<Build> CreateBuildAsync(CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(CreateBuildAsync)}]";
-            
-            Build createCloudBuildResult;
+
+            HathoraSdk.Models.Operations.CreateBuildRequest createBuildRequest = new()
+            {
+                AppId = base.AppId,
+                CreateBuildRequestValue = 
+            };
+
+            CreateBuildResponse createCloudBuildResponse = null;
             
             try
             {
-                createCloudBuildResult = await buildApi.CreateBuildAsync(
-                    HathoraServerConfig.HathoraCoreOpts.AppId,
-                    _cancelToken);
+                createCloudBuildResponse = await buildApi.CreateBuildAsync(
+                    new CreateBuildSecurity { Auth0 = base.ServerAuth0 },
+                    createBuildRequest);
             }
             catch (Exception e)
             {
@@ -70,9 +78,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createCloudBuildResult)}: {ToJson(createCloudBuildResult)}</color>");
+                $"{nameof(createCloudBuildResponse)}: {ToJson(createCloudBuildResponse)}</color>");
 
-            return createCloudBuildResult;
+            return createCloudBuildResponse;
         }
 
         /// <summary>

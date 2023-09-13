@@ -7,6 +7,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Demos.Shared.Scripts.Common;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using TMPro;
 using UnityEngine;
@@ -270,13 +271,16 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 Debug.LogError($"Error: {e}");
                 throw;
             }
-
-            // TODO: Get region from UI; null returns ALL regions
-            Region? region = null;
+            
+            ListActivePublicLobbiesRequest listActivePublicLobbiesRequest = new()
+            {
+                // TODO: Get region from UI; null returns ALL regions
+                Region = null, // null == All regions
+            };
             
             try
             {
-                await ClientMgr.GetActivePublicLobbiesAsync(region); // => Callback @ onRefreshActiveLobbiesDone
+                await ClientMgr.GetActivePublicLobbiesAsync(listActivePublicLobbiesRequest); // => Callback @ onRefreshActiveLobbiesDone
             }
             catch (Exception e)
             {

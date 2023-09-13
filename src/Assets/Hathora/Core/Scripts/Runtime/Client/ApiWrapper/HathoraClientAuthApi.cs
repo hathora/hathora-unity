@@ -4,8 +4,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
-using Hathora.Core.Scripts.Runtime.Client.Models;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
 using UnityEngine;
@@ -49,19 +49,19 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
 
         #region Client Auth Async Hathora SDK Calls
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns AuthResult on success</returns>
-        public async Task<AuthResult> ClientAuthAsync(CancellationToken _cancelToken = default)
+        public async Task<LoginResponse> ClientAuthAsync(CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraClientAuthApi)}.{nameof(ClientAuthAsync)}]"; 
             Debug.Log($"{logPrefix} Start");
+
+            LoginAnonymousRequest anonLoginRequest = new() { AppId = HathoraClientConfig.AppId }; 
+            LoginAnonymousResponse loginAnonResponse = null;
             
-            LoginResponse anonLoginResult;
             try
             {
-                anonLoginResult = await authApi.LoginAnonymousAsync(
-                    HathoraClientConfig.AppId, 
-                    _cancelToken);
+                loginAnonResponse = await authApi.LoginAnonymousAsync(anonLoginRequest);
             }
             catch (Exception e)
             {
@@ -69,22 +69,19 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            bool isAuthed = !string.IsNullOrEmpty(anonLoginResult?.Token); 
+            bool isAuthed = !string.IsNullOrEmpty(loginAnonResponse.LoginResponse?.Token); 
             
             
 #if UNITY_EDITOR
             // For security, we probably only want to log this in the editor
             Debug.Log($"{logPrefix} <color=yellow>{nameof(isAuthed)}: {isAuthed}, " +
-                $"{nameof(anonLoginResult)}: {ToJson(anonLoginResult)}</color>");
+                $"{nameof(loginAnonResponse)}: {ToJson(loginAnonResponse)}</color>");
 #else
             Debug.Log($"{logPrefix} {nameof(isAuthed)}: {isAuthed}");
 #endif
-            
-            
-            return isAuthed
-                ? new AuthResult(anonLoginResult.Token)
-                : null;
 
+
+            return loginAnonResponse.LoginResponse;
         }
         #endregion // Server Auth Async Hathora SDK Calls
     }

@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
-using Hathora.Core.Scripts.Runtime.Client.Models;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -131,12 +131,13 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// - Sets `PlayerAuthToken` cache
         /// - Callback @ virtual OnAuthLoginComplete(isSuccess)
         /// </summary>
-        public async Task<AuthResult> AuthLoginAsync(CancellationToken _cancelToken = default)
+        public async Task<LoginResponse> AuthLoginAsync(CancellationToken _cancelToken = default)
         {
-            AuthResult authResult = await clientApis.ClientAuthApi.ClientAuthAsync(_cancelToken);
-
-            hathoraClientSession.InitNetSession(authResult.PlayerAuthToken);
-            OnAuthLoginDone(authResult.IsSuccess);
+            LoginResponse authResult = await clientApis.ClientAuthApi.ClientAuthAsync(_cancelToken);
+            bool isSuccess = !string.IsNullOrEmpty(authResult.Token);
+            
+            hathoraClientSession.InitNetSession(authResult.Token);
+            OnAuthLoginDone(isSuccess);
 
             return authResult;
         }
@@ -205,17 +206,17 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// - Sets `Lobbies` cache on done (not necessarily success)
         /// - Callback @ virtual OnViewPublicLobbiesComplete(lobbies)
         /// </summary>
-        /// <param name="_region">null returns all regions</param>
+        /// <param name="_listActivePublicLobbiesRequest">Null region returns all Regions</param>
         /// <param name="_cancelToken"></param>
         public async Task<List<Lobby>> GetActivePublicLobbiesAsync(
-            Region? _region = null,
+            ListActivePublicLobbiesRequest _listActivePublicLobbiesRequest,
             CancellationToken _cancelToken = default)
         {
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
             
             List<Lobby> lobbies = await clientApis.ClientLobbyApi.ClientListPublicLobbiesAsync(
-                _region,
+                _listActivePublicLobbiesRequest,
                 _cancelToken);
 
             hathoraClientSession.Lobbies = lobbies;

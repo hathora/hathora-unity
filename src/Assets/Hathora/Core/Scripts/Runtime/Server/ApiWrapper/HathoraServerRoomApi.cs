@@ -142,26 +142,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
         private async Task<string> CreateRoomAsync(
-            string _customCreateRoomId = null,
+            CreateRoomRequest createRoomReq,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAsync)}]";
             
             // Prep request data
-            CreateRoomRequest createRoomReq = null;
-            
-            try
-            {
-                createRoomReq = new CreateRoomRequest(roomOpts.SelectedHathoraRegion);
-                
-                Debug.Log($"{logPrefix} <color=yellow>" +
-                    $"{nameof(createRoomReq)}: {ToJson(createRoomReq)}</color>");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
+            Debug.Log($"{logPrefix} <color=yellow>" +
+                $"{nameof(createRoomReq)}: {ToJson(createRoomReq)}</color>");
 
             // Request call async =>
             ConnectionInfoV2 createRoomResultWithNullPort;

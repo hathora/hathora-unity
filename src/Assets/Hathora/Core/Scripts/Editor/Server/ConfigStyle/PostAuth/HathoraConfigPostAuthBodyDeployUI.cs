@@ -449,12 +449,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// Cache last successful Deployment for the session
         /// </summary>
         /// <param name="_deployment"></param>
-        private void onDeployAppSuccess(Deployment _deployment)
-        {
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            ServerConfig.HathoraDeployOpts.LastDeployment = 
-                new Deployment(_deployment);
-        }
+        private void onDeployAppSuccess(Deployment _deployment) =>
+            ServerConfig.HathoraDeployOpts.LastDeployment = _deployment;
         #endregion // Event Logic
         
         

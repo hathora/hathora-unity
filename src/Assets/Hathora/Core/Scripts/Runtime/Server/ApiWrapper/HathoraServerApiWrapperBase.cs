@@ -17,6 +17,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         public SDKConfig HathoraSdkConfig { get; set; }
         protected HathoraServerConfig HathoraServerConfig { get; private set; }
 
+        /// <summary>Pulls "DevAuthToken" from HathoraServerConfig</summary>
+        protected string ServerAuth0 => 
+            HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken;
+
         // Shortcuts
         public string AppId
         {

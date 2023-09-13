@@ -54,7 +54,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// Create a new Player Client Lobby.
         /// </summary>
         /// <param name="_playerAuthToken">Player Auth Token (likely from a cached session)</param>
-        /// <param name="lobbyVisibility"></param>
+        /// <param name="_lobbyVisibility"></param>
         /// <param name="_initConfigJsonStr"></param>
         /// <param name="roomId">Null will auto-generate</param>
         /// <param name="_cancelToken"></param>
@@ -62,7 +62,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
             string _playerAuthToken,
-            LobbyVisibility lobbyVisibility,
+            LobbyVisibility _lobbyVisibility,
             Region _region = Region.WashingtonDC,
             string _initConfigJsonStr = "{}",
             string roomId = null,
@@ -70,10 +70,15 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         {
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
             
-            CreateLobbyRequest createLobbyRequest = new(
-                lobbyVisibility, 
-                _initConfigJsonStr, 
-                _region);
+            // TODO: The old SDK `InitialConfig` was just a string; now it's an empty class - how to apply the json string?
+            LobbyInitialConfig initConfigWrapper = new(_initConfigJsonStr);
+            
+            CreateLobbyRequest createLobbyRequest = new()
+            {
+                Region = _region,
+                Visibility = _lobbyVisibility,
+                InitialConfig = initConfigWrapper,
+            };
 
             Debug.Log($"{logPrefix} <color=yellow>{nameof(createLobbyRequest)}: " +
                 $"{ToJson(createLobbyRequest)}</color>");
@@ -151,7 +156,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// Gets a list of active+public lobbies.
         /// </summary>
         /// <param name="_request">Leave Region null to return ALL Regions</param>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns></returns>
         public async Task<List<Lobby>> ClientListPublicLobbiesAsync(
             ListActivePublicLobbiesRequest _request,
