@@ -142,7 +142,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             CreateRoomRequest createRoomReq = null;
             try
             {
-                createRoomReq = new CreateRoomRequest(roomOpts.HathoraRegion);
+                createRoomReq = new CreateRoomRequest(roomOpts.SelectedHathoraRegion);
                 
                 Debug.Log("[HathoraServerRoom.CreateRoomAwaitActiveAsync] " +
                     $"<color=yellow>roomConfig: {createRoomReq.ToJson()}</color>");
