@@ -68,7 +68,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             _hathoraCoreOpts.DevAuthOpts.HasAuthToken &&
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildDirName) &&
             !string.IsNullOrEmpty(_linuxHathoraAutoBuildOpts.ServerBuildExeName) &&
-            _hathoraDeployOpts.ContainerPortWrapper.PortNumber >= 1024;
+            _hathoraDeployOpts.ContainerPort.PortNumber >= 1024;
         
         /// <summary>
         /// For Editor only: You may also want to check if you are !HathoraServerDeploy.IsDeploying

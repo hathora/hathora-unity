@@ -7,6 +7,7 @@ using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
@@ -34,41 +35,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         }
 
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
+        [FormerlySerializedAs("_existingAppsWithDeploymentWrapper")]
         [SerializeField]
-        private List<ApplicationWithDeployment> _existingAppsWithDeploymentWrapper = new();
-        
-        public List<ApplicationWithDeployment> ExistingAppsWithDeploymentWrapper
-        {
-            get => _existingAppsWithDeploymentWrapper;
-            set => _existingAppsWithDeploymentWrapper = value;
-        }
+        private List<ApplicationWithDeployment> _existingAppsWithDeployment = new();
 
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
         public List<ApplicationWithDeployment> ExistingAppsWithDeployment
         {
-            get {
-                if (this._existingAppsWithDeploymentWrapper == null)
-                    return new List<ApplicationWithDeployment>();
-                
-                // Parse from `ApplicationWithDeploymentWrapper` to `ApplicationWithDeployment` 
-                List<ApplicationWithDeployment> appsWithDeployment = this._existingAppsWithDeploymentWrapper
-                    .Select(app => app.ToApplicationWithDeploymentType())
-                    .ToList();
-
-                return appsWithDeployment;
-            }
-            
-            set  
-            {
-                if (value == null)
-                    return;
-                
-                List<ApplicationWithDeployment> parsedList = _existingAppsWithDeploymentWrapper = value
-                    .Select(app => new ApplicationWithDeploymentWrapper(app))
-                    .ToList();
-
-                this._existingAppsWithDeploymentWrapper = parsedList;
-            }
+            get => _existingAppsWithDeployment;
+            set => _existingAppsWithDeployment = value;
         }
 
         /// <summary>Cached from App API.</summary>
@@ -77,10 +52,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// </param>
         public List<string> GetExistingAppNames(string _prependDummyIndex0Str)
         {
-            if (_existingAppsWithDeploymentWrapper == null)
+            if (_existingAppsWithDeployment == null)
                 return new List<string>();
 
-            IEnumerable<string> enumerable = _existingAppsWithDeploymentWrapper?
+            IEnumerable<string> enumerable = _existingAppsWithDeployment?
                 .Select(app => app.AppName);
 
             if (!string.IsNullOrEmpty(_prependDummyIndex0Str))

@@ -41,18 +41,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         #endregion // Plan Name
         
         
-        #region Container Port Wrapper
+        #region Container Port
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         [SerializeField]
-        private ContainerPortWrapper _containerPortWrapper = new();
+        private ContainerPort containerPort = new();
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        public ContainerPortWrapper ContainerPortWrapper
+        public ContainerPort ContainerPort
         {
-            get => _containerPortWrapper;
-            set => _containerPortWrapper = value;
+            get => containerPort;
+            set => containerPort = value;
         }
-        #endregion // Container Port Wrapper
+        #endregion // Container Port
 
 
         #region Transport Type 
@@ -71,42 +71,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _transportTypeSelectedIndex = value;
         }
         #endregion // Transport Type 
-        
-        #region Env Vars
-        // /// <summary>(!) Like an `.env` file, these are all strings.</summary>
-        // [SerializeField]
-        // private List<HathoraEnvVars> _envVars = new();
-        //
-        // /// <summary>(!) Like an `.env` file, these are all strings.</summary>
-        // public List<HathoraEnvVars> EnvVars
-        // {
-        //     get => _envVars;
-        //     set => _envVars = value;
-        // }
-        #endregion // Env Vars
-
-        
-        #region Advanced Deploy Opts
-        // /// <summary>You probably don't need to touch these, unless debugging</summary>
-        // [SerializeField]
-        // private HathoraDeployAdvancedOpts _advancedDeployOpts = new();
-        //
-        // /// <summary>You probably don't need to touch these, unless debugging</summary>
-        // public HathoraDeployAdvancedOpts AdvancedDeployOpts
-        // {
-        //     get => _advancedDeployOpts;
-        //     set => _advancedDeployOpts = value;
-        // }
-        #endregion // Advanced Deploy Opts
 
         
         #region Last Deployment
         /// <summary>If you deployed something, we set the cached result</summary>
         // [SerializeField] // TODO: Make serializable. For now, this won't persist between Unity sessions.
-        private DeploymentWrapper _lastDeployment;
+        private Deployment _lastDeployment;
         
         /// <summary>If you deployed something, we set the cached result</summary>
-        public DeploymentWrapper LastDeployment
+        public Deployment LastDeployment
         {
             get => _lastDeployment;
             set => _lastDeployment = value;

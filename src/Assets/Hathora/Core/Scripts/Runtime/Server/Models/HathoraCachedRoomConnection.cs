@@ -7,6 +7,7 @@ using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
@@ -28,20 +29,22 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public string GetFriendlyRegionStr() => 
             Enum.GetName(typeof(Region), _hathoraRegion)?.SplitPascalCase();
         
+        [FormerlySerializedAs("_roomWrapper")]
         [SerializeField]
-        private RoomWrapper _roomWrapper;
+        private Room _room;
         public Room Room
         {
-            get => _roomWrapper?.ToRoomType();
-            set => _roomWrapper = new RoomWrapper(value);
+            get => _room;
+            set => _room = value;
         }
         
+        [FormerlySerializedAs("_connectionInfoV2Wrapper")]
         [SerializeField]
-        private ConnectionInfoV2Wrapper _connectionInfoV2Wrapper;
+        private ConnectionInfoV2 _connectionInfoV2;
         public ConnectionInfoV2 ConnectionInfoV2
         {
-            get => _connectionInfoV2Wrapper?.ToConnectionInfoV2Type();
-            set => _connectionInfoV2Wrapper = new ConnectionInfoV2Wrapper(value);
+            get => _connectionInfoV2;
+            set => _connectionInfoV2 = value;
         }
 
         public bool IsError { get; set; }
@@ -71,13 +74,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// <returns></returns>
         public string GetConnInfoStr()
         {
-            string hostStr = _connectionInfoV2Wrapper == null
+            string hostStr = _connectionInfoV2 == null
                 ? "<MissingHost>"
-                : _connectionInfoV2Wrapper?.ExposedPort?.Host ?? "<MissingHost>";
+                : _connectionInfoV2?.ExposedPort?.Host ?? "<MissingHost>";
 
-            double portDbl = _connectionInfoV2Wrapper == null
+            double portDbl = _connectionInfoV2 == null
                 ? 0
-                : _connectionInfoV2Wrapper?.ExposedPort?.Port ?? 0;
+                : _connectionInfoV2?.ExposedPort?.Port ?? 0;
             
             string portStr = portDbl > 0 
                 ? portDbl.ToString(CultureInfo.InvariantCulture)

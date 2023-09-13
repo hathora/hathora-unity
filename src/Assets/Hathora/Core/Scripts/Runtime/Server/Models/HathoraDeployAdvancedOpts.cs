@@ -36,14 +36,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// Ensure the port differs from the others.
         /// </summary>
         [SerializeField] 
-        private AdditionalContainerPortWrapper additionalTransportInfo1 = new();
+        private List<ExposedPort> additionalTransportInfo1 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public AdditionalContainerPortWrapper AdditionalTransportInfo1
+        public List<ExposedPort> AdditionalTransportInfo1
         {
             get => additionalTransportInfo1;
             set => additionalTransportInfo1 = value;
@@ -55,14 +55,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// Ensure the port differs from the others.
         /// </summary>
         [SerializeField] 
-        private AdditionalContainerPortWrapper additionalTransportInfo2 = new();
+        private List<ExposedPort> additionalTransportInfo2 = new();
         
         /// <summary>
         /// In rare cases, you may want to provide multiple (up to 2 more) transports.
         /// Leave the nickname empty and we'll ignore this.
         /// Ensure the port differs from the others.
         /// </summary>
-        public AdditionalContainerPortWrapper AdditionalTransportInfo2
+        public List<ExposedPort> AdditionalTransportInfo2
         {
             get => additionalTransportInfo2;
             set => additionalTransportInfo2 = value;
