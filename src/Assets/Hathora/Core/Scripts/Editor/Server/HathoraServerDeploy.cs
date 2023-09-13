@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
-using UnityEditor;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
@@ -22,6 +22,9 @@ namespace Hathora.Core.Scripts.Editor.Server
     public delegate void OnBuildReqComplete(Build _buildInfo);
     public delegate void OnUploadComplete();
     
+    /// <summary>
+    /// Deployment wrapper using a chain of events, gathering data from HathoraServerConfig.
+    /// </summary>
     public static class HathoraServerDeploy
     {   
         /// <summary>
@@ -119,6 +122,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // Prepare paths and file names that we didn't get from UserConfig  
                 HathoraServerPaths serverPaths = new(_serverConfig);
 
+                // Prepare APIs
+                HathoraServerBuildApi buildApi = new(_serverConfig);
+                HathoraServerDeployApi deployApi = new(_serverConfig);
 
                 #region Dockerfile >> Compress to .tar.gz
                 // ----------------------------------------------
@@ -149,18 +155,49 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                 #region Request to build
                 // ----------------------------------------------
+                // Get all Deployments -> Get the most recent -> Use their env vars / additional ports
+                List<Deployment> oldDeployments = null;
+                try
+                {
+                    oldDeployments = await deployApi.GetDeploymentsAsync(_cancelToken);
+                }
+                catch (TaskCanceledException e)
+                {
+                    Debug.Log($"{logPrefix} GetDeploymentsAsync => Task Cancelled");
+                    throw;
+                }
+                catch (Exception e) { return null; }
+
+                // Get the most-recent deployments env vars + additional ports, if any
+                List<DeploymentEnvInner> envVars = null;
+                List<ContainerPort> additionalContainerPorts = null;
+                if (oldDeployments.Count > 0)
+                {
+                    // The order is unknown - sort by create date and get the latest one
+                    Deployment lastDeployment = oldDeployments.OrderByDescending(item => 
+                        item.CreatedAt).FirstOrDefault();
+
+                    // Get the latest deployments env vars + additional ports
+                    // to prevent the new deployment from overriding them.
+                    envVars = lastDeployment?.Env;
+                    additionalContainerPorts = lastDeployment?.AdditionalContainerPorts;
+                }
+                
+                // ----------------------------------------------
+                // Create a Hathora build (request a buildId)
                 DeploymentStep = DeploymentSteps.RequestingUploadPerm;
                 strb.AppendLine(GetDeployFriendlyStatus());
 
                 // Get a buildId from Hathora
-                HathoraServerBuildApi buildApi = new(_serverConfig);
-
                 Build buildInfo = null;
 
-                try { buildInfo = await getBuildInfoAsync(buildApi, _cancelToken); }
+                try
+                {
+                    buildInfo = await buildApi.CreateBuildAsync(_cancelToken);
+                }
                 catch (TaskCanceledException e)
                 {
-                    Debug.Log($"{logPrefix} getBuildInfoAsync => Task Cancelled");
+                    Debug.Log($"{logPrefix} CreateBuildAsync => Task Cancelled");
                     throw;
                 }
                 catch (Exception e) { return null; }
@@ -203,29 +240,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 }
 
                 // Logs from server
-                strb.AppendLine("<color=white>");
-                strb.AppendLine("<b>===== [Server response START] =====</b>");
-                buildWithLogs.logChunks.ForEach(
-                    log =>
-                    {
-                        // Make an error stand out
-                        bool hasErr = log.StartsWith("Error");
-                        if (hasErr)
-                            strb.Append($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>");
-                            
-                        // No matter what, add the log here
-                        strb.AppendLine(log);
-
-                        if (hasErr)
-                            strb.Append("</color>");
-                    });
-                strb.AppendLine("<b>===== [Server response END] =====</b>")
-                    .AppendLine("</color>");
-                
-                Assert.AreEqual(
-                    buildWithLogs.build?.Status,
-                    Build.StatusEnum.Succeeded,
-                    $"{logPrefix} buildWithLogs.build?.Status != Succeeded");
+                appendServerLogOutput(strb, buildWithLogs);
 
                 OnUploadComplete?.Invoke();
                 _cancelToken.ThrowIfCancellationRequested();
@@ -237,13 +252,15 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // Deploy the build
                 DeploymentStep = DeploymentSteps.Deploying;
                 strb.AppendLine(GetDeployFriendlyStatus());
-
-                HathoraServerDeployApi deployApi = new(_serverConfig);
-
+                
                 Deployment deployment = null;
                 try
                 {
-                    deployment = await deployBuildAsync(deployApi, buildInfo.BuildId);
+                    deployment = await deployApi.CreateDeploymentAsync(
+                        buildInfo.BuildId, 
+                        envVars,
+                        additionalContainerPorts,
+                        _cancelToken);
                 }
                 catch (TaskCanceledException e)
                 {
@@ -298,24 +315,34 @@ namespace Hathora.Core.Scripts.Editor.Server
             }
         }
 
-        private static async Task<Deployment> deployBuildAsync(
-            HathoraServerDeployApi _deployApi, 
-            double _buildInfoBuildId)
+        private static void appendServerLogOutput(
+            StringBuilder _strb,
+            (Build build, List<string> logChunks) _buildWithLogs)
         {
-            Debug.Log("[HathoraServerDeploy.deployBuildAsync] " +
-                $"Deploying the uploaded build (_buildId #{_buildInfoBuildId}) ...");
-            
-            Deployment createDeploymentResult = null;
-            try
-            {
-                createDeploymentResult = await _deployApi.CreateDeploymentAsync(_buildInfoBuildId);
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            _strb.AppendLine("<color=white>");
+            _strb.AppendLine("<b>===== [Server response START] =====</b>");
+            _buildWithLogs.logChunks.ForEach(
+                log =>
+                {
+                    // Make an error stand out
+                    bool hasErr = log.StartsWith("Error");
+                    if (hasErr)
+                        _strb.Append($"<color={HathoraEditorUtils.HATHORA_PINK_CANCEL_COLOR_HEX}>");
+                            
+                    // No matter what, add the log here
+                    _strb.AppendLine(log);
 
-            return createDeploymentResult;
+                    if (hasErr)
+                        _strb.Append("</color>");
+                });
+            _strb.AppendLine("<b>===== [Server response END] =====</b>")
+                .AppendLine("</color>");
+                
+            Assert.AreEqual(
+                _buildWithLogs.build?.Status,
+                Build.StatusEnum.Succeeded,
+                $"[{nameof(HathoraServerDeploy)}.{nameof(appendServerLogOutput)}] " +
+                    "buildWithLogs.build?.Status != Succeeded");
         }
 
         /// <summary>
@@ -370,31 +397,6 @@ namespace Hathora.Core.Scripts.Editor.Server
             }
             
             return (build, logChunks);
-        }
-
-        private static async Task<Build> getBuildInfoAsync(
-            HathoraServerBuildApi _buildApi,
-            CancellationToken _cancelToken = default)
-        {
-            Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] " +
-                "Getting build info (notably for _buildId)...");
-            
-            Build createBuildResult = null;
-            try
-            {
-                createBuildResult = await _buildApi.CreateBuildAsync(_cancelToken);
-            }
-            catch (TaskCanceledException e)
-            {
-                Debug.Log("[HathoraServerDeploy.getBuildInfoAsync] Task Cancelled");
-                throw;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-            return createBuildResult;
         }
     }
 }
