@@ -71,7 +71,6 @@ sysinfo.txt
 # Temporary auto-generated Android Assets
 /src/[Aa]ssets/[Ss]treamingAssets/aa.meta
 /src/[Aa]ssets/[Ss]treamingAssets/aa/*
-/src/.idea
 /src/Build*
 /Utils/logs/*
 /Utils/uploadToHathora/*
