@@ -41,7 +41,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             
             // TODO: Manually init w/out constructor, or add constructor support to model
             // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.lobbyApi = new LobbyV2SDK(base.HathoraSdkConfig);
+            this.lobbyApi = new LobbyV2SDK(config: base.HathoraSdkConfig);
         }
 
 
@@ -75,13 +75,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             // Debug.Log($"{logPrefix} <color=yellow>request: {request.ToJson()}</color>");
             Debug.Log($"{logPrefix} Start");
 
-            Lobby lobby;
+            CreateLobbyResponse createLobbyResponse = null;
 
             try
             {
                 // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
                 // TODO: Manually init w/out constructor, or add constructor support to model
-                lobby = await lobbyApi.CreateLobbyAsync(
+                createLobbyResponse = await lobbyApi.CreateLobbyAsync(
                     HathoraClientConfig.AppId,
                     _playerAuthToken, // Player token; not dev
                     request,
@@ -90,14 +90,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.Log($"{logPrefix}");
-            }
-            catch (ApiException apiException)
-            {
-                HandleApiException(
-                    nameof(HathoraClientLobbyApi),
-                    nameof(ClientCreateLobbyAsync), 
-                    apiException);
+                Debug.LogError($"{logPrefix} {nameof(lobbyApi.CreateLobbyAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
@@ -106,7 +99,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             //     $"<color=yellow>lobby: {lobby.ToJson()}</color>");
             Debug.Log($"{logPrefix} Success");
             
-            return lobby;
+            return createLobbyResponse.Lobby;
         }
 
         /// <summary>
@@ -123,83 +116,74 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         {
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
             Debug.Log($"{logPrefix} <color=yellow>roomId: {roomId}</color>");
+
+            GetLobbyInfoResponse lobbyInfoResponse = null;
             
-            GetLobbyInfoResponse lobby;
             try
             {
                 // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
                 // TODO: Manually init w/out constructor, or add constructor support to model
-                lobby = await lobbyApi.GetLobbyInfoAsync(
+                lobbyInfoResponse = await lobbyApi.GetLobbyInfoAsync(
                     HathoraClientConfig.AppId,
                     roomId,
                     _cancelToken);
             }
-            catch (Exception apiException)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraClientLobbyApi),
-                    nameof(ClientGetLobbyInfoAsync), 
-                    apiException);
-                
-                if (apiException.ErrorCode == 404)
-                {
-                    Debug.LogError($"{logPrefix} 404 - Tip: If a server made a Room without a lobby, " +
-                        "instead use the Room api (rather than Lobby api)");
-                }
-                
+                Debug.LogError($"{logPrefix} {nameof(lobbyApi.GetLobbyInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
             
-            if (!lobby.GetLobbyInfo404ApplicationJSONString // TODO
-
+            if (lobbyInfoResponse.StatusCode == 404)
+            {
+                Debug.LogError($"{logPrefix} 404: {lobbyInfoResponse.GetLobbyInfo404ApplicationJSONString} - " +
+                    "Tip: If a server made a Room without a lobby, instead use the Room api (rather than Lobby api)");
+            }
+            
             // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
             // Debug.Log($"{logPrefix} Success: <color=yellow>lobby: {lobby.ToJson()}</color>");      
             Debug.Log($"{logPrefix} Success");      
             
-            return lobby;
+            return lobbyInfoResponse.Lobby;
         }
 
         /// <summary>
         /// Gets a list of active+public lobbies.
         /// </summary>
-        /// <param name="_region">Leave null to return ALL Regions</param>
+        /// <param name="_request">Leave Region null to return ALL Regions</param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
         public async Task<List<Lobby>> ClientListPublicLobbiesAsync(
-            Region? _region = null, // null == ALL regions
+            ListActivePublicLobbiesRequest _request,
             CancellationToken _cancelToken = default)
         {
-            string logsPrefix = $"[HathoraClientLobbyApi.{nameof(ClientListPublicLobbiesAsync)}]";
-            string regionStr = _region == null ? "any" : _region.ToString();
+            string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientListPublicLobbiesAsync)}]";
+            string regionLogStr = _request.Region == null ? "Any" : _request.Region.ToString();
+            Debug.Log($"{logPrefix} <color=yellow>Getting public+active lobbies for " +
+                $"'{(regionLogStr)}' region</color>");
+
+            ListActivePublicLobbiesResponse activePublicLobbiesResponse = null;
             
-            Debug.Log($"{logsPrefix} <color=yellow>Getting public+active lobbies for '{regionStr}' region</color>");
-            
-            List<Lobby> lobbies;
             try
             {
                 // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
                 // TODO: Manually init w/out constructor, or add constructor support to model
-                lobbies = await lobbyApi.ListActivePublicLobbiesAsync(
-                    HathoraClientConfig.AppId,
-                    region: _region,
-                    _cancelToken);
+                activePublicLobbiesResponse = await lobbyApi.ListActivePublicLobbiesAsync(_request);
             }
-            catch (ApiException apiException)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraClientLobbyApi),
-                    nameof(ClientListPublicLobbiesAsync), 
-                    apiException);
-                
-                if (apiException.ErrorCode == 404)
-                    Debug.LogError($"{logsPrefix} 404: If a server made a Room without a lobby, " +
-                        "instead use the Room api (rather than Lobby api)");
-                
+                Debug.LogError($"{logPrefix} {nameof(lobbyApi.ListActivePublicLobbiesAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
-            Debug.Log($"{logsPrefix} => numLobbiesFound: {lobbies?.Count ?? 0}");
-            return lobbies;
+            if (activePublicLobbiesResponse.StatusCode == 404)
+            {
+                Debug.LogError($"{logPrefix} 404: If a server made a Room without a lobby, " +
+                    $"instead use the {nameof(HathoraClientRoomApi)} (not {nameof(HathoraClientLobbyApi)})");
+            }
+
+            Debug.Log($"{logPrefix} => numLobbiesFound: {activePublicLobbiesResponse.Lobbies?.Count ?? 0}");
+            return activePublicLobbiesResponse.Lobbies;
         }
         #endregion // Client Lobby Async Hathora SDK Calls
     }

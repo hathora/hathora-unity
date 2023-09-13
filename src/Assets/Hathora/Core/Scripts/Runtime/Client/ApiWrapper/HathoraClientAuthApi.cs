@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
@@ -57,13 +58,10 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     HathoraClientConfig.AppId, 
                     _cancelToken);
             }
-            catch (ApiException apiException)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraClientAuthApi),
-                    nameof(ClientAuthAsync), 
-                    apiException);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(authApi.LoginAnonymousAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             bool isAuthed = !string.IsNullOrEmpty(anonLoginResult?.Token); 

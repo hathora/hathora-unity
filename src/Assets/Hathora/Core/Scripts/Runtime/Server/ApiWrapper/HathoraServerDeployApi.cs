@@ -112,13 +112,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     deployConfig,
                     _cancelToken);
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraServerDeployApi),
-                    nameof(CreateDeploymentAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(lobbyApi.LoginAnonymousAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
@@ -144,13 +141,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 getDeploymentsResult = await deployApi.GetDeploymentsAsync(AppId, _cancelToken);
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraServerDeployApi),
-                    nameof(GetDeploymentsAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(deployApi.GetDeploymentsAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             Debug.Log($"{logPrefix} <color=yellow>num: '{getDeploymentsResult?.Count}'</color>");

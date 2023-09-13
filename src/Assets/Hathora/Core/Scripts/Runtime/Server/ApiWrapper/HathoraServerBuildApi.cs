@@ -57,13 +57,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     HathoraServerConfig.HathoraCoreOpts.AppId,
                     _cancelToken);
             }
-            catch (ApiException apiException)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraServerBuildApi),
-                    nameof(CreateBuildAsync), 
-                    apiException);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(buildApi.CreateBuildAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             // // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
@@ -88,12 +85,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _pathToTarGzBuildFile,
             CancellationToken _cancelToken = default)
         {
+            string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(RunCloudBuildAsync)}]";
             byte[] cloudRunBuildResultLogsStream = null;
 
             #region Timeout Workaround
             // Temporarily sets the Timeout to 15min (900k ms) to allow for large builds.
             // Since Timeout has no setter, we need to temporarily make a new api instance.
-            Configuration highTimeoutConfig = HathoraUtils.DeepCopy(base.HathoraSdkConfig);
+            SDKConfig highTimeoutConfig = HathoraUtils.DeepCopy(base.HathoraSdkConfig);
             highTimeoutConfig.Timeout = (int)TimeSpan.FromMinutes(15).TotalMilliseconds;
 
             BuildV1SDK highTimeoutBuildApi = new(highTimeoutConfig);
@@ -119,24 +117,19 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (TaskCanceledException)
             {
-                Debug.Log("[HathoraServerBuildApi.RunCloudBuildAsync] Task Cancelled || timed out");
+                Debug.Log($"{logPrefix} Task Cancelled || timed out");
             }
-            catch (ApiException apiException)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraServerBuildApi),
-                    nameof(RunCloudBuildAsync),
-                    apiException);
-
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(highTimeoutBuildApi.RunBuildAsync)} => Error: {e.Message}");
+                return null; // fail
             }
             finally
             {
                 uploading = false;
             }
 
-            Debug.Log($"[HathoraServerBuildApi.RunCloudBuildAsync] Done - " +
-                "to know if success, call buildApi.RunBuild");
+            Debug.Log($"{logPrefix} Done - to know if success, call buildApi.RunBuild");
 
             // (!) Unity, by default, truncates logs to 1k chars (including callstack).
             string encodedLogs = Encoding.UTF8.GetString(cloudRunBuildResultLogsStream);
@@ -206,13 +199,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     _buildId,
                     _cancelToken);
             }
-            catch (ApiException apiException)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraServerBuildApi),
-                    nameof(GetBuildInfoAsync), 
-                    apiException);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(buildApi.GetBuildInfoAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             // // TODO: `StatusEnum` to check for `Active` status no longer exists in the new SDK - how to check for status?

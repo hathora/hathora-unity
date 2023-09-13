@@ -37,6 +37,7 @@ namespace HathoraSdk
     {
         public string DeveloperToken { get; private set; }
         public string AppId { get; private set; }
+        public int Timeout { get; set; }
     }
 
     public class HathoraSDK: IHathoraSDK

@@ -1,5 +1,6 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using HathoraSdk;
@@ -64,14 +65,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.Log($"{logPrefix} Task cancelled");
                 return null;
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                // HTTP err from Hathora Cloud
-                HandleApiException(
-                    nameof(HathoraServerLobbyApi),
-                    nameof(GetLobbyInfoAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(lobbyApi.GetLobbyInfoAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?

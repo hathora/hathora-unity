@@ -184,14 +184,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.Log($"{logPrefix} Task cancelled");
                 return null;
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                // HTTP err from Hathora Cloud
-                HandleApiException(
-                    nameof(HathoraServerRoomApi),
-                    nameof(CreateRoomAwaitActiveAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(roomApi.CreateRoomAsync)} => Error: {e.Message}");
+                return null; // fail
             }
             
             // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
@@ -231,14 +227,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.Log($"{logPrefix} Task cancelled");
                 return null;
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                // HTTP err from Hathora Cloud
-                HandleApiException(
-                    nameof(HathoraServerRoomApi),
-                    nameof(GetRoomInfoAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(roomApi.GetRoomInfoAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
@@ -278,14 +270,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.Log($"{logPrefix} Task cancelled");
                 return null;
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                // HTTP err from Hathora Cloud
-                HandleApiException(
-                    nameof(HathoraServerRoomApi),
-                    nameof(GetRoomInfoAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(roomApi.GetActiveRoomsForProcessAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
@@ -328,14 +316,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.Log("[HathoraServerRoomApi.GetConnectionInfoAsync] Task cancelled");
                 return null;
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                // HTTP err from Hathora Cloud
-                HandleApiException(
-                    nameof(HathoraServerRoomApi),
-                    nameof(GetConnectionInfoAsync), 
-                    apiErr);
-                return null;
+                Debug.LogError($"{logPrefix} {nameof(roomApi.GetConnectionInfoAsync)} => Error: {e.Message}");
+                return null; // fail
             }
             
             // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.

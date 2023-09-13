@@ -1,9 +1,11 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using Debug = UnityEngine.Debug;
 
@@ -37,28 +39,31 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateAppAsync` to upload and app a cloud app to Hathora.
         /// </summary>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO: This may be implemented in the future</param>
         /// <returns>Returns App on success</returns>
         public async Task<List<ApplicationWithDeployment>> GetAppsAsync(
             CancellationToken _cancelToken = default)
         {
-            List<ApplicationWithDeployment> getAppsResult;   
+            string logPrefix = $"[{nameof(HathoraServerAppApi)}.{nameof(GetAppsAsync)}]";
+            
+            GetAppsResponse getAppsResponse = null;
+            
             try
-            {  
-                getAppsResult = await appApi.GetAppsAsync(_cancelToken);
-            }
-            catch (ApiException apiErr)
             {
-                HandleApiException(
-                    nameof(HathoraServerAppApi),
-                    nameof(GetAppsAsync), 
-                    apiErr);
-                return null; 
+                GetAppsSecurity security = TODO;
+                getAppsResponse = await appApi.GetAppsAsync(security);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{logPrefix} {nameof(appApi.GetAppsAsync)} => Error: {e.Message}");
+                return null; // fail
             }
 
-            Debug.Log($"[HathoraServerAppApi.GetAppsAsync] num: '{getAppsResult?.Count}'");
-
-            return getAppsResult;
+            // Get inner response to return -> Log/Validate
+            List<ApplicationWithDeployment> applicationWithDeployment = getAppsResponse.ApplicationWithDeployments;
+            Debug.Log($"[HathoraServerAppApi.GetAppsAsync] num: '{applicationWithDeployment?.Count ?? 0}'");
+            
+            return applicationWithDeployment;
         }
         #endregion // Server App Async Hathora SDK Calls
     }

@@ -2,6 +2,7 @@
 
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using HathoraSdk;
+using Newtonsoft.Json;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -15,6 +16,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     {
         public SDKConfig HathoraSdkConfig { get; set; }
         protected HathoraServerConfig HathoraServerConfig { get; private set; }
+
+        protected string ToJson<T>(T Obj, bool prettify = true)
+        {
+            Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
+            return JsonConvert.SerializeObject(Obj, formatting);
+        }
 
         // Shortcuts
         public string AppId

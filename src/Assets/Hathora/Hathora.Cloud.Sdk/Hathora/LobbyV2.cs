@@ -41,6 +41,13 @@ namespace HathoraSdk
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="defaultClient"></param>
+        /// <param name="securityClient"></param>
+        /// <param name="serverUrl"></param>
+        /// <param name="config"></param>
         public LobbyV2SDK(ISpeakeasyHttpClient defaultClient, ISpeakeasyHttpClient securityClient, string serverUrl, SDKConfig config)
         {
             _defaultClient = defaultClient;

@@ -1,8 +1,10 @@
 // Created by dylan@hathora.dev
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using Debug = UnityEngine.Debug;
 
@@ -54,35 +56,36 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             const string logPrefix = "[HathoraServerProcessApi.GetProcessInfoAsync]";
             Debug.Log($"{logPrefix} <color=yellow>processId: {_processId}</color>");
             
-            Process getProcessInfoResult = null;
+            GetProcessInfoResponse getProcessInfoResponse = null;
+            
             try
-            {  
-                getProcessInfoResult = await processesApi.GetProcessInfoAsync(
+            {
+                GetProcessInfoSecurity security;
+                GetProcessInfoRequest request;
+                
+                getProcessInfoResponse = await processesApi.GetProcessInfoAsync(
                     AppId,
                     _processId,
                     _cancelToken);
             }
-            catch (ApiException apiErr)
+            catch (Exception e)
             {
-                HandleApiException(
-                    nameof(HathoraServerProcessApi),
-                    nameof(GetProcessInfoAsync), 
-                    apiErr);
-                return null; 
+                Debug.LogError($"{logPrefix} LoginAnonymousAsync => Error: {e.Message}");
+                return null; // fail
             }
 
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"getProcessInfoResult: {getProcessInfoResult.ToJson()}</color>");
-            
-            
-            if (getProcessInfoResult.StoppingAt != null)
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(getProcessInfoResponse)}: " +
+                $"{ToJson(getProcessInfoResponse)}</color>");
+
+            Process process = getProcessInfoResponse.Process; 
+            if (process?.StoppingAt != null)
             {
                 Debug.LogError($"{logPrefix} Got Process info, but reported <color=orange>Stopped</color> " +
                     $"(returnNullOnStoppedProcess=={_returnNullOnStoppedProcess})");
                 return null;
             }
 
-            return getProcessInfoResult;
+            return process;
         }
         #endregion // Server Process Async Hathora SDK Calls
     }
