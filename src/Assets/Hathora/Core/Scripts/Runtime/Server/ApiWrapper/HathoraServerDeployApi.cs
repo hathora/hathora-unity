@@ -96,7 +96,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     deployOpts.SelectedPlanName, 
                     _additionalContainerPorts ?? new List<ContainerPort>(),
                     selectedTransportType,
-                    deployOpts.ContainerPort.PortNumber
+                    deployOpts.ContainerPort.Port
                 );
                 
                 // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?

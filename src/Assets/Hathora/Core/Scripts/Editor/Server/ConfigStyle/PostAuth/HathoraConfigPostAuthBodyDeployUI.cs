@@ -193,12 +193,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 _tooltip: "This is the port your server code is listening on, Hathora will bind to this.\n" +
                 "(NOTE: this will be different from the port players/clients connect to - see \"Create Room\")\n\n" +
                 "Default: 7777 (<1024 is generally reserved by system)",
-                _val: ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber,
+                _val: ServerConfig.HathoraDeployOpts.ContainerPort.Port,
                 _minVal: 1024,
                 _maxVal: 49151,
                 _alignPopup: GuiAlign.SmallRight);
 
-            bool isChanged = inputInt != ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber;
+            bool isChanged = inputInt != ServerConfig.HathoraDeployOpts.ContainerPort.Port;
             if (isChanged)
                 onContainerPortNumberNumChanged(inputInt);
             
@@ -313,7 +313,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (ServerConfig.HathoraDeployOpts.RoomsPerProcess < 1)
                 helpboxLabelStrb.Append("`Rooms per Process`,");
             
-            if (ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber < 1)
+            if (ServerConfig.HathoraDeployOpts.ContainerPort.Port < 1)
                 helpboxLabelStrb.Append("`Container Port Number` ");
             
             if (ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex < 1)
@@ -352,9 +352,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         
         private void onContainerPortNumberNumChanged(int _inputInt)
         {
-            ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber = _inputInt;
+            ServerConfig.HathoraDeployOpts.ContainerPort.Port = _inputInt;
             SaveConfigChange(
-                nameof(ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber), 
+                nameof(ServerConfig.HathoraDeployOpts.ContainerPort.Port), 
                 _inputInt.ToString());
         }
         
@@ -467,7 +467,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             !HathoraServerDeploy.IsDeploying &&
             ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX &&
             ServerConfig.HathoraDeployOpts.RoomsPerProcess > 0 &&
-            ServerConfig.HathoraDeployOpts.ContainerPortWrapper.PortNumber > 0 &&
+            ServerConfig.HathoraDeployOpts.ContainerPort.Port > 0 &&
             ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX;
 
         #endregion //Utils
