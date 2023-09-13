@@ -7,6 +7,7 @@ using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Client.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Shared;
+using HathoraSdk.Utils;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -34,12 +35,16 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             SDKConfig _hathoraSdkConfig = null)
         {
             Debug.Log($"[{nameof(HathoraClientAuthApi)}] Initializing API...");
-            
             base.Init(_hathoraClientConfig, _hathoraSdkConfig);
             
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.authApi = new AuthV1SDK(base.HathoraSdkConfig);
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            this.authApi = new AuthV1SDK(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                HathoraSdkConfig);
         }
 
 

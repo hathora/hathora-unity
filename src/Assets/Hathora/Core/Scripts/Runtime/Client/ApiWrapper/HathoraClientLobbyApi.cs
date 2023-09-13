@@ -8,6 +8,7 @@ using Hathora.Core.Scripts.Runtime.Client.Config;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
+using HathoraSdk.Utils;
 using UnityEngine;
 using CreateLobbyRequest = HathoraSdk.Models.Shared.CreateLobbyRequest;
 
@@ -27,8 +28,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     {
         private LobbyV2SDK lobbyApi;
 
-        /// <summary>
-        /// </summary>
+        /// <summary>Monobehaviour workaround for a constructor.</summary>
         /// <param name="_hathoraClientConfig"></param>
         /// <param name="_hathoraSdkConfig"></param>
         public override void Init(
@@ -36,12 +36,16 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             SDKConfig _hathoraSdkConfig = null)
         {
             Debug.Log($"[{nameof(HathoraClientLobbyApi)}] Initializing API...");
-            
             base.Init(_hathoraClientConfig, _hathoraSdkConfig);
             
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.lobbyApi = new LobbyV2SDK(config: base.HathoraSdkConfig);
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            this.lobbyApi = new LobbyV2SDK(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                HathoraSdkConfig);
         }
 
 

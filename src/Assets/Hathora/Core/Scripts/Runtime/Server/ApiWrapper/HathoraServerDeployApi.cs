@@ -9,6 +9,7 @@ using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Shared;
+using HathoraSdk.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -32,10 +33,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             : base(_hathoraServerConfig, _hathoraSdkConfig)
         {
             Debug.Log("[HathoraServerDeployApi] Initializing API...");
-            
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.deployApi = new DeploymentV1SDK(base.HathoraSdkConfig);
+
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            this.deployApi = new DeploymentV1SDK(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                HathoraSdkConfig);
         }
         
         

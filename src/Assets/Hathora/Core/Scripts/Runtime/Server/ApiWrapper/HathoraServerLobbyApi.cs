@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HathoraSdk;
 using HathoraSdk.Models.Shared;
+using HathoraSdk.Utils;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -27,9 +28,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             Debug.Log("[HathoraServerLobbyApi] Initializing API...");
             
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.lobbyApi = new LobbyV2SDK(base.HathoraSdkConfig);
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            this.lobbyApi = new LobbyV2SDK(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                HathoraSdkConfig);
         }
         
         

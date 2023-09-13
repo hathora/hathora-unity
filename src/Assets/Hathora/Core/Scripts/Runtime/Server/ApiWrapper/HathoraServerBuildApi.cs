@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraSdk;
 using HathoraSdk.Models.Shared;
+using HathoraSdk.Utils;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -32,9 +33,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             Debug.Log("[HathoraServerBuildApi] Initializing API...");
             
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.buildApi = new BuildV1SDK(base.HathoraSdkConfig);
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            this.buildApi = new BuildV1SDK(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                HathoraSdkConfig);
         }
         
         
@@ -89,12 +95,20 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             byte[] cloudRunBuildResultLogsStream = null;
 
             #region Timeout Workaround
+            // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: Verify that Timeout is used!
             // Temporarily sets the Timeout to 15min (900k ms) to allow for large builds.
             // Since Timeout has no setter, we need to temporarily make a new api instance.
             SDKConfig highTimeoutConfig = HathoraUtils.DeepCopy(base.HathoraSdkConfig);
             highTimeoutConfig.Timeout = (int)TimeSpan.FromMinutes(15).TotalMilliseconds;
-
-            BuildV1SDK highTimeoutBuildApi = new(highTimeoutConfig);
+            
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            BuildV1SDK highTimeoutBuildApi = new(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                highTimeoutConfig);
             #endregion // Timeout Workaround
          
             uploading = true;
