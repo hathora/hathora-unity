@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
@@ -332,11 +333,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
             // ----------------
             // Get all active Rooms by ProcessId =>
-            List<PickRoomExcludeKeyofRoomAllocations> activeRooms =
+            List<GetActiveRoomsForProcessResponse> activeRooms =
                 await ServerApis.ServerRoomApi.GetActiveRoomsForProcessAsync(procId, _cancelToken);
 
             // Get 1st Room -> validate
-            PickRoomExcludeKeyofRoomAllocations firstActiveRoom = activeRooms?.FirstOrDefault();
+            GetActiveRoomsForProcessResponse firstActiveRoom = activeRooms?.FirstOrDefault();
             
             if (_cancelToken.IsCancellationRequested)
             {

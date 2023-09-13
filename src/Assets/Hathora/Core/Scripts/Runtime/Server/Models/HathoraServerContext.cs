@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public string EnvVarProcessId { get; private set; }
         public Process ProcessInfo { get; set; }
         public Lobby Lobby { get; set; }
-        public List<PickRoomExcludeKeyofRoomAllocations> ActiveRoomsForProcess { get; set; }
+        public List<GetActiveRoomsForProcessResponse> ActiveRoomsForProcess { get; set; }
         #endregion // Vars
         
 
@@ -79,7 +80,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             return ipPort;
         }
         
-        public PickRoomExcludeKeyofRoomAllocations FirstActiveRoomForProcess => 
+        public GetActiveRoomsForProcessResponse FirstActiveRoomForProcess => 
             ActiveRoomsForProcess?.FirstOrDefault();
 
         /// <summary>Checks for (Process, Room and Lobby) != null.</summary>
@@ -137,7 +138,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public HathoraServerContext(
             string _envVarProcessId,
             Process _processInfo,
-            List<PickRoomExcludeKeyofRoomAllocations> _activeRoomsForProcess,
+            List<GetActiveRoomsForProcessResponse> _activeRoomsForProcess,
             Lobby _lobby)
         {
             this.EnvVarProcessId = _envVarProcessId;

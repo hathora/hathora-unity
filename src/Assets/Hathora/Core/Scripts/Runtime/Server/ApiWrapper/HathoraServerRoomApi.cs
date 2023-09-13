@@ -6,9 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
+using CreateRoomRequest = HathoraSdk.Models.Shared.CreateRoomRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
@@ -256,12 +258,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<List<PickRoomExcludeKeyofRoomAllocations>> GetActiveRoomsForProcessAsync(
+        public async Task<List<GetActiveRoomsForProcessResponse>> GetActiveRoomsForProcessAsync(
             string _processId, 
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[HathoraServerRoomApi].{nameof(GetActiveRoomsForProcessAsync)}]";
-            List<PickRoomExcludeKeyofRoomAllocations> getActiveRoomsResultList = null;
+            List<GetActiveRoomsForProcessResponse> getActiveRoomsResultList = null;
 
             try
             {
