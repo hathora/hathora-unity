@@ -70,14 +70,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         {
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
             
-            CreateLobbyRequest request = new(
+            CreateLobbyRequest createLobbyRequest = new(
                 lobbyVisibility, 
                 _initConfigJsonStr, 
                 _region);
 
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} <color=yellow>request: {request.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Start");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(createLobbyRequest)}: " +
+                $"{ToJson(createLobbyRequest)}</color>");
 
             CreateLobbyResponse createLobbyResponse = null;
 
@@ -88,7 +87,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 createLobbyResponse = await lobbyApi.CreateLobbyAsync(
                     HathoraClientConfig.AppId,
                     _playerAuthToken, // Player token; not dev
-                    request,
+                    createLobbyRequest,
                     roomId,
                     _cancelToken);
             }
@@ -98,10 +97,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            //// TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
-            //     $"<color=yellow>lobby: {lobby.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
+            Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
+                $"<color=yellow>{nameof(createLobbyResponse)}: {ToJson(createLobbyResponse)}</color>");
             
             return createLobbyResponse.Lobby;
         }
@@ -144,9 +141,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     "Tip: If a server made a Room without a lobby, instead use the Room api (rather than Lobby api)");
             }
             
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success: <color=yellow>lobby: {lobby.ToJson()}</color>");      
-            Debug.Log($"{logPrefix} Success");      
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(lobbyInfoResponse)}: {ToJson(lobbyInfoResponse)}</color>");      
             
             return lobbyInfoResponse.Lobby;
         }

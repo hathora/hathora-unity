@@ -69,10 +69,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            // // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success: " +
-            //     $"<color=yellow>createCloudBuildResult: {createCloudBuildResult.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(createCloudBuildResult)}: {ToJson(createCloudBuildResult)}</color>");
 
             return createCloudBuildResult;
         }
@@ -223,11 +221,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
             bool isSuccess = true;
             
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success? {isSuccess}, " +
-            //     $"<color=yellow>createCloudBuildResult: {getBuildInfoResult.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
-            
+            Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
+                $"{nameof(getBuildInfoResult)}: {ToJson(getBuildInfoResult)}</color>");
 
             return getBuildInfoResult;
         }

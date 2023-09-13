@@ -74,13 +74,10 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             
 #if UNITY_EDITOR
             // For security, we probably only want to log this in the editor
-            
-            //// TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} isAuthed: {isAuthed}, " +
-            //     $"<color=yellow>anonLoginResult: {anonLoginResult?.ToJson()}</color>");
-            Debug.Log($"{logPrefix} isAuthed: {isAuthed}");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(isAuthed)}: {isAuthed}, " +
+                $"{nameof(anonLoginResult)}: {ToJson(anonLoginResult)}</color>");
 #else
-            Debug.Log($"{logPrefix} isAuthed: {isAuthed}");
+            Debug.Log($"{logPrefix} {nameof(isAuthed)}: {isAuthed}");
 #endif
             
             

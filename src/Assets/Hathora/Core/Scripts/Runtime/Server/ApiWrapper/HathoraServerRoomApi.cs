@@ -129,10 +129,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // ----------
             // Success
             
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success: " +
-            //     $"<color=yellow>activeConnectionInfo: {activeConnectionInfo.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(activeConnectionInfo)}: {ToJson(activeConnectionInfo)}</color>");
 
             return (activeRoom, activeConnectionInfo);
         }
@@ -156,9 +154,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 createRoomReq = new CreateRoomRequest(roomOpts.SelectedHathoraRegion);
                 
-                // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-                // Debug.Log($"{logPrefix} <color=yellow>roomConfig: {createRoomReq.ToJson()}</color>");
-                Debug.Log($"{logPrefix} Success");
+                Debug.Log($"{logPrefix} <color=yellow>" +
+                    $"{nameof(createRoomReq)}: {ToJson(createRoomReq)}</color>");
             }
             catch (Exception e)
             {
@@ -190,10 +187,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
             
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success: <color=yellow>" +
-            //     $"createRoomResultWithNullPort: {createRoomResultWithNullPort.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(createRoomResultWithNullPort)}: " +
+                $"{ToJson(createRoomResultWithNullPort)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             return createRoomResultWithNullPort.RoomId;
@@ -233,9 +228,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success: <color=yellow>getRoomInfoResult: {getRoomInfoResult.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(getRoomInfoResult)}: {ToJson(getRoomInfoResult)}</color>");
 
             return getRoomInfoResult;
         }
@@ -282,7 +276,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             if (getActiveRoomsResultList.Count > 0)
             {
                 Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                    $"getActiveRoomsResultList[0]: {getActiveRoomsResultList[0].ToJson()}</color>");
+                    $"{nameof(getActiveRoomsResultList)}[0]: {base.ToJson(getActiveRoomsResultList[0])}</color>");
             }
 
             return getActiveRoomsResultList;
@@ -327,9 +321,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // getConnectionInfoResult.Status == ConnectionInfoV2.StatusEnum.Active && 
                 getConnectionInfoResult.ExposedPort != null;
 
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success: <color=yellow>getConnectionInfoResult: {getConnectionInfoResult.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success: isActiveWithExposedPort? {isActiveWithExposedPort}");
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(getConnectionInfoResult)}: {ToJson(getConnectionInfoResult)}</color>");
 
             return getConnectionInfoResult;
         }

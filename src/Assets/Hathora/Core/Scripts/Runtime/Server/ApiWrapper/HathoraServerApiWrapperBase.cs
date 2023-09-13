@@ -17,12 +17,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         public SDKConfig HathoraSdkConfig { get; set; }
         protected HathoraServerConfig HathoraServerConfig { get; private set; }
 
-        protected string ToJson<T>(T Obj, bool prettify = true)
-        {
-            Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
-            return JsonConvert.SerializeObject(Obj, formatting);
-        }
-
         // Shortcuts
         public string AppId
         {
@@ -75,26 +69,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             // TODO: The new `SDKConfig` is empty, but previously passed AccessToken; how does the new SDK handle this if we don't pass the token?
             // AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-        };        
+        };
         #endregion // Init
-        
 
-        // /// <summary>
-        // /// (!) `ApiException` Missing in v2 Hathora SDK
-        // /// </summary>
-        // /// <param name="_className"></param>
-        // /// <param name="_funcName"></param>
-        // /// <param name="_apiException"></param>
-        // /// <exception cref="ApiException"></exception>
-        // public void HandleApiException(
-        //     string _className, 
-        //     string _funcName,
-        //     ApiException _apiException)
-        // {
-        //     UnityEngine.Debug.LogError($"[{_className}.{_funcName}] API Error: " +
-        //         $"{_apiException.ErrorCode} {_apiException.ErrorContent} | {_apiException.Message}");
-        //
-        //     throw _apiException;
-        // }
+        
+        #region Utils
+        public string ToJson<T>(T Obj, bool prettify = true)
+        {
+            Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
+            return JsonConvert.SerializeObject(Obj, formatting);
+        }
+        #endregion // Utils
     }
 }

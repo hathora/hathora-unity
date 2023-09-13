@@ -74,8 +74,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(getProcessInfoResponse)}: " +
-                $"{ToJson(getProcessInfoResponse)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(getProcessInfoResponse)}: {ToJson(getProcessInfoResponse)}</color>");
 
             Process process = getProcessInfoResponse.Process; 
             if (process?.StoppingAt != null)

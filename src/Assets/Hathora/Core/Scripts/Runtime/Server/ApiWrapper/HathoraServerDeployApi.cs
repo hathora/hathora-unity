@@ -99,9 +99,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     deployOpts.ContainerPort.Port
                 );
                 
-                // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-                // Debug.Log($"{logPrefix} <color=yellow>deployConfig: {deployConfig.ToJson()}</color>");
-                Debug.Log($"{logPrefix} Success");
+                Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
             }
             catch (Exception e)
             {
@@ -120,14 +118,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(lobbyApi.LoginAnonymousAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(deployApi.CreateDeploymentAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} <color=yellow>createDeploymentResult: " +
-            //     $"{createDeploymentResult.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success");
+            Debug.Log($"{logPrefix} <color=yellow>" +
+                $"{nameof(createDeploymentResult)}: {ToJson(createDeploymentResult)}</color>");
 
             return createDeploymentResult;
         }

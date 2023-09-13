@@ -3,6 +3,7 @@
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using HathoraSdk;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -45,5 +46,15 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         
         public SDKConfig GenerateSdkConfig() => new();
         #endregion // Init
+        
+        
+        #region Utils
+        public string ToJson<T>(T Obj, bool prettify = true)
+        {
+            Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
+            return JsonConvert.SerializeObject(Obj, formatting);
+        }
+        #endregion // Utils
+        
     }
 }

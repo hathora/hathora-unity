@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using HathoraSdk;
+using Newtonsoft.Json;
 
 namespace Hathora.Core.Scripts.Runtime.Common.Models
 {
@@ -14,5 +15,14 @@ namespace Hathora.Core.Scripts.Runtime.Common.Models
         
         /// <summary>Creates a default SDK Config</summary>
         SDKConfig GenerateSdkConfig();
+
+        /// <summary>
+        /// Serialize the object to a readable [optionally prettified/indented] format.
+        /// </summary>
+        /// <param name="Obj"></param>
+        /// <param name="prettify">Add indention formatting for clarity?</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public string ToJson<T>(T Obj, bool prettify = true);
     }
 }

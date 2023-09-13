@@ -112,10 +112,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
             // Success
             
-            // TODO: `ToJson()` no longer exists in request/response models, but should soon make a return?
-            // Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
-            //     $"connectionInfoResponse: {connectionInfoResponse.ToJson()}</color>");
-            Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling)");
+            Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
+                $"{nameof(connectionInfoResponse)}: {ToJson(connectionInfoResponse)}</color>");
 
             return connectionInfoResponse;
         }
