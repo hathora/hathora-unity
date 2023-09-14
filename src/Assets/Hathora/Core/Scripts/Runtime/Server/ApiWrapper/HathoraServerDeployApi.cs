@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
 using Newtonsoft.Json;
@@ -64,62 +65,58 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// Optional - For example, you may want to expose 2 ports to support both UDP and
         /// TLS transports simultaneously (eg: FishNet's `Multipass` transport)
         /// </param>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns Deployment on success</returns>
         public async Task<Deployment> CreateDeploymentAsync(
-            double _buildId,
+            int _buildId,
             List<DeploymentEnv> _env = null,
             List<ContainerPort> _additionalContainerPorts = null,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerDeployApi)}.{nameof(CreateDeploymentAsync)}]";
             
-            // (!) Throws on constructor Exception - fallback to new objects on null
-            DeploymentConfig deployConfig = null;
-            try
-            {
-                // Hathora SDK's TransportType enum's index starts at 1: But so does deployOpts to match
-                TransportType selectedTransportType = deployOpts.SelectedTransportType;
-                
-                #region DeploymentEnvConfigInner Workaround
-                // #######################################################################################
-                // (!) Hathora SDK's DeploymentConfigEnvInner is Obsolete for DeploymentEnvInner
-                // (!) These two are identical in properties: For now, we'll re-serialize
-                List<DeploymentConfigEnv> envWorkaround = null;
-                if (_env?.Count > 0)
+            // Prepare request
+            TransportType selectedTransportType = deployOpts.SelectedTransportType;
+            
+            #region DeploymentEnvConfigInner Workaround
+            // #######################################################################################
+            // (!) Hathora SDK's DeploymentEnv is identical to DeploymentConfigEnv >> Port it over
+            List<DeploymentConfigEnv> envWorkaround = _env?.Select(envVar => 
+                new DeploymentConfigEnv
                 {
-                    string envWorkaroundJson = JsonConvert.SerializeObject(_env);
-                    envWorkaround = JsonConvert.DeserializeObject<List<DeploymentConfigEnv>>(envWorkaroundJson);    
-                }
-                // #######################################################################################
-                #endregion DeploymentEnvConfigInner Workaround
-                
-                deployConfig = new DeploymentConfig(
-                    envWorkaround ?? new List<DeploymentConfigEnv>(),  // DEPRECATED: To be replaced by below line
-                    // _env ?? new List<DeploymentEnvInner>(),              // TODO: To replace the above line
-                    deployOpts.RoomsPerProcess, 
-                    deployOpts.SelectedPlanName, 
-                    _additionalContainerPorts ?? new List<ContainerPort>(),
-                    selectedTransportType,
-                    deployOpts.ContainerPort.Port
-                );
-                
-                Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
-            }
-            catch (Exception e)
+                    Name = envVar.Name, 
+                    Value = envVar.Value,
+                }).ToList();
+            // #######################################################################################
+            #endregion DeploymentEnvConfigInner Workaround
+            
+            DeploymentConfig deployConfig = new()
             {
-                Debug.LogError($"{logPrefix} Error: {e}");
-                throw;
-            }
+                Env = envWorkaround ?? new List<DeploymentConfigEnv>(),
+                RoomsPerProcess = deployOpts.RoomsPerProcess, 
+                PlanName = deployOpts.SelectedPlanName, 
+                AdditionalContainerPorts = _additionalContainerPorts ?? new List<ContainerPort>(),
+                TransportType = selectedTransportType,
+                ContainerPort = deployOpts.ContainerPort.Port,
+            };
 
-            Deployment createDeploymentResult = null;
+            CreateDeploymentRequest createDeploymentRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                DeploymentConfig = deployConfig,
+                BuildId = _buildId,
+            };
+            
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
+
+            // Get response async =>
+            CreateDeploymentResponse createDeploymentResponse = null;
+            
             try
             {
-                createDeploymentResult = await deployApi.CreateDeploymentAsync(
-                    AppId,
-                    _buildId,
-                    deployConfig,
-                    _cancelToken);
+                createDeploymentResponse = await deployApi.CreateDeploymentAsync(
+                    new CreateDeploymentSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    createDeploymentRequest);
             }
             catch (Exception e)
             {
@@ -128,26 +125,35 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createDeploymentResult)}: {ToJson(createDeploymentResult)}</color>");
+                $"{nameof(createDeploymentResponse)}: {ToJson(createDeploymentResponse)}</color>");
 
-            return createDeploymentResult;
+            return createDeploymentResponse.Deployment;
         }
 
         /// <summary>
         /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns Deployment on success</returns>
         public async Task<List<Deployment>> GetDeploymentsAsync(
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerDeployApi)}.{nameof(CreateDeploymentAsync)}]";
 
-            List<Deployment> getDeploymentsResult = null;
+            // Prepare request
+            GetDeploymentsRequest getDeploymentsRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+            };
+
+            // Get response async =>
+            GetDeploymentsResponse getDeploymentsResponse = null;
             
             try
             {
-                getDeploymentsResult = await deployApi.GetDeploymentsAsync(AppId, _cancelToken);
+                getDeploymentsResponse = await deployApi.GetDeploymentsAsync(
+                    new GetDeploymentsSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    getDeploymentsRequest);
             }
             catch (Exception e)
             {
@@ -155,29 +161,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} <color=yellow>num: '{getDeploymentsResult?.Count}'</color>");
-            return getDeploymentsResult;
+            // Process response
+            List<Deployment> deployments = getDeploymentsResponse.Deployments;
+            Debug.Log($"{logPrefix} <color=yellow>num: '{deployments?.Count}'</color>");
+            
+            return deployments;
         }
         #endregion // Server Deploy Async Hathora SDK Calls
-
-
-        // /// TODO
-        // /// <summary>
-        // /// Convert List of HathoraEnvVars to List of DeploymentConfigEnvInner.
-        // /// </summary>
-        // /// <returns>
-        // /// Returns empty list (NOT null) on empty, since Env is required for DeploymentConfig.
-        // /// </returns>
-        // private List<DeploymentConfigEnvInner> parseEnvFromConfig()
-        // {
-        //     // Validate
-        //     List<HathoraEnvVars> envVars = HathoraServerConfig.HathoraDeployOpts.EnvVars;
-        //     if (envVars == null || envVars.Count == 0) 
-        //         return new List<DeploymentConfigEnvInner>();
-        //     
-        //     // Parse
-        //     return HathoraServerConfig.HathoraDeployOpts.EnvVars.Select(_env => 
-        //         new DeploymentConfigEnvInner(_env.Key, _env.StrVal)).ToList();
-        // }
     }
 }
