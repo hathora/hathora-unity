@@ -13,10 +13,15 @@ using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
 using UnityEngine;
-using CreateBuildRequest = HathoraSdk.Models.Shared.CreateBuildRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
+    /// <summary>
+    /// Handles Build API calls to Hathora Server.
+    /// - Passes API key from HathoraServerConfig to SDK
+    /// - Passes Auth0 (Dev Token) from hathoraServerConfig to SDK
+    /// - API Docs | https://hathora.dev/api#tag/BuildV1
+    /// </summary>
     public class HathoraServerBuildApi : HathoraServerApiWrapperBase
     {
         private readonly BuildV1SDK buildApi;
@@ -51,25 +56,37 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateBuildAsync` to request an cloud build (_tarball upload).
         /// </summary>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_buildTag">
+        /// Build tag to associate a version with a build. It is accessible via getBuildInfo().
+        /// </param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns Build on success >> Pass this info to RunCloudBuildAsync()</returns>
-        public async Task<Build> CreateBuildAsync(CancellationToken _cancelToken = default)
+        public async Task<Build> CreateBuildAsync(
+            string _buildTag = null,
+            CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(CreateBuildAsync)}]";
-
-            HathoraSdk.Models.Operations.CreateBuildRequest createBuildRequest = new()
+            
+            // Prep request
+            HathoraSdk.Models.Shared.CreateBuildRequest createBuildRequest = new()
+            {
+                BuildTag = _buildTag,
+            };
+            
+            HathoraSdk.Models.Operations.CreateBuildRequest createBuildRequestWrapper = new()
             {
                 AppId = base.AppId,
-                CreateBuildRequestValue = 
+                CreateBuildRequestValue = createBuildRequest,
             };
-
+            
+            // Get response async =>
             CreateBuildResponse createCloudBuildResponse = null;
             
             try
             {
                 createCloudBuildResponse = await buildApi.CreateBuildAsync(
-                    new CreateBuildSecurity { Auth0 = base.ServerAuth0 },
-                    createBuildRequest);
+                    new CreateBuildSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    createBuildRequestWrapper);
             }
             catch (Exception e)
             {
@@ -80,7 +97,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
                 $"{nameof(createCloudBuildResponse)}: {ToJson(createCloudBuildResponse)}</color>");
 
-            return createCloudBuildResponse;
+            return createCloudBuildResponse.Build;
         }
 
         /// <summary>
@@ -90,15 +107,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </summary>
         /// <param name="_buildId"></param>
         /// <param name="_pathToTarGzBuildFile">Ensure path is normalized</param>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns streamLogs (List of chunks) on success</returns>
         public async Task<List<string>> RunCloudBuildAsync(
-            double _buildId, 
+            int _buildId, 
             string _pathToTarGzBuildFile,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(RunCloudBuildAsync)}]";
-            byte[] cloudRunBuildResultLogsStream = null;
 
             #region Timeout Workaround
             // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: Verify that Timeout is used!
@@ -117,23 +133,43 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 highTimeoutConfig);
             #endregion // Timeout Workaround
          
+            // Prep upload request
+            RunBuildRequestBodyFile requestFile = new()
+            {
+                File = _pathToTarGzBuildFile,
+                Content = await File.ReadAllBytesAsync(_pathToTarGzBuildFile, _cancelToken),
+            };
+            
+            RunBuildRequestBody runBuildRequest = new()
+            {
+                File = requestFile,
+            };
+            
+            RunBuildRequest runBuildRequestWrapper = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                BuildId = _buildId,
+                RequestBody = runBuildRequest,
+            };
+                
+            // Get response async =>
+            RunBuildResponse runBuildResponse = null;
             uploading = true;
 
             try
             {
                 _ = startProgressNoticeAsync(); // !await
 
-                await using FileStream fileStream = new(
-                    _pathToTarGzBuildFile,
-                    FileMode.Open,
-                    FileAccess.Read);
+                // TODO: No more need for file stream in the new SDK?
+                // await using FileStream fileStream = new(
+                //     _pathToTarGzBuildFile,
+                //     FileMode.Open,
+                //     FileAccess.Read);
 
                 // (!) Using the `highTimeoutBuildApi` workaround instance here
-                cloudRunBuildResultLogsStream = await highTimeoutBuildApi.RunBuildAsync(
-                    HathoraServerConfig.HathoraCoreOpts.AppId,
-                    _buildId,
-                    fileStream,
-                    _cancelToken);
+                runBuildResponse = await highTimeoutBuildApi.RunBuildAsync(
+                    new RunBuildSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    runBuildRequestWrapper);;
             }
             catch (TaskCanceledException)
             {
@@ -151,11 +187,30 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             Debug.Log($"{logPrefix} Done - to know if success, call buildApi.RunBuild");
 
-            // (!) Unity, by default, truncates logs to 1k chars (including callstack).
-            string encodedLogs = Encoding.UTF8.GetString(cloudRunBuildResultLogsStream);
+            // (!) Unity, by default, truncates logs to 1k chars (callstack-inclusive).
+            string encodedLogs = await readStreamToStringAsync(runBuildResponse?.RunBuild200TextPlainBinaryString);
             List<string> logChunks = onRunCloudBuildDone(encodedLogs);
             
             return logChunks;  // streamLogs 
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_memoryQueueBufferStream">From runBuildResponse.RunBuild200TextPlainBinaryString</param>
+        /// <returns></returns>
+        private static async Task<string> readStreamToStringAsync(MemoryQueueBufferStream _memoryQueueBufferStream)
+        {
+            if (_memoryQueueBufferStream == null)
+                return string.Empty;
+
+            await using (_memoryQueueBufferStream)
+            {
+                byte[] buffer = new byte[_memoryQueueBufferStream.Length];
+                await _memoryQueueBufferStream.ReadAsync(buffer.AsMemory(start:0, buffer.Length));
+                
+                return Encoding.UTF8.GetString(buffer);
+            }
         }
 
         private async Task startProgressNoticeAsync()
@@ -202,7 +257,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// Wrapper for `RunBuildAsync` to upload the _tarball after calling 
         /// </summary>
         /// <param name="_buildId"></param>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns byte[] on success</returns>
         public async Task<Build> GetBuildInfoAsync(
             double _buildId,
