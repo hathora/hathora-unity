@@ -88,7 +88,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // #######################################################################################
                 #endregion DeploymentEnvConfigInner Workaround
                 
-                // TODO: Manually init w/out constructor, or add constructor support to model
                 deployConfig = new DeploymentConfig(
                     envWorkaround ?? new List<DeploymentConfigEnv>(),  // DEPRECATED: To be replaced by below line
                     // _env ?? new List<DeploymentEnvInner>(),              // TODO: To replace the above line
@@ -137,8 +136,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerDeployApi)}.{nameof(CreateDeploymentAsync)}]";
+
+            List<Deployment> getDeploymentsResult = null;
             
-            List<Deployment> getDeploymentsResult;
             try
             {
                 getDeploymentsResult = await deployApi.GetDeploymentsAsync(AppId, _cancelToken);

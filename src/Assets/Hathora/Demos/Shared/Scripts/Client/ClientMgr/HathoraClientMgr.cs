@@ -150,14 +150,14 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// </summary>
         /// <param name="_region"></param>
         /// <param name="_visibility"></param>
-        /// <param name="_initConfigJsonStr"></param>
+        /// <param name="_initConfigObj"></param>
         /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
         public async Task<Lobby> CreateLobbyAsync(
             Region _region,
             LobbyVisibility _visibility = LobbyVisibility.Public,
-            string _initConfigJsonStr = "{}",
-            string _roomId = null,
+            string _roomId,
+            object _initConfigObj,
             CancellationToken _cancelToken = default)
         {
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
@@ -167,7 +167,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 hathoraClientSession.PlayerAuthToken,
                 _visibility,
                 _region,
-                _initConfigJsonStr,
+                _initConfigObj,
                 _roomId,
                 _cancelToken);
             

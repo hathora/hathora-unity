@@ -10,7 +10,6 @@ using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
 using UnityEngine;
-using CreateLobbyRequest = HathoraSdk.Models.Shared.CreateLobbyRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 {
@@ -55,29 +54,38 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// </summary>
         /// <param name="_playerAuthToken">Player Auth Token (likely from a cached session)</param>
         /// <param name="_lobbyVisibility"></param>
-        /// <param name="_initConfigJsonStr"></param>
-        /// <param name="roomId">Null will auto-generate</param>
+        /// <param name="_initConfigObj">
+        /// Pass your own serializable model (or json string):
+        /// - These are the initial values included in the Lobby.
+        /// - Eg: `MaxNumPlayers`
+        /// - Required, since a 'Lobby' without an InitConfig is just a 'Room'. 
+        /// </param>
+        /// <param name="_roomId">Null will auto-generate</param>
         /// <param name="_cancelToken"></param>
         /// <param name="_region">(!) Index starts at 1 (not 0)</param>
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
             string _playerAuthToken,
             LobbyVisibility _lobbyVisibility,
+            object _initConfigObj,
             Region _region = Region.WashingtonDC,
-            string _initConfigJsonStr = "{}",
-            string roomId = null,
+            string _roomId = null,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
-            
-            // TODO: The old SDK `InitialConfig` was just a string; now it's an empty class - how to apply the json string?
-            LobbyInitialConfig initConfigWrapper = new(_initConfigJsonStr);
-            
-            CreateLobbyRequest createLobbyRequest = new()
+
+            HathoraSdk.Models.Shared.CreateLobbyRequest createLobbyRequest = new()
             {
                 Region = _region,
                 Visibility = _lobbyVisibility,
-                InitialConfig = initConfigWrapper,
+                InitialConfig = _initConfigObj, // TODO: SDK `InitialConfig` should take a serializable <object>
+            };
+            
+            HathoraSdk.Models.Operations.CreateLobbyRequest createLobbyRequestWrapper = new()
+            {
+                CreateLobbyRequestValue = createLobbyRequest,
+                // AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                RoomId = _roomId,
             };
 
             Debug.Log($"{logPrefix} <color=yellow>{nameof(createLobbyRequest)}: " +
@@ -87,14 +95,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
             try
             {
-                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
-                // TODO: Manually init w/out constructor, or add constructor support to model
-                createLobbyResponse = await lobbyApi.CreateLobbyAsync(
-                    HathoraClientConfig.AppId,
-                    _playerAuthToken, // Player token; not dev
-                    createLobbyRequest,
-                    roomId,
-                    _cancelToken);
+                createLobbyResponse = await lobbyApi.CreateLobbyAsync(createLobbyRequestWrapper);
             }
             catch (Exception e)
             {
@@ -109,7 +110,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         }
 
         /// <summary>
-        /// Gets Lobby info, if we already know the roomId.
+        /// Gets Lobby info, if we already know the _roomId.
         /// (!) Creating a room will also return Lobby info; you probably want to
         ///     do this if interested in *joining*.
         /// </summary>
@@ -121,14 +122,12 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
-            Debug.Log($"{logPrefix} <color=yellow>roomId: {roomId}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>_roomId: {roomId}</color>");
 
             GetLobbyInfoResponse lobbyInfoResponse = null;
             
             try
             {
-                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
-                // TODO: Manually init w/out constructor, or add constructor support to model
                 lobbyInfoResponse = await lobbyApi.GetLobbyInfoAsync(
                     HathoraClientConfig.AppId,
                     roomId,
@@ -171,8 +170,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             
             try
             {
-                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
-                // TODO: Manually init w/out constructor, or add constructor support to model
                 activePublicLobbiesResponse = await lobbyApi.ListActivePublicLobbiesAsync(_request);
             }
             catch (Exception e)

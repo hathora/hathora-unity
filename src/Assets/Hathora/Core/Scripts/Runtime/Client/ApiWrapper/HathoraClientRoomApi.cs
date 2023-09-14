@@ -3,9 +3,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Cloud.Sdk.Api;
-using Hathora.Cloud.Sdk.Client;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using HathoraSdk;
 using HathoraSdk.Models.Shared;
@@ -80,8 +77,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 
                 try
                 {
-                    // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
-                    // TODO: Manually init w/out constructor, or add constructor support to model
                     connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
                         HathoraClientConfig.AppId, 
                         roomId,

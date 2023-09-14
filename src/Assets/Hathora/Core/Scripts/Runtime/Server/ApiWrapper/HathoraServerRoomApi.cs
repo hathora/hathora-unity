@@ -8,6 +8,7 @@ using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
+using HathoraSdk.Utils;
 using UnityEngine;
 using UnityEngine.Assertions;
 using CreateRoomRequest = HathoraSdk.Models.Shared.CreateRoomRequest;
@@ -33,9 +34,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             Debug.Log("[HathoraServerRoomApi] Initializing API...");
             
-            // TODO: Manually init w/out constructor, or add constructor support to model
-            // TODO: `Configuration` is missing in the new SDK - cleanup, if permanently gone.
-            this.roomApi = new RoomV2SDK(base.HathoraSdkConfig);
+            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
+            SpeakeasyHttpClient httpClient = null;
+            string serverUrl = null;
+            this.roomApi = new RoomV2SDK(
+                httpClient,
+                httpClient, 
+                serverUrl,
+                HathoraSdkConfig);
         }
         
         

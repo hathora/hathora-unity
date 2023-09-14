@@ -56,8 +56,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             try
             {
-                // TODO: The old SDK passed `AppId` -- how does the new SDK handle this if we don't pass AppId and don't init with a Sdk Configuration?
-                // TODO: Manually init w/out constructor, or add constructor support to model
                 getLobbyInfoResult = await lobbyApi.GetLobbyInfoAsync(
                     AppId,
                     _lobbyId,
