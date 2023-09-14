@@ -333,11 +333,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
             // ----------------
             // Get all active Rooms by ProcessId =>
-            List<GetActiveRoomsForProcessResponse> activeRooms =
-                await ServerApis.ServerRoomApi.GetActiveRoomsForProcessAsync(procId, _cancelToken);
+            List<RoomWithoutAllocations> activeRooms = await 
+                ServerApis.ServerRoomApi.GetActiveRoomsForProcessAsync(procId, _cancelToken);
 
             // Get 1st Room -> validate
-            GetActiveRoomsForProcessResponse firstActiveRoom = activeRooms?.FirstOrDefault();
+            RoomWithoutAllocations firstActiveRoom = activeRooms?.FirstOrDefault();
             
             if (_cancelToken.IsCancellationRequested)
             {

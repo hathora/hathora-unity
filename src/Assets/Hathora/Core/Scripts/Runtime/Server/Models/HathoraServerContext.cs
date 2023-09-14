@@ -25,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public string EnvVarProcessId { get; private set; }
         public Process ProcessInfo { get; set; }
         public Lobby Lobby { get; set; }
-        public List<GetActiveRoomsForProcessResponse> ActiveRoomsForProcess { get; set; }
+        public List<RoomWithoutAllocations> ActiveRoomsForProcess { get; set; }
         #endregion // Vars
         
 
@@ -80,14 +80,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             return ipPort;
         }
         
-        public GetActiveRoomsForProcessResponse FirstActiveRoomForProcess => 
+        public RoomWithoutAllocations FirstActiveRoomForProcess => 
             ActiveRoomsForProcess?.FirstOrDefault();
 
-        /// <summary>Checks for (Process, Room and Lobby) != null.</summary>
+        /// <summary>Checks for ( Process, Room, [Lobby] ) != null and Process !stopped.</summary>
         /// <returns>isValid</returns>
         public bool CheckIsValid(bool _expectingLobby) =>
             ProcessInfo != null &&
-            ProcessInfo.StoppingAt == null &&
+            ProcessInfo.StoppingAt != default &&
             FirstActiveRoomForProcess != null &&
             (!_expectingLobby || Lobby != null);
 
