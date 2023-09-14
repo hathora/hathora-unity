@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
@@ -51,15 +52,21 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </summary>
         /// 
         /// <list type="number">
-        /// <item>Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora</item>
-        /// <item>Poll GetConnectionInfoV2Async(roomId): takes ~5s, until Status is `Active`</item>
-        /// <item>Once Active Status, get Room info</item>
+        /// <item>Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora.</item>
+        /// <item>Poll GetConnectionInfoV2Async(roomId): takes ~5s, until Status is `Active`.</item>
+        /// <item>Once Active Status, get Room info.</item>
         /// </list>
-        /// 
-        /// <param name="_customCreateRoomId"></param>
+        /// <param name="_region">Leave empty to use the default value via `HathoraUtils.DEFAULT_REGION`.</param>
+        /// <param name="_roomConfig">
+        /// Optional configuration parameters for the room. Can be any string including stringified JSON.
+        /// It is accessible from the room via [`GetRoomInfo()`](https://hathora.dev/api#tag/RoomV2/operation/GetRoomInfo).
+        /// </param>
+        /// <param name="_customCreateRoomId">Recommended to leave null to prevent potential dupes.</param>
         /// <param name="_cancelToken">TODO</param>
         /// <returns>both Room + [ACTIVE]ConnectionInfoV2 (ValueTuple) on success</returns>
         public async Task<(Room room, ConnectionInfoV2 connInfo)> CreateRoomAwaitActiveAsync(
+            Region _region = HathoraUtils.DEFAULT_REGION,
+            string _roomConfig = null,
             string _customCreateRoomId = null,
             CancellationToken _cancelToken = default)
         {
@@ -69,7 +76,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string newlyCreatedRoomId = null;
             try
             {
-                newlyCreatedRoomId = await CreateRoomAsync(_customCreateRoomId, _cancelToken);
+                CreateRoomRequest createRoomReq = new()
+                {
+                    Region = _region,
+                    RoomConfig = _roomConfig,
+                };
+                  
+                newlyCreatedRoomId = await CreateRoomAsync(
+                    createRoomReq, 
+                    _customCreateRoomId, 
+                    _cancelToken);
             }
             catch (TaskCanceledException e)
             {
@@ -140,30 +156,38 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <summary>
         /// Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora.
         /// </summary>
-        /// <param name="createRoomReq">Region, RoomConfig</param>
+        /// <param name="_createRoomReq">Region, RoomConfig</param>
+        /// <param name="_customRoomId"></param>
         /// <param name="_cancelToken">TODO</param>
         /// <returns></returns>
-        private async Task<string> CreateRoomAsync(
-            CreateRoomRequest createRoomReq,
+        private async Task<ConnectionInfoV2> CreateRoomAsync(
+            CreateRoomRequest _createRoomReq,
+            string _customRoomId = null,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAsync)}]";
             
             // Prep request data
+            HathoraSdk.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                RoomId = _customRoomId,
+                CreateRoomRequestValue = _createRoomReq,
+            };
+            
             Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createRoomReq)}: {ToJson(createRoomReq)}</color>");
+                $"{nameof(createRoomRequestWrapper)}: {ToJson(createRoomRequestWrapper)}</color>");
 
             // Request call async =>
-            ConnectionInfoV2 createRoomResultWithNullPort;
+            CreateRoomResponse createRoomResponse = null;
+            
             try
             {
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
-                createRoomResultWithNullPort = await roomApi.CreateRoomAsync(
-                    AppId,
-                    createRoomReq,
-                    _customCreateRoomId,
-                    _cancelToken);
+                createRoomResponse = await roomApi.CreateRoomAsync(
+                    new CreateRoomSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
             {
@@ -177,11 +201,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
             
-            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(createRoomResultWithNullPort)}: " +
-                $"{ToJson(createRoomResultWithNullPort)}</color>");
+            // Process response
+            Debug.Log($"{logPrefix} Success: <color=yellow>" +
+                $"{nameof(createRoomResponse)}: {ToJson(createRoomResponse)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
-            return createRoomResultWithNullPort.RoomId;
+            return createRoomResponse.ConnectionInfoV2;
         }
         
         /// <summary>
@@ -197,14 +222,21 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         {
             string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(GetRoomInfoAsync)}]";
             
-            Room getRoomInfoResult;
+            // Prepare request
+            GetRoomInfoRequest getRoomInfoRequest = new()
+            {
+                // AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                RoomId = _roomId,
+            };
+            
+            // Get response async =>
+            GetRoomInfoResponse getRoomInfoResponse = null;
 
             try
             {
-                getRoomInfoResult = await roomApi.GetRoomInfoAsync(
-                    AppId,
-                    _roomId,
-                    _cancelToken);
+                getRoomInfoResponse = await roomApi.GetRoomInfoAsync(
+                    new GetRoomInfoSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    getRoomInfoRequest);
             }
             catch (TaskCanceledException)
             {
@@ -219,9 +251,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getRoomInfoResult)}: {ToJson(getRoomInfoResult)}</color>");
+                $"{nameof(getRoomInfoResponse)}: {ToJson(getRoomInfoResponse)}</color>");
 
-            return getRoomInfoResult;
+            return getRoomInfoResponse.Room;
         }
         
         /// <summary>
@@ -234,19 +266,27 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<List<GetActiveRoomsForProcessResponse>> GetActiveRoomsForProcessAsync(
+        public async Task<List<RoomWithoutAllocations>> GetActiveRoomsForProcessAsync(
             string _processId, 
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[HathoraServerRoomApi].{nameof(GetActiveRoomsForProcessAsync)}]";
-            List<GetActiveRoomsForProcessResponse> getActiveRoomsResultList = null;
+            string logPrefix = $"[{nameof(HathoraServerRoomApi)}].{nameof(GetActiveRoomsForProcessAsync)}]";
+            
+            // Prepare request
+            GetActiveRoomsForProcessRequest getActiveRoomsForProcessRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                ProcessId = _processId,
+            };
+            
+            // Get response async =>
+            GetActiveRoomsForProcessResponse getActiveRoomsForProcessResponse = null;
 
             try
             {
-                getActiveRoomsResultList = await roomApi.GetActiveRoomsForProcessAsync(
-                    AppId,
-                    _processId,
-                    _cancelToken);
+                getActiveRoomsForProcessResponse = await roomApi.GetActiveRoomsForProcessAsync(
+                    new GetActiveRoomsForProcessSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    getActiveRoomsForProcessRequest);
             }
             catch (TaskCanceledException)
             {
@@ -260,16 +300,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
+            // Process result
+            List<RoomWithoutAllocations> activeRooms = getActiveRoomsForProcessResponse.RoomWithoutAllocations;
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"getActiveRoomsResultList count: {getActiveRoomsResultList.Count}</color>");
+                $"getActiveRoomsResultList count: {activeRooms.Count}</color>");
 
-            if (getActiveRoomsResultList.Count > 0)
+            if (activeRooms.Count > 0)
             {
                 Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                    $"{nameof(getActiveRoomsResultList)}[0]: {base.ToJson(getActiveRoomsResultList[0])}</color>");
+                    $"{nameof(activeRooms)}[0]: {base.ToJson(activeRooms[0])}</color>");
             }
 
-            return getActiveRoomsResultList;
+            return activeRooms;
         }
 
         /// <summary>
