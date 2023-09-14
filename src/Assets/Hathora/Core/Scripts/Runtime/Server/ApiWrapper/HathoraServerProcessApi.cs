@@ -89,7 +89,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getProcessInfoResponse)}: {ToJson(getProcessInfoResponse)}</color>");
+                $"{nameof(getProcessInfoResponse)}: {base.ToJson(getProcessInfoResponse)}</color>");
 
             Process process = getProcessInfoResponse.Process;
 

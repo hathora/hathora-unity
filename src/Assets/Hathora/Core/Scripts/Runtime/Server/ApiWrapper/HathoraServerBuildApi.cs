@@ -95,7 +95,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createCloudBuildResponse)}: {ToJson(createCloudBuildResponse)}</color>");
+                $"{nameof(createCloudBuildResponse)}: {base.ToJson(createCloudBuildResponse)}</color>");
 
             return createCloudBuildResponse.Build;
         }
@@ -291,7 +291,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             bool isSuccess = build is { Status: BuildStatus.Succeeded };
             
             Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
-                $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse)}</color>");
+                $"{nameof(getBuildInfoResponse)}: {base.ToJson(getBuildInfoResponse)}</color>");
 
             return build;
         }

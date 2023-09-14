@@ -108,7 +108,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
             // Success
             Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
-                $"{nameof(getConnectionInfoResponse)}: {ToJson(getConnectionInfoResponse)}</color>");
+                $"{nameof(getConnectionInfoResponse)}: {base.ToJson(getConnectionInfoResponse)}</color>");
 
             return connectionInfo;
         }

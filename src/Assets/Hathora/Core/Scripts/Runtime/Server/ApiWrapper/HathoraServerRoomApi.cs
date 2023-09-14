@@ -148,7 +148,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // ----------
             // Success
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(activeConnectionInfo)}: {ToJson(activeConnectionInfo)}</color>");
+                $"{nameof(activeConnectionInfo)}: {base.ToJson(activeConnectionInfo)}</color>");
 
             return (activeRoom, activeConnectionInfo);
         }
@@ -176,7 +176,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             };
             
             Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createRoomRequestWrapper)}: {ToJson(createRoomRequestWrapper)}</color>");
+                $"{nameof(createRoomRequestWrapper)}: {base.ToJson(createRoomRequestWrapper)}</color>");
 
             // Request call async =>
             CreateRoomResponse createRoomResponse = null;
@@ -203,7 +203,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             // Process response
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createRoomResponse)}: {ToJson(createRoomResponse)}</color>");
+                $"{nameof(createRoomResponse)}: {base.ToJson(createRoomResponse)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             return createRoomResponse.ConnectionInfoV2;
@@ -251,7 +251,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getRoomInfoResponse)}: {ToJson(getRoomInfoResponse)}</color>");
+                $"{nameof(getRoomInfoResponse)}: {base.ToJson(getRoomInfoResponse)}</color>");
 
             return getRoomInfoResponse.Room;
         }
@@ -354,7 +354,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
                 $"{nameof(isActiveWithExposedPort)}? {isActiveWithExposedPort}, " +
-                $"{nameof(getConnectionInfoResult)}: {ToJson(getConnectionInfoResult)}</color>");
+                $"{nameof(getConnectionInfoResult)}: {base.ToJson(getConnectionInfoResult)}</color>");
 
             return getConnectionInfoResult;
         }
@@ -408,7 +408,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(connectionInfo)}: {ToJson(connectionInfo)}</color>");
+                $"{nameof(connectionInfo)}: {base.ToJson(connectionInfo)}</color>");
         
             IsPollingForActiveConnInfo = false;
             return connectionInfo;

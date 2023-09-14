@@ -86,7 +86,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getLobbyInfoResult)}: {ToJson(getLobbyInfoResult)}</color>");
+                $"{nameof(getLobbyInfoResult)}: {base.ToJson(getLobbyInfoResult)}</color>");
 
             return getLobbyInfoResult.Lobby;
         }

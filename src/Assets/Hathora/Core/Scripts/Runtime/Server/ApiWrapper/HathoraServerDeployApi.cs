@@ -107,7 +107,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 BuildId = _buildId,
             };
             
-            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {base.ToJson(deployConfig)}</color>");
 
             // Get response async =>
             CreateDeploymentResponse createDeploymentResponse = null;
@@ -125,7 +125,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createDeploymentResponse)}: {ToJson(createDeploymentResponse)}</color>");
+                $"{nameof(createDeploymentResponse)}: {base.ToJson(createDeploymentResponse)}</color>");
 
             return createDeploymentResponse.Deployment;
         }

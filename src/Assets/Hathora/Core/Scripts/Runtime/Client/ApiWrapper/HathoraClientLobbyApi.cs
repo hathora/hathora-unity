@@ -105,7 +105,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
 
             Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
-                $"<color=yellow>{nameof(createLobbyResponse)}: {ToJson(createLobbyResponse)}</color>");
+                $"<color=yellow>{nameof(createLobbyResponse)}: {base.ToJson(createLobbyResponse)}</color>");
             
             return createLobbyResponse.Lobby;
         }
@@ -152,7 +152,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             }
             
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(lobbyInfoResponse)}: {ToJson(lobbyInfoResponse)}</color>");      
+                $"{nameof(lobbyInfoResponse)}: {base.ToJson(lobbyInfoResponse)}</color>");      
             
             return lobbyInfoResponse.Lobby;
         }
