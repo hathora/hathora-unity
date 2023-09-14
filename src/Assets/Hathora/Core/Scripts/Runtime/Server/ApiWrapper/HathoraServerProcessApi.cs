@@ -51,8 +51,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_processId">
         /// The process running the Room; find it in web console or GetRunningProcesses().
         /// </param>
-        /// <param name="_returnNullOnStoppedProcess">If the Process stopped (no Rooms inside), just return null</param>
-        /// <param name="_cancelToken"></param>
+        /// <param name="_returnNullOnStoppedProcess">
+        /// If the Process stopped (no Rooms inside), just return null.
+        /// - This makes the validation process easier if you want all-or-nothing.
+        /// </param>
+        /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns Process on success</returns>
         public async Task<Process> GetProcessInfoAsync(
             string _processId,
@@ -62,33 +65,42 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             const string logPrefix = "[HathoraServerProcessApi.GetProcessInfoAsync]";
             Debug.Log($"{logPrefix} <color=yellow>processId: {_processId}</color>");
             
+            // Process request
+            GetProcessInfoRequest getProcessInfoRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                ProcessId = _processId,
+            };
+            
+            // Get response async =>
             GetProcessInfoResponse getProcessInfoResponse = null;
             
             try
             {
-                GetProcessInfoSecurity security;
-                GetProcessInfoRequest request;
-                
                 getProcessInfoResponse = await processesApi.GetProcessInfoAsync(
-                    AppId,
-                    _processId,
-                    _cancelToken);
+                    new GetProcessInfoSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    getProcessInfoRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} LoginAnonymousAsync => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(processesApi.GetProcessInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
+            // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
                 $"{nameof(getProcessInfoResponse)}: {ToJson(getProcessInfoResponse)}</color>");
 
-            Process process = getProcessInfoResponse.Process; 
-            if (process?.StoppingAt != null)
+            Process process = getProcessInfoResponse.Process;
+
+            bool isStoppedProcess = process?.StoppingAt != null; 
+            if (isStoppedProcess)
             {
                 Debug.LogError($"{logPrefix} Got Process info, but reported <color=orange>Stopped</color> " +
                     $"(returnNullOnStoppedProcess=={_returnNullOnStoppedProcess})");
-                return null;
+
+                if (_returnNullOnStoppedProcess)
+                    return null;
             }
 
             return process;
