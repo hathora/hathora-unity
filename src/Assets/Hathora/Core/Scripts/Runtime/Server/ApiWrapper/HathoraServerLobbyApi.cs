@@ -12,7 +12,10 @@ using UnityEngine.Assertions;
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     /// <summary>
-    /// V2 API Doc | https://hathora.dev/api#tag/LobbyV2
+    /// Handles Application API calls to Hathora Server.
+    /// - Passes API key from HathoraServerConfig to SDK
+    /// - Passes Auth0 (Dev Token) from hathoraServerConfig to SDK
+    /// - API Docs | https://hathora.dev/api#tag/LobbyV2
     /// </summary>
     public class HathoraServerLobbyApi : HathoraServerApiWrapperBase
     {

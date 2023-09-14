@@ -287,14 +287,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            // // TODO: `StatusEnum` to check for `Active` status no longer exists in the new SDK - how to check for status?
-            // bool isSuccess = getBuildInfoResult is { Status: Build.StatusEnum.Succeeded };
-            bool isSuccess = true;
+            Build build = getBuildInfoResponse.Build;
+            bool isSuccess = build is { Status: BuildStatus.Succeeded };
             
             Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
                 $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse)}</color>");
 
-            return getBuildInfoResponse.Build;
+            return build;
         }
         #endregion // Server Build Async Hathora SDK Calls
     }

@@ -12,6 +12,12 @@ using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
+    /// <summary>
+    /// Handles Application API calls to Hathora Server.
+    /// - Passes API key from HathoraServerConfig to SDK
+    /// - Passes Auth0 (Dev Token) from hathoraServerConfig to SDK
+    /// - API Docs | https://hathora.dev/api#tag/AppV1
+    /// </summary>
     public class HathoraServerAppApi : HathoraServerApiWrapperBase
     {
         private readonly AppV1SDK appApi;

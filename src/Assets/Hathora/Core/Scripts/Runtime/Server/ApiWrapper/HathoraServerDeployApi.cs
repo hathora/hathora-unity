@@ -15,6 +15,12 @@ using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
+    /// <summary>
+    /// Handles Deployment API calls to Hathora Server.
+    /// - Passes API key from HathoraServerConfig to SDK
+    /// - Passes Auth0 (Dev Token) from hathoraServerConfig to SDK
+    /// - API Docs | https://hathora.dev/api#tag/BuildV1
+    /// </summary>
     public class HathoraServerDeployApi : HathoraServerApiWrapperBase
     {
         private readonly DeploymentV1SDK deployApi;
