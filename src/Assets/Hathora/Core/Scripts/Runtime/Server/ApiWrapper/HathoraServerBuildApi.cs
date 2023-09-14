@@ -260,19 +260,26 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns byte[] on success</returns>
         public async Task<Build> GetBuildInfoAsync(
-            double _buildId,
+            int _buildId,
             CancellationToken _cancelToken)
         {
             string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(GetBuildInfoAsync)}]";
+
+            // Prepare request
+            GetBuildInfoRequest getBuildInfoRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                BuildId = _buildId,
+            };
             
-            Build getBuildInfoResult;
+            // Get response async =>
+            GetBuildInfoResponse getBuildInfoResponse = null;
             
             try
             {
-                getBuildInfoResult = await buildApi.GetBuildInfoAsync(
-                    HathoraServerConfig.HathoraCoreOpts.AppId,
-                    _buildId,
-                    _cancelToken);
+                getBuildInfoResponse = await buildApi.GetBuildInfoAsync(
+                    new GetBuildInfoSecurity() { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    getBuildInfoRequest);
             }
             catch (Exception e)
             {
@@ -285,9 +292,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             bool isSuccess = true;
             
             Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
-                $"{nameof(getBuildInfoResult)}: {ToJson(getBuildInfoResult)}</color>");
+                $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse)}</color>");
 
-            return getBuildInfoResult;
+            return getBuildInfoResponse.Build;
         }
         #endregion // Server Build Async Hathora SDK Calls
     }
