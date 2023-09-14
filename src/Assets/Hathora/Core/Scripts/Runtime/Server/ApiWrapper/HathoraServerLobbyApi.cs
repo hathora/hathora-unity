@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using HathoraSdk;
+using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
 using UnityEngine;
@@ -47,23 +48,28 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// When you get the result, check Status for Active.
         /// (!) If !Active, getting the ConnectionInfoV2 will result in !ExposedPort.
         /// </summary>
-        /// <param name="_lobbyId"></param>
+        /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
         public async Task<Lobby> GetLobbyInfoAsync(
-            string _lobbyId, 
+            string _roomId, 
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerLobbyApi)}.{nameof(GetLobbyInfoAsync)}]";
-            Lobby getLobbyInfoResult;
+
+            // Prepare request
+            GetLobbyInfoRequest getLobbyInfoRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                RoomId = _roomId,
+            };
+            
+            // Get response async =>
+            GetLobbyInfoResponse getLobbyInfoResult = null;
 
             try
             {
-                getLobbyInfoResult = await lobbyApi.GetLobbyInfoAsync(
-                    AppId,
-                    _lobbyId,
-                    _cancelToken);
-                
+                getLobbyInfoResult = await lobbyApi.GetLobbyInfoAsync(getLobbyInfoRequest);
                 Assert.IsNotNull(getLobbyInfoResult, $"{logPrefix} !getLobbyInfoResult");
             }
             catch (TaskCanceledException)
@@ -78,10 +84,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
+            // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
                 $"{nameof(getLobbyInfoResult)}: {ToJson(getLobbyInfoResult)}</color>");
 
-            return getLobbyInfoResult;
+            return getLobbyInfoResult.Lobby;
         }
         #endregion // Server Lobby Async Hathora SDK Calls
     }
