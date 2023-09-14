@@ -57,13 +57,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerAppApi)}.{nameof(GetAppsAsync)}]";
-            
+
+            // Get response async => 
             GetAppsResponse getAppsResponse = null;
             
             try
             {
-                GetAppsSecurity security = TODO;
-                getAppsResponse = await appApi.GetAppsAsync(security);
+                getAppsResponse = await appApi.GetAppsAsync(
+                    new GetAppsSecurity { Auth0 = base.Auth0DevToken } // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                ); 
             }
             catch (Exception e)
             {
@@ -73,7 +75,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Get inner response to return -> Log/Validate
             List<ApplicationWithDeployment> applicationWithDeployment = getAppsResponse.ApplicationWithDeployments;
-            Debug.Log($"[HathoraServerAppApi.GetAppsAsync] num: '{applicationWithDeployment?.Count ?? 0}'");
+            Debug.Log($"{logPrefix} num: '{applicationWithDeployment?.Count ?? 0}'");
             
             return applicationWithDeployment;
         }
