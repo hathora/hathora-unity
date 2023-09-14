@@ -73,7 +73,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAwaitActiveAsync)}]";
             
             // (1/3) Create Room
-            string newlyCreatedRoomId = null;
+            ConnectionInfoV2 createdRoomConnectionInfo = null;
+            
             try
             {
                 CreateRoomRequest createRoomReq = new()
@@ -82,7 +83,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     RoomConfig = _roomConfig,
                 };
                   
-                newlyCreatedRoomId = await CreateRoomAsync(
+                createdRoomConnectionInfo = await CreateRoomAsync(
                     createRoomReq, 
                     _customCreateRoomId, 
                     _cancelToken);
@@ -96,6 +97,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.LogError($"{logPrefix} CreateRoomAsync => Error: {e.Message}");
                 throw;
             }
+
+            string newlyCreatedRoomId = createdRoomConnectionInfo.RoomId;
             
             // ----------
             // (2/3) Poll until `Active` connection Status (or timeout)
@@ -326,15 +329,20 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(GetConnectionInfoAsync)}]";
+
+            // Prepare request
+            GetConnectionInfoRequest getConnectionInfoRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                RoomId = _roomId,
+            };
             
-            ConnectionInfoV2 getConnectionInfoResult;
+            // Get response async =>
+            GetConnectionInfoResponse getConnectionInfoResponse = null;
 
             try
             {
-                getConnectionInfoResult = await roomApi.GetConnectionInfoAsync(
-                    AppId,
-                    _roomId,
-                    _cancelToken);
+                getConnectionInfoResponse = await roomApi.GetConnectionInfoAsync(getConnectionInfoRequest);
             }
             catch (TaskCanceledException)
             {
@@ -348,15 +356,19 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
             
-            bool isActiveWithExposedPort = 
-                getConnectionInfoResult.Status == ConnectionInfoV2Status.Active && 
-                getConnectionInfoResult.ExposedPort != null;
+            // Process result
+            ConnectionInfoV2 connectionInfo = getConnectionInfoResponse.ConnectionInfoV2;
+            bool isActiveWithExposedPort = connectionInfo is
+            {
+                Status: ConnectionInfoV2Status.Active, 
+                ExposedPort: not null,
+            };
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
                 $"{nameof(isActiveWithExposedPort)}? {isActiveWithExposedPort}, " +
-                $"{nameof(getConnectionInfoResult)}: {base.ToJson(getConnectionInfoResult)}</color>");
+                $"{nameof(getConnectionInfoResponse)}: {base.ToJson(getConnectionInfoResponse)}</color>");
 
-            return getConnectionInfoResult;
+            return connectionInfo;
         }
 
         // ------------------------------------------
