@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using HathoraSdk;
-using HathoraSdk.Models.Shared;
 using HathoraSdk.Utils;
+using HathoraSdk.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -53,34 +53,36 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// Gets connection info, like ip:port.
         /// (!) We'll poll until we have an `Active` Status: Be sure to await!
         /// </summary>
-        /// <param name="roomId">Get this from NetHathoraClientLobbyApi join/create</param>
-        /// <param name="pollIntervalSecs"></param>
-        /// <param name="pollTimeoutSecs"></param>
+        /// <param name="_roomId">Get this from NetHathoraClientLobbyApi join/create</param>
+        /// <param name="_pollIntervalSecs"></param>
+        /// <param name="_pollTimeoutSecs"></param>
         /// <param name="_cancelToken"></param>
         /// <returns>Room on success</returns>
         public async Task<ConnectionInfoV2> ClientGetConnectionInfoAsync(
-            string roomId, 
-            int pollIntervalSecs = 1, 
-            int pollTimeoutSecs = 15,
+            string _roomId, 
+            int _pollIntervalSecs = 1, 
+            int _pollTimeoutSecs = 15,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraClientRoomApi)}.{nameof(ClientGetConnectionInfoAsync)}]";
             
+            // Prep request
+            HathoraSdk.Models.Operations.GetConnectionInfoRequest getConnectionInfoRequest = new()
+            {
+                RoomId = _roomId,
+            };
+
             // Poll until we get the `Active` status.
             int pollSecondsTicked; // Duration to be logged later
-            ConnectionInfoV2 connectionInfoResponse = null;
+            HathoraSdk.Models.Operations.GetConnectionInfoResponse getConnectionInfoResponse = null;
             
-            // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
-            for (pollSecondsTicked = 0; pollSecondsTicked < pollTimeoutSecs; pollSecondsTicked++)
+            for (pollSecondsTicked = 0; pollSecondsTicked < _pollTimeoutSecs; pollSecondsTicked++)
             {
                 _cancelToken.ThrowIfCancellationRequested();
                 
                 try
                 {
-                    connectionInfoResponse = await roomApi.GetConnectionInfoAsync(
-                        HathoraClientConfig.AppId, 
-                        roomId,
-                        _cancelToken);
+                    getConnectionInfoResponse = await roomApi.GetConnectionInfoAsync(getConnectionInfoRequest);
                 }
                 catch(Exception e)
                 {
@@ -88,29 +90,27 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                     return null; // fail
                 }
 
+                if (getConnectionInfoResponse.ConnectionInfoV2?.Status == ConnectionInfoV2Status.Active)
+                    break;
                 
-                // // TODO: `StatusEnum` to check for `Active` status no longer exists in the new SDK - how to check for status?
-                // if (connectionInfoResponse.Status == ConnectionInfoV2.StatusEnum.Active)
-                //     break;
-                
-                await Task.Delay(TimeSpan.FromSeconds(pollIntervalSecs), _cancelToken);
+                await Task.Delay(TimeSpan.FromSeconds(_pollIntervalSecs), _cancelToken);
             }
 
             // -----------------------------------------
             // We're done polling -- sucess or timeout?
-            // // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
-            // if (connectionInfoResponse?.Status != ConnectionInfoV2.StatusEnum.Active)
-            // {
-            //     Debug.LogError($"{logPrefix} Error: Timed out");
-            //     return null;
-            // }
+            ConnectionInfoV2 connectionInfo = getConnectionInfoResponse?.ConnectionInfoV2;
+
+            if (connectionInfo?.Status != ConnectionInfoV2Status.Active)
+            {
+                Debug.LogError($"{logPrefix} Error: Timed out");
+                return null;
+            }
 
             // Success
-            
             Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
-                $"{nameof(connectionInfoResponse)}: {ToJson(connectionInfoResponse)}</color>");
+                $"{nameof(getConnectionInfoResponse)}: {ToJson(getConnectionInfoResponse)}</color>");
 
-            return connectionInfoResponse;
+            return connectionInfo;
         }
         #endregion // Client Room Async Hathora SDK Calls
     }

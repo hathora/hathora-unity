@@ -155,9 +155,9 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// <param name="_cancelToken"></param>
         public async Task<Lobby> CreateLobbyAsync(
             Region _region,
-            LobbyVisibility _visibility = LobbyVisibility.Public,
             string _roomId,
             object _initConfigObj,
+            LobbyVisibility _visibility = LobbyVisibility.Public,
             CancellationToken _cancelToken = default)
         {
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
@@ -165,10 +165,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
             Lobby lobby = await clientApis.ClientLobbyApi.ClientCreateLobbyAsync(
                 hathoraClientSession.PlayerAuthToken,
-                _visibility,
                 _region,
-                _initConfigObj,
                 _roomId,
+                _initConfigObj,
+                _visibility,
                 _cancelToken);
             
             hathoraClientSession.Lobby = lobby;

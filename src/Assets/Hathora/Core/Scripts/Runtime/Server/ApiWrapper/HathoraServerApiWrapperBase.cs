@@ -18,7 +18,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         protected HathoraServerConfig HathoraServerConfig { get; private set; }
 
         /// <summary>Pulls "DevAuthToken" from HathoraServerConfig</summary>
-        protected string ServerAuth0 => 
+        protected string Auth0DevToken => 
             HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken;
 
         // Shortcuts

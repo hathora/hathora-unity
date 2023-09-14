@@ -278,7 +278,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getBuildInfoResponse = await buildApi.GetBuildInfoAsync(
-                    new GetBuildInfoSecurity() { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new GetBuildInfoSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
                     getBuildInfoRequest);
             }
             catch (Exception e)

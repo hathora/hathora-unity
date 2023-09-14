@@ -67,9 +67,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <returns>Lobby on success</returns>
         public async Task<Lobby> ClientCreateLobbyAsync(
             string _playerAuthToken,
-            LobbyVisibility _lobbyVisibility,
             object _initConfigObj,
             Region _region = HathoraUtils.DEFAULT_REGION,
+            LobbyVisibility _lobbyVisibility = LobbyVisibility.Public,
             string _roomId = null,
             CancellationToken _cancelToken = default)
         {
@@ -125,14 +125,19 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
             Debug.Log($"{logPrefix} <color=yellow>_roomId: {roomId}</color>");
 
+            // Prep request
+            GetLobbyInfoRequest getLobbyInfoRequest = new()
+            {
+                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                RoomId = roomId,
+            };
+            
+            // Get response async =>
             GetLobbyInfoResponse lobbyInfoResponse = null;
             
             try
             {
-                lobbyInfoResponse = await lobbyApi.GetLobbyInfoAsync(
-                    HathoraClientConfig.AppId,
-                    roomId,
-                    _cancelToken);
+                lobbyInfoResponse = await lobbyApi.GetLobbyInfoAsync(getLobbyInfoRequest);
             }
             catch (Exception e)
             {

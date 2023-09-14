@@ -496,9 +496,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             // Potential success >> Validate
             Assert.IsNotNull(_roomConnInfo.Room?.RoomId, "!RoomId");
             
-            // // TODO: `StatusEnum` is missing in the new SDK - Find what to check for Active, instead; cleanup, if permanently gone.
-            // Assert.AreEqual(_roomConnInfo.ConnectionInfoV2?.Status, 
-            //     ConnectionInfoV2.StatusEnum.Active,  "Status !Active");
+            Assert.AreEqual(_roomConnInfo.ConnectionInfoV2?.Status,
+                ConnectionInfoV2Status.Active, 
+                "Status !Active");
         }
         
         
