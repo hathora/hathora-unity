@@ -18,7 +18,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     public class HathoraCachedRoomConnection
     {
         [SerializeField]
-        private Region _hathoraRegion = Region.Seattle;
+        private Region _hathoraRegion = HathoraUtils.DEFAULT_REGION;
         public Region HathoraRegion
         {
             get => _hathoraRegion;

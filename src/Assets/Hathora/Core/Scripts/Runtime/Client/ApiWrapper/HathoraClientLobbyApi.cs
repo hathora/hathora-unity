@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
@@ -68,7 +69,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string _playerAuthToken,
             LobbyVisibility _lobbyVisibility,
             object _initConfigObj,
-            Region _region = Region.WashingtonDC,
+            Region _region = HathoraUtils.DEFAULT_REGION,
             string _roomId = null,
             CancellationToken _cancelToken = default)
         {

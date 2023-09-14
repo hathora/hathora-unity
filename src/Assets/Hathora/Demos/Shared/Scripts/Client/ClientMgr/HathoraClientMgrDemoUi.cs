@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Common;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
@@ -212,8 +213,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             setShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
 
-            // (!) Region Index starts at 1 (not 0) // TODO: Get from UI
-            const Region _region = Region.WashingtonDC;
+            const Region _region = HathoraUtils.DEFAULT_REGION;
 
             try
             {
