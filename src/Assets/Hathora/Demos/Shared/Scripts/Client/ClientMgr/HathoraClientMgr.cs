@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Demos.Shared.Scripts.Client.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
@@ -19,13 +20,11 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 {
     /// <summary>
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
-    /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events + session.
-    /// - Every SDK call caches the result in `hathoraClientSession`.
-    /// - If you have a UI script, subscribe to the events above to handle them ^
+    /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events + session tracking.
+    /// - Every SDK call from this script caches the result in `hathoraClientSession`.
     /// - To add API scripts: Add to the `ClientApis` serialized field.
-    /// - Ready to be inheritted with protected virtual members, should you want to!
-    /// 
-    /// - Available Events to subscribe to:
+    /// - Optimized to optionally be inheritted to separate your logic from Hathora's (easy updates; separation of logic).
+    /// - Subscribe to event callbacks like `OnAuthLoginDoneEvent` to handle UI/logic from multiple scripts:
     ///     * OnAuthLoginDoneEvent
     ///     * OnGetActiveConnectionInfoFailEvent
     ///     * OnGetActiveConnectionInfoDoneEvent
@@ -148,15 +147,17 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// - Callback @ virtual OnCreateLobbyCompleteAsync(lobby)
         /// - Asserts IsAuthed
         /// </summary>
-        /// <param name="_region"></param>
+        /// <param name="_region">Leaving null will pass `HathoraUtils.DEFAULT_REGION`</param>
         /// <param name="_visibility"></param>
-        /// <param name="_initConfigObj"></param>
-        /// <param name="_roomId"></param>
+        /// <param name="_initConfigObj">Pass your own model OR stringified json, minimally "{}"</param>
+        /// <param name="_roomId">
+        /// Leave null to auto-generate an Id (recommended to prevent potential dupe issues)
+        /// </param>
         /// <param name="_cancelToken"></param>
         public async Task<Lobby> CreateLobbyAsync(
-            Region _region,
-            string _roomId,
             object _initConfigObj,
+            Region _region = HathoraUtils.DEFAULT_REGION,
+            string _roomId = null,
             LobbyVisibility _visibility = LobbyVisibility.Public,
             CancellationToken _cancelToken = default)
         {
@@ -165,10 +166,10 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
             Lobby lobby = await clientApis.ClientLobbyApi.ClientCreateLobbyAsync(
                 hathoraClientSession.PlayerAuthToken,
-                _region,
-                _roomId,
                 _initConfigObj,
+                _region,
                 _visibility,
+                _roomId,
                 _cancelToken);
             
             hathoraClientSession.Lobby = lobby;

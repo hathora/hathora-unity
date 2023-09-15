@@ -138,7 +138,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public HathoraServerContext(
             string _envVarProcessId,
             Process _processInfo,
-            List<GetActiveRoomsForProcessResponse> _activeRoomsForProcess,
+            List<RoomWithoutAllocations> _activeRoomsForProcess,
             Lobby _lobby)
         {
             this.EnvVarProcessId = _envVarProcessId;

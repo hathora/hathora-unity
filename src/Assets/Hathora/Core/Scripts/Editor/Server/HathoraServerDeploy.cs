@@ -193,7 +193,10 @@ namespace Hathora.Core.Scripts.Editor.Server
 
                 try
                 {
-                    buildInfo = await buildApi.CreateBuildAsync(_cancelToken);
+                    // TODO: Ask for buildTag in parent arg - passing `null`, for now
+                    buildInfo = await buildApi.CreateBuildAsync(
+                        _buildTag: null, 
+                        _cancelToken);
                 }
                 catch (TaskCanceledException e)
                 {
@@ -359,7 +362,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         private static async Task<(Build build, List<string> logChunks)> uploadAndVerifyBuildAsync(
             HathoraServerConfig _serverConfig,
             HathoraServerBuildApi _buildApi,
-            double _buildId,
+            int _buildId,
             HathoraServerPaths _serverPaths,
             CancellationToken _cancelToken = default)
         {
