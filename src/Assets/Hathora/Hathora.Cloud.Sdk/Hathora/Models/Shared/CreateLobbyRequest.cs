@@ -20,10 +20,11 @@ namespace HathoraSdk.Models.Shared
     {
         /// <summary>
         /// User input to initialize the game state. Object must be smaller than 64KB.
+        /// Changed from `LobbyInitialConfig` to generic `object` --Dylan
         /// </summary>
         [SerializeField]
         [JsonProperty("initialConfig")]
-        public LobbyInitialConfig InitialConfig { get; set; } = default!;
+        public object InitialConfig { get; set; } = default!;
         
         [SerializeField]
         [JsonProperty("region")]

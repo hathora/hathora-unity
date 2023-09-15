@@ -7,6 +7,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using Hathora.Demos.Shared.Scripts.Client.Models;
 using Hathora.Demos.Shared.Scripts.Common;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
@@ -213,15 +214,20 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             setShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
 
-            const Region _region = HathoraUtils.DEFAULT_REGION;
+            InitConfigExample initConfig = new(); // gameMode = 0
+            const Region region = HathoraUtils.DEFAULT_REGION;
 
             try
             {
-                await ClientMgr.CreateLobbyAsync(_region); // public lobby
+                await ClientMgr.CreateLobbyAsync(
+                    initConfig, 
+                    region, // TODO: Get from UI
+                    _roomId: null,
+                    LobbyVisibility.Public); // TODO: Get from UI
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error: {e}");
+                Debug.LogError($"[{nameof(HathoraClientMgrDemoUi)}.{nameof(OnCreateLobbyBtnClick)}] Error: {e}");
                 throw;
             }
         }

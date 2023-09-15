@@ -17,7 +17,7 @@ namespace HathoraSdk.Models.Shared
     /// <summary>
     /// User input to initialize the game state. Object must be smaller than 64KB.
     /// </summary>
-    [Serializable]
+    [Serializable, Obsolete("This will be deleted and changed to a generic object type")]
     public class LobbyInitialConfig
     {
     }
