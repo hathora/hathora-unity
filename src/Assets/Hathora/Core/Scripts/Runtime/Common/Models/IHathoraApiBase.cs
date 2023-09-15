@@ -1,7 +1,6 @@
 // Created by dylan@hathora.dev
 
 using HathoraSdk;
-using Newtonsoft.Json;
 
 namespace Hathora.Core.Scripts.Runtime.Common.Models
 {
