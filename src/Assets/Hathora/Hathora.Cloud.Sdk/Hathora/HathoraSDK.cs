@@ -36,9 +36,9 @@ namespace HathoraSdk
     public class SDKConfig
     {
         #region MANUALLY ADDED -> WILL BE OVERWRITTEN
-        public string HathoraDevToken { get; private set; }
-        public string AppId { get; private set; }
-        public int Timeout { get; set; }
+        /// <summary>For Server calls only -- Clients go through `AuthV{i}SDK`</summary>
+        public string HathoraDevToken { get; set; }
+        public string AppId { get; set; }
         #endregion // MANUALLY ADDED -> WILL BE OVERWRITTEN
     }
 
