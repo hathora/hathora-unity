@@ -189,7 +189,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
                 createRoomResponse = await roomApi.CreateRoomAsync(
-                    new CreateRoomSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new CreateRoomSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
@@ -238,7 +238,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getRoomInfoResponse = await roomApi.GetRoomInfoAsync(
-                    new GetRoomInfoSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new GetRoomInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getRoomInfoRequest);
             }
             catch (TaskCanceledException)
@@ -288,7 +288,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getActiveRoomsForProcessResponse = await roomApi.GetActiveRoomsForProcessAsync(
-                    new GetActiveRoomsForProcessSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new GetActiveRoomsForProcessSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getActiveRoomsForProcessRequest);
             }
             catch (TaskCanceledException)

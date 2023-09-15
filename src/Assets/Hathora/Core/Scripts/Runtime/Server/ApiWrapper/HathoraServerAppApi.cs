@@ -64,7 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getAppsResponse = await appApi.GetAppsAsync(
-                    new GetAppsSecurity { Auth0 = base.Auth0DevToken } // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new GetAppsSecurity { Auth0 = base.HathoraDevToken } // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                 ); 
             }
             catch (Exception e)

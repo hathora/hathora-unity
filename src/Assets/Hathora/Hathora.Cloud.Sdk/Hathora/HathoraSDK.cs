@@ -35,9 +35,11 @@ namespace HathoraSdk
     
     public class SDKConfig
     {
-        public string DeveloperToken { get; private set; }
+        #region MANUALLY ADDED -> WILL BE OVERWRITTEN
+        public string HathoraDevToken { get; private set; }
         public string AppId { get; private set; }
         public int Timeout { get; set; }
+        #endregion // MANUALLY ADDED -> WILL BE OVERWRITTEN
     }
 
     public class HathoraSDK: IHathoraSDK

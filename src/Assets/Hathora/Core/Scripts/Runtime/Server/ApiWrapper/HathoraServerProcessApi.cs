@@ -35,6 +35,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
             SpeakeasyHttpClient httpClient = null;
             string serverUrl = null;
+            
             this.processesApi = new ProcessesV1SDK(
                 httpClient,
                 httpClient, 
@@ -78,7 +79,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getProcessInfoResponse = await processesApi.GetProcessInfoAsync(
-                    new GetProcessInfoSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new GetProcessInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getProcessInfoRequest);
             }
             catch (Exception e)

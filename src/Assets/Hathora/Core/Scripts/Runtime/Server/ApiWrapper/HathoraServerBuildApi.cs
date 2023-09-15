@@ -85,7 +85,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 createCloudBuildResponse = await buildApi.CreateBuildAsync(
-                    new CreateBuildSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new CreateBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createBuildRequestWrapper);
             }
             catch (Exception e)
@@ -168,7 +168,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
                 // (!) Using the `highTimeoutBuildApi` workaround instance here
                 runBuildResponse = await highTimeoutBuildApi.RunBuildAsync(
-                    new RunBuildSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new RunBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     runBuildRequestWrapper);;
             }
             catch (TaskCanceledException)
@@ -278,7 +278,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getBuildInfoResponse = await buildApi.GetBuildInfoAsync(
-                    new GetBuildInfoSecurity { Auth0 = base.Auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.DeveloperToken
+                    new GetBuildInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getBuildInfoRequest);
             }
             catch (Exception e)
