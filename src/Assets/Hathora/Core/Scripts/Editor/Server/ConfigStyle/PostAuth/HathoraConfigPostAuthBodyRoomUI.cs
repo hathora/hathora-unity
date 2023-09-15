@@ -411,7 +411,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.SelectedHathoraRegion;
             createNewCreateRoomCancelToken();
-            HathoraServerRoomApi serverRoomApi = new(ServerConfig);
+            HathoraServerRoomApiWrapper serverRoomApiWrapper = new(ServerConfig);
 
             (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
 
@@ -424,7 +424,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                     throw new Exception("MOCK_CREATE_ROOM_ERR (Simulated Err)");
                 }
                 
-                roomConnInfoTuple = await serverRoomApi.CreateRoomAwaitActiveAsync(
+                roomConnInfoTuple = await serverRoomApiWrapper.ServerCreateRoomAwaitActiveAsync(
                     _cancelToken: CreateRoomCancelTokenSrc.Token);
             }
             // catch (TaskCanceledException e)

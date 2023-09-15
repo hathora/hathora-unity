@@ -4,48 +4,31 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
-using HathoraSdk.Utils;
 using UnityEngine;
 
-namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
+namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 {
     /// <summary>
-    /// High-level API wrapper for the low-level Hathora SDK's Lobby API.
-    /// * Caches SDK Config and HathoraClientConfig for API use. 
-    /// * Try/catches async API calls and [Base] automatically handlles API Exceptions.
-    /// * Due to code autogen, the SDK exposes too much: This simplifies and minimally exposes.
-    /// * Due to code autogen, the SDK sometimes have nuances: This provides fixes/workarounds.
-    /// * Call Init() to pass HathoraClientConfig + Hathora SDK Config (see HathoraClientMgr).
-    /// * Does not handle UI (see HathoraClientMgrUi).
-    /// * Does not handle Session caching (see HathoraClientSession).
+    /// Common+Client API calls for Lobby.
+    /// Operations to create and manage lobbies.
+    /// Lobbies Concept | https://hathora.dev/docs/concepts/hathora-entities#lobby 
+    /// API Docs | https://hathora.dev/api#tag/LobbyV2 
     /// </summary>
-    public class HathoraClientLobbyApi : HathoraClientApiWrapperBase
+    public class HathoraLobbyApiWrapper : HathoraApiWrapperBase
     {
-        private LobbyV2SDK lobbyApi;
+        protected LobbyV2SDK LobbyApi { get; }
 
-        /// <summary>Monobehaviour workaround for a constructor.</summary>
-        /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_hathoraSdkConfig"></param>
-        public override void Init(
-            HathoraClientConfig _hathoraClientConfig,
-            SDKConfig _hathoraSdkConfig = null)
+        public HathoraLobbyApiWrapper(HathoraSDK _hathoraSdk)
+            : base(_hathoraSdk)
         {
-            Debug.Log($"[{nameof(HathoraClientLobbyApi)}] Initializing API...");
-            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
+            Debug.Log($"[{nameof(HathoraLobbyApiWrapper)}.Constructor] " +
+                "Initializing Common API...");
             
-            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
-            SpeakeasyHttpClient httpClient = null;
-            string serverUrl = null;
-            this.lobbyApi = new LobbyV2SDK(
-                httpClient,
-                httpClient, 
-                serverUrl,
-                HathoraSdkConfig);
+            this.LobbyApi = _hathoraSdk.LobbyV2 as LobbyV2SDK;
         }
 
 
@@ -53,7 +36,9 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <summary>
         /// Create a new Player Client Lobby.
         /// </summary>
-        /// <param name="_playerAuthToken">Player Auth Token (likely from a cached session)</param>
+        /// <param name="_playerAuthToken">
+        /// TODO: Client PlayerAuthToken !used in new SDK: Deprecated?
+        /// Player Auth Token (likely from a cached session)</param>
         /// <param name="_lobbyVisibility"></param>
         /// <param name="_initConfigObj">
         /// Pass your own serializable model (or json string):
@@ -65,7 +50,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <param name="_cancelToken"></param>
         /// <param name="_region">(!) Index starts at 1 (not 0)</param>
         /// <returns>Lobby on success</returns>
-        public async Task<Lobby> ClientCreateLobbyAsync(
+        public virtual async Task<Lobby> CreateLobbyAsync(
             string _playerAuthToken,
             object _initConfigObj,
             Region _region = HathoraUtils.DEFAULT_REGION,
@@ -73,7 +58,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             string _roomId = null,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
+            string logPrefix = $"[{nameof(HathoraLobbyApiWrapper)}.{nameof(CreateLobbyAsync)}]";
 
             HathoraSdk.Models.Shared.CreateLobbyRequest createLobbyRequest = new()
             {
@@ -85,7 +70,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             HathoraSdk.Models.Operations.CreateLobbyRequest createLobbyRequestWrapper = new()
             {
                 CreateLobbyRequestValue = createLobbyRequest,
-                // AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _roomId,
             };
 
@@ -96,15 +81,15 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
             try
             {
-                createLobbyResponse = await lobbyApi.CreateLobbyAsync(createLobbyRequestWrapper);
+                createLobbyResponse = await LobbyApi.CreateLobbyAsync(createLobbyRequestWrapper);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(lobbyApi.CreateLobbyAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(LobbyApi.CreateLobbyAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
-            Debug.Log($"[NetHathoraClientAuthApi.ClientCreateLobbyAsync] Success: " +
+            Debug.Log($"{logPrefix} Success: " +
                 $"<color=yellow>{nameof(createLobbyResponse)}: {base.ToJson(createLobbyResponse)}</color>");
             
             return createLobbyResponse.Lobby;
@@ -118,17 +103,17 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <param name="roomId"></param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<Lobby> ClientGetLobbyInfoAsync(
+        public virtual async Task<Lobby> GetLobbyInfoAsync(
             string roomId,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientCreateLobbyAsync)}]";
+            string logPrefix = $"[{nameof(HathoraLobbyApiWrapper)}.{nameof(CreateLobbyAsync)}]";
             Debug.Log($"{logPrefix} <color=yellow>_roomId: {roomId}</color>");
 
             // Prep request
             GetLobbyInfoRequest getLobbyInfoRequest = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = roomId,
             };
             
@@ -137,11 +122,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             
             try
             {
-                lobbyInfoResponse = await lobbyApi.GetLobbyInfoAsync(getLobbyInfoRequest);
+                lobbyInfoResponse = await LobbyApi.GetLobbyInfoAsync(getLobbyInfoRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(lobbyApi.GetLobbyInfoAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(LobbyApi.GetLobbyInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
             
@@ -163,11 +148,11 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <param name="_request">Leave Region null to return ALL Regions</param>
         /// <param name="_cancelToken">TODO</param>
         /// <returns></returns>
-        public async Task<List<Lobby>> ClientListPublicLobbiesAsync(
+        public virtual async Task<List<Lobby>> ListPublicLobbiesAsync(
             ListActivePublicLobbiesRequest _request,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraClientLobbyApi)}.{nameof(ClientListPublicLobbiesAsync)}]";
+            string logPrefix = $"[{nameof(HathoraLobbyApiWrapper)}.{nameof(ListPublicLobbiesAsync)}]";
             string regionLogStr = _request.Region == null ? "Any" : _request.Region.ToString();
             Debug.Log($"{logPrefix} <color=yellow>Getting public+active lobbies for " +
                 $"'{(regionLogStr)}' region</color>");
@@ -176,18 +161,18 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
             
             try
             {
-                activePublicLobbiesResponse = await lobbyApi.ListActivePublicLobbiesAsync(_request);
+                activePublicLobbiesResponse = await LobbyApi.ListActivePublicLobbiesAsync(_request);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(lobbyApi.ListActivePublicLobbiesAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(LobbyApi.ListActivePublicLobbiesAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
             if (activePublicLobbiesResponse.StatusCode == 404)
             {
                 Debug.LogError($"{logPrefix} 404: If a server made a Room without a lobby, " +
-                    $"instead use the {nameof(HathoraClientRoomApi)} (not {nameof(HathoraClientLobbyApi)})");
+                    $"instead use the {nameof(HathoraRoomApiWrapper)} (not {nameof(HathoraLobbyApiWrapper)})");
             }
 
             Debug.Log($"{logPrefix} => numLobbiesFound: {activePublicLobbiesResponse.Lobbies?.Count ?? 0}");

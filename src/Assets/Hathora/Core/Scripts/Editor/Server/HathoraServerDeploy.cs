@@ -123,8 +123,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerPaths serverPaths = new(_serverConfig);
 
                 // Prepare APIs
-                HathoraServerBuildApi buildApi = new(_serverConfig);
-                HathoraServerDeployApi deployApi = new(_serverConfig);
+                HathoraServerBuildApiWrapper buildApiWrapper = new(_serverConfig);
+                HathoraServerDeployApiWrapper deployApiWrapper = new(_serverConfig);
 
                 #region Dockerfile >> Compress to .tar.gz
                 // ----------------------------------------------
@@ -159,7 +159,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 List<Deployment> oldDeployments = null;
                 try
                 {
-                    oldDeployments = await deployApi.GetDeploymentsAsync(_cancelToken);
+                    oldDeployments = await deployApiWrapper.GetDeploymentsAsync(_cancelToken);
                 }
                 catch (TaskCanceledException e)
                 {
@@ -194,7 +194,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 try
                 {
                     // TODO: Ask for buildTag in parent arg - passing `null`, for now
-                    buildInfo = await buildApi.CreateBuildAsync(
+                    buildInfo = await buildApiWrapper.CreateBuildAsync(
                         _buildTag: null, 
                         _cancelToken);
                 }
@@ -227,7 +227,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 {
                     buildWithLogs = await uploadAndVerifyBuildAsync(
                         _serverConfig,
-                        buildApi,
+                        buildApiWrapper,
                         buildInfo.BuildId,
                         serverPaths,
                         _cancelToken);
@@ -259,7 +259,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 Deployment deployment = null;
                 try
                 {
-                    deployment = await deployApi.CreateDeploymentAsync(
+                    deployment = await deployApiWrapper.CreateDeploymentAsync(
                         buildInfo.BuildId, 
                         envVars,
                         additionalContainerPorts,
@@ -354,14 +354,14 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// 2. getBuildInfo (since File streaming may have failed)
         /// </summary>
         /// <param name="_serverConfig"></param>
-        /// <param name="_buildApi"></param>
+        /// <param name="_buildApiWrapper"></param>
         /// <param name="_buildId"></param>
         /// <param name="_serverPaths"></param>
         /// <param name="_cancelToken">Optional</param>
         /// <returns>streamingLogs</returns>
         private static async Task<(Build build, List<string> logChunks)> uploadAndVerifyBuildAsync(
             HathoraServerConfig _serverConfig,
-            HathoraServerBuildApi _buildApi,
+            HathoraServerBuildApiWrapper _buildApiWrapper,
             int _buildId,
             HathoraServerPaths _serverPaths,
             CancellationToken _cancelToken = default)
@@ -380,13 +380,13 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             try
             {
-                logChunks = await _buildApi.RunCloudBuildAsync(
+                logChunks = await _buildApiWrapper.RunCloudBuildAsync(
                     _buildId,
                     normalizedPathToTarball,
                     _cancelToken);
 
-                HathoraServerBuildApi buildApi = new(_serverConfig);
-                build = await buildApi.GetBuildInfoAsync(_buildId, _cancelToken);
+                HathoraServerBuildApiWrapper buildApiWrapper = new(_serverConfig);
+                build = await buildApiWrapper.GetBuildInfoAsync(_buildId, _cancelToken);
             }
             catch (TaskCanceledException e)
             {

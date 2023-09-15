@@ -6,41 +6,28 @@ using System.Threading.Tasks;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
-using HathoraSdk.Utils;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     /// <summary>
     /// Operations to get data on active and stopped processes.
+    /// Processes Concept | https://hathora.dev/docs/concepts/hathora-entities#process
     /// API Docs | https://hathora.dev/api#tag/ProcessesV1 
     /// </summary>
-    public class HathoraServerProcessApi : HathoraServerApiWrapperBase
+    public class HathoraServerProcessApiWrapper : HathoraServerApiWrapperBase
     {
-        private ProcessesV1SDK processesApi;
+        protected ProcessesV1SDK ProcessesApi { get; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="_hathoraServerConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
-        public HathoraServerProcessApi(
-            HathoraServerConfig _hathoraServerConfig,
-            SDKConfig _hathoraSdkConfig = null)
-            : base(_hathoraServerConfig, _hathoraSdkConfig)
-        { 
-            Debug.Log("[HathoraServerProcessApi] Initializing API..."); 
+        public HathoraServerProcessApiWrapper(
+            HathoraSDK _hathoraSdk,
+            HathoraServerConfig _hathoraServerConfig)
+            : base(_hathoraSdk, _hathoraServerConfig)
+        {
+            Debug.Log($"[{nameof(HathoraServerProcessApiWrapper)}.Constructor] " +
+                "Initializing Server API...");
             
-            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
-            SpeakeasyHttpClient httpClient = null;
-            string serverUrl = null;
-            
-            this.processesApi = new ProcessesV1SDK(
-                httpClient,
-                httpClient, 
-                serverUrl,
-                HathoraSdkConfig);
+            this.ProcessesApi = _hathoraSdk.ProcessesV1 as ProcessesV1SDK;
         }
         
         
@@ -63,13 +50,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             bool _returnNullOnStoppedProcess = true,
             CancellationToken _cancelToken = default)
         {
-            const string logPrefix = "[HathoraServerProcessApi.GetProcessInfoAsync]";
+            const string logPrefix = "[HathoraServerProcessApiWrapper.GetProcessInfoAsync]";
             Debug.Log($"{logPrefix} <color=yellow>processId: {_processId}</color>");
             
             // Process request
             GetProcessInfoRequest getProcessInfoRequest = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 ProcessId = _processId,
             };
             
@@ -78,13 +65,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getProcessInfoResponse = await processesApi.GetProcessInfoAsync(
+                getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(
                     new GetProcessInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getProcessInfoRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(processesApi.GetProcessInfoAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(ProcessesApi.GetProcessInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 

@@ -3,52 +3,33 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Core.Scripts.Runtime.Client.Config;
 using HathoraSdk;
-using HathoraSdk.Utils;
 using HathoraSdk.Models.Shared;
 using UnityEngine;
 
-namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
+namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 {
     /// <summary>
-    /// High-level API wrapper for the low-level Hathora SDK's Room API.
-    /// * Caches SDK Config and HathoraClientConfig for API use. 
-    /// * Try/catches async API calls and [Base] automatically handlles API Exceptions.
-    /// * Due to code autogen, the SDK exposes too much: This simplifies and minimally exposes.
-    /// * Due to code autogen, the SDK sometimes have nuances: This provides fixes/workarounds.
-    /// * Call Init() to pass HathoraClientConfig + Hathora SDK Config (see HathoraClientMgr).
-    /// * Does not handle UI (see HathoraClientMgrUi).
-    /// * Does not handle Session caching (see HathoraClientSession).
+    /// Common+Client API calls for Room.
+    /// Operations to create, manage, and connect to rooms.
+    /// Rooms Concept | https://hathora.dev/docs/concepts/hathora-entities#room 
+    /// API Docs | https://hathora.dev/api#tag/RoomV1 
     /// </summary>
-    public class HathoraClientRoomApi : HathoraClientApiWrapperBase
+    public class HathoraRoomApiWrapper : HathoraApiWrapperBase
     {
-        private RoomV2SDK roomApi;
+        protected RoomV2SDK RoomApi { get; }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="_hathoraClientConfig"></param>
-        /// <param name="_hathoraSdkConfig"></param>
-        public override void Init(
-            HathoraClientConfig _hathoraClientConfig, 
-            SDKConfig _hathoraSdkConfig = null)
+        public HathoraRoomApiWrapper(HathoraSDK _hathoraSdk)
+        : base(_hathoraSdk)
         {
-            Debug.Log($"[{nameof(HathoraClientRoomApi)}] Initializing API...");
+            Debug.Log($"[{nameof(HathoraRoomApiWrapper)}.Constructor] " +
+                "Initializing Common API...");
             
-            base.Init(_hathoraClientConfig, _hathoraSdkConfig);
-            
-            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
-            SpeakeasyHttpClient httpClient = null;
-            string serverUrl = null;
-            this.roomApi = new RoomV2SDK(
-                httpClient,
-                httpClient, 
-                serverUrl,
-                HathoraSdkConfig);
+            this.RoomApi = _hathoraSdk.RoomV2 as RoomV2SDK;
         }
 
-
-        #region Client Room Async Hathora SDK Calls
+        
+        #region Common Room Async Hathora SDK Calls
         /// <summary>
         /// Gets connection info, like ip:port.
         /// (!) We'll poll until we have an `Active` Status: Be sure to await!
@@ -58,13 +39,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
         /// <param name="_pollTimeoutSecs"></param>
         /// <param name="_cancelToken"></param>
         /// <returns>Room on success</returns>
-        public async Task<ConnectionInfoV2> ClientGetConnectionInfoAsync(
+        public virtual async Task<ConnectionInfoV2> GetConnectionInfoAsync(
             string _roomId, 
             int _pollIntervalSecs = 1, 
             int _pollTimeoutSecs = 15,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraClientRoomApi)}.{nameof(ClientGetConnectionInfoAsync)}]";
+            string logPrefix = $"[{nameof(HathoraRoomApiWrapper)}.{nameof(GetConnectionInfoAsync)}]";
             
             // Prep request
             HathoraSdk.Models.Operations.GetConnectionInfoRequest getConnectionInfoRequest = new()
@@ -82,7 +63,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 
                 try
                 {
-                    getConnectionInfoResponse = await roomApi.GetConnectionInfoAsync(getConnectionInfoRequest);
+                    getConnectionInfoResponse = await RoomApi.GetConnectionInfoAsync(getConnectionInfoRequest);
                 }
                 catch(Exception e)
                 {
@@ -112,6 +93,6 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 
             return connectionInfo;
         }
-        #endregion // Client Room Async Hathora SDK Calls
+        #endregion // Common Room Async Hathora SDK Calls
     }
 }

@@ -282,9 +282,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onRefreshAppsListBtnClick");   
             isRefreshingExistingApps = true;
-            HathoraServerAppApi appApi = new(ServerConfig); 
             
-            List<ApplicationWithDeployment> apps = await appApi.GetAppsAsync();
+            HathoraServerAppApiWrapper appApiWrapper = new(ServerConfig); 
+            
+            List<ApplicationWithDeployment> apps = await appApiWrapper.GetAppsAsync();
 
             try 
             {

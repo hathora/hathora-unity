@@ -4,45 +4,37 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
-using HathoraSdk.Utils;
 using UnityEngine;
 using UnityEngine.Assertions;
 using CreateRoomRequest = HathoraSdk.Models.Shared.CreateRoomRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
-    public class HathoraServerRoomApi : HathoraServerApiWrapperBase
+    /// <summary>
+    /// Operations to create, manage, and connect to rooms.
+    /// Rooms Concept | https://hathora.dev/docs/concepts/hathora-entities#process
+    /// API Docs | https://hathora.dev/api#tag/RoomV2
+    /// </summary>
+    public class HathoraServerRoomApiWrapper : HathoraRoomApiWrapper
     {
-        private readonly RoomV2SDK roomApi;
-        private HathoraLobbyRoomOpts roomOpts => HathoraServerConfig.HathoraLobbyRoomOpts;
+        private HathoraServerConfig hathoraServerConfig;
+        private string auth0DevToken => hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken; 
         public bool IsPollingForActiveConnInfo { get; private set; }
         
-        /// <summary>
-        /// </summary>
-        /// <param name="_hathoraServerConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Passed along to base for API calls as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
-        public HathoraServerRoomApi( 
-            HathoraServerConfig _hathoraServerConfig,
-            SDKConfig _hathoraSdkConfig = null)
-            : base(_hathoraServerConfig, _hathoraSdkConfig)
+        public HathoraServerRoomApiWrapper(
+            HathoraSDK _hathoraSdk,
+            HathoraServerConfig _hathoraServerConfig)
+            : base(_hathoraSdk)
         {
-            Debug.Log("[HathoraServerRoomApi] Initializing API...");
+            Debug.Log($"[{nameof(HathoraServerRoomApiWrapper)}.Constructor] " +
+                "Initializing Server API...");
             
-            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
-            SpeakeasyHttpClient httpClient = null;
-            string serverUrl = null;
-            this.roomApi = new RoomV2SDK(
-                httpClient,
-                httpClient, 
-                serverUrl,
-                HathoraSdkConfig);
+            hathoraServerConfig = _hathoraServerConfig;
         }
         
         
@@ -52,7 +44,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </summary>
         /// 
         /// <list type="number">
-        /// <item>Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora.</item>
+        /// <item>Wrapper for `ServerCreateRoomAwaitActiveAsync` to create a new room in Hathora.</item>
         /// <item>Poll GetConnectionInfoV2Async(roomId): takes ~5s, until Status is `Active`.</item>
         /// <item>Once Active Status, get Room info.</item>
         /// </list>
@@ -64,13 +56,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_customCreateRoomId">Recommended to leave null to prevent potential dupes.</param>
         /// <param name="_cancelToken">TODO</param>
         /// <returns>both Room + [ACTIVE]ConnectionInfoV2 (ValueTuple) on success</returns>
-        public async Task<(Room room, ConnectionInfoV2 connInfo)> CreateRoomAwaitActiveAsync(
+        public async Task<(Room room, ConnectionInfoV2 connInfo)> ServerCreateRoomAwaitActiveAsync(
             Region _region = HathoraUtils.DEFAULT_REGION,
             string _roomConfig = null,
             string _customCreateRoomId = null,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAwaitActiveAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(ServerCreateRoomAwaitActiveAsync)}]";
             
             // (1/3) Create Room
             ConnectionInfoV2 createdRoomConnectionInfo = null;
@@ -83,7 +75,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     RoomConfig = _roomConfig,
                 };
                   
-                createdRoomConnectionInfo = await CreateRoomAsync(
+                createdRoomConnectionInfo = await ServerCreateRoomAsync(
                     createRoomReq, 
                     _customCreateRoomId, 
                     _cancelToken);
@@ -94,7 +86,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} CreateRoomAsync => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} ServerCreateRoomAsync => Error: {e.Message}");
                 throw;
             }
 
@@ -130,7 +122,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             Room activeRoom = null;
             try
             {
-                activeRoom = await GetRoomInfoAsync(
+                activeRoom = await ServerGetRoomInfoAsync(
                     newlyCreatedRoomId, 
                     _cancelToken);
                 
@@ -143,7 +135,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(GetRoomInfoAsync)} => Error: {e.Message} " +
+                Debug.LogError($"{logPrefix} {nameof(ServerGetRoomInfoAsync)} => Error: {e.Message} " +
                     "(Check console.hathora.dev logs for +info)");
                 throw;
             }
@@ -157,23 +149,23 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         }
 
         /// <summary>
-        /// Wrapper for `CreateRoomAwaitActiveAsync` to create a new room in Hathora.
+        /// Wrapper for `ServerCreateRoomAwaitActiveAsync` to create a new room in Hathora.
         /// </summary>
         /// <param name="_createRoomReq">Region, RoomConfig</param>
         /// <param name="_customRoomId"></param>
         /// <param name="_cancelToken">TODO</param>
         /// <returns></returns>
-        private async Task<ConnectionInfoV2> CreateRoomAsync(
+        private async Task<ConnectionInfoV2> ServerCreateRoomAsync(
             CreateRoomRequest _createRoomReq,
             string _customRoomId = null,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(CreateRoomAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(ServerCreateRoomAsync)}]";
             
             // Prep request data
             HathoraSdk.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _customRoomId,
                 CreateRoomRequestValue = _createRoomReq,
             };
@@ -188,8 +180,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
-                createRoomResponse = await roomApi.CreateRoomAsync(
-                    new CreateRoomSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                createRoomResponse = await RoomApi.CreateRoomAsync(
+                    new CreateRoomSecurity { Auth0 = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
@@ -200,7 +192,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(roomApi.CreateRoomAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(RoomApi.CreateRoomAsync)} => Error: {e.Message}");
                 return null; // fail
             }
             
@@ -219,16 +211,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_roomId"></param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<Room> GetRoomInfoAsync(
+        public async Task<Room> ServerGetRoomInfoAsync(
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(GetRoomInfoAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(ServerGetRoomInfoAsync)}]";
             
             // Prepare request
             GetRoomInfoRequest getRoomInfoRequest = new()
             {
-                // AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _roomId,
             };
             
@@ -237,8 +229,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             try
             {
-                getRoomInfoResponse = await roomApi.GetRoomInfoAsync(
-                    new GetRoomInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                getRoomInfoResponse = await RoomApi.GetRoomInfoAsync(
+                    new GetRoomInfoSecurity { Auth0 = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getRoomInfoRequest);
             }
             catch (TaskCanceledException)
@@ -249,7 +241,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(roomApi.GetRoomInfoAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(RoomApi.GetRoomInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
@@ -269,16 +261,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         /// <param name="_cancelToken"></param>
         /// <returns></returns>
-        public async Task<List<RoomWithoutAllocations>> GetActiveRoomsForProcessAsync(
+        public async Task<List<RoomWithoutAllocations>> ServerGetActiveRoomsForProcessAsync(
             string _processId, 
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerRoomApi)}].{nameof(GetActiveRoomsForProcessAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}].{nameof(ServerGetActiveRoomsForProcessAsync)}]";
             
             // Prepare request
             GetActiveRoomsForProcessRequest getActiveRoomsForProcessRequest = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 ProcessId = _processId,
             };
             
@@ -287,8 +279,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             try
             {
-                getActiveRoomsForProcessResponse = await roomApi.GetActiveRoomsForProcessAsync(
-                    new GetActiveRoomsForProcessSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                getActiveRoomsForProcessResponse = await RoomApi.GetActiveRoomsForProcessAsync(
+                    new GetActiveRoomsForProcessSecurity { Auth0 = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getActiveRoomsForProcessRequest);
             }
             catch (TaskCanceledException)
@@ -299,7 +291,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(roomApi.GetActiveRoomsForProcessAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(RoomApi.GetActiveRoomsForProcessAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
@@ -316,64 +308,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             return activeRooms;
         }
+        #endregion // Server Room Async Hathora SDK Calls
 
-        /// <summary>
-        /// (!) If the Room you created has a Status if !Active, the
-        /// Result `ExposedPort` prop here will be null.
-        /// </summary>
-        /// <param name="_roomId"></param>
-        /// <param name="_cancelToken"></param>
-        /// <returns></returns>
-        public async Task<ConnectionInfoV2> GetConnectionInfoAsync(
-            string _roomId, 
-            CancellationToken _cancelToken = default)
-        {
-            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(GetConnectionInfoAsync)}]";
-
-            // Prepare request
-            GetConnectionInfoRequest getConnectionInfoRequest = new()
-            {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
-                RoomId = _roomId,
-            };
-            
-            // Get response async =>
-            GetConnectionInfoResponse getConnectionInfoResponse = null;
-
-            try
-            {
-                getConnectionInfoResponse = await roomApi.GetConnectionInfoAsync(getConnectionInfoRequest);
-            }
-            catch (TaskCanceledException)
-            {
-                // The user explicitly cancelled, or the Task timed out
-                Debug.Log("[HathoraServerRoomApi.GetConnectionInfoAsync] Task cancelled");
-                return null;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"{logPrefix} {nameof(roomApi.GetConnectionInfoAsync)} => Error: {e.Message}");
-                return null; // fail
-            }
-            
-            // Process result
-            ConnectionInfoV2 connectionInfo = getConnectionInfoResponse.ConnectionInfoV2;
-            bool isActiveWithExposedPort = connectionInfo is
-            {
-                Status: ConnectionInfoV2Status.Active, 
-                ExposedPort: not null,
-            };
-
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(isActiveWithExposedPort)}? {isActiveWithExposedPort}, " +
-                $"{nameof(getConnectionInfoResponse)}: {base.ToJson(getConnectionInfoResponse)}</color>");
-
-            return connectionInfo;
-        }
-
-        // ------------------------------------------
-        // Utils >>
         
+        #region Utils
         /// <summary>
         /// ETA 5 seconds; poll once/second.
         /// </summary>
@@ -384,7 +322,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _roomId,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerRoomApi)}.{nameof(PollConnectionInfoUntilActiveAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(PollConnectionInfoUntilActiveAsync)}]";
             
             ConnectionInfoV2 connectionInfo = null;
             int attemptNum = 0;
@@ -425,6 +363,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             IsPollingForActiveConnInfo = false;
             return connectionInfo;
         }
-        #endregion // Server Room Async Hathora SDK Calls
+        #endregion //Utils
     }
 }

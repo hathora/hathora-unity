@@ -1,8 +1,7 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Core.Scripts.Runtime.Common.Models;
+using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using HathoraSdk;
-using Newtonsoft.Json;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -12,38 +11,39 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     /// Server APIs can inherit from this.
     /// Unlike Client API wrappers (since !Mono), we init via Constructor instead of Init().
     /// </summary>
-    public abstract class HathoraServerApiWrapperBase : IHathoraApiBase
+    public abstract class HathoraServerApiWrapperBase : HathoraApiWrapperBase
     {
-        public SDKConfig HathoraSdkConfig { get; set; }
-        protected HathoraServerConfig HathoraServerConfig { get; private set; }
+        #region Vars
+        protected HathoraServerConfig HathoraServerConfig { get; }
 
         /// <summary>Pulls "DevAuthToken" from HathoraServerConfig</summary>
         protected string HathoraDevToken => 
             HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken;
 
         // Shortcuts
-        public string AppId
+        protected new string AppId
         {
             get {
+                string logPrefix = $"[{nameof(HathoraServerApiWrapperBase)}.{nameof(AppId)}.get]";
+
                 if (HathoraServerConfig == null)
                 {
-                    Debug.LogError("[HathoraServerApiWrapper.AppId.get] !HathoraServerConfig: " +
-                        "Did you forget to add init a newly-added API @ HathoraServerMgr.initApis()?" +
+                    Debug.LogError($"{logPrefix} !HathoraServerConfig: " +
+                        "Did you forget to add init a newly-added API @ HathoraServerMgr.InitApiWrappers()?" +
                         "**For Non-host Clients (or Servers that don't have runtime Server API calls), you may ignore this**");
                     return null;
                 }
 
                 if (HathoraServerConfig.HathoraCoreOpts == null)
                 {
-                    Debug.LogError("[HathoraServerApiWrapper.AppId.get] HathoraServerConfig exists, " +
+                    Debug.LogError($"{logPrefix} HathoraServerConfig exists, " +
                         "but !HathoraServerConfig.HathoraCoreOpts");
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(HathoraServerConfig.HathoraCoreOpts.AppId))
                 {
-                    Debug.LogError("[HathoraServerApiWrapper.AppId.get] " +
-                        "!HathoraServerConfig.HathoraCoreOpts.AppId -- " +
+                    Debug.LogError($"{logPrefix} !HathoraServerConfig.HathoraCoreOpts.AppId: " +
                         "Did you configure your HathoraServerConfig?");
                     return null;
                 }
@@ -51,7 +51,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return HathoraServerConfig.HathoraCoreOpts.AppId;
             }
         }
-        
+        #endregion // Vars
+
 
         #region Init
         /// <summary>
@@ -61,28 +62,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_hathoraServerConfig">
         /// Find via Unity editor top menu: Hathora >> Find Configs
         /// </param>
+        /// <param name="_hathoraSdk"></param>
         protected HathoraServerApiWrapperBase(
-            HathoraServerConfig _hathoraServerConfig,
-            SDKConfig _hathoraSdkConfig = null)
+            HathoraSDK _hathoraSdk,
+            HathoraServerConfig _hathoraServerConfig)
+            : base(_hathoraSdk)
         {
             this.HathoraServerConfig = _hathoraServerConfig;
-            this.HathoraSdkConfig = _hathoraSdkConfig ?? GenerateSdkConfig();
         }
-        
-        public SDKConfig GenerateSdkConfig() => new()
-        {
-            // TODO: The new `SDKConfig` is empty, but previously passed AccessToken; how does the new SDK handle this if we don't pass the token?
-            // AccessToken = HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
-        };
         #endregion // Init
-
-        
-        #region Utils
-        public string ToJson<T>(T Obj, bool prettify = true)
-        {
-            Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
-            return JsonConvert.SerializeObject(Obj, formatting);
-        }
-        #endregion // Utils
     }
 }

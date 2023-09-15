@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Core.Scripts.Runtime.Client;
+using Hathora.Core.Scripts.Runtime.Client.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Client.Config;
+using Hathora.Core.Scripts.Runtime.Common;
+using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using Hathora.Demos.Shared.Scripts.Client.Models;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
@@ -16,13 +17,13 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
-namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
+namespace Hathora.Core.Scripts.Runtime.Client
 {
     /// <summary>
     /// - This is the entry point to call Hathora SDK: Auth, lobby, rooms, etc.
     /// - Opposed to the SDK itself, this gracefully wraps around it with callbacks + events + session tracking.
     /// - Every SDK call from this script caches the result in `hathoraClientSession`.
-    /// - To add API scripts: Add to the `ClientApis` serialized field.
+    /// - To add API scripts: Add to the `apis` serialized field.
     /// - Optimized to optionally be inheritted to separate your logic from Hathora's (easy updates; separation of logic).
     /// - Subscribe to event callbacks like `OnAuthLoginDoneEvent` to handle UI/logic from multiple scripts:
     ///     * OnAuthLoginDoneEvent
@@ -34,8 +35,6 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
     {
         public static HathoraClientMgr Singleton { get; private set; }
         
-        
-        #region Serialized Fields
         [Header("(!) Get from Hathora dir; see hover tooltip")]
         [SerializeField, Tooltip("AppId should parity HathoraServerConfig (see top menu Hathora/Configuration")]
         private HathoraClientConfig hathoraClientConfig;
@@ -51,14 +50,15 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// - Reset anew when authenticating.
         /// </summary>
         public HathoraClientSession HathoraClientSession => hathoraClientSession;
+
+        /// <summary>
+        /// Container for Hathora Client/Common APIs.
+        /// (!) If you skip the high-level wrappers here, hathoraClientSession (cache) will not set!
+        /// </summary>
+        private HathoraClientApiContainer apis;
         
-        [FormerlySerializedAs("ClientApis")]
-        [SerializeField]
-        private ClientApiContainer clientApis;
-        
-        /// <summary>Direct access to the APIs, if the mgr !has what you want</summary>
-        protected ClientApiContainer ClientApis => clientApis;
-        #endregion // Serialized Fields
+        /// <summary>Inits with info from `HathoraClientConfig`</summary>
+        protected HathoraSDK HathoraSdk { get; private set; }
 
 
         #region Public Events
@@ -78,11 +78,16 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         
         
         #region Init
-        protected virtual void Awake() =>
+        protected virtual void Awake()
+        {
             setSingleton();
+            initHathoraSdk();
+            initApiWrappers();
+        }
         
-        protected virtual void Start() =>
-            initApis(_hathoraSdkConfig: null); // Base will create this
+        protected virtual void Start()
+        {
+        }
 
         /// <summary>
         /// You want other classes to easily be able to access your ClientMgr
@@ -104,21 +109,53 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             Singleton = this;
         }
-
-        /// <summary>
-        /// Init all Client API wrappers. Uses serialized HathoraClientConfig
-        /// </summary>
-        /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        private void initApis(SDKConfig _hathoraSdkConfig = null)
+        
+        private void initHathoraSdk()
         {
-            if (clientApis.ClientAuthApi != null)
-                clientApis.ClientAuthApi.Init(hathoraClientConfig, _hathoraSdkConfig);
+            string appId = hathoraClientConfig.AppId;
             
-            if (clientApis.ClientLobbyApi != null)
-                clientApis.ClientLobbyApi.Init(hathoraClientConfig, _hathoraSdkConfig);
+            HathoraSDK.Security security = new()
+            {
+                // TODO: Redundant AppId - If this is already set in SDKConfig, Security should internally create it within its own constructor
+                HathoraDevToken = appId,
+            };
+            
+            SDKConfig sdkConfig = new()
+            {
+                AppId = appId,
+                // HathoraDevToken = // Servers only 
+            };
+            
+            this.HathoraSdk = new HathoraSDK(
+                serverUrl: null,
+                client: null,
+                sdkConfig,
+                security);
+        }
 
-            if (clientApis.ClientRoomApi != null)
-                clientApis.ClientRoomApi.Init(hathoraClientConfig, _hathoraSdkConfig);
+        /// <summary>Init all Client API wrappers, passing HathoraSdk instance.</summary>
+        private void initApiWrappers()
+        {
+            if (!CheckIsValidToInitApis())
+                return;
+            
+            apis = new HathoraClientApiContainer(HathoraSdk);
+        }
+
+        /// <returns>isValid</returns>
+        private bool CheckIsValidToInitApis()
+        {
+            string logPrefix = $"[{nameof(HathoraClientMgr)}.{nameof(CheckIsValidToInitApis)}]";
+
+            if (hathoraClientConfig == null)
+            {
+                Debug.LogError($"{logPrefix} !hathoraClientConfig: " +
+                    $"Serialize to {gameObject.name}.{nameof(HathoraClientMgr)} to " +
+                    "call Client + Common API calls");
+                return false;
+            }
+
+            return true; // isValid
         }
         #endregion // Init
         
@@ -132,7 +169,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         /// </summary>
         public async Task<LoginResponse> AuthLoginAsync(CancellationToken _cancelToken = default)
         {
-            LoginResponse authResult = await clientApis.ClientAuthApi.ClientAuthAsync(_cancelToken);
+            LoginResponse authResult = await apis.ClientAuthApiWrapper.ClientAuthAsync(_cancelToken);
             bool isSuccess = !string.IsNullOrEmpty(authResult.Token);
             
             hathoraClientSession.InitNetSession(authResult.Token);
@@ -164,7 +201,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
 
-            Lobby lobby = await clientApis.ClientLobbyApi.ClientCreateLobbyAsync(
+            Lobby lobby = await apis.LobbyApiWrapper.CreateLobbyAsync(
                 hathoraClientSession.PlayerAuthToken,
                 _initConfigObj,
                 _region,
@@ -191,7 +228,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
 
-            Lobby lobby = await clientApis.ClientLobbyApi.ClientGetLobbyInfoAsync(
+            Lobby lobby = await apis.LobbyApiWrapper.GetLobbyInfoAsync(
                 _roomId,
                 _cancelToken);
         
@@ -216,7 +253,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
             
-            List<Lobby> lobbies = await clientApis.ClientLobbyApi.ClientListPublicLobbiesAsync(
+            List<Lobby> lobbies = await apis.LobbyApiWrapper.ListPublicLobbiesAsync(
                 _listActivePublicLobbiesRequest,
                 _cancelToken);
 
@@ -245,7 +282,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             
             try
             {
-                connectionInfo = await clientApis.ClientRoomApi.ClientGetConnectionInfoAsync(
+                connectionInfo = await apis.RoomApiWrapper.GetConnectionInfoAsync(
                     _roomId,
                     _cancelToken: _cancelToken);
             }
@@ -253,7 +290,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
             {
                 Debug.LogError(
                     $"[{nameof(HathoraClientMgr)}.{nameof(GetActiveConnectionInfo)}] " +
-                    $"ClientGetConnectionInfoAsync => Error: {e}");
+                    $"GetConnectionInfoAsync => Error: {e}");
 
                 throw;
             }

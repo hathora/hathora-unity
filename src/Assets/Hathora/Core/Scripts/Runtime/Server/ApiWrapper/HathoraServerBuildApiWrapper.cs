@@ -17,39 +17,25 @@ using UnityEngine;
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     /// <summary>
-    /// Handles Build API calls to Hathora Server.
-    /// - Passes API key from HathoraServerConfig to SDK
-    /// - Passes Auth0 (Dev Token) from hathoraServerConfig to SDK
-    /// - API Docs | https://hathora.dev/api#tag/BuildV1
+    /// Operations that allow you create and manage your builds.
+    /// Build Concept | https://hathora.dev/docs/concepts/hathora-entities#build
+    /// API Docs | https://hathora.dev/api#tag/BuildV1
     /// </summary>
-    public class HathoraServerBuildApi : HathoraServerApiWrapperBase
+    public class HathoraServerBuildApiWrapper : HathoraServerApiWrapperBase
     {
-        private readonly BuildV1SDK buildApi;
+        protected BuildV1SDK BuildApi { get; }
         private volatile bool uploading;
 
-        /// <summary>
-        /// </summary>
-        /// <param name="_hathoraServerConfig"></param>
-        /// <param name="_hathoraSdkConfig">
-        /// Set in base as `HathoraSdkConfig`; potentially null in child.
-        /// </param>
-        public HathoraServerBuildApi(
-            HathoraServerConfig _hathoraServerConfig,
-            SDKConfig _hathoraSdkConfig = null) 
-            : base(_hathoraServerConfig, _hathoraSdkConfig)
+        public HathoraServerBuildApiWrapper(
+            HathoraSDK _hathoraSdk,
+            HathoraServerConfig _hathoraServerConfig)
+            : base(_hathoraSdk, _hathoraServerConfig)
         {
-            Debug.Log("[HathoraServerBuildApi] Initializing API...");
+            Debug.Log($"[{nameof(HathoraServerBuildApiWrapper)}.Constructor] " +
+                "Initializing Server API...");
             
-            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
-            SpeakeasyHttpClient httpClient = null;
-            string serverUrl = null;
-            this.buildApi = new BuildV1SDK(
-                httpClient,
-                httpClient, 
-                serverUrl,
-                HathoraSdkConfig);
+            this.BuildApi = _hathoraSdk.BuildV1 as BuildV1SDK;
         }
-        
         
         
         #region Server Build Async Hathora SDK Calls
@@ -65,7 +51,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _buildTag = null,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(CreateBuildAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(CreateBuildAsync)}]";
             
             // Prep request
             HathoraSdk.Models.Shared.CreateBuildRequest createBuildRequest = new()
@@ -84,13 +70,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                createCloudBuildResponse = await buildApi.CreateBuildAsync(
+                createCloudBuildResponse = await BuildApi.CreateBuildAsync(
                     new CreateBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createBuildRequestWrapper);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(buildApi.CreateBuildAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(BuildApi.CreateBuildAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
@@ -114,7 +100,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _pathToTarGzBuildFile,
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(RunCloudBuildAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(RunCloudBuildAsync)}]";
 
             #region Timeout Workaround // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: How to raise timeout now?
             Debug.Log($"{logPrefix} (!) TODO: The new SDK can no longer set (raise) Timeout");
@@ -147,7 +133,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             RunBuildRequest runBuildRequestWrapper = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 BuildId = _buildId,
                 RequestBody = runBuildRequest,
             };
@@ -166,10 +152,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 //     FileMode.Open,
                 //     FileAccess.Read);
 
-                // (!) Using the `highTimeoutBuildApi` workaround instance here
-                runBuildResponse = await highTimeoutBuildApi.RunBuildAsync(
+                // // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: How to raise timeout now?
+                // runBuildResponse = await highTimeoutBuildApi.RunBuildAsync(
+                //     new RunBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                //     runBuildRequestWrapper);
+
+                runBuildResponse = await BuildApi.RunBuildAsync(
                     new RunBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
-                    runBuildRequestWrapper);;
+                    runBuildRequestWrapper);
             }
             catch (TaskCanceledException)
             {
@@ -177,7 +167,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(highTimeoutBuildApi.RunBuildAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(BuildApi.RunBuildAsync)} => Error: {e.Message}");
                 return null; // fail
             }
             finally
@@ -185,7 +175,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 uploading = false;
             }
 
-            Debug.Log($"{logPrefix} Done - to know if success, call buildApi.RunBuild");
+            Debug.Log($"{logPrefix} Done - to know if success, call BuildApi.RunBuild");
 
             // (!) Unity, by default, truncates logs to 1k chars (callstack-inclusive).
             string encodedLogs = await readStreamToStringAsync(runBuildResponse?.RunBuild200TextPlainBinaryString);
@@ -246,7 +236,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 IEnumerable<string> chunk = lines.Skip(i).Take(chunkSize);
                 string chunkStr = string.Join("\n", chunk);
-                Debug.Log($"[HathoraServerBuildApi.onRunCloudBuildDone] result == chunk starting at line {i}: " +
+                Debug.Log($"[HathoraServerBuildApiWrapper.onRunCloudBuildDone] result == chunk starting at line {i}: " +
                     $"\n<color=yellow>{chunkStr}</color>");
             }
 
@@ -263,12 +253,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             int _buildId,
             CancellationToken _cancelToken)
         {
-            string logPrefix = $"[{nameof(HathoraServerBuildApi)}.{nameof(GetBuildInfoAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(GetBuildInfoAsync)}]";
 
             // Prepare request
             GetBuildInfoRequest getBuildInfoRequest = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 BuildId = _buildId,
             };
             
@@ -277,13 +267,13 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getBuildInfoResponse = await buildApi.GetBuildInfoAsync(
+                getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(
                     new GetBuildInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getBuildInfoRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(buildApi.GetBuildInfoAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(BuildApi.GetBuildInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 

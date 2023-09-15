@@ -1,0 +1,72 @@
+// Created by dylan@hathora.dev
+
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
+using HathoraSdk;
+using HathoraSdk.Models.Operations;
+using HathoraSdk.Models.Shared;
+using UnityEngine;
+
+namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
+{
+    /// <summary>
+    /// Client API calls for Auth.
+    /// Operations that allow you to generate a Hathora-signed JSON web token (JWT) for player authentication.
+    /// JWT Concept | https://jwt.io/
+    /// Auth Concept | https://hathora.dev/docs/lobbies-and-matchmaking/auth-service
+    /// API Docs | https://hathora.dev/api#tag/AuthV1
+    /// </summary>
+    public class HathoraClientAuthApiWrapper : HathoraApiWrapperBase
+    {
+        protected AuthV1SDK AuthApi { get; }
+
+        public HathoraClientAuthApiWrapper(HathoraSDK _hathoraSdk)
+            : base(_hathoraSdk)
+        {
+            Debug.Log($"[{nameof(HathoraClientAuthApiWrapper)}.Constructor] " +
+                "Initializing Client API...");
+            
+            this.AuthApi = _hathoraSdk.AuthV1 as AuthV1SDK;
+        }
+
+
+        #region Client Auth Async Hathora SDK Calls
+        /// <param name="_cancelToken">TODO</param>
+        /// <returns>Returns AuthResult on success</returns>
+        public async Task<LoginResponse> ClientAuthAsync(CancellationToken _cancelToken = default)
+        {
+            string logPrefix = $"[{nameof(HathoraClientAuthApiWrapper)}.{nameof(ClientAuthAsync)}]"; 
+            Debug.Log($"{logPrefix} Start");
+
+            LoginAnonymousRequest anonLoginRequest = new() { AppId = base.AppId }; 
+            LoginAnonymousResponse loginAnonResponse = null;
+            
+            try
+            {
+                loginAnonResponse = await AuthApi.LoginAnonymousAsync(anonLoginRequest);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{logPrefix} {nameof(AuthApi.LoginAnonymousAsync)} => Error: {e.Message}");
+                return null; // fail
+            }
+
+            bool isAuthed = !string.IsNullOrEmpty(loginAnonResponse.LoginResponse?.Token); 
+            
+            
+#if UNITY_EDITOR
+            // For security, we probably only want to log this in the editor
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(isAuthed)}: {isAuthed}, " +
+                $"{nameof(loginAnonResponse)}: {base.ToJson(loginAnonResponse)}</color>");
+#else
+            Debug.Log($"{logPrefix} {nameof(isAuthed)}: {isAuthed}");
+#endif
+
+
+            return loginAnonResponse.LoginResponse;
+        }
+        #endregion // Server Auth Async Hathora SDK Calls
+    }
+}

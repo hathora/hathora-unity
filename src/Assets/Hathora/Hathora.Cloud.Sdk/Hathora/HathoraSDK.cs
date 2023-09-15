@@ -44,6 +44,12 @@ namespace HathoraSdk
 
     public class HathoraSDK: IHathoraSDK
     {
+        /// <summary>
+        /// Adding for outlined pending change @
+        /// https://github.com/speakeasy-sdks/hathora-sdk-unity#sdk-example-usage
+        /// --Dylan 
+        /// </summary>
+        public Security HathoraSecurity { get; private set; }
         public SDKConfig Config { get; private set; }
         public static List<string> ServerList = new List<string>()
         {
@@ -73,16 +79,47 @@ namespace HathoraSdk
         public IRoomV1SDK RoomV1 { get; private set; }
         public IRoomV2SDK RoomV2 { get; private set; }
 
-        public HathoraSDK(string? serverUrl = null, ISpeakeasyHttpClient? client = null)
+        /// <summary>
+        /// Adding for outlined pending change @
+        /// https://github.com/speakeasy-sdks/hathora-sdk-unity#sdk-example-usage
+        /// --Dylan 
+        /// </summary>
+        public class Security
+        {
+            public string HathoraDevToken { get; set; }
+        }
+        
+        /// <summary>
+        /// Adding `security` to args, outlined pending change @
+        /// https://github.com/speakeasy-sdks/hathora-sdk-unity#sdk-example-usage
+        /// --Dylan 
+        /// </summary>
+        // public HathoraSDK(string? serverUrl = null, ISpeakeasyHttpClient? client = null)
+        public HathoraSDK(
+            string? serverUrl = null, 
+            ISpeakeasyHttpClient? client = null,
+            SDKConfig? config = null, // Added since planned --Dylan
+            Security? security = null) // Added since planned --Dylan
         {
             _serverUrl = serverUrl ?? HathoraSDK.ServerList[0];
 
             _defaultClient = new SpeakeasyHttpClient(client);
             _securityClient = _defaultClient;
             
-            Config = new SDKConfig()
-            {
-            };
+            #region Dylan Changes
+            
+            // Adding for outlined pending change @
+            // https://github.com/speakeasy-sdks/hathora-sdk-unity#sdk-example-usage
+            // --Dylan 
+            HathoraSecurity = security ?? new Security();
+            
+            // Edited to take in config arg --Dylan
+            Config = config ?? new SDKConfig();
+            // Config = new SDKConfig()
+            // {
+            // };
+            
+            #endregion // Dylan Changes
 
             AppV1 = new AppV1SDK(_defaultClient, _securityClient, _serverUrl, Config);
             AuthV1 = new AuthV1SDK(_defaultClient, _securityClient, _serverUrl, Config);

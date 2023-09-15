@@ -8,8 +8,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     [Serializable]
     public class HathoraDevAuthTokenOpts
     {
+        /// <summary>TODO: To be renamed to `HathoraDevToken` to parity the new `SDKConfig.HathoraDevToken`</summary>
         [SerializeField]
         private string _devAuthToken;
+
+        /// <summary>TODO: To be renamed to `HathoraDevToken` to parity the new `SDKConfig.HathoraDevToken`</summary>
         public string DevAuthToken
         {
             get => _devAuthToken;

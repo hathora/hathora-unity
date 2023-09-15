@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraSdk;
@@ -38,6 +39,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
         public HathoraServerConfig HathoraServerConfig
         {
             get {
+                string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(hathoraServerConfig)}.get]";
+                
 				#if !UNITY_SERVER && !UNITY_EDITOR
 				Debug.LogError("[HathoraServerMgr] (!) Tried to get hathoraServerConfig " +
                     "from Server when NOT a <server || editor>");
@@ -46,7 +49,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
                 if (hathoraServerConfig == null)
                 {
-                    Debug.LogError("[HathoraServerMgr.hathoraServerConfig.get] HathoraServerMgr exists, " +
+                    Debug.LogError($"{logPrefix} HathoraServerMgr exists, " +
                         "but !HathoraServerConfig -- Did you forget to serialize a config into your scene?");
                 }
 
@@ -54,13 +57,15 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
         }
         
-        private ServerApiContainer serverApis;
-        
         /// <summary>
-        /// Get the Hathora Server SDK API wrappers for all wrapped Server APIs.
-        /// (!) There may be high-level variants of the calls here; check 1st!
+        /// Container for Hathora Client/Common APIs.
+        /// (!) First check `this` for wrappers that may contain a chain of API calls for common uses.
+        ///   - For example, GetServerContext() gets: ProcessId, Process, Room, ConnectionInfo, [Lobby].
         /// </summary>
-        public ServerApiContainer ServerApis => serverApis;
+        protected ServerApiContainer Apis { get; private set; }
+        
+        /// <summary>Inits with info from `HathoraServerConfig`</summary>
+        protected HathoraSDK HathoraSdk { get; private set; }
 
         /// <summary>(!) This is set async on Awake; check for null</summary>
         private volatile HathoraServerContext serverContext;
@@ -88,12 +93,13 @@ namespace Hathora.Core.Scripts.Runtime.Server
             return;
 #endif
             
-
+            
             Debug.Log($"[{nameof(HathoraServerMgr)}] Awake");
+            
             setSingleton();
-
-            // Unlike Client calls, we can init immediately @ Awake
-            InitApis(_hathoraSdkConfig: null); // Base will create this
+            initHathoraSdk();
+            InitApiWrappers();
+            
 
 #if (UNITY_EDITOR)
             // Optional mocked ID for debugging: Create a Room manually in Hathora console => paste ProcessId @ debugEditorMockProcId
@@ -140,17 +146,37 @@ namespace Hathora.Core.Scripts.Runtime.Server
             
             Singleton = this;
         }
-
-        protected virtual bool ValidateReqs()
+        
+        private void initHathoraSdk()
         {
-            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(ValidateReqs)}]";
+            string appId = hathoraServerConfig.HathoraCoreOpts.AppId;
+            
+            HathoraSDK.Security security = new() { HathoraDevToken = appId };
+            
+            SDKConfig sdkConfig = new()
+            {
+                AppId = appId, // TODO: Redundant AppId - If this is already set in SDKConfig, Security should internally create it within its own constructor
+                HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken, 
+            };
+            
+            this.HathoraSdk = new HathoraSDK(
+                serverUrl: null,
+                client: null,
+                sdkConfig,
+                security);
+        }
+
+        /// <returns>isValid</returns>
+        protected virtual bool CheckIsValidToInitApis()
+        {
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(CheckIsValidToInitApis)}]";
             
             if (hathoraServerConfig == null)
             {
 #if UNITY_SERVER
                 Debug.LogError($"{logPrefix} !HathoraServerConfig: " +
-                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} (if you want " +
-                    "server runtime calls from Server standalone || Editor)");
+                    $"Serialize to {gameObject.name}.{nameof(HathoraServerMgr)} to "+
+                    "call Server + Common API calls");
                 return false;
 #elif UNITY_EDITOR
                 Debug.Log($"<color=orange>(!)</color> {logPrefix} !HathoraServerConfig: Np in Editor, " +
@@ -172,15 +198,12 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// (!) Unlike ClientMgr that are Mono-derived, we init via Constructor instead of Init().
         /// </summary>
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
-        protected virtual void InitApis(SDKConfig _hathoraSdkConfig = null)
+        protected virtual void InitApiWrappers()
         {
-            if (!ValidateReqs())
+            if (!CheckIsValidToInitApis())
                 return;
-            
-            serverApis.ServerAppApi = new HathoraServerAppApi(hathoraServerConfig, _hathoraSdkConfig);
-            serverApis.ServerLobbyApi = new HathoraServerLobbyApi(hathoraServerConfig, _hathoraSdkConfig);
-            serverApis.ServerProcessApi = new HathoraServerProcessApi(hathoraServerConfig, _hathoraSdkConfig);
-            serverApis.ServerRoomApi = new HathoraServerRoomApi(hathoraServerConfig, _hathoraSdkConfig);
+
+            Apis = new ServerApiContainer(HathoraSdk, hathoraServerConfig);
         }
         #endregion // Init
         
@@ -302,7 +325,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             // ----------------
             // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ )
             // We await => just in case we called this early, to prevent race conditions
-            Process processInfo = await ServerApis.ServerProcessApi.GetProcessInfoAsync(
+            Process processInfo = await Apis.ServerProcessApiWrapper.GetProcessInfoAsync(
                 hathoraProcessIdEnvVar, 
                 _returnNullOnStoppedProcess: true,
                 _cancelToken);
@@ -334,7 +357,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             // ----------------
             // Get all active Rooms by ProcessId =>
             List<RoomWithoutAllocations> activeRooms = await 
-                ServerApis.ServerRoomApi.GetActiveRoomsForProcessAsync(procId, _cancelToken);
+                Apis.ServerRoomApiWrapper.ServerGetActiveRoomsForProcessAsync(procId, _cancelToken);
 
             // Get 1st Room -> validate
             RoomWithoutAllocations firstActiveRoom = activeRooms?.FirstOrDefault();
@@ -358,7 +381,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             try
             {
                 // Try catch since we may not have a Lobby, which could be ok
-                lobby = await ServerApis.ServerLobbyApi.GetLobbyInfoAsync(
+                lobby = await Apis.LobbyApiWrapper.GetLobbyInfoAsync(
                     firstActiveRoom.RoomId,
                     _cancelToken);
             }

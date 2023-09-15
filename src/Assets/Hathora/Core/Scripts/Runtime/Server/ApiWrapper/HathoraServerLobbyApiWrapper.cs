@@ -6,40 +6,29 @@ using System.Threading.Tasks;
 using HathoraSdk;
 using HathoraSdk.Models.Operations;
 using HathoraSdk.Models.Shared;
-using HathoraSdk.Utils;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
     /// <summary>
-    /// Handles Application API calls to Hathora Server.
-    /// - Passes API key from HathoraServerConfig to SDK
-    /// - Passes Auth0 (Dev Token) from hathoraServerConfig to SDK
-    /// - API Docs | https://hathora.dev/api#tag/LobbyV2
+    /// Operations to create and manage lobbies.
+    /// Lobbies Concept | https://hathora.dev/docs/concepts/hathora-entities#lobby
+    /// API Docs | https://hathora.dev/api#tag/LobbyV2
     /// </summary>
-    public class HathoraServerLobbyApi : HathoraServerApiWrapperBase
+    public class HathoraServerLobbyApiWrapper : HathoraServerApiWrapperBase
     {
-        private readonly LobbyV2SDK lobbyApi;
+        protected LobbyV2SDK LobbyApi { get; }
         
-        /// <summary>
-        /// </summary>
-        /// <param name="_hathoraServerConfig"></param>
-        public HathoraServerLobbyApi( 
-            HathoraServerConfig _hathoraServerConfig,
-            SDKConfig _hathoraSdkConfig = null)
-            : base(_hathoraServerConfig, _hathoraSdkConfig)
+        public HathoraServerLobbyApiWrapper(
+            HathoraSDK _hathoraSdk,
+            HathoraServerConfig _hathoraServerConfig)
+            : base(_hathoraSdk, _hathoraServerConfig)
         {
-            Debug.Log("[HathoraServerLobbyApi] Initializing API...");
+            Debug.Log($"[{nameof(HathoraServerLobbyApiWrapper)}.Constructor] " +
+                "Initializing Server API...");
             
-            // TODO: Overloading VxSDK constructor with nulls, for now, until we know how to properly construct
-            SpeakeasyHttpClient httpClient = null;
-            string serverUrl = null;
-            this.lobbyApi = new LobbyV2SDK(
-                httpClient,
-                httpClient, 
-                serverUrl,
-                HathoraSdkConfig);
+            this.LobbyApi = _hathoraSdk.LobbyV2 as LobbyV2SDK;
         }
         
         
@@ -55,12 +44,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
-            string logPrefix = $"[{nameof(HathoraServerLobbyApi)}.{nameof(GetLobbyInfoAsync)}]";
+            string logPrefix = $"[{nameof(HathoraServerLobbyApiWrapper)}.{nameof(GetLobbyInfoAsync)}]";
 
             // Prepare request
             GetLobbyInfoRequest getLobbyInfoRequest = new()
             {
-                //AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _roomId,
             };
             
@@ -69,7 +58,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             try
             {
-                getLobbyInfoResult = await lobbyApi.GetLobbyInfoAsync(getLobbyInfoRequest);
+                getLobbyInfoResult = await LobbyApi.GetLobbyInfoAsync(getLobbyInfoRequest);
                 Assert.IsNotNull(getLobbyInfoResult, $"{logPrefix} !getLobbyInfoResult");
             }
             catch (TaskCanceledException)
@@ -80,7 +69,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(lobbyApi.GetLobbyInfoAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(LobbyApi.GetLobbyInfoAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
