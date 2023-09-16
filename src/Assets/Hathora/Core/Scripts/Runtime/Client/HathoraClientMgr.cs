@@ -10,9 +10,9 @@ using Hathora.Core.Scripts.Runtime.Client.Config;
 using Hathora.Core.Scripts.Runtime.Common;
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
@@ -58,7 +58,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         private HathoraClientApiContainer apis;
         
         /// <summary>Inits with info from `HathoraClientConfig`</summary>
-        protected HathoraSDK HathoraSdk { get; private set; }
+        protected HathoraCloudSDK HathoraSdk { get; private set; }
 
 
         #region Public Events
@@ -112,25 +112,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         
         private void initHathoraSdk()
         {
-            string appId = hathoraClientConfig.AppId;
-            
-            HathoraSDK.Security security = new()
-            {
-                // TODO: Redundant AppId - If this is already set in SDKConfig, Security should internally create it within its own constructor
-                HathoraDevToken = appId,
-            };
-            
-            SDKConfig sdkConfig = new()
-            {
-                AppId = appId,
-                // HathoraDevToken = // Servers only 
-            };
-            
-            this.HathoraSdk = new HathoraSDK(
-                serverUrl: null,
-                client: null,
-                sdkConfig,
-                security);
+            this.HathoraSdk = new HathoraCloudSDK(hathoraClientConfig.AppId);
         }
 
         /// <summary>Init all Client API wrappers, passing HathoraSdk instance.</summary>

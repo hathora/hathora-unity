@@ -1,7 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
-using HathoraSdk.Models.Shared;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Server.Models;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -25,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         private volatile bool uploading;
 
         public HathoraServerDeployApiWrapper(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk, _hathoraServerConfig)
         {
@@ -99,7 +99,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 createDeploymentResponse = await DeployApi.CreateDeploymentAsync(
-                    new CreateDeploymentSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new CreateDeploymentSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createDeploymentRequest);
             }
             catch (Exception e)
@@ -136,7 +136,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(
-                    new GetDeploymentsSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetDeploymentsSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getDeploymentsRequest);
             }
             catch (Exception e)

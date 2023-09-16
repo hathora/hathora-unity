@@ -19,14 +19,16 @@ Create a new [application](https://hathora.dev/docs/concepts/hathora-entities#ap
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Shared;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.AppV1.CreateAppAsync(new CreateAppSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new AppConfig() {
         AppName = "minecraft",
         AuthConfiguration = new AuthConfiguration() {
@@ -62,16 +64,16 @@ Delete an [application](https://hathora.dev/docs/concepts/hathora-entities#appli
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.AppV1.DeleteAppAsync(new DeleteAppSecurity() {
-        Auth0 = "",
-    }, new DeleteAppRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
-    }))
+        HathoraDevToken = "",
+    }, new DeleteAppRequest() {}))
 {
     // handle response
 }
@@ -97,16 +99,16 @@ Get details for an [application](https://hathora.dev/docs/concepts/hathora-entit
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.AppV1.GetAppInfoAsync(new GetAppInfoSecurity() {
-        Auth0 = "",
-    }, new GetAppInfoRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
-    }))
+        HathoraDevToken = "",
+    }, new GetAppInfoRequest() {}))
 {
     // handle response
 }
@@ -132,13 +134,15 @@ Returns an unsorted list of your organization’s [applications](https://hathora
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.AppV1.GetAppsAsync(new GetAppsSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }))
 {
     // handle response
@@ -164,14 +168,16 @@ Update data for an existing [application](https://hathora.dev/docs/concepts/hath
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new UpdateAppRequest() {
         AppConfig = new AppConfig() {
             AppName = "minecraft",
@@ -183,7 +189,6 @@ using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppSecurity() {
                 Nickname = new RecordStringNever() {},
             },
         },
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     }))
 {
     // handle response

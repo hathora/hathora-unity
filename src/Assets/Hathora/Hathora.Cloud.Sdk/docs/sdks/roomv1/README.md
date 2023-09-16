@@ -17,20 +17,21 @@
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.CreateRoomDeprecatedAsync(new CreateRoomDeprecatedSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new CreateRoomDeprecatedRequest() {
         CreateRoomRequest = new Models.Shared.CreateRoomRequest() {
-            Region = HathoraSdk.Models.Shared.Region.Sydney,
+            Region = HathoraCloud.Models.Shared.Region.Sydney,
             RoomConfig = "{\"name\":\"my-room\"}",
         },
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -58,15 +59,16 @@ using(var res = await sdk.RoomV1.CreateRoomDeprecatedAsync(new CreateRoomDepreca
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.DestroyRoomDeprecatedAsync(new DestroyRoomDeprecatedSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new DestroyRoomDeprecatedRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -94,15 +96,16 @@ using(var res = await sdk.RoomV1.DestroyRoomDeprecatedAsync(new DestroyRoomDepre
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.GetActiveRoomsForProcessDeprecatedAsync(new GetActiveRoomsForProcessDeprecatedSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetActiveRoomsForProcessDeprecatedRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     }))
 {
@@ -130,13 +133,14 @@ using(var res = await sdk.RoomV1.GetActiveRoomsForProcessDeprecatedAsync(new Get
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.GetConnectionInfoDeprecatedAsync(new GetConnectionInfoDeprecatedRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -163,15 +167,16 @@ using(var res = await sdk.RoomV1.GetConnectionInfoDeprecatedAsync(new GetConnect
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.GetInactiveRoomsForProcessDeprecatedAsync(new GetInactiveRoomsForProcessDeprecatedSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetInactiveRoomsForProcessDeprecatedRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     }))
 {
@@ -199,15 +204,16 @@ using(var res = await sdk.RoomV1.GetInactiveRoomsForProcessDeprecatedAsync(new G
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.GetRoomInfoDeprecatedAsync(new GetRoomInfoDeprecatedSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetRoomInfoDeprecatedRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -235,15 +241,16 @@ using(var res = await sdk.RoomV1.GetRoomInfoDeprecatedAsync(new GetRoomInfoDepre
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV1.SuspendRoomDeprecatedAsync(new SuspendRoomDeprecatedSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new SuspendRoomDeprecatedRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {

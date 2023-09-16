@@ -4,9 +4,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
@@ -22,7 +22,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
     {
         protected AuthV1SDK AuthApi { get; }
 
-        public HathoraClientAuthApiWrapper(HathoraSDK _hathoraSdk)
+        public HathoraClientAuthApiWrapper(HathoraCloudSDK _hathoraSdk)
             : base(_hathoraSdk)
         {
             Debug.Log($"[{nameof(HathoraClientAuthApiWrapper)}.Constructor] " +

@@ -6,32 +6,34 @@ Operations that allow you configure and manage an application's [build](https://
 
 ### Available Operations
 
-* [CreateDeployment](#createdeployment) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) and [build](https://hathora.dev/docs/concepts/hathora-entities#build).
-* [GetDeploymentInfo](#getdeploymentinfo) - Get details for an existing [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) using `appId`.
-* [GetDeployments](#getdeployments) - Returns an array of [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) objects for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+* [CreateDeployment](#createdeployment) - Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+* [GetDeploymentInfo](#getdeploymentinfo) - Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
+* [GetDeployments](#getdeployments) - Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
 ## CreateDeployment
 
-Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) and [build](https://hathora.dev/docs/concepts/hathora-entities#build).
+Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymentSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new CreateDeploymentRequest() {
         DeploymentConfig = new DeploymentConfig() {
             AdditionalContainerPorts = new List<ContainerPort>() {
                 new ContainerPort() {
                     Name = "default",
                     Port = 8000,
-                    TransportType = HathoraSdk.Models.Shared.TransportType.Udp,
+                    TransportType = HathoraCloud.Models.Shared.TransportType.Udp,
                 },
             },
             ContainerPort = 4000,
@@ -41,11 +43,10 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
                     Value = "TRUE",
                 },
             },
-            PlanName = HathoraSdk.Models.Shared.PlanName.Tiny,
+            PlanName = HathoraCloud.Models.Shared.PlanName.Tiny,
             RoomsPerProcess = 3,
-            TransportType = HathoraSdk.Models.Shared.TransportType.Tls,
+            TransportType = HathoraCloud.Models.Shared.TransportType.Tls,
         },
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         BuildId = 1,
     }))
 {
@@ -68,20 +69,21 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
 
 ## GetDeploymentInfo
 
-Get details for an existing [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) using `appId`.
+Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.DeploymentV1.GetDeploymentInfoAsync(new GetDeploymentInfoSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetDeploymentInfoRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         DeploymentId = 1,
     }))
 {
@@ -104,21 +106,21 @@ using(var res = await sdk.DeploymentV1.GetDeploymentInfoAsync(new GetDeploymentI
 
 ## GetDeployments
 
-Returns an array of [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment) objects for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.DeploymentV1.GetDeploymentsAsync(new GetDeploymentsSecurity() {
-        Auth0 = "",
-    }, new GetDeploymentsRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
-    }))
+        HathoraDevToken = "",
+    }, new GetDeploymentsRequest() {}))
 {
     // handle response
 }

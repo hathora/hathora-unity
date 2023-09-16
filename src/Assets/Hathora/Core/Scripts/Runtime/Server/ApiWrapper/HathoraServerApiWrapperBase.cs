@@ -1,7 +1,7 @@
 // Created by dylan@hathora.dev
 
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
-using HathoraSdk;
+using HathoraCloud;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -64,7 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </param>
         /// <param name="_hathoraSdk"></param>
         protected HathoraServerApiWrapperBase(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk)
         {

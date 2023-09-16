@@ -17,15 +17,16 @@ Get details for an existing [process](https://hathora.dev/docs/concepts/hathora-
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.ProcessesV1.GetProcessInfoAsync(new GetProcessInfoSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetProcessInfoRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     }))
 {
@@ -53,17 +54,18 @@ Returns an array of active [process](https://hathora.dev/docs/concepts/hathora-e
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.ProcessesV1.GetRunningProcessesAsync(new GetRunningProcessesSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetRunningProcessesRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
-        Region = HathoraSdk.Models.Shared.Region.London,
+        Region = HathoraCloud.Models.Shared.Region.London,
     }))
 {
     // handle response
@@ -90,17 +92,18 @@ Returns an array of stopped [process](https://hathora.dev/docs/concepts/hathora-
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.ProcessesV1.GetStoppedProcessesAsync(new GetStoppedProcessesSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetStoppedProcessesRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
-        Region = HathoraSdk.Models.Shared.Region.SaoPaulo,
+        Region = HathoraCloud.Models.Shared.Region.SaoPaulo,
     }))
 {
     // handle response

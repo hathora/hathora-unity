@@ -12,13 +12,15 @@
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BillingV1.GetBalanceAsync(new GetBalanceSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }))
 {
     // handle response
@@ -42,13 +44,15 @@ using(var res = await sdk.BillingV1.GetBalanceAsync(new GetBalanceSecurity() {
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BillingV1.GetInvoicesAsync(new GetInvoicesSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }))
 {
     // handle response
@@ -72,13 +76,15 @@ using(var res = await sdk.BillingV1.GetInvoicesAsync(new GetInvoicesSecurity() {
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BillingV1.GetPaymentMethodAsync(new GetPaymentMethodSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }))
 {
     // handle response
@@ -102,14 +108,16 @@ using(var res = await sdk.BillingV1.GetPaymentMethodAsync(new GetPaymentMethodSe
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Shared;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BillingV1.InitStripeCustomerPortalUrlAsync(new InitStripeCustomerPortalUrlSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new CustomerPortalUrl() {
         ReturnUrl = "quibusdam",
     }))

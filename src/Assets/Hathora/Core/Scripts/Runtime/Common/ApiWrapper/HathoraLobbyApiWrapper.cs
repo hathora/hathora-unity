@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
@@ -22,7 +22,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
     {
         protected LobbyV2SDK LobbyApi { get; }
 
-        public HathoraLobbyApiWrapper(HathoraSDK _hathoraSdk)
+        public HathoraLobbyApiWrapper(HathoraCloudSDK _hathoraSdk)
             : base(_hathoraSdk)
         {
             Debug.Log($"[{nameof(HathoraLobbyApiWrapper)}.Constructor] " +
@@ -60,14 +60,14 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         {
             string logPrefix = $"[{nameof(HathoraLobbyApiWrapper)}.{nameof(CreateLobbyAsync)}]";
 
-            HathoraSdk.Models.Shared.CreateLobbyRequest createLobbyRequest = new()
+            HathoraCloud.Models.Shared.CreateLobbyRequest createLobbyRequest = new()
             {
                 Region = _region,
                 Visibility = _lobbyVisibility,
                 InitialConfig = _initConfigObj, // TODO: SDK `InitialConfig` should take a serializable <object>
             };
             
-            HathoraSdk.Models.Operations.CreateLobbyRequest createLobbyRequestWrapper = new()
+            HathoraCloud.Models.Operations.CreateLobbyRequest createLobbyRequestWrapper = new()
             {
                 CreateLobbyRequestValue = createLobbyRequest,
                 AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
