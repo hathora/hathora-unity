@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
+using UnityEngine;
+
 namespace HathoraCloud
 {
     using HathoraCloud.Models.Operations;
@@ -82,13 +84,17 @@ namespace HathoraCloud
             
             var client = SecuritySerializer.Apply(_defaultClient, security);
             
+            Debug.Log("before sendAsync");
             var httpResponse = await client.SendAsync(httpRequest);
+            
+            Debug.Log("after sendAsync");
             switch (httpResponse.result)
             {
                 case UnityWebRequest.Result.ConnectionError:
                 case UnityWebRequest.Result.DataProcessingError:
                 case UnityWebRequest.Result.ProtocolError:
                     var errorMsg = httpResponse.error;
+                    Debug.Log("error: "+ errorMsg);
                     httpRequest.Dispose();
                     throw new Exception(errorMsg);
             }

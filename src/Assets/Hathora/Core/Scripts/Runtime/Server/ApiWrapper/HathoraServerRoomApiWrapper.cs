@@ -86,6 +86,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
+                Debug.Log(e.StackTrace);
                 Debug.LogError($"{logPrefix} ServerCreateRoomAsync => Error: {e.Message}");
                 throw;
             }
@@ -102,6 +103,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     newlyCreatedRoomId,
                     _cancelToken);
 
+                Debug.Log(activeConnectionInfo);
                 Assert.IsTrue(activeConnectionInfo?.Status == ConnectionInfoV2Status.Active,
                     $"{logPrefix} {nameof(activeConnectionInfo)} Expected `Active` status, since Room is Active");
             }
@@ -112,6 +114,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
+                
+                Debug.Log(e.StackTrace);
                 Debug.LogError($"{logPrefix} {nameof(PollConnectionInfoUntilActiveAsync)} => Error: {e.Message} " +
                     "(Check console.hathora.dev logs for +info)");
                 throw;
@@ -135,6 +139,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
+                Debug.Log(e.StackTrace);
                 Debug.LogError($"{logPrefix} {nameof(ServerGetRoomInfoAsync)} => Error: {e.Message} " +
                     "(Check console.hathora.dev logs for +info)");
                 throw;
@@ -165,7 +170,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prep request data
             HathoraCloud.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                // AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _customRoomId,
                 CreateRoomRequestValue = _createRoomReq,
             };
@@ -192,13 +197,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
+                Debug.Log(e.StackTrace);
                 Debug.LogError($"{logPrefix} {nameof(RoomApi.CreateRoomAsync)} => Error: {e.Message}");
                 return null; // fail
             }
             
             // Process response
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createRoomResponse)}: {ToJson(createRoomResponse)}</color>");
+            // Debug.Log($"{logPrefix} Success: <color=yellow>" +
+            //     $"{nameof(createRoomResponse)}: {ToJson(createRoomResponse)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             createRoomResponse.RawResponse?.Dispose(); // Prevent mem leaks
@@ -246,8 +252,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getRoomInfoResponse)}: {ToJson(getRoomInfoResponse)}</color>");
+            // Debug.Log($"{logPrefix} Success: <color=yellow>" +
+            //     $"{nameof(getRoomInfoResponse)}: {ToJson(getRoomInfoResponse)}</color>");
 
             getRoomInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return getRoomInfoResponse.Room;
@@ -360,10 +366,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.LogWarning($"{logPrefix} Room !Active (yet) - attempting to poll again ...");
             }
             
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(connectionInfo)}: {ToJson(connectionInfo)}</color>");
+            // Debug.Log($"{logPrefix} Success: <color=yellow>" +
+            //     $"{nameof(connectionInfo)}: {ToJson(connectionInfo)}</color>");
         
             IsPollingForActiveConnInfo = false;
+            Debug.Log(connectionInfo);
             return connectionInfo;
         }
         #endregion //Utils
