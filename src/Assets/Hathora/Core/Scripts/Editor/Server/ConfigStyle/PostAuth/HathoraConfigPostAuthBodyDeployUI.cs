@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
-using HathoraSdk.Models.Shared;
+using HathoraCloud.Models.Shared;
 using UnityEditor;
 using UnityEngine;
 

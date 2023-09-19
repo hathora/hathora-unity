@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk.Models.Shared;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Serialization;
 

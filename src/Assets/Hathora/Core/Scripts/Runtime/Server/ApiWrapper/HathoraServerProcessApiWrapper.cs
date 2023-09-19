@@ -3,9 +3,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -20,7 +20,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         protected ProcessesV1SDK ProcessesApi { get; }
 
         public HathoraServerProcessApiWrapper(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk, _hathoraServerConfig)
         {
@@ -66,7 +66,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(
-                    new GetProcessInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetProcessInfoSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getProcessInfoRequest);
             }
             catch (Exception e)

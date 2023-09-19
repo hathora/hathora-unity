@@ -6,8 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 

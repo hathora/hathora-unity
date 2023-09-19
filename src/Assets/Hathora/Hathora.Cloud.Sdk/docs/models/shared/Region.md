@@ -1,7 +1,5 @@
 # Region
 
-Region to filter by. If omitted, active public lobbies in all regions will be returned.
-
 
 ## Values
 

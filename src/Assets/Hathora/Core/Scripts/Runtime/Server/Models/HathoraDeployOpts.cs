@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk.Models.Shared;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models

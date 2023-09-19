@@ -2,14 +2,16 @@
 
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Shared;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.AppV1.CreateAppAsync(new CreateAppSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new AppConfig() {
         AppName = "minecraft",
         AuthConfiguration = new AuthConfiguration() {

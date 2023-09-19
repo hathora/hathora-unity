@@ -2,36 +2,37 @@
 
 ## Overview
 
-Operations that allow you create and manage your [build](https://hathora.dev/docs/concepts/hathora-entities#build).
+Operations that allow you create and manage your [builds](https://hathora.dev/docs/concepts/hathora-entities#build).
 
 ### Available Operations
 
-* [CreateBuild](#createbuild) - Generate a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. You can optionally pass in a `buildTag` to tag your build with a version. You need `buildId` to run a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
-* [DeleteBuild](#deletebuild) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId` and `buildId`.
-* [GetBuildInfo](#getbuildinfo) - Get details for an existing [build](https://hathora.dev/docs/concepts/hathora-entities#build) using `appId` and `buildId`.
-* [GetBuilds](#getbuilds) - Returns an array of [build](https://hathora.dev/docs/concepts/hathora-entities#build) objects for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-* [RunBuild](#runbuild) - Provide a tarball that will generate a container image for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Pass in `buildId` generated from Create Build.
+* [CreateBuild](#createbuild) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+* [DeleteBuild](#deletebuild) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
+* [GetBuildInfo](#getbuildinfo) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
+* [GetBuilds](#getbuilds) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
+* [RunBuild](#runbuild) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
 
 ## CreateBuild
 
-Generate a new [build](https://hathora.dev/docs/concepts/hathora-entities#build) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. You can optionally pass in a `buildTag` to tag your build with a version. You need `buildId` to run a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
+Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BuildV1.CreateBuildAsync(new CreateBuildSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new Models.Operations.CreateBuildRequest() {
         CreateBuildRequest = new Models.Shared.CreateBuildRequest() {
             BuildTag = "0.1.14-14c793",
         },
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     }))
 {
     // handle response
@@ -53,20 +54,21 @@ using(var res = await sdk.BuildV1.CreateBuildAsync(new CreateBuildSecurity() {
 
 ## DeleteBuild
 
-Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId` and `buildId`.
+Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BuildV1.DeleteBuildAsync(new DeleteBuildSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new DeleteBuildRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         BuildId = 1,
     }))
 {
@@ -89,20 +91,21 @@ using(var res = await sdk.BuildV1.DeleteBuildAsync(new DeleteBuildSecurity() {
 
 ## GetBuildInfo
 
-Get details for an existing [build](https://hathora.dev/docs/concepts/hathora-entities#build) using `appId` and `buildId`.
+Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BuildV1.GetBuildInfoAsync(new GetBuildInfoSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetBuildInfoRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         BuildId = 1,
     }))
 {
@@ -125,21 +128,21 @@ using(var res = await sdk.BuildV1.GetBuildInfoAsync(new GetBuildInfoSecurity() {
 
 ## GetBuilds
 
-Returns an array of [build](https://hathora.dev/docs/concepts/hathora-entities#build) objects for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BuildV1.GetBuildsAsync(new GetBuildsSecurity() {
-        Auth0 = "",
-    }, new GetBuildsRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
-    }))
+        HathoraDevToken = "",
+    }, new GetBuildsRequest() {}))
 {
     // handle response
 }
@@ -160,18 +163,20 @@ using(var res = await sdk.BuildV1.GetBuildsAsync(new GetBuildsSecurity() {
 
 ## RunBuild
 
-Provide a tarball that will generate a container image for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Pass in `buildId` generated from Create Build.
+Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new RunBuildRequest() {
         RequestBody = new RunBuildRequestBody() {
             File = new RunBuildRequestBodyFile() {
@@ -179,7 +184,6 @@ using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildSecurity() {
                 File = "nulla",
             },
         },
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         BuildId = 1,
     }))
 {

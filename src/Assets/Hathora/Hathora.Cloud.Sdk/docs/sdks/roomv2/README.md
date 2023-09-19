@@ -21,20 +21,21 @@ Create a new [room](https://hathora.dev/docs/concepts/hathora-entities#room) for
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.CreateRoomAsync(new CreateRoomSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new Models.Operations.CreateRoomRequest() {
         CreateRoomRequest = new Models.Shared.CreateRoomRequest() {
-            Region = HathoraSdk.Models.Shared.Region.Seattle,
+            Region = HathoraCloud.Models.Shared.Region.Seattle,
             RoomConfig = "{\"name\":\"my-room\"}",
         },
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -62,15 +63,16 @@ Destroy a [room](https://hathora.dev/docs/concepts/hathora-entities#room). All a
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.DestroyRoomAsync(new DestroyRoomSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new DestroyRoomRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -98,15 +100,16 @@ Get all active [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) 
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.GetActiveRoomsForProcessAsync(new GetActiveRoomsForProcessSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetActiveRoomsForProcessRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     }))
 {
@@ -134,13 +137,14 @@ Poll this endpoint to get connection details to a [room](https://hathora.dev/doc
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.GetConnectionInfoAsync(new GetConnectionInfoRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -167,15 +171,16 @@ Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.GetInactiveRoomsForProcessAsync(new GetInactiveRoomsForProcessSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetInactiveRoomsForProcessRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     }))
 {
@@ -203,15 +208,16 @@ Retreive current and historical allocation data for a [room](https://hathora.dev
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.GetRoomInfoAsync(new GetRoomInfoSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new GetRoomInfoRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {
@@ -239,15 +245,16 @@ Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The r
 ### Example Usage
 
 ```csharp
-using Hathora;
-using HathoraSdk.Models.Operations;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraSDK();
+var sdk = new HathoraCloudSDK(
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
 
 using(var res = await sdk.RoomV2.SuspendRoomAsync(new SuspendRoomSecurity() {
-        Auth0 = "",
+        HathoraDevToken = "",
     }, new SuspendRoomRequest() {
-        AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
         RoomId = "2swovpy1fnunu",
     }))
 {

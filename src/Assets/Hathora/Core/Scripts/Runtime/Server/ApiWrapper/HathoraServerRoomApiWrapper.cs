@@ -6,12 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
-using CreateRoomRequest = HathoraSdk.Models.Shared.CreateRoomRequest;
+using CreateRoomRequest = HathoraCloud.Models.Shared.CreateRoomRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
@@ -27,7 +27,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         public bool IsPollingForActiveConnInfo { get; private set; }
         
         public HathoraServerRoomApiWrapper(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk)
         {
@@ -163,7 +163,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(ServerCreateRoomAsync)}]";
             
             // Prep request data
-            HathoraSdk.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
+            HathoraCloud.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
             {
                 AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _customRoomId,
@@ -181,7 +181,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
                 createRoomResponse = await RoomApi.CreateRoomAsync(
-                    new CreateRoomSecurity { Auth0 = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new CreateRoomSecurity { HathoraDevToken = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
@@ -230,7 +230,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getRoomInfoResponse = await RoomApi.GetRoomInfoAsync(
-                    new GetRoomInfoSecurity { Auth0 = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetRoomInfoSecurity { HathoraDevToken = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getRoomInfoRequest);
             }
             catch (TaskCanceledException)
@@ -280,7 +280,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getActiveRoomsForProcessResponse = await RoomApi.GetActiveRoomsForProcessAsync(
-                    new GetActiveRoomsForProcessSecurity { Auth0 = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetActiveRoomsForProcessSecurity { HathoraDevToken = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getActiveRoomsForProcessRequest);
             }
             catch (TaskCanceledException)

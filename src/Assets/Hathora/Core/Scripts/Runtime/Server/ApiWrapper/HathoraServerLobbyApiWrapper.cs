@@ -3,9 +3,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -21,7 +21,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         protected LobbyV2SDK LobbyApi { get; }
         
         public HathoraServerLobbyApiWrapper(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk, _hathoraServerConfig)
         {

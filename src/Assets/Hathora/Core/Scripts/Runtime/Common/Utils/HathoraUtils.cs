@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
-using HathoraSdk.Models.Shared;
+using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 using Application = UnityEngine.Application;

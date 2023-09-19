@@ -4,7 +4,7 @@ using System;
 using Hathora.Core.Scripts.Runtime.Client.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Common;
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
-using HathoraSdk;
+using HathoraCloud;
 
 namespace Hathora.Core.Scripts.Runtime.Client
 {
@@ -22,7 +22,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// <param name="_initAuthApiWrapper"></param>
         /// <param name="_initRoomApiWrapper"></param>
         public HathoraClientApiContainer(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             bool _initAuthApiWrapper = true,
             bool _initRoomApiWrapper = true)
             : base(_hathoraSdk)

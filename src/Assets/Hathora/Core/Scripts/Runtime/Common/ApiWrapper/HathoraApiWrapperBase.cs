@@ -1,20 +1,20 @@
 // Created by dylan@hathora.dev
 
-using HathoraSdk;
+using HathoraCloud;
 using Newtonsoft.Json;
 
 namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 {
     /// <summary>
     /// Common high-level helper of common utils for Client/Server API wrappers.
-    /// - Stores HathoraSDK
+    /// - Stores HathoraCloudSDK
     /// - Shortcut to commonly-used AppId
     /// - ToJson helper to serialize [+prettify] API requests/results. 
     /// </summary>
     public abstract class HathoraApiWrapperBase
     {
         #region Vars
-        private HathoraSDK HathoraSdk { get; set; }
+        private HathoraCloudSDK HathoraSdk { get; set; }
 
         /// <summary>Common shortcut to HathoraSdk.Config.AppId</summary>
         protected string AppId => HathoraSdk.Config.AppId;
@@ -28,7 +28,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         /// - Servers auth via Auth0 HathoraDevToken
         /// </summary>
         /// <param name="_hathoraSdk">Leave null to get default from ClientMgr</param>
-        protected HathoraApiWrapperBase(HathoraSDK _hathoraSdk) =>
+        protected HathoraApiWrapperBase(HathoraCloudSDK _hathoraSdk) =>
             this.HathoraSdk = _hathoraSdk;
         #endregion // Init
         

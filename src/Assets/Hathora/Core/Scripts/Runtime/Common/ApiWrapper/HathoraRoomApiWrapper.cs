@@ -3,8 +3,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using HathoraSdk;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
@@ -19,7 +19,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
     {
         protected RoomV2SDK RoomApi { get; }
 
-        public HathoraRoomApiWrapper(HathoraSDK _hathoraSdk)
+        public HathoraRoomApiWrapper(HathoraCloudSDK _hathoraSdk)
         : base(_hathoraSdk)
         {
             Debug.Log($"[{nameof(HathoraRoomApiWrapper)}.Constructor] " +
@@ -48,14 +48,14 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             string logPrefix = $"[{nameof(HathoraRoomApiWrapper)}.{nameof(GetConnectionInfoAsync)}]";
             
             // Prep request
-            HathoraSdk.Models.Operations.GetConnectionInfoRequest getConnectionInfoRequest = new()
+            HathoraCloud.Models.Operations.GetConnectionInfoRequest getConnectionInfoRequest = new()
             {
                 RoomId = _roomId,
             };
 
             // Poll until we get the `Active` status.
             int pollSecondsTicked; // Duration to be logged later
-            HathoraSdk.Models.Operations.GetConnectionInfoResponse getConnectionInfoResponse = null;
+            HathoraCloud.Models.Operations.GetConnectionInfoResponse getConnectionInfoResponse = null;
             
             for (pollSecondsTicked = 0; pollSecondsTicked < _pollTimeoutSecs; pollSecondsTicked++)
             {

@@ -2,7 +2,7 @@
 
 using System;
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
-using HathoraSdk;
+using HathoraCloud;
 
 namespace Hathora.Core.Scripts.Runtime.Common
 {
@@ -21,7 +21,7 @@ namespace Hathora.Core.Scripts.Runtime.Common
         /// <param name="_initLobbyApiWrapper"></param>
         /// <param name="_initRoomApiWrapper"></param>
         protected HathoraCommonApiContainer(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             bool _initLobbyApiWrapper = true,
             bool _initRoomApiWrapper = true)
         {

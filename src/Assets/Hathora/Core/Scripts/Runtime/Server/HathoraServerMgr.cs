@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server
@@ -65,7 +65,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         protected ServerApiContainer Apis { get; private set; }
         
         /// <summary>Inits with info from `HathoraServerConfig`</summary>
-        protected HathoraSDK HathoraSdk { get; private set; }
+        protected HathoraCloudSDK HathoraSdk { get; private set; }
 
         /// <summary>(!) This is set async on Awake; check for null</summary>
         private volatile HathoraServerContext serverContext;
@@ -149,21 +149,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         private void initHathoraSdk()
         {
-            string appId = hathoraServerConfig.HathoraCoreOpts.AppId;
-            
-            HathoraSDK.Security security = new() { HathoraDevToken = appId };
-            
-            SDKConfig sdkConfig = new()
-            {
-                AppId = appId, // TODO: Redundant AppId - If this is already set in SDKConfig, Security should internally create it within its own constructor
-                HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken, 
-            };
-            
-            this.HathoraSdk = new HathoraSDK(
-                serverUrl: null,
-                client: null,
-                sdkConfig,
-                security);
+            this.HathoraSdk = new HathoraCloudSDK(hathoraServerConfig.HathoraCoreOpts.AppId);
         }
 
         /// <returns>isValid</returns>

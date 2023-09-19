@@ -8,10 +8,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
-using HathoraSdk.Utils;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
+using HathoraCloud.Utils;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -27,7 +27,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         private volatile bool uploading;
 
         public HathoraServerBuildApiWrapper(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk, _hathoraServerConfig)
         {
@@ -54,12 +54,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(CreateBuildAsync)}]";
             
             // Prep request
-            HathoraSdk.Models.Shared.CreateBuildRequest createBuildRequest = new()
+            HathoraCloud.Models.Shared.CreateBuildRequest createBuildRequest = new()
             {
                 BuildTag = _buildTag,
             };
             
-            HathoraSdk.Models.Operations.CreateBuildRequest createBuildRequestWrapper = new()
+            HathoraCloud.Models.Operations.CreateBuildRequest createBuildRequestWrapper = new()
             {
                 AppId = base.AppId,
                 CreateBuildRequestValue = createBuildRequest,
@@ -71,7 +71,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 createCloudBuildResponse = await BuildApi.CreateBuildAsync(
-                    new CreateBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new CreateBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     createBuildRequestWrapper);
             }
             catch (Exception e)
@@ -154,11 +154,11 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
                 // // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: How to raise timeout now?
                 // runBuildResponse = await highTimeoutBuildApi.RunBuildAsync(
-                //     new RunBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                //     new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                 //     runBuildRequestWrapper);
 
                 runBuildResponse = await BuildApi.RunBuildAsync(
-                    new RunBuildSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     runBuildRequestWrapper);
             }
             catch (TaskCanceledException)
@@ -268,7 +268,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(
-                    new GetBuildInfoSecurity { Auth0 = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetBuildInfoSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     getBuildInfoRequest);
             }
             catch (Exception e)

@@ -3,7 +3,7 @@
 using System;
 using Hathora.Core.Scripts.Runtime.Common;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
-using HathoraSdk;
+using HathoraCloud;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
@@ -35,7 +35,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// <param name="_initServerRoomApiWrapper"></param>
         /// <param name="_initServerBuildApi">Not generally used for Runtime scripts</param>
         public ServerApiContainer(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig,
             bool _initServerAppApi = true,
             bool _initServerProcessApi = true,

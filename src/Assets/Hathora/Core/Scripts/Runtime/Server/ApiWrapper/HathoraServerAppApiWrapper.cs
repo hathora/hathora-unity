@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using HathoraSdk;
-using HathoraSdk.Models.Operations;
-using HathoraSdk.Models.Shared;
+using HathoraCloud;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using Debug = UnityEngine.Debug;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -21,7 +21,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         protected AppV1SDK AppApi { get; }
 
         public HathoraServerAppApiWrapper(
-            HathoraSDK _hathoraSdk,
+            HathoraCloudSDK _hathoraSdk,
             HathoraServerConfig _hathoraServerConfig)
             : base(_hathoraSdk, _hathoraServerConfig)
         {
@@ -49,7 +49,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getAppsResponse = await AppApi.GetAppsAsync(
-                    new GetAppsSecurity { Auth0 = base.HathoraDevToken } // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetAppsSecurity { HathoraDevToken = base.HathoraDevToken } // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                 ); 
             }
             catch (Exception e)
