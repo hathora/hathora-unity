@@ -18,6 +18,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 
         /// <summary>Common shortcut to HathoraSdk.Config.AppId</summary>
         protected string AppId => HathoraSdk.Config.AppId;
+
+        /// <summary>Works around UnityWebRequest serialization errs for disposable objs</summary>
+        private JsonSerializerSettings jsonSerializerSettings;
         #endregion // Vars
         
 
@@ -28,15 +31,11 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         /// - Servers auth via Auth0 HathoraDevToken
         /// </summary>
         /// <param name="_hathoraSdk">Leave null to get default from ClientMgr</param>
-        protected HathoraApiWrapperBase(HathoraCloudSDK _hathoraSdk) =>
-            this.HathoraSdk = _hathoraSdk;
-        #endregion // Init
-        
-        
-        #region Utils
-        protected static string ToJson<T>(T Obj, bool prettify = true)
+        protected HathoraApiWrapperBase(HathoraCloudSDK _hathoraSdk)
         {
-            // Ignore problematic props like ReadTimeout on MemoryQueueBufferStream from UnityWebRequests
+            this.HathoraSdk = _hathoraSdk;
+            
+            // Create a custom JsonSerializerSettings to ignore problematic props like ReadTimeout on MemoryQueueBufferStream from UnityWebRequests
             JsonSerializerSettings settings = new()
             {
                 Error = (sender, args) =>
@@ -48,9 +47,18 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
                         args.ErrorContext.Handled = true;
                 },
             };
-            
-            Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
-            return JsonConvert.SerializeObject(Obj, formatting, settings);
+        }
+        #endregion // Init
+        
+        
+        #region Utils
+        protected string ToJson<T>(T _serializableObj, bool _prettify = true)
+        {
+            Formatting formatting = _prettify ? Formatting.Indented : Formatting.None;
+            return JsonConvert.SerializeObject(
+                _serializableObj, 
+                formatting, 
+                jsonSerializerSettings);
         }
         #endregion // Utils
     }
