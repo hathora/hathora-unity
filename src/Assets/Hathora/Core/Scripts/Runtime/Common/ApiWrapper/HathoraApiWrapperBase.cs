@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using HathoraCloud;
+using HathoraCloud.Utils;
 using Newtonsoft.Json;
 
 namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
@@ -34,32 +35,22 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         protected HathoraApiWrapperBase(HathoraCloudSDK _hathoraSdk)
         {
             this.HathoraSdk = _hathoraSdk;
-            
-            // Create a custom JsonSerializerSettings to ignore problematic props like ReadTimeout on MemoryQueueBufferStream from UnityWebRequests
-            JsonSerializerSettings settings = new()
-            {
-                Error = (sender, args) =>
-                {
-                    string member = args.ErrorContext.Member.ToString();
-                    bool isDisposableCantSerialize = member is "ReadTimeout" or "WriteTimeout";
-                    
-                    if (isDisposableCantSerialize)
-                        args.ErrorContext.Handled = true;
-                },
-            };
         }
         #endregion // Init
         
         
         #region Utils
-        protected string ToJson<T>(T _serializableObj, bool _prettify = true)
-        {
-            Formatting formatting = _prettify ? Formatting.Indented : Formatting.None;
-            return JsonConvert.SerializeObject(
-                _serializableObj, 
-                formatting, 
-                jsonSerializerSettings);
-        }
+        /// <summary>
+        /// This uses the identical Json serializer that Hathora SDK uses:
+        /// Deserialize requests, for example, to see exactly what's being sent.
+        /// - BUG: UnityWebRequest serialization errs for disposable objs
+        /// - BUG: Enums are serializing as numbers; server expects camelCase "strings" 
+        /// </summary>
+        /// <param name="_serializableObj"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        protected string ToJson<T>(T _serializableObj) =>
+            Utilities.SerializeJSON(_serializableObj);
         #endregion // Utils
     }
 }
