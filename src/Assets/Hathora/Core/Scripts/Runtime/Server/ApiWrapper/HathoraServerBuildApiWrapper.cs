@@ -178,8 +178,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             Debug.Log($"{logPrefix} Done - to know if success, call BuildApi.RunBuild");
 
             // (!) Unity, by default, truncates logs to 1k chars (callstack-inclusive).
-            string encodedLogs = await readStreamToStringAsync(runBuildResponse?.RunBuild200TextPlainBinaryString);
-            List<string> logChunks = onRunCloudBuildDone(encodedLogs);
+            // string encodedLogs = await readStreamToStringAsync(runBuildResponse?.RunBuild200TextPlainByteString); // TODO: Cleanup
+            string logs = runBuildResponse?.RunBuild200TextPlainByteString;
+            List<string> logChunks = onRunCloudBuildDone(logs);
             
             return logChunks;  // streamLogs 
         }

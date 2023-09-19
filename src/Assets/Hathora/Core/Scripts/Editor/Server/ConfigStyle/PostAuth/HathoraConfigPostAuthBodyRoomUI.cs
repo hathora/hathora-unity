@@ -411,7 +411,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.SelectedHathoraRegion;
             createNewCreateRoomCancelToken();
-            HathoraServerRoomApiWrapper serverRoomApiWrapper = new(ServerConfig);
+            
+            HathoraServerRoomApiWrapper serverRoomApiWrapper = new(
+                HathoraServerMgr.Singleton.HathoraSdk,
+                ServerConfig);
 
             (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
 

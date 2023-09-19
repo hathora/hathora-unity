@@ -64,8 +64,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// </summary>
         protected ServerApiContainer Apis { get; private set; }
         
-        /// <summary>Inits with info from `HathoraServerConfig`</summary>
-        protected HathoraCloudSDK HathoraSdk { get; private set; }
+        /// <summary>Direct SDK access: Inits with info from `HathoraServerConfig`</summary>
+        public HathoraCloudSDK HathoraSdk { get; private set; }
 
         /// <summary>(!) This is set async on Awake; check for null</summary>
         private volatile HathoraServerContext serverContext;

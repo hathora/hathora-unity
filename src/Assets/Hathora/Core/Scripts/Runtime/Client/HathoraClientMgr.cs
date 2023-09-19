@@ -57,8 +57,8 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// </summary>
         private HathoraClientApiContainer apis;
         
-        /// <summary>Inits with info from `HathoraClientConfig`</summary>
-        protected HathoraCloudSDK HathoraSdk { get; private set; }
+        /// <summary>Direct SDK access: Inits with info from `HathoraClientConfig`</summary>
+        public HathoraCloudSDK HathoraSdk { get; private set; }
 
 
         #region Public Events

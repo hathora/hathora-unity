@@ -123,8 +123,13 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerPaths serverPaths = new(_serverConfig);
 
                 // Prepare APIs
-                HathoraServerBuildApiWrapper buildApiWrapper = new(_serverConfig);
-                HathoraServerDeployApiWrapper deployApiWrapper = new(_serverConfig);
+                HathoraServerBuildApiWrapper buildApiWrapper = new(
+                    HathoraServerMgr.Singleton.HathoraSdk,
+                    _serverConfig);
+                
+                HathoraServerDeployApiWrapper deployApiWrapper = new(
+                    HathoraServerMgr.Singleton.HathoraSdk,
+                    _serverConfig);
 
                 #region Dockerfile >> Compress to .tar.gz
                 // ----------------------------------------------
@@ -385,7 +390,10 @@ namespace Hathora.Core.Scripts.Editor.Server
                     normalizedPathToTarball,
                     _cancelToken);
 
-                HathoraServerBuildApiWrapper buildApiWrapper = new(_serverConfig);
+                HathoraServerBuildApiWrapper buildApiWrapper = new(
+                    HathoraServerMgr.Singleton.HathoraSdk,
+                    _serverConfig);
+                
                 build = await buildApiWrapper.GetBuildInfoAsync(_buildId, _cancelToken);
             }
             catch (TaskCanceledException e)
