@@ -41,9 +41,12 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             {
                 Error = (sender, args) =>
                 {
-                    if (args.ErrorContext.Member.ToString() == "ReadTimeout")
+                    string member = args.ErrorContext.Member.ToString();
+                    bool isDisposableCantSerialize = member is "ReadTimeout" or "WriteTimeout";
+                    
+                    if (isDisposableCantSerialize)
                         args.ErrorContext.Handled = true;
-                }
+                },
             };
             
             Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
