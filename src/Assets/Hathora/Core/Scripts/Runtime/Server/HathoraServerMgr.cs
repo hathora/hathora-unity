@@ -149,13 +149,14 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         private void initHathoraSdk()
         {
-            this.HathoraSdk = new HathoraCloudSDK(hathoraServerConfig.HathoraCoreOpts.AppId);
+            if (CanInitSdk())
+                this.HathoraSdk = new HathoraCloudSDK(hathoraServerConfig.HathoraCoreOpts.AppId);
         }
 
         /// <returns>isValid</returns>
-        protected virtual bool CheckIsValidToInitApis()
+        protected virtual bool CanInitSdk()
         {
-            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(CheckIsValidToInitApis)}]";
+            string logPrefix = $"[{nameof(HathoraServerMgr)}.{nameof(CanInitSdk)}]";
             
             if (hathoraServerConfig == null)
             {
@@ -186,7 +187,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// <param name="_hathoraSdkConfig">We'll automatically create this, if empty</param>
         protected virtual void InitApiWrappers()
         {
-            if (!CheckIsValidToInitApis())
+            if (!CanInitSdk())
                 return;
 
             Apis = new ServerApiContainer(HathoraSdk, hathoraServerConfig);
