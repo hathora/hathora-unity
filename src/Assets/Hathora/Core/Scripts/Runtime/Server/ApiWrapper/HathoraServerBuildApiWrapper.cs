@@ -104,7 +104,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(RunCloudBuildAsync)}]";
 
             #region Timeout Workaround // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: How to raise timeout now?
-            Debug.Log($"{logPrefix} (!) TODO: The new SDK can no longer set (raise) Timeout");
+            Debug.Log($"{logPrefix} (!) TODO: The new SDK can no longer set Timeout " +
+                $"(to temporarily increase for potentially-large uploads");
+            
             // // Temporarily sets the Timeout to 15min (900k ms) to allow for large builds.
             // // Since Timeout has no setter, we need to temporarily make a new api instance.
             // SDKConfig highTimeoutConfig = HathoraUtils.DeepCopy(base.HathoraSdkConfig);
