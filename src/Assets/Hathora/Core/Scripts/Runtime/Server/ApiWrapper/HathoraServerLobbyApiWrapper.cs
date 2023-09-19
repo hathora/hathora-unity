@@ -75,8 +75,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getLobbyInfoResult)}: {base.ToJson(getLobbyInfoResult)}</color>");
+                $"{nameof(getLobbyInfoResult)}: {ToJson(getLobbyInfoResult)}</color>");
 
+            getLobbyInfoResult.RawResponse?.Dispose(); // Prevent mem leaks
             return getLobbyInfoResult.Lobby;
         }
         #endregion // Server Lobby Async Hathora SDK Calls

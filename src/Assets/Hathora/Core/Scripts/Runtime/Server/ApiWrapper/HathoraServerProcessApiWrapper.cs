@@ -77,7 +77,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getProcessInfoResponse)}: {base.ToJson(getProcessInfoResponse)}</color>");
+                $"{nameof(getProcessInfoResponse)}: {ToJson(getProcessInfoResponse)}</color>");
 
             Process process = getProcessInfoResponse.Process;
 
@@ -91,6 +91,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     return null;
             }
 
+            getProcessInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return process;
         }
         #endregion // Server Process Async Hathora SDK Calls

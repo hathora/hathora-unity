@@ -34,10 +34,20 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         
         
         #region Utils
-        protected string ToJson<T>(T Obj, bool prettify = true)
+        protected static string ToJson<T>(T Obj, bool prettify = true)
         {
+            // Ignore problematic props like ReadTimeout on MemoryQueueBufferStream from UnityWebRequests
+            JsonSerializerSettings settings = new()
+            {
+                Error = (sender, args) =>
+                {
+                    if (args.ErrorContext.Member.ToString() == "ReadTimeout")
+                        args.ErrorContext.Handled = true;
+                }
+            };
+            
             Formatting formatting = prettify ? Formatting.Indented : Formatting.None;
-            return JsonConvert.SerializeObject(Obj, formatting);
+            return JsonConvert.SerializeObject(Obj, formatting, settings);
         }
         #endregion // Utils
     }

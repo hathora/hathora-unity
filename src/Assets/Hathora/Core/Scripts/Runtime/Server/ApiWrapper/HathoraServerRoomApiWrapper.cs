@@ -143,7 +143,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // ----------
             // Success
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(activeConnectionInfo)}: {base.ToJson(activeConnectionInfo)}</color>");
+                $"{nameof(activeConnectionInfo)}: {ToJson(activeConnectionInfo)}</color>");
 
             return (activeRoom, activeConnectionInfo);
         }
@@ -171,7 +171,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             };
             
             Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createRoomRequestWrapper)}: {base.ToJson(createRoomRequestWrapper)}</color>");
+                $"{nameof(createRoomRequestWrapper)}: {ToJson(createRoomRequestWrapper)}</color>");
 
             // Request call async =>
             CreateRoomResponse createRoomResponse = null;
@@ -198,9 +198,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             // Process response
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createRoomResponse)}: {base.ToJson(createRoomResponse)}</color>");
+                $"{nameof(createRoomResponse)}: {ToJson(createRoomResponse)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
+            createRoomResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createRoomResponse.ConnectionInfoV2;
         }
         
@@ -246,8 +247,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getRoomInfoResponse)}: {base.ToJson(getRoomInfoResponse)}</color>");
+                $"{nameof(getRoomInfoResponse)}: {ToJson(getRoomInfoResponse)}</color>");
 
+            getRoomInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return getRoomInfoResponse.Room;
         }
         
@@ -303,9 +305,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             if (activeRooms.Count > 0)
             {
                 Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                    $"{nameof(activeRooms)}[0]: {base.ToJson(activeRooms[0])}</color>");
+                    $"{nameof(activeRooms)}[0]: {ToJson(activeRooms[0])}</color>");
             }
 
+            getActiveRoomsForProcessResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return activeRooms;
         }
         #endregion // Server Room Async Hathora SDK Calls
@@ -358,7 +361,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(connectionInfo)}: {base.ToJson(connectionInfo)}</color>");
+                $"{nameof(connectionInfo)}: {ToJson(connectionInfo)}</color>");
         
             IsPollingForActiveConnInfo = false;
             return connectionInfo;

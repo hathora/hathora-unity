@@ -62,6 +62,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             List<ApplicationWithDeployment> applicationWithDeployment = getAppsResponse.ApplicationWithDeployments;
             Debug.Log($"{logPrefix} num: '{applicationWithDeployment?.Count ?? 0}'");
             
+            getAppsResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return applicationWithDeployment;
         }
         #endregion // Server App Async Hathora SDK Calls

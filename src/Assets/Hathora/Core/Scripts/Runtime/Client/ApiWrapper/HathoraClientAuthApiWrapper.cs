@@ -59,12 +59,13 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 #if UNITY_EDITOR
             // For security, we probably only want to log this in the editor
             Debug.Log($"{logPrefix} <color=yellow>{nameof(isAuthed)}: {isAuthed}, " +
-                $"{nameof(loginAnonResponse)}: {base.ToJson(loginAnonResponse)}</color>");
+                $"{nameof(loginAnonResponse)}: {ToJson(loginAnonResponse)}</color>");
 #else
             Debug.Log($"{logPrefix} {nameof(isAuthed)}: {isAuthed}");
 #endif
 
 
+            loginAnonResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return loginAnonResponse.LoginResponse;
         }
         #endregion // Server Auth Async Hathora SDK Calls

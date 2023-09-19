@@ -91,7 +91,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 BuildId = _buildId,
             };
             
-            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {base.ToJson(deployConfig)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
 
             // Get response async =>
             CreateDeploymentResponse createDeploymentResponse = null;
@@ -109,8 +109,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createDeploymentResponse)}: {base.ToJson(createDeploymentResponse)}</color>");
-
+                $"{nameof(createDeploymentResponse)}: {ToJson(createDeploymentResponse)}</color>");
+            
+            createDeploymentResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createDeploymentResponse.Deployment;
         }
 
@@ -149,6 +150,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             List<Deployment> deployments = getDeploymentsResponse.Deployments;
             Debug.Log($"{logPrefix} <color=yellow>num: '{deployments?.Count}'</color>");
             
+            getDeploymentsResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return deployments;
         }
         #endregion // Server Deploy Async Hathora SDK Calls

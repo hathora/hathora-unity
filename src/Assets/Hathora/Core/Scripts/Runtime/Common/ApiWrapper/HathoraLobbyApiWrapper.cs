@@ -90,8 +90,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: " +
-                $"<color=yellow>{nameof(createLobbyResponse)}: {base.ToJson(createLobbyResponse)}</color>");
+                $"<color=yellow>{nameof(createLobbyResponse)}: {ToJson(createLobbyResponse)}</color>");
             
+            createLobbyResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createLobbyResponse.Lobby;
         }
 
@@ -137,8 +138,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             }
             
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(lobbyInfoResponse)}: {base.ToJson(lobbyInfoResponse)}</color>");      
+                $"{nameof(lobbyInfoResponse)}: {ToJson(lobbyInfoResponse)}</color>");      
             
+            lobbyInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return lobbyInfoResponse.Lobby;
         }
 
@@ -176,6 +178,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} => numLobbiesFound: {activePublicLobbiesResponse.Lobbies?.Count ?? 0}");
+            
+            activePublicLobbiesResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return activePublicLobbiesResponse.Lobbies;
         }
         #endregion // Client Lobby Async Hathora SDK Calls

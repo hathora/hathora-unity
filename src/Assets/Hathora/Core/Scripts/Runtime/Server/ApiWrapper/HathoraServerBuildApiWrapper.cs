@@ -81,8 +81,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createCloudBuildResponse)}: {base.ToJson(createCloudBuildResponse)}</color>");
-
+                $"{nameof(createCloudBuildResponse)}: {ToJson(createCloudBuildResponse)}</color>");
+            
+            createCloudBuildResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createCloudBuildResponse.Build;
         }
 
@@ -182,6 +183,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logs = runBuildResponse?.RunBuild200TextPlainByteString;
             List<string> logChunks = onRunCloudBuildDone(logs);
             
+            runBuildResponse?.RawResponse?.Dispose(); // Prevent mem leaks
             return logChunks;  // streamLogs 
         }
         
@@ -282,8 +284,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             bool isSuccess = build is { Status: BuildStatus.Succeeded };
             
             Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
-                $"{nameof(getBuildInfoResponse)}: {base.ToJson(getBuildInfoResponse)}</color>");
+                $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse)}</color>");
 
+            getBuildInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return build;
         }
         #endregion // Server Build Async Hathora SDK Calls

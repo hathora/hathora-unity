@@ -89,8 +89,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 
             // Success
             Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
-                $"{nameof(getConnectionInfoResponse)}: {base.ToJson(getConnectionInfoResponse)}</color>");
+                $"{nameof(getConnectionInfoResponse)}: {ToJson(getConnectionInfoResponse)}</color>");
 
+            getConnectionInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return connectionInfo;
         }
         #endregion // Common Room Async Hathora SDK Calls

@@ -153,7 +153,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"{logPrefix} Error: {e}");
+                    Debug.LogError($"{logPrefix} Error: {e.Message}");
                     throw;
                 }
 
@@ -203,7 +203,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 {
                     // TODO: Ask for buildTag in parent arg - passing `null`, for now
                     buildInfo = await buildApiWrapper.CreateBuildAsync(
-                        _buildTag: null, 
+                        _buildTag: null,
                         _cancelToken);
                 }
                 catch (TaskCanceledException e)
@@ -211,7 +211,11 @@ namespace Hathora.Core.Scripts.Editor.Server
                     Debug.Log($"{logPrefix} CreateBuildAsync => Task Cancelled");
                     throw;
                 }
-                catch (Exception e) { return null; }
+                catch (Exception e)
+                {
+                    Debug.LogError($"{logPrefix} Error: {e.Message}");
+                    return null;
+                }
 
                 Assert.IsNotNull(buildInfo, $"{logPrefix} Expected buildInfo");
 
@@ -406,7 +410,7 @@ namespace Hathora.Core.Scripts.Editor.Server
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraServerDeploy.uploadAndVerifyBuildAsync] Error: {e}");
+                Debug.LogError($"[HathoraServerDeploy.uploadAndVerifyBuildAsync] Error: {e.Message}");
                 throw;
             }
             
