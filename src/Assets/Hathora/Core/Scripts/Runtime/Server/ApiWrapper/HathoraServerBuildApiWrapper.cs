@@ -126,7 +126,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             RunBuildRequestBodyFile requestFile = new()
             {
                 File = _pathToTarGzBuildFile,
-                Content = await File.ReadAllBytesAsync(_pathToTarGzBuildFile, _cancelToken),
+                // Content = // Apply below in try/catch since we need to await
             };
             
             RunBuildRequestBody runBuildRequest = new()
@@ -143,26 +143,28 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 
             // Get response async =>
             RunBuildResponse runBuildResponse = null;
+            // MemoryQueueBufferStream stream = null; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
             uploading = true;
 
             try
             {
                 _ = startProgressNoticeAsync(); // !await
+                
+                // Prepare disposable file _stream
+                await using FileStream fileStream = new(
+                    _pathToTarGzBuildFile,
+                    FileMode.Open,
+                    FileAccess.Read);
 
-                // TODO: No more need for file stream in the new SDK?
-                // await using FileStream fileStream = new(
-                //     _pathToTarGzBuildFile,
-                //     FileMode.Open,
-                //     FileAccess.Read);
+                runBuildRequestWrapper.RequestBody.File.Content = toByteArray(fileStream);
 
                 // // (!) TODO: SDKConfig.Timer no longer exists in the new SDK: How to raise timeout now?
-                // runBuildResponse = await highTimeoutBuildApi.RunBuildAsync(
-                //     new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
-                //     runBuildRequestWrapper);
-
                 runBuildResponse = await BuildApi.RunBuildAsync(
                     new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
                     runBuildRequestWrapper);
+
+                // stream = runBuildResponse.RunBuild200TextPlainByteString; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
+                uploading = true;
             }
             catch (TaskCanceledException)
             {
@@ -178,7 +180,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 uploading = false;
             }
 
-            Debug.Log($"{logPrefix} Done - to know if success, call BuildApi.RunBuild");
+            Debug.Log($"{logPrefix} Done - to know if success, call BuildApi.RunBuild " +
+                "(or see `HathoraServerConfig` logs at bottom)");
 
             // (!) Unity, by default, truncates logs to 1k chars (callstack-inclusive).
             // string encodedLogs = await readStreamToStringAsync(runBuildResponse?.RunBuild200TextPlainByteString); // TODO: Cleanup
@@ -187,25 +190,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             runBuildResponse?.RawResponse?.Dispose(); // Prevent mem leaks
             return logChunks;  // streamLogs 
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_memoryQueueBufferStream">From runBuildResponse.RunBuild200TextPlainBinaryString</param>
-        /// <returns></returns>
-        private static async Task<string> readStreamToStringAsync(MemoryQueueBufferStream _memoryQueueBufferStream)
-        {
-            if (_memoryQueueBufferStream == null)
-                return string.Empty;
-
-            await using (_memoryQueueBufferStream)
-            {
-                byte[] buffer = new byte[_memoryQueueBufferStream.Length];
-                await _memoryQueueBufferStream.ReadAsync(buffer.AsMemory(start:0, buffer.Length));
-                
-                return Encoding.UTF8.GetString(buffer);
-            }
         }
 
         private async Task startProgressNoticeAsync()
@@ -223,7 +207,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         }
 
         /// <summary>
-        /// DONE - not necessarily success. Log stream every 500 lines
+        /// DONE - not necessarily success. Log _stream every 500 lines
         /// (!) Unity, by default, truncates logs to 1k chars (including callstack).
         /// </summary>
         /// <param name="_cloudRunBuildResultLogsStr"></param>
@@ -292,5 +276,22 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             return build;
         }
         #endregion // Server Build Async Hathora SDK Calls
+        
+        
+        #region Utils
+        private static byte[] toByteArray(Stream _stream)
+        {
+            _stream.Position = 0;
+            byte[] buffer = new byte[_stream.Length];
+            
+            for (int totalBytesCopied = 0; totalBytesCopied < _stream.Length;)
+                totalBytesCopied += _stream.Read(
+                    buffer, 
+                    offset: totalBytesCopied, 
+                    count: Convert.ToInt32(_stream.Length) - totalBytesCopied);
+            
+            return buffer;
+        }
+        #endregion // Utils
     }
 }
