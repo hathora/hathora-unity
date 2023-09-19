@@ -72,7 +72,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             InsertSpace2x();
             
-            bool enableBuildBtn = ServerConfig.MeetsBuildAndDeployBtnReqs();
+            bool enableBuildBtn = ServerConfig.MeetsBuildBtnReqs();
             if (!enableBuildBtn && !HathoraServerDeploy.IsDeploying)
                 insertGenerateServerBuildBtnHelpboxOnMissingReqs();
             else
