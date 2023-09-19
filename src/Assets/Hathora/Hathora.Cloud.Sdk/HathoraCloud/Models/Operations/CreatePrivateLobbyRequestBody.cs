@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
+using Newtonsoft.Json.Converters;
+
 namespace HathoraCloud.Models.Operations
 {
     using HathoraCloud.Models.Shared;
@@ -28,6 +30,7 @@ namespace HathoraCloud.Models.Operations
         
         [SerializeField]
         [JsonProperty("region")]
+        [JsonConverter(typeof(StringEnumConverter))] // (!) Added manually to serialize to string instead of int --Dylan
         public Region Region { get; set; } = default!;
         
     }
