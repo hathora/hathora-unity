@@ -12,6 +12,7 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
@@ -123,12 +124,14 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerPaths serverPaths = new(_serverConfig);
 
                 // Prepare APIs
+                HathoraCloudSDK sdk = new(_serverConfig.HathoraCoreOpts.AppId);
+                
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
-                    HathoraServerMgr.Singleton.HathoraSdk,
+                    sdk,
                     _serverConfig);
                 
                 HathoraServerDeployApiWrapper deployApiWrapper = new(
-                    HathoraServerMgr.Singleton.HathoraSdk,
+                    sdk,
                     _serverConfig);
 
                 #region Dockerfile >> Compress to .tar.gz
@@ -391,7 +394,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                     _cancelToken);
 
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
-                    HathoraServerMgr.Singleton.HathoraSdk,
+                    new HathoraCloudSDK(_serverConfig.HathoraCoreOpts.AppId),
                     _serverConfig);
                 
                 build = await buildApiWrapper.GetBuildInfoAsync(_buildId, _cancelToken);

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
+using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using UnityEditor;
 using UnityEngine;
@@ -284,7 +285,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             isRefreshingExistingApps = true;
             
             HathoraServerAppApiWrapper appApiWrapper = new(
-                HathoraServerMgr.Singleton.HathoraSdk, 
+                new HathoraCloudSDK(ServerConfig.HathoraCoreOpts.AppId), 
                 ServerConfig);
             
             List<ApplicationWithDeployment> apps = await appApiWrapper.GetAppsAsync();

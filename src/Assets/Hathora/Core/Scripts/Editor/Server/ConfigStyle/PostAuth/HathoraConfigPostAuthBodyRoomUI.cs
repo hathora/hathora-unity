@@ -12,6 +12,7 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
+using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using UnityEditor;
 using UnityEngine;
@@ -413,7 +414,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             createNewCreateRoomCancelToken();
             
             HathoraServerRoomApiWrapper serverRoomApiWrapper = new(
-                HathoraServerMgr.Singleton.HathoraSdk,
+                new HathoraCloudSDK(ServerConfig.HathoraCoreOpts.AppId),
                 ServerConfig);
 
             (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;
