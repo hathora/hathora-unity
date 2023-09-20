@@ -66,7 +66,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(
-                    new GetProcessInfoSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetProcessInfoSecurity { HathoraDevToken = base.HathoraDevToken },
                     getProcessInfoRequest);
             }
             catch (Exception e)

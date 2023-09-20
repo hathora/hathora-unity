@@ -181,7 +181,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
                 createRoomResponse = await RoomApi.CreateRoomAsync(
-                    new CreateRoomSecurity { HathoraDevToken = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new CreateRoomSecurity { HathoraDevToken = auth0DevToken },
                     createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
@@ -231,7 +231,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getRoomInfoResponse = await RoomApi.GetRoomInfoAsync(
-                    new GetRoomInfoSecurity { HathoraDevToken = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetRoomInfoSecurity { HathoraDevToken = auth0DevToken },
                     getRoomInfoRequest);
             }
             catch (TaskCanceledException)
@@ -282,7 +282,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getActiveRoomsForProcessResponse = await RoomApi.GetActiveRoomsForProcessAsync(
-                    new GetActiveRoomsForProcessSecurity { HathoraDevToken = auth0DevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetActiveRoomsForProcessSecurity { HathoraDevToken = auth0DevToken },
                     getActiveRoomsForProcessRequest);
             }
             catch (TaskCanceledException)

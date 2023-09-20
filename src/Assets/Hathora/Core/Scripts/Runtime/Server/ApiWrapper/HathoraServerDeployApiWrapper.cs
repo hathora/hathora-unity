@@ -99,7 +99,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 createDeploymentResponse = await DeployApi.CreateDeploymentAsync(
-                    new CreateDeploymentSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new CreateDeploymentSecurity { HathoraDevToken = base.HathoraDevToken },
                     createDeploymentRequest);
             }
             catch (Exception e)
@@ -137,7 +137,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(
-                    new GetDeploymentsSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetDeploymentsSecurity { HathoraDevToken = base.HathoraDevToken },
                     getDeploymentsRequest);
             }
             catch (Exception e)

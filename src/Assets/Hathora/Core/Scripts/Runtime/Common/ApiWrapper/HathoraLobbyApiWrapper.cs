@@ -37,7 +37,6 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         /// Create a new Player Client Lobby.
         /// </summary>
         /// <param name="_playerAuthToken">
-        /// TODO: Client PlayerAuthToken !used in new SDK: Deprecated?
         /// Player Auth Token (likely from a cached session)</param>
         /// <param name="_lobbyVisibility"></param>
         /// <param name="_initConfigObj">

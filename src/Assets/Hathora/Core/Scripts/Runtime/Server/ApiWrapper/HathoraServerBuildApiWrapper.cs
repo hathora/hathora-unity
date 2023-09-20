@@ -71,7 +71,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 createCloudBuildResponse = await BuildApi.CreateBuildAsync(
-                    new CreateBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new CreateBuildSecurity { HathoraDevToken = base.HathoraDevToken },
                     createBuildRequestWrapper);
             }
             catch (Exception e)
@@ -140,7 +140,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 runBuildRequestWrapper.RequestBody.File.Content = toByteArray(fileStream);
 
                 runBuildResponse = await BuildApi.RunBuildAsync(
-                    new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken },
                     runBuildRequestWrapper);
 
                 // stream = runBuildResponse.RunBuild200TextPlainByteString; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
@@ -244,7 +244,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(
-                    new GetBuildInfoSecurity { HathoraDevToken = base.HathoraDevToken }, // TODO: Redundant - already has Auth0 from constructor via SDKConfig.HathoraDevToken
+                    new GetBuildInfoSecurity { HathoraDevToken = base.HathoraDevToken },
                     getBuildInfoRequest);
             }
             catch (Exception e)
