@@ -53,7 +53,8 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
                 return null; // fail
             }
 
-            bool isAuthed = !string.IsNullOrEmpty(loginAnonResponse.LoginResponse?.Token); 
+            string clientAuthToken = loginAnonResponse.LoginResponse?.Token; 
+            bool isAuthed = !string.IsNullOrEmpty(clientAuthToken); 
             
             
 #if UNITY_EDITOR

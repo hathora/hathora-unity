@@ -66,10 +66,8 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// For a new Session, we simply update the PlayerAuthToken.
         /// </summary>
         /// <param name="playerAuthToken"></param>
-        public void InitNetSession(string playerAuthToken)
-        {
+        public void InitNetSession(string playerAuthToken) =>
             this.PlayerAuthToken = playerAuthToken;
-        }
         #endregion // Init
     }
 }
