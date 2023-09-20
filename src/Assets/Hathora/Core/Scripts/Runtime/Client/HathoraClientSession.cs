@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
+using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
 
@@ -66,8 +67,17 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// For a new Session, we simply update the PlayerAuthToken.
         /// </summary>
         /// <param name="playerAuthToken"></param>
-        public void InitNetSession(string playerAuthToken) =>
+        public void InitNetSession(string playerAuthToken)
+        {
             this.PlayerAuthToken = playerAuthToken;
+
+            
+            #region (!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan
+            Debug.Log($"[HathoraClientSession.{nameof(InitNetSession)}] <color=orange>(!) SDK WORKAROUND: " +
+                "Adding client Authorization Token header to temporary `SDKConfig.ClientAuthToken` --Dylan</color>");
+            SDKConfig.ClientAuthToken = playerAuthToken;
+            #endregion // (!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan
+        }
         #endregion // Init
     }
 }

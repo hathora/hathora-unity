@@ -36,6 +36,9 @@ namespace HathoraCloud
     public class SDKConfig
     {
         public string? AppId;
+        
+        /// <summary>(!) TEMPORARY WORKAROUND FOR BEARER TOKEN --Dylan</summary>
+        public static string? ClientAuthToken { get; set; }
     }
 
     public class HathoraCloudSDK: IHathoraCloudSDK
