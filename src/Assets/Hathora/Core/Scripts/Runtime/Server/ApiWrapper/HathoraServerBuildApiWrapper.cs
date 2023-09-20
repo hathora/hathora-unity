@@ -80,8 +80,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createCloudBuildResponse)}: {ToJson(createCloudBuildResponse)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(createCloudBuildResponse)}: " +
+                $"{ToJson(createCloudBuildResponse.Build)}</color>");
             
             createCloudBuildResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createCloudBuildResponse.Build;
@@ -277,7 +277,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             bool isSuccess = build is { Status: BuildStatus.Succeeded };
             
             Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
-                $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse)}</color>");
+                $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse.Build)}</color>");
 
             getBuildInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return build;

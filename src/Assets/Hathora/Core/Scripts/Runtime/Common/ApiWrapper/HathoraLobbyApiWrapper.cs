@@ -89,8 +89,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} Success: " +
-                $"<color=yellow>{nameof(createLobbyResponse)}: {ToJson(createLobbyResponse.Lobby)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(createLobbyResponse)}: " +
+                $"{ToJson(createLobbyResponse.Lobby)}</color>");
             
             createLobbyResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createLobbyResponse.Lobby;
@@ -137,8 +137,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
                     "Tip: If a server made a Room without a lobby, instead use the Room api (rather than Lobby api)");
             }
             
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"[{lobbyInfoResponse.StatusCode}] {nameof(lobbyInfoResponse)}: " +
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(lobbyInfoResponse)}: " +
                 $"{ToJson(lobbyInfoResponse.Lobby)}</color>");      
             
             lobbyInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks

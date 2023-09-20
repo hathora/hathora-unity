@@ -108,8 +108,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createDeploymentResponse)}: {ToJson(createDeploymentResponse)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(createDeploymentResponse.Deployment)}: " +
+                $"{ToJson(createDeploymentResponse.Deployment)}</color>");
             
             createDeploymentResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createDeploymentResponse.Deployment;

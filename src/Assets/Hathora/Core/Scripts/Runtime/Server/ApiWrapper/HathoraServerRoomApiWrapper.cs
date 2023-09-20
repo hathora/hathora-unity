@@ -142,8 +142,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // ----------
             // Success
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(activeConnectionInfo)}: {ToJson(activeConnectionInfo)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(activeConnectionInfo)}: " +
+                $"{ToJson(activeConnectionInfo)}</color>");
 
             return (activeRoom, activeConnectionInfo);
         }
@@ -170,8 +170,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 CreateRoomRequestValue = _createRoomReq,
             };
             
-            Debug.Log($"{logPrefix} <color=yellow>" +
-                $"{nameof(createRoomRequestWrapper)}: {ToJson(createRoomRequestWrapper)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(createRoomRequestWrapper)}: " +
+                $"{ToJson(createRoomRequestWrapper)}</color>");
 
             // Request call async =>
             CreateRoomResponse createRoomResponse = null;
@@ -197,8 +197,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             // Process response
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(createRoomResponse)}: {ToJson(createRoomResponse)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(createRoomResponse.ConnectionInfoV2)}: " +
+                $"{ToJson(createRoomResponse.ConnectionInfoV2)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             createRoomResponse.RawResponse?.Dispose(); // Prevent mem leaks
@@ -246,8 +246,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 return null; // fail
             }
 
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getRoomInfoResponse)}: {ToJson(getRoomInfoResponse)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(getRoomInfoResponse.Room)}: " +
+                $"{ToJson(getRoomInfoResponse.Room)}</color>");
 
             getRoomInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return getRoomInfoResponse.Room;
@@ -304,8 +304,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             if (activeRooms.Count > 0)
             {
-                Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                    $"{nameof(activeRooms)}[0]: {ToJson(activeRooms[0])}</color>");
+                Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(activeRooms)}[0]: " +
+                    $"{ToJson(activeRooms[0])}</color>");
             }
 
             getActiveRoomsForProcessResponse.RawResponse?.Dispose(); // Prevent mem leaks
@@ -360,8 +360,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 Debug.LogWarning($"{logPrefix} Room !Active (yet) - attempting to poll again ...");
             }
             
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(connectionInfo)}: {ToJson(connectionInfo)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(connectionInfo)}: " +
+                $"{ToJson(connectionInfo)}</color>");
         
             IsPollingForActiveConnInfo = false;
             return connectionInfo;

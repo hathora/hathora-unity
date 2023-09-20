@@ -89,7 +89,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 
             // Success
             Debug.Log($"{logPrefix} Success (after {pollSecondsTicked}s polling): <color=yellow>" +
-                $"[{getConnectionInfoResponse.StatusCode}] {nameof(getConnectionInfoResponse)}: " +
+                $"[{getConnectionInfoResponse.StatusCode}] {nameof(getConnectionInfoResponse.ConnectionInfoV2)}: " +
                 $"{ToJson(getConnectionInfoResponse.ConnectionInfoV2)}</color>");
 
             getConnectionInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks

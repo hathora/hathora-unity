@@ -74,8 +74,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             // Process result
-            Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(getLobbyInfoResult)}: {ToJson(getLobbyInfoResult)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(getLobbyInfoResult.Lobby)}: " +
+                $"{ToJson(getLobbyInfoResult.Lobby)}</color>");
 
             getLobbyInfoResult.RawResponse?.Dispose(); // Prevent mem leaks
             return getLobbyInfoResult.Lobby;
