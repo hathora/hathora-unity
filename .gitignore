@@ -90,3 +90,4 @@ src/Assets/Hathora/Core/Scripts/Editor/Common/SuperSave.*
 *.*~
 src/.hathora/LocalContainer
 utils/mono_crash.mem.*.blob
+/Assets

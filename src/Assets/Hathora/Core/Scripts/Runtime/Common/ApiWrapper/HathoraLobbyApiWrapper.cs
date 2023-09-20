@@ -90,7 +90,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             }
 
             Debug.Log($"{logPrefix} Success: " +
-                $"<color=yellow>{nameof(createLobbyResponse)}: {ToJson(createLobbyResponse)}</color>");
+                $"<color=yellow>{nameof(createLobbyResponse)}: {ToJson(createLobbyResponse.Lobby)}</color>");
             
             createLobbyResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return createLobbyResponse.Lobby;
@@ -138,7 +138,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             }
             
             Debug.Log($"{logPrefix} Success: <color=yellow>" +
-                $"{nameof(lobbyInfoResponse)}: {ToJson(lobbyInfoResponse)}</color>");      
+                $"[{lobbyInfoResponse.StatusCode}] {nameof(lobbyInfoResponse)}: " +
+                $"{ToJson(lobbyInfoResponse.Lobby)}</color>");      
             
             lobbyInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return lobbyInfoResponse.Lobby;

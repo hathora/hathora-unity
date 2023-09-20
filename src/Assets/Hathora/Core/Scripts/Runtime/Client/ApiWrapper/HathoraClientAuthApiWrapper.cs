@@ -59,7 +59,7 @@ namespace Hathora.Core.Scripts.Runtime.Client.ApiWrapper
 #if UNITY_EDITOR
             // For security, we probably only want to log this in the editor
             Debug.Log($"{logPrefix} <color=yellow>{nameof(isAuthed)}: {isAuthed}, " +
-                $"{nameof(loginAnonResponse)}: {ToJson(loginAnonResponse)}</color>");
+                $"{nameof(loginAnonResponse)}: {ToJson(loginAnonResponse.LoginResponse)}</color>");
 #else
             Debug.Log($"{logPrefix} {nameof(isAuthed)}: {isAuthed}");
 #endif
