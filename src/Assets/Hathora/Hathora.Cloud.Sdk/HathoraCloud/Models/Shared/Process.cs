@@ -98,7 +98,6 @@ namespace HathoraCloud.Models.Shared
         
         [SerializeField]
         [JsonProperty("region")]
-        [JsonConverter(typeof(StringEnumConverter))] // (!) Added manually to serialize to string instead of int --Dylan
         public Region Region { get; set; } = default!;
         
         [Obsolete("This field will be removed in a future release, please migrate away from it as soon as possible")]
