@@ -372,7 +372,9 @@ namespace HathoraCloud
                     throw new Exception(errorMsg);
             }
 
-            var contentType = httpResponse.GetResponseHeader("Content-Type");
+            // var contentType = httpResponse.GetResponseHeader("Content-Type"); // bug(SOA): Fixes contentType --Dylan
+            var contentType = "text/plain";
+            
             var response = new RunBuildResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
