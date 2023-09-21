@@ -205,7 +205,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 Assert.IsNotNull(buildInfo, $"{logPrefix} Expected buildInfo");
 
                 // Building seems to unselect Hathora _serverConfig on success
-                HathoraServerConfigFinder.ShowWindowOnly();
+                HathoraServerConfigFinder.SelectLastKnownServerConfig();
 
                 OnBuildReqComplete?.Invoke(buildInfo);
                 _cancelToken.ThrowIfCancellationRequested();
