@@ -66,9 +66,10 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
         }
         #endregion // vars
-        
-        
-        private async void Start() => await InitArgsAsync();
+
+
+        protected virtual async void Awake() {}
+        protected virtual async void Start() => await InitArgsAsync();
 
         /// <summary>
         /// (!) Some args like `-scene` and `-mode` are statically consumed only once

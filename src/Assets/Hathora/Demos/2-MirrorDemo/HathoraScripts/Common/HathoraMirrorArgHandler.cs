@@ -13,8 +13,8 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
     /// </summary>
     public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
-        private async void Start() => 
-            await base.InitArgsAsync();
+        protected override void Awake() {}
+        protected override void Start() {}
 
         protected override void ArgModeStartServer()
         {
