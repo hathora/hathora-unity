@@ -168,7 +168,9 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// </summary>
         /// <param name="_region">Leaving null will pass `HathoraUtils.DEFAULT_REGION`</param>
         /// <param name="_visibility"></param>
-        /// <param name="_initConfigObj">Pass your own model OR stringified json, minimally "{}"</param>
+        /// <param name="_initConfigObj">
+        /// Pass your own model OR stringified json, minimally "{}"
+        /// </param>
         /// <param name="_roomId">
         /// Leave null to auto-generate an Id (recommended to prevent potential dupe issues)
         /// </param>

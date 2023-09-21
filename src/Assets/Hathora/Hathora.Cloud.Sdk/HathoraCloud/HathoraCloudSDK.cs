@@ -37,7 +37,7 @@ namespace HathoraCloud
     {
         public string? AppId;
         
-        /// <summary>(!) TEMPORARY WORKAROUND FOR BEARER TOKEN --Dylan</summary>
+        /// <summary>(!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan</summary>
         public static string? ClientAuthToken { get; set; }
     }
 

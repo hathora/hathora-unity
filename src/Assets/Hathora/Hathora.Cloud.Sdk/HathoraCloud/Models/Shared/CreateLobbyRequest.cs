@@ -25,7 +25,7 @@ namespace HathoraCloud.Models.Shared
         /// </summary>
         [SerializeField]
         [JsonProperty("initialConfig")]
-        public object InitialConfig { get; set; } = default!; // (!) Hard-coded to `object` --Dylan
+        public object InitialConfig { get; set; } = default!; // (!) Swapped from `LobbyInitialConfig` to `object` type --Dylan
         
         [SerializeField]
         [JsonProperty("region")]
