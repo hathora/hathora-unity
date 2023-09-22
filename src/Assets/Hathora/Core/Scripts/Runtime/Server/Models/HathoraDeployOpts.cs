@@ -35,6 +35,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public int PlanNameSelectedIndex { get; set; }
 
+        // TODO: Wrap for persistence
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public PlanName SelectedPlanName => 
             (PlanName)_planNameSelectedIndex;
@@ -42,6 +43,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         
         
         #region Container Port
+        // TODO: Wrap for persistence
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         [SerializeField]
         private ContainerPort containerPort = new();
@@ -57,12 +59,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
         #region Transport Type 
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public TransportType SelectedTransportType => 
-            (TransportType)_transportTypeSelectedIndex;
-        
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
         private int _transportTypeSelectedIndex = (int)TransportType.Udp;
+        
+        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
+        public TransportType SelectedTransportType => 
+            (TransportType)_transportTypeSelectedIndex;
        
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public int TransportTypeSelectedIndex
@@ -74,6 +76,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
         
         #region Last Deployment
+        // TODO: Wrap for persistence
         /// <summary>If you deployed something, we set the cached result</summary>
         // [SerializeField] // TODO: Make serializable. For now, this won't persist between Unity sessions.
         private Deployment _lastDeployment;

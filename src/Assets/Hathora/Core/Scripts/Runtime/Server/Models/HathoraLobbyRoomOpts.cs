@@ -27,6 +27,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
         /// Since this Enum isn't alphabatized, also care if you Sort() the list.
         /// </summary>
+        // TODO: Wrap for persistence
         public Region SelectedHathoraRegion => 
             (Region)_hathoraRegionSelectedIndex;
         #endregion // Hathora Region

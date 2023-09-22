@@ -3,7 +3,6 @@
 using System;
 using System.Globalization;
 using Hathora.Core.Scripts.Runtime.Common.Extensions;
-using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
@@ -17,6 +16,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     [Serializable]
     public class HathoraCachedRoomConnection
     {
+        // TODO: Wrap for persistence
         [SerializeField]
         private Region _hathoraRegion = HathoraUtils.DEFAULT_REGION;
         public Region HathoraRegion
@@ -29,6 +29,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public string GetFriendlyRegionStr() => 
             Enum.GetName(typeof(Region), _hathoraRegion)?.SplitPascalCase();
         
+        // TODO: Wrap for persistence
         [FormerlySerializedAs("_roomWrapper")]
         [SerializeField]
         private Room _room;
@@ -38,6 +39,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _room = value;
         }
         
+        // TODO: Wrap for persistence
         [FormerlySerializedAs("_connectionInfoV2Wrapper")]
         [SerializeField]
         private ConnectionInfoV2 _connectionInfoV2;

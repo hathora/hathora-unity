@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hathora.Core.Scripts.Runtime.Common.Models;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
@@ -22,9 +21,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         private int _existingAppsSelectedIndex = -1;
 
         /// <summary>Get from your Hathora dashboard</summary>
-        public string AppId => ExistingAppsWithDeployment != null && ExistingAppsWithDeployment.Count > 0 && _existingAppsSelectedIndex > -1 && _existingAppsSelectedIndex < ExistingAppsWithDeployment.Count
-            ? ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId
-            : null;
+        public string AppId => 
+            ExistingAppsWithDeployment is { Count: > 0 } && 
+            _existingAppsSelectedIndex > -1 && 
+            _existingAppsSelectedIndex < ExistingAppsWithDeployment.Count
+                ? ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId
+                : null;
         
         public bool HasAppId => !string.IsNullOrEmpty(AppId);
         
@@ -34,6 +36,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _existingAppsSelectedIndex = value;
         }
 
+        // TODO: Wrap for persistence
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
         [FormerlySerializedAs("_existingAppsWithDeploymentWrapper")]
         [SerializeField]
