@@ -25,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _hathoraRegion = value;
         }
 
-        /// <summary>WashingtonDC => "Washington DC"</summary>
+        /// <summary>Washington_DC => "Washington DC"</summary>
         public string GetFriendlyRegionStr() => 
             Enum.GetName(typeof(Region), _hathoraRegion)?.SplitPascalCase();
         
