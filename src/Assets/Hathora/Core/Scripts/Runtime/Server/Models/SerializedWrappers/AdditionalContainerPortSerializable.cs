@@ -1,13 +1,12 @@
 // Created by dylan@hathora.dev
 
 using System;
-using Hathora.Core.Scripts.Runtime.Common.Models;
 using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
+namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.

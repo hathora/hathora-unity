@@ -6,14 +6,14 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
+namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
     /// Set transport configurations for where the server will listen.
     /// --- 
-    /// This is a wrapper for Hathora SDK's `ContainerPort` model.
+    /// This is a wrapper for Hathora SDK's `ContainerPortSerializable` model.
     /// TODO: Upgrade SDK models to natively support serialization
     /// </summary>
     [Serializable]

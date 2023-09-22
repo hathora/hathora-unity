@@ -6,16 +6,16 @@ using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
+namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
-    /// This is a wrapper for Hathora SDK's `RoomCurrentAllocationSerializable` model.
+    /// This is a wrapper for Hathora SDK's `RoomAllocationSerializable` model.
     /// TODO: Upgrade SDK models to natively support serialization
     /// </summary>
     [Serializable]
-    public class RoomCurrentAllocationSerializable
+    public class RoomAllocationSerializable
     {
         /// <summary>
         /// (!) Originally a nullable DateTime, but Unity's SerializeField
@@ -29,7 +29,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
                 ? parsedDateTime 
                 : DateTime.MinValue;
 
-            set => _unscheduledAtDateTimeWrapper = value.ToString(CultureInfo.InvariantCulture);
+            set => _unscheduledAtDateTimeWrapper = value.ToString();
         }
 
         [SerializeField, JsonProperty("scheduledAt")]
@@ -59,7 +59,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             set => _roomAllocationId = value;
         }
 
-        public RoomCurrentAllocationSerializable(RoomCurrentAllocation _roomAllocation)
+        public RoomAllocationSerializable(RoomAllocation _roomAllocation)
         {
             if (_roomAllocation == null)
                 return;
@@ -70,9 +70,9 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             this.RoomAllocationId = _roomAllocation.RoomAllocationId;
         }
 
-        public RoomCurrentAllocation ToRoomCurrentAllocationType()
+        public RoomAllocation ToRoomAllocationType()
         {
-            RoomCurrentAllocation roomCurrentAllocation = new()
+            RoomAllocation roomCurrentAllocation = new()
             {
                 UnscheduledAt = UnscheduledAt,
                 ScheduledAt = ScheduledAt,

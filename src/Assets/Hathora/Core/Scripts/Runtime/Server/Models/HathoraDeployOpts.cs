@@ -1,12 +1,11 @@
 // dylan@hathora.dev
 
 using System;
-using System.Collections.Generic;
 using System.Text;
-using Hathora.Core.Scripts.Runtime.Common.Models;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
+using Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
@@ -33,9 +32,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         private int _planNameSelectedIndex = (int)PlanName.Tiny;
 
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public int PlanNameSelectedIndex { get; set; }
+        public int PlanNameSelectedIndex
+        {
+            get => _planNameSelectedIndex;
+            set => _planNameSelectedIndex = value;
+        }
 
-        // TODO: Wrap for persistence
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         public PlanName SelectedPlanName => 
             (PlanName)_planNameSelectedIndex;
@@ -43,16 +45,17 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         
         
         #region Container Port
-        // TODO: Wrap for persistence
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
+        [FormerlySerializedAs("containerPortSerializableSerializable")]
+        [FormerlySerializedAs("_containerPortSerializable")]
         [SerializeField]
-        private ContainerPort containerPort = new();
+        private ContainerPortSerializable _containerPortSerializableSerializable = new();
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        public ContainerPort ContainerPort
+        public ContainerPortSerializable ContainerPortSerializable
         {
-            get => containerPort;
-            set => containerPort = value;
+            get => _containerPortSerializableSerializable;
+            set => _containerPortSerializableSerializable = value;
         }
         #endregion // Container Port
 
@@ -76,7 +79,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
         
         #region Last Deployment
-        // TODO: Wrap for persistence
         /// <summary>If you deployed something, we set the cached result</summary>
         // [SerializeField] // TODO: Make serializable. For now, this won't persist between Unity sessions.
         private Deployment _lastDeployment;

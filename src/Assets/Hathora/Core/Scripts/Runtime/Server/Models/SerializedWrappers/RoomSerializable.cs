@@ -6,7 +6,7 @@ using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
+namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.
@@ -45,7 +45,9 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         private List<RoomAllocationSerializable> _allocationsWrapper = new();
         public List<RoomAllocation> Allocations
         {
-            get => _allocationsWrapper?.ConvertAll(wrapper => wrapper.ToRoomAllocationType());
+            get => _allocationsWrapper?.ConvertAll(wrapper => 
+                wrapper.ToRoomAllocationType());
+            
             set => _allocationsWrapper = value?.ConvertAll(val => 
                 new RoomAllocationSerializable(val));
         }

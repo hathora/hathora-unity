@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
+namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.
@@ -54,20 +54,22 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         }
         
         
-        /// <summary>Parses from List of ContainerPort</summary>
+        /// <summary>Parses from List of ContainerPortSerializable</summary>
         [SerializeField, JsonProperty("additionalContainerPorts")]
         private List<AdditionalContainerPortSerializable> _additionalContainerPorts;
 
-        /// <summary>Parses from List of ContainerPort</summary>
+        /// <summary>Parses from List of ContainerPortSerializable</summary>
         public List<ContainerPort> AdditionalContainerPorts
         {
-            get => _additionalContainerPorts?.ConvertAll(wrapper => wrapper.ToContainerPortType());
+            get => _additionalContainerPorts?.ConvertAll(wrapper => 
+                wrapper.ToContainerPortType());
+            
             set => _additionalContainerPorts = value?.ConvertAll(val => 
                 new AdditionalContainerPortSerializable(val));
         }
         
 
-        /// <summary>Parses from ContainerPort</summary>
+        /// <summary>Parses from ContainerPortSerializable</summary>
         [FormerlySerializedAs("_defaultContainerPortWrapper")]
         [SerializeField, JsonProperty("defaultContainerPort")]
         private ContainerPortSerializable defaultContainerPortSerializable = new();

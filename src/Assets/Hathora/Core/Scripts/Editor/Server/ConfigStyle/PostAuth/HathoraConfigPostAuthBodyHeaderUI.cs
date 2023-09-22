@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Hathora.Core.Scripts.Editor.Common;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
+using Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers;
 using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using UnityEditor;
@@ -289,16 +290,20 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 ServerConfig);
             
             List<ApplicationWithDeployment> apps = await appApiWrapper.GetAppsAsync();
+            
+            // TODO: SDK models should be serializable (instead of using a wrapper)
+            List<ApplicationWithDeploymentSerializable> appsSerializable = apps.ConvertAll(app =>
+                new ApplicationWithDeploymentSerializable(app));
 
             try 
             {
-                // The wrappers go through a great deal of parsing
-                ServerConfig.HathoraCoreOpts.ExistingAppsWithDeployment = apps; // Cache the response to ServerConfig
+                // Cache the response to ServerConfig
+                ServerConfig.HathoraCoreOpts.ExistingAppsWithDeploymentSerializable = appsSerializable; // 
             }
             catch (Exception e)
             {
                 Debug.LogError("Error setting " +
-                    $"{nameof(ServerConfig.HathoraCoreOpts.ExistingAppsWithDeployment)}: {e}");
+                    $"{nameof(ServerConfig.HathoraCoreOpts.ExistingAppsWithDeploymentSerializable)}: {e}");
                 throw;
             }
               

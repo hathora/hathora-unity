@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -22,10 +23,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
         /// <summary>Get from your Hathora dashboard</summary>
         public string AppId => 
-            ExistingAppsWithDeployment is { Count: > 0 } && 
+            ExistingAppsWithDeploymentSerializable is { Count: > 0 } && 
             _existingAppsSelectedIndex > -1 && 
-            _existingAppsSelectedIndex < ExistingAppsWithDeployment.Count
-                ? ExistingAppsWithDeployment?[_existingAppsSelectedIndex]?.AppId
+            _existingAppsSelectedIndex < ExistingAppsWithDeploymentSerializable.Count
+                ? ExistingAppsWithDeploymentSerializable?[_existingAppsSelectedIndex]?.AppId
                 : null;
         
         public bool HasAppId => !string.IsNullOrEmpty(AppId);
@@ -36,17 +37,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             set => _existingAppsSelectedIndex = value;
         }
 
-        // TODO: Wrap for persistence
         /// <summary>Ported from `ApplicationWithDeployment`</summary>
+        [FormerlySerializedAs("existingAppsWithDeploymentSerializableSerializable")]
+        [FormerlySerializedAs("_existingAppsWithDeploymentSerializable")]
         [FormerlySerializedAs("_existingAppsWithDeploymentWrapper")]
         [SerializeField]
-        private List<ApplicationWithDeployment> _existingAppsWithDeployment = new();
-
-        /// <summary>Ported from `ApplicationWithDeployment`</summary>
-        public List<ApplicationWithDeployment> ExistingAppsWithDeployment
+        private List<ApplicationWithDeploymentSerializable> _existingAppsWithDeploymentSerializableSerializable = new();
+        public List<ApplicationWithDeploymentSerializable> ExistingAppsWithDeploymentSerializable
         {
-            get => _existingAppsWithDeployment;
-            set => _existingAppsWithDeployment = value;
+            get => _existingAppsWithDeploymentSerializableSerializable;
+            set => _existingAppsWithDeploymentSerializableSerializable = value;
         }
 
         /// <summary>Cached from App API.</summary>
@@ -55,10 +55,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         /// </param>
         public List<string> GetExistingAppNames(string _prependDummyIndex0Str)
         {
-            if (_existingAppsWithDeployment == null)
+            if (_existingAppsWithDeploymentSerializableSerializable == null)
                 return new List<string>();
 
-            IEnumerable<string> enumerable = _existingAppsWithDeployment?
+            IEnumerable<string> enumerable = _existingAppsWithDeploymentSerializableSerializable?
                 .Select(app => app.AppName);
 
             if (!string.IsNullOrEmpty(_prependDummyIndex0Str))

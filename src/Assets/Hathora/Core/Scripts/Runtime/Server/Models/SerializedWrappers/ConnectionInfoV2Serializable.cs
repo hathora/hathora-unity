@@ -6,7 +6,7 @@ using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
+namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.
@@ -37,7 +37,9 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         private List<ExposedPortSerializable> _additionalExposedPorts;
         public List<ExposedPort> AdditionalExposedPorts
         {
-            get => _additionalExposedPorts?.ConvertAll(wrapper => wrapper.ToExposedPortType());
+            get => _additionalExposedPorts?.ConvertAll(wrapper => 
+                wrapper.ToExposedPortType());
+            
             set => _additionalExposedPorts = value?.ConvertAll(val => 
                 new ExposedPortSerializable(val));
         }

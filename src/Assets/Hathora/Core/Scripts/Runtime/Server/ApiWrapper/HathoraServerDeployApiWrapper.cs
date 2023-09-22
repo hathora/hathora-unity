@@ -81,7 +81,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 PlanName = deployOpts.SelectedPlanName, 
                 AdditionalContainerPorts = _additionalContainerPorts ?? new List<ContainerPort>(),
                 TransportType = selectedTransportType,
-                ContainerPort = deployOpts.ContainerPort.Port,
+                ContainerPort = deployOpts.ContainerPortSerializable.Port,
             };
 
             CreateDeploymentRequest createDeploymentRequest = new()
