@@ -26,14 +26,15 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             get => _planName;
             set => _planName = value;
         }
-        
-        [SerializeField, JsonProperty("transportType")]
-        private TransportType _transportType;
-        public TransportType TransportType 
-        { 
-            get => _transportType;
-            set => _transportType = value;
-        }
+
+        // [Obsolete("Deprecated - pending removed")]
+        // [SerializeField, JsonProperty("transportType")]
+        // private DeploymentTransportType _transportType;
+        // public DeploymentTransportType TransportType 
+        // { 
+        //     get => _transportType;
+        //     set => _transportType = value;
+        // }
         
         [SerializeField, JsonProperty("env")] // TODO
         private List<DeploymentEnv> _env;
@@ -45,8 +46,8 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         }
         
         [SerializeField, JsonProperty("roomsPerProcess")]
-        private double _roomsPerProcess;
-        public double RoomsPerProcess 
+        private int _roomsPerProcess;
+        public int RoomsPerProcess 
         { 
             get => _roomsPerProcess;
             set => _roomsPerProcess = value;
@@ -117,16 +118,16 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         }
         
         [SerializeField, JsonProperty("deploymentId")]
-        private double _deploymentId;
-        public double DeploymentId 
+        private int _deploymentId;
+        public int DeploymentId 
         { 
             get => _deploymentId;
             set => _deploymentId = value;
         }
         
         [SerializeField, JsonProperty("buildId")]
-        private double _buildId;
-        public double BuildId 
+        private int _buildId;
+        public int BuildId 
         { 
             get => _buildId;
             set => _buildId = value;
@@ -148,7 +149,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
                 return;
 
             this.PlanName = _deployment.PlanName;
-            this.TransportType = _deployment.TransportType;
+            // this.TransportType = _deployment.TransportType; // Deprecated - to be removed
             this.RoomsPerProcess = _deployment.RoomsPerProcess;
             this.defaultContainerPortSerializable = new ContainerPortSerializable(_deployment.DefaultContainerPort);
             this.AdditionalContainerPorts = _deployment.AdditionalContainerPorts;
@@ -159,37 +160,27 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             this.DeploymentId = _deployment.DeploymentId;
             this.BuildId = _deployment.BuildId;
             this.AppId = _deployment.AppId;
-            // Env = _deployment.Env;
+            this.Env = _deployment.Env;
         }
 
         public Deployment ToDeploymentType()
         {
-            // (!) SDK constructor throws on req'd val == null
-            
-            Deployment deployment = null;
-            try
+            Deployment deployment = new()
             {
-                deployment = new(
-                    env: Env,
-                    createdAt: this.CreatedAt,
-                    createdBy: this.CreatedBy,
-                    planName: this.PlanName,
-                    transportType: this.TransportType,
-                    roomsPerProcess: this.RoomsPerProcess,
-                    additionalContainerPorts: this.AdditionalContainerPorts,
-                    defaultContainerPort: this.DefaultContainerPort,
-                    requestedMemoryMB: this.RequestedMemoryMB,
-                    requestedCPU: this.RequestedCPU,
-                    deploymentId: this.DeploymentId,
-                    buildId: this.BuildId,
-                    appId: this.AppId // Env = this.Env,
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
+                PlanName = this.PlanName,
+                // TransportType = this.TransportType, // Deprecated - to be removed
+                RoomsPerProcess = this.RoomsPerProcess,
+                DefaultContainerPort = this.DefaultContainerPort,
+                AdditionalContainerPorts = this.AdditionalContainerPorts,
+                CreatedAt = this.CreatedAt,
+                CreatedBy = this.CreatedBy,
+                RequestedMemoryMB = this.RequestedMemoryMB,
+                RequestedCPU = this.RequestedCPU,
+                DeploymentId = this.DeploymentId,
+                BuildId = this.BuildId,
+                AppId = this.AppId,
+                Env = this.Env,
+            };
 
             return deployment;
         }

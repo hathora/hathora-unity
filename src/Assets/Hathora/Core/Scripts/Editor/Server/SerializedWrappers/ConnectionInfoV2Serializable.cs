@@ -17,12 +17,12 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
     [Serializable]
     public class ConnectionInfoV2Serializable
     {
-        [SerializeField, JsonProperty("status")]
-        private ConnectionInfoV2Status _statusEnum;
-        public ConnectionInfoV2Status StatusEnum
+        [SerializeField, JsonProperty("_status")]
+        private ConnectionInfoV2Status _status;
+        public ConnectionInfoV2Status Status
         {
-            get => _statusEnum;
-            set => _statusEnum = value;
+            get => _status;
+            set => _status = value;
         }
         
         [SerializeField, JsonProperty("exposedPort")]
@@ -58,31 +58,24 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             
             this.AdditionalExposedPorts = _connectionInfoV2.AdditionalExposedPorts;
             this.ExposedPort = _connectionInfoV2.ExposedPort;
-            this.StatusEnum = _connectionInfoV2.Status;
+            this.Status = _connectionInfoV2.Status;
             this.RoomId = _connectionInfoV2.RoomId;
         }
 
         public ConnectionInfoV2 ToConnectionInfoV2Type()
         {
-            // (!) SDK constructor throws on req'd val == null
-            
-            ConnectionInfoV2 room = null;
-            try
+            ConnectionInfoV2 connectionInfo = null;
             {
-                room = new ConnectionInfoV2(
-                    this.AdditionalExposedPorts,
-                    this.ExposedPort,
-                    this.StatusEnum,
-                    this.RoomId
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
+                connectionInfo = new ConnectionInfoV2
+                {
+                    AdditionalExposedPorts = this.AdditionalExposedPorts,
+                    ExposedPort = this.ExposedPort,
+                    Status = this.Status,
+                    RoomId = this.RoomId,
+                };
             }
             
-            return room;
+            return connectionInfo;
         }
     }
 }

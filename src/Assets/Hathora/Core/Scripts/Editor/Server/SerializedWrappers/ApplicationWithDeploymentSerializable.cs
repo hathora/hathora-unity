@@ -33,10 +33,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         /// <summary>Serialized from `DateTime`.</summary>
         public DateTime CreatedAt
         {
-            get => DateTime.TryParse(_createdAtWrapper, out DateTime parsedDateTime) 
-                ? parsedDateTime 
-                : DateTime.MinValue;
-
+            get => DateTime.Parse(_createdAtWrapper); 
             set => _createdAtWrapper = value.ToString(CultureInfo.InvariantCulture);
         }
         
@@ -62,12 +59,9 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         private string _deletedAtWrapper;
         
         /// <summary>Serialized from `DateTime`.</summary>
-        public DateTime? DeletedAt
+        public DateTime DeletedAt
         {
-            get => DateTime.TryParse(_deletedAtWrapper, out DateTime parsedDateTime)
-                ? parsedDateTime
-                : null;
-            
+            get => DateTime.Parse(_deletedAtWrapper);
             set => _deletedAtWrapper = value.ToString();
         }
  
@@ -141,45 +135,24 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             this.AuthConfiguration = _appWithDeployment.AuthConfiguration;
         }
 
-        /// <summary>This work around SDK throwing on null values</summary>
-        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
-        private void setMissingDefaults()
-        {
-            this.CreatedBy ??= "";
-            this.DeletedBy ??= "";
-            this.AppSecret ??= "";
-            this.OrgId ??= "";
-            this.AuthConfiguration ??= new AuthConfiguration();
-        }
-
         /// <summary>
         /// </summary>
         /// <returns></returns>
         public ApplicationWithDeployment ToApplicationWithDeploymentType()
         {
-            setMissingDefaults(); // (!) Works around SDK constructor throws on req'd val == null
-
-            ApplicationWithDeployment appWithDeploy = null;
-            try
+            ApplicationWithDeployment appWithDeploy = new()
             {
-                appWithDeploy = new ApplicationWithDeployment(
-                    DeletedBy,
-                    DeletedAt,
-                    CreatedAt,
-                    CreatedBy,
-                    OrgId,
-                    AuthConfiguration,
-                    AppSecret,
-                    AppId,
-                    AppName, 
-                    Deployment
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
+                DeletedBy = DeletedBy,
+                DeletedAt = DeletedAt,
+                CreatedAt = CreatedAt,
+                CreatedBy = CreatedBy,
+                OrgId = OrgId,
+                AuthConfiguration = AuthConfiguration,
+                AppSecret = AppSecret,
+                AppId = AppId,
+                AppName = AppName,
+                Deployment = Deployment,
+            };
             
             return appWithDeploy;
         }

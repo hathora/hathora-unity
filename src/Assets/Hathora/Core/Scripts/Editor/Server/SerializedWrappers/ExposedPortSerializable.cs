@@ -25,15 +25,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             get => _host;
             set => _host = value;
         }
-        
 
-        /// <summary>This work around SDK throwing on null values</summary>
-        [Obsolete("To be removed once SDK !throws on optionally-null vals")]
-        private void setMissingDefaults()
-        {
-            // containerName default already handled outside
-            this.Host ??= "";
-        }
         
         public ExposedPortSerializable(ExposedPort _exposedPort)
             : base(_exposedPort)
@@ -46,25 +38,14 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         
         public virtual ExposedPort ToExposedPortType()
         {
-            ExposedPort exposedPort = null;
             string containerName = this.GetTransportNickname(); // Should be "default"
-            
-            setMissingDefaults(); // (!) Works around SDK constructor throws on req'd val == null
-
-            try
+            ExposedPort exposedPort = new()
             {
-                exposedPort = new ExposedPort(
-                    this.TransportType,
-                    this.PortNumber,
-                    this.Host,
-                    containerName
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
+                TransportType = this.TransportType,
+                Port = this.Port,
+                Host = this.Host,
+                Name = containerName,
+            };
 
             return exposedPort;
         }

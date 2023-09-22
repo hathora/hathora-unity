@@ -4,13 +4,14 @@ using System;
 using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
     /// <summary>
     /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
-    /// Set transpport configurations for where the server will listen.
+    /// Set transport configurations for where the server will listen.
     /// --- 
     /// This is a wrapper for Hathora SDK's `ContainerPort` model.
     /// TODO: Upgrade SDK models to natively support serialization
@@ -30,14 +31,14 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         }    
         
 
+        [FormerlySerializedAs("_portNumber")]
         [SerializeField, Range(1024, 65535), JsonProperty("portNumber")]
-        private int _portNumber = 7777;
-        public int PortNumber
+        private int port = 7777;
+        public int Port
         {
-            get => _portNumber;
-            set => _portNumber = value;
+            get => port;
+            set => port = value;
         }
-
         
         public ContainerPortSerializable()
         {
@@ -51,7 +52,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
                 return;
             
             this._transportType = _exposedPort.TransportType;
-            this._portNumber = (int)_exposedPort.Port;
+            this.port = (int)_exposedPort.Port;
             // this.Nickname = _exposedPort.Name; // Always "default": See GetTransportNickname()
         }
         
@@ -63,33 +64,25 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
                 return;
             
             this._transportType = _containerPort.TransportType;
-            this._portNumber = _containerPort.Port;
+            this.port = _containerPort.Port;
         }
         
         /// <summary>
-        /// Override this if you want the name to be custom
+        /// Override this if you want the name to be custom. 
         /// </summary>
         /// <returns></returns>
         public virtual string GetTransportNickname() => "default";
 
         public virtual ContainerPort ToContainerPortType()
         {
-            ContainerPort containerPort = null;
             string containerName = this.GetTransportNickname();
             
-            try
+            ContainerPort containerPort = new()
             {
-                containerPort = new ContainerPort(
-                    this.TransportType,
-                    this.PortNumber,
-                    containerName
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
+                TransportType = this.TransportType,
+                Port = this.Port,
+                Name = containerName,
+            };
 
             return containerPort;
         }

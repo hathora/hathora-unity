@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
@@ -13,7 +12,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
     /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
     /// This is a wrapper for Hathora SDK's `Room` model.
-    /// TODO: Upgrade SDK models to natively support serialization
+    /// We'll eventually upgrade the SDK model to natively support this.
     /// </summary>
     [Serializable]
     public class RoomSerializable
@@ -34,13 +33,12 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             set => _status = value;
         }
         
-        [FormerlySerializedAs("_currentAllocationWrapper")]
         [SerializeField, JsonProperty("currentAllocation")]
-        private RoomAllocationSerializable currentAllocationSerializable;
-        public RoomAllocation CurrentAllocation
+        private RoomCurrentAllocationSerializable _currentCurrentAllocationSerializable;
+        public RoomCurrentAllocation CurrentAllocation
         {
-            get => currentAllocationSerializable?.ToRoomAllocationType();
-            set => currentAllocationSerializable = new RoomAllocationSerializable(value);
+            get => _currentCurrentAllocationSerializable?.ToRoomCurrentAllocationType();
+            set => _currentCurrentAllocationSerializable = new RoomCurrentAllocationSerializable(value);
         }
 
         [SerializeField, JsonProperty("allocations")]
@@ -75,25 +73,15 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 
         public Room ToRoomType()
         {
-            // (!) SDK constructor throws on req'd val == null
-            
-            Room room = null;
-            try
+            Room room = new()
             {
-                room = new Room(
-                    CurrentAllocation,
-                    Status,
-                    Allocations,
-                    RoomId,
-                    AppId
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error: {e}");
-                throw;
-            }
-            
+                CurrentAllocation = CurrentAllocation,
+                Status = Status,
+                Allocations = Allocations,
+                RoomId = RoomId,
+                AppId = AppId,
+            };
+         
             return room;
         }
     }
