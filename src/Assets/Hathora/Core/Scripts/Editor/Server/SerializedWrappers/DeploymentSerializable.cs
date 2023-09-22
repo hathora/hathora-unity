@@ -11,10 +11,10 @@ using UnityEngine.Serialization;
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
     /// <summary>
-    /// Hathora SDK model wrapper to add [Serializable] support.
+    /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
     /// This is a wrapper for Hathora SDK's `Deployment` model.
-    /// We'll eventually replace this with a [Serializable] revamp of the model.
+    /// TODO: Upgrade SDK models to natively support serialization
     /// </summary>
     [Serializable]
     public class DeploymentSerializable
@@ -36,12 +36,10 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         }
         
         [SerializeField, JsonProperty("env")] // TODO
-        private List<DeploymentEnvInner> _env;
-        public List<DeploymentEnvInner> Env
+        private List<DeploymentEnv> _env;
+        public List<DeploymentEnv> Env
         {
-            get => new List<DeploymentEnvInner>();
-            // get => _env;
-            
+            get => _env;
             set => _env = value;
 
         }

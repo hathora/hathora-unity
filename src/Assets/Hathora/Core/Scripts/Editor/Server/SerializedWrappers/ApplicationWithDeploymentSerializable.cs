@@ -10,10 +10,10 @@ using UnityEngine.Serialization;
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
     /// <summary>
-    /// Hathora SDK model wrapper to add [Serializable] support.
+    /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
     /// This is a wrapper for Hathora SDK's `ApplicationWithDeployment` model.
-    /// We'll eventually replace this with a [Serializable] revamp of the model.
+    /// TODO: Upgrade SDK models to natively support serialization
     /// </summary>
     [Serializable]
     public class ApplicationWithDeploymentSerializable

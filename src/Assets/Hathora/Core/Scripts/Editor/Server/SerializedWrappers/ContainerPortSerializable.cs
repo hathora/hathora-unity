@@ -8,12 +8,12 @@ using UnityEngine;
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
     /// <summary>
-    /// Hathora SDK model wrapper to add [Serializable] support.
+    /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
     /// Set transpport configurations for where the server will listen.
     /// --- 
     /// This is a wrapper for Hathora SDK's `ContainerPort` model.
-    /// We'll eventually replace this with a [Serializable] revamp of the model.
+    /// TODO: Upgrade SDK models to natively support serialization
     /// </summary>
     [Serializable]
     public class ContainerPortSerializable

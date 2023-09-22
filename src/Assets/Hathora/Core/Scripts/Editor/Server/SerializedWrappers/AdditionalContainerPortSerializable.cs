@@ -10,14 +10,14 @@ using UnityEngine.Assertions;
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
     /// <summary>
-    /// Hathora SDK model wrapper to add [Serializable] support.
+    /// Hathora SDK model wrapper to allow serializable class/fields.
     /// 
     /// Set transport configurations for where the server will listen.
     /// Unlike ContainerPortSerializable, here, you can customize the nickname (instead of "default").
     /// Leave the nickname null and we'll ignore this class.
     /// ---
     /// This is a wrapper for Hathora SDK's `ApplicationWithDeployment` model.
-    /// We'll eventually replace this with a [Serializable] revamp of the model.
+    /// TODO: Upgrade SDK models to natively support serialization
     /// </summary>
     [Serializable]
     public class AdditionalContainerPortSerializable : ContainerPortSerializable
