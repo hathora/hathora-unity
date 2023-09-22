@@ -132,7 +132,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
         /// <summary>Are we logged in, already (is ServerConfig dev auth token set)?</summary>
         /// <returns></returns>
         protected bool CheckHasAuthToken() =>
-            !string.IsNullOrEmpty(ServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken);
+            !string.IsNullOrEmpty(ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken);
         
         protected bool CheckHasSelectedApp() => 
             !string.IsNullOrEmpty(ServerConfig.HathoraCoreOpts.AppId);

@@ -16,9 +16,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         #region Vars
         protected HathoraServerConfig HathoraServerConfig { get; }
 
-        /// <summary>Pulls "DevAuthToken" from HathoraServerConfig</summary>
+        /// <summary>Pulls "HathoraDevToken" from HathoraServerConfig</summary>
         protected string HathoraDevToken => 
-            HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken;
+            HathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken;
 
         // Shortcuts
         protected new string AppId

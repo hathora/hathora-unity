@@ -93,7 +93,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <param name="_token">You probably want the refreshToken</param>
         public static void SetAuthToken(HathoraServerConfig _hathoraServerConfig, string _token)
         {
-            _hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken = _token;
+            _hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken = _token;
             Debug.Log("[HathoraServerBuild] Dev HathoraDevToken login successful: " +
                 "Token set @ HathoraServerConfig");
         }

@@ -23,7 +23,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
     public class HathoraServerRoomApiWrapper : HathoraRoomApiWrapper
     {
         private HathoraServerConfig hathoraServerConfig;
-        private string auth0DevToken => hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken; 
+        private string auth0DevToken => hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken; 
         public bool IsPollingForActiveConnInfo { get; private set; }
         
         public HathoraServerRoomApiWrapper(

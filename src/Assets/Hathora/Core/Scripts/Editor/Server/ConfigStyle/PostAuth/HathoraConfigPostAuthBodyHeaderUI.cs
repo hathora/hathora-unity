@@ -231,10 +231,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             // USER INPUT >>
             string newDevAuthToken = EditorGUILayout.PasswordField(
-                ServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken,
+                ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
                 options: null);
 
-            if (newDevAuthToken != ServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken)
+            if (newDevAuthToken != ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken)
                 onDevTokenChanged(newDevAuthToken);
 
             GUILayout.EndHorizontal();
@@ -253,10 +253,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         #region Event Logic
         private void onDevTokenChanged(string _inputStr)
         {
-            ServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken = _inputStr;
+            ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken = _inputStr;
             
             SaveConfigChange(
-                nameof(ServerConfig.HathoraCoreOpts.DevAuthOpts.DevAuthToken), 
+                nameof(ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken), 
                 _inputStr);
 
             bool keyDeleted = string.IsNullOrEmpty(_inputStr); 
