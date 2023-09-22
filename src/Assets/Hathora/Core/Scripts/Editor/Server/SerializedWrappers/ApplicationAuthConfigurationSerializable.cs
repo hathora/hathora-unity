@@ -1,6 +1,7 @@
 // Created by dylan@hathora.dev
 
 using System;
+using HathoraCloud.Models.Shared;
 
 namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
 {
@@ -46,7 +47,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         // }
         
 
-        public ApplicationAuthConfigurationSerializable(ApplicationAuthConfiguration _appAuthConfig)
+        public ApplicationAuthConfigurationSerializable(AuthConfiguration _appAuthConfig)
         {
             if (_appAuthConfig == null)
                 return;
@@ -56,9 +57,9 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             // this.Anonymous = _appAuthConfig.Anonymous; // TODO
         }
 
-        public ApplicationAuthConfiguration ToApplicationAuthConfigurationType()
+        public AuthConfiguration ToApplicationAuthConfigurationType()
         {
-            ApplicationAuthConfiguration appAuthConfig = null;
+            AuthConfiguration appAuthConfig = null;
             try
             {
                 appAuthConfig = new()

@@ -82,7 +82,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
         [FormerlySerializedAs("_authConfigurationWrapper")]
         [SerializeField, JsonProperty("authConfiguration")]
         private ApplicationAuthConfigurationSerializable authConfigurationSerializable;
-        public ApplicationAuthConfiguration AuthConfiguration 
+        public AuthConfiguration AuthConfiguration 
         { 
             get => authConfigurationSerializable.ToApplicationAuthConfigurationType();
             set => authConfigurationSerializable = new ApplicationAuthConfigurationSerializable(value);
@@ -149,7 +149,7 @@ namespace Hathora.Core.Scripts.Editor.Server.SerializedWrappers
             this.DeletedBy ??= "";
             this.AppSecret ??= "";
             this.OrgId ??= "";
-            this.AuthConfiguration ??= new ApplicationAuthConfiguration();
+            this.AuthConfiguration ??= new AuthConfiguration();
         }
 
         /// <summary>
