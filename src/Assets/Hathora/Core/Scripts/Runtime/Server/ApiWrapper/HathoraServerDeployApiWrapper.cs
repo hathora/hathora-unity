@@ -86,7 +86,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             CreateDeploymentRequest createDeploymentRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 DeploymentConfig = deployConfig,
                 BuildId = _buildId,
             };
@@ -128,7 +127,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetDeploymentsRequest getDeploymentsRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
             };
 
             // Get response async =>

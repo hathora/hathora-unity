@@ -56,7 +56,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Process request
             GetProcessInfoRequest getProcessInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 ProcessId = _processId,
             };
             

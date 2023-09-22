@@ -165,7 +165,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prep request data
             HathoraCloud.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _customRoomId,
                 CreateRoomRequestValue = _createRoomReq,
             };
@@ -221,7 +220,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetRoomInfoRequest getRoomInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _roomId,
             };
             
@@ -272,7 +270,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetActiveRoomsForProcessRequest getActiveRoomsForProcessRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 ProcessId = _processId,
             };
             

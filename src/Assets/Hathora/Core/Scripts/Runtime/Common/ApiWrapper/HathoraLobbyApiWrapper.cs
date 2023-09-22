@@ -69,7 +69,6 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             HathoraCloud.Models.Operations.CreateLobbyRequest createLobbyRequestWrapper = new()
             {
                 CreateLobbyRequestValue = createLobbyRequest,
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _roomId,
             };
 
@@ -113,7 +112,6 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             // Prep request
             GetLobbyInfoRequest getLobbyInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = roomId,
             };
             

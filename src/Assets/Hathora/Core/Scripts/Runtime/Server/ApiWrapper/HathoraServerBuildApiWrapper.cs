@@ -117,7 +117,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             RunBuildRequest runBuildRequestWrapper = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 BuildId = _buildId,
                 RequestBody = runBuildRequest,
             };
@@ -234,7 +233,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetBuildInfoRequest getBuildInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 BuildId = _buildId,
             };
             
