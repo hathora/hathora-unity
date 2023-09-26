@@ -5237,6 +5237,7 @@ GameObject:
   - component: {fileID: 6730436420827614694}
   - component: {fileID: 6730436420827614718}
   - component: {fileID: 3964277563861138990}
+  - component: {fileID: -967001504388231501}
   m_Layer: 5
   m_Name: HathoraManagerBase
   m_TagString: Untagged
@@ -5311,6 +5312,20 @@ MonoBehaviour:
   debugEditorMockProcId: 
   hathoraServerConfig: {fileID: 11400000, guid: c65599dda8f4a354aa2953bb4665a361,
     type: 2}
+--- !u!114 &-967001504388231501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6730436420827614691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d094ef429a191747b97d8a6daa0388d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hathoraClientConfig: {fileID: 0}
+  hathoraClientSession: {fileID: 6730436420827614694}
 --- !u!1 &6730436420891535536
 GameObject:
   m_ObjectHideFlags: 0

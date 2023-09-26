@@ -2359,6 +2359,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -967001504388231501, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: hathoraClientConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 758ef4b681567fb488c04c2dcf920e7a,
+        type: 2}
     - target: {fileID: 927034865, guid: e4dcbec2e4ad0514a94f944ced942c4d, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2387,7 +2393,8 @@ PrefabInstance:
         type: 3}
       propertyPath: hathoraServerConfig
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 18b51cabe31a4ef428485a8db42c6a1a,
+        type: 2}
     - target: {fileID: 6730436419053282267, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -2821,6 +2828,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6730436420910717609, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 6730436420910717609, guid: e4dcbec2e4ad0514a94f944ced942c4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -237.70003
       objectReference: {fileID: 0}
     - target: {fileID: 6730436420958521615, guid: e4dcbec2e4ad0514a94f944ced942c4d,
         type: 3}
