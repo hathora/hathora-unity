@@ -27,27 +27,21 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         
         
         #region Plan Name
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
-        private int _planNameSelectedIndex = (int)PlanName.Tiny;
-
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public int PlanNameSelectedIndex
+        private int _planNameIndexIndex = (int)PlanName.Tiny;
+        public int PlanNameIndex
         {
-            get => _planNameSelectedIndex;
-            set => _planNameSelectedIndex = value;
+            get => _planNameIndexIndex;
+            set => _planNameIndexIndex = value;
         }
 
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public PlanName SelectedPlanName => 
-            (PlanName)_planNameSelectedIndex;
+        public PlanName PlanName => 
+            (PlanName)_planNameIndexIndex;
         #endregion // Plan Name
         
         
         #region Container Port
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        [FormerlySerializedAs("containerPortSerializableSerializable")]
-        [FormerlySerializedAs("_containerPortSerializable")]
         [SerializeField]
         private ContainerPortSerializable _containerPortSerializableSerializable = new();
 
@@ -61,20 +55,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
 
         #region Transport Type 
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
-        private int _transportTypeSelectedIndex = (int)TransportType.Udp;
-        
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public TransportType SelectedTransportType => 
-            (TransportType)_transportTypeSelectedIndex;
-       
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public int TransportTypeSelectedIndex
+        private int _transportTypeIndex = (int)TransportType.Udp;
+        public int TransportTypeIndex
         {
-            get => _transportTypeSelectedIndex;
-            set => _transportTypeSelectedIndex = value;
+            get => _transportTypeIndex;
+            set => _transportTypeIndex = value;
         }
+        
+        public TransportType TransportType => 
+            (TransportType)_transportTypeIndex;
         #endregion // Transport Type 
 
         

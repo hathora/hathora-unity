@@ -176,11 +176,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         /// <summary>(!) Despite its name, a Popup() is actually a dropdown list</summary>
         private void insertExistingAppsPopupList()
         {
-            List<string> displayedOptionsList = ServerConfig.HathoraCoreOpts.GetExistingAppNames(
-                _prependDummyIndex0Str: null);
-                
+            List<string> displayedOptionsList = ServerConfig.HathoraCoreOpts.GetExistingAppNames();
             string[] displayedOptionsArr = displayedOptionsList?.ToArray();
-    
             int selectedIndex = ServerConfig.HathoraCoreOpts.ExistingAppsSelectedIndex;
     
             int newSelectedIndex = EditorGUILayout.Popup(
@@ -188,8 +185,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 displayedOptionsArr,
                 GUILayout.ExpandWidth(true));
 
-            bool isNewValidIndex = displayedOptionsList != null &&
-                selectedIndex >= 0 &&
+            bool isNewValidIndex = 
+                displayedOptionsList != null &&
                 newSelectedIndex != selectedIndex &&
                 selectedIndex < displayedOptionsList.Count;
 

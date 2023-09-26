@@ -60,7 +60,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerDeployApiWrapper)}.{nameof(CreateDeploymentAsync)}]";
             
             // Prepare request
-            TransportType selectedTransportType = deployOpts.SelectedTransportType;
+            TransportType selectedTransportType = deployOpts.TransportType;
             
             #region DeploymentEnvConfigInner Workaround
             // #######################################################################################
@@ -78,7 +78,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 Env = envWorkaround ?? new List<DeploymentConfigEnv>(),
                 RoomsPerProcess = deployOpts.RoomsPerProcess, 
-                PlanName = deployOpts.SelectedPlanName, 
+                PlanName = deployOpts.PlanName, 
                 AdditionalContainerPorts = _additionalContainerPorts ?? new List<ContainerPort>(),
                 TransportType = selectedTransportType,
                 ContainerPort = deployOpts.ContainerPortSerializable.Port,

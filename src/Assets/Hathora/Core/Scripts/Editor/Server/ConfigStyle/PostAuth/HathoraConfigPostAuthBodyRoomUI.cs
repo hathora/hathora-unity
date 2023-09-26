@@ -203,7 +203,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             EditorGUILayout.BeginHorizontal();
             
             insertRoomIdLbl();
-            insertRoomRegionLbl(); // Delayed
+            insertRoomRegionLbl();
             insertRoomCreateDateLbl();
             
             EditorGUILayout.EndHorizontal();
@@ -302,13 +302,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 : ""
             );
             
-            // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
                 helpboxLabelStrb.Append("`AppId` ");
-            
-            // (!) This is 0-indexed
-            if (_serverConfig.HathoraLobbyRoomOpts.HathoraRegionSelectedIndex < 0)
-                helpboxLabelStrb.Append("`Region` ");
 
             return helpboxLabelStrb;
         }
@@ -366,13 +361,13 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertRegionHorizPopupList()
         {
-            int selectedIndex = ServerConfig.HathoraLobbyRoomOpts.HathoraRegionSelectedIndex;
+            int selectedIndex = ServerConfig.HathoraLobbyRoomOpts.HathoraRegionIndex;
 
-            // Get list of string names from Region Enum members - with extra info.
-            // The index order is !modified.
-            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<Region>(
-                _prependDummyIndex0Str: "<Choose a Region>");
-
+            // Get list of string names from Region Enum members - with prettified names. Index order !modified.
+            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<Region>(_prettifyNames: true);
+            
+            // Prettify those opts
+            
             int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Region",
                 _tooltip: "Default: `Seattle`",
@@ -380,7 +375,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
             
-            bool isNewValidIndex = selectedIndex >= 0 &&
+            bool isNewValidIndex =
                 newSelectedIndex != selectedIndex &&
                 selectedIndex < displayOptsStrArr.Count;
             
@@ -396,10 +391,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private void onSelectedRegionPopupIndexChanged(int _newSelectedIndex)
         {
             // Sorted list (order, names and index) will be different from the original list
-            ServerConfig.HathoraLobbyRoomOpts.HathoraRegionSelectedIndex = _newSelectedIndex;
+            ServerConfig.HathoraLobbyRoomOpts.HathoraRegionIndex = _newSelectedIndex;
             
             SaveConfigChange(
-                nameof(ServerConfig.HathoraLobbyRoomOpts.HathoraRegionSelectedIndex), 
+                nameof(ServerConfig.HathoraLobbyRoomOpts.HathoraRegionIndex), 
                 _newSelectedIndex.ToString());
         }
         
@@ -411,7 +406,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             isCreatingRoomAwaitingActiveStatus = true;
             resetLastCreatedRoom(); // Both UI + ServerConfig
 
-            Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.SelectedHathoraRegion;
+            Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.HathoraRegion;
             createNewCreateRoomCancelToken();
             
             Security security = new()

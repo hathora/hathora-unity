@@ -101,8 +101,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 "Cannot find HathoraServerConfig ScriptableObject");
             
             #if UNITY_WEBGL
-            bool isTcpTransport = _serverConfig.HathoraDeployOpts.SelectedTransportType == TransportType.Tcp;
-            string selectedTransportTypeStr = Enum.GetName(typeof (TransportType), _serverConfig.HathoraDeployOpts.SelectedTransportType);
+            bool isTcpTransport = _serverConfig.HathoraDeployOpts.TransportType == TransportType.Tcp;
+            string selectedTransportTypeStr = Enum.GetName(typeof (TransportType), _serverConfig.HathoraDeployOpts.TransportType);
             if (!isTcpTransport)
             {
                 Debug.LogWarning($"{logPrefix} (!) Do you plan for your clients to connect with WebGL (TCP/WS)? " +

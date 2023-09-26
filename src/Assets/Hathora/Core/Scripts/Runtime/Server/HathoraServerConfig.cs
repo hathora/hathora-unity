@@ -78,12 +78,9 @@ namespace Hathora.Core.Scripts.Runtime.Server
             MeetsBuildBtnReqs() &&
             MeetsDeployBtnReqs();
 
-        /// <summary>(!) Hathora SDK Enums start at index 1 (not 0).</summary>
-        /// <returns></returns>
+        /// <returns>meetsCreateRoomBtnReqs</returns>
         public bool MeetsCreateRoomBtnReqs() =>
-            HathoraCoreOpts.HasAppId &&
-            HathoraLobbyRoomOpts.HathoraRegionSelectedIndex > -1 &&
-            HathoraLobbyRoomOpts.SelectedHathoraRegion > 0;
+            HathoraCoreOpts.HasAppId;
 
         /// <summary>
         /// Combines path, then normalizes

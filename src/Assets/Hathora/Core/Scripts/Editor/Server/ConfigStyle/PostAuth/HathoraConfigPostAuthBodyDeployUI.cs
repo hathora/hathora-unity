@@ -210,13 +210,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         
         private void insertTransportTypeHorizRadioBtnGroup()
         {
-            int selectedIndex = ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex;
+            int selectedIndex = ServerConfig.HathoraDeployOpts.TransportTypeIndex;
             
-            // Get list of string names from PlanName Enum members. Set UPPER.
-            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<TransportType>(
-                EnumListOpts.AllCaps,
-                _prependDummyIndex0Str: "<Choose a Transport Type>");
-
+            // Get list of string names from PlanNameIndex Enum members. Set UPPER.
+            List<string> displayOptsStrList = GetStrListOfEnumMemberKeys<TransportType>(EnumListOpts.AllCaps);
             int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Transport Type",
                 _tooltip: 
@@ -226,7 +223,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
 
-            bool isNewValidIndex = selectedIndex >= 0 &&
+            bool isNewValidIndex = 
                 newSelectedIndex != selectedIndex &&
                 selectedIndex < displayOptsStrList.Count;
 
@@ -257,13 +254,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertPlanNameHorizPopupList()
         {
-            int selectedIndex = ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex;
+            int selectedIndex = ServerConfig.HathoraDeployOpts.PlanNameIndex;
             
-            // Get list of string names from PlanName Enum members - with extra info.
+            // Get list of string names from PlanNameIndex Enum members - with extra info.
             // The index order is !modified.
-            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<PlanName>(
-                _prependDummyIndex0Str: "<Choose a Plan>");
-
+            List<string> displayOptsStrArr = GetDisplayOptsStrArrFromEnum<PlanName>();
             int newSelectedIndex = base.InsertHorizLabeledPopupList(
                 _labelStr: "Plan Size",
                 _tooltip: "Determines amount of resources your server instances has access to\n\n" +
@@ -276,7 +271,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 _selectedIndex: selectedIndex,
                 GuiAlign.SmallRight);
 
-            bool isNewValidIndex = selectedIndex >= 0 &&
+            bool isNewValidIndex = 
                 newSelectedIndex != selectedIndex &&
                 selectedIndex < displayOptsStrArr.Count;
 
@@ -305,21 +300,20 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             InsertSpace2x();
 
-            // (!) Hathora SDK Enums start at index 1 (not 0)
             StringBuilder helpboxLabelStrb = new("Missing required fields: ");
             if (!ServerConfig.HathoraCoreOpts.HasAppId)
                 helpboxLabelStrb.Append("`AppId` ");
             
-            if (ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex < 1)
+            if (ServerConfig.HathoraDeployOpts.PlanNameIndex < 0)
                 helpboxLabelStrb.Append("`Plan Size` ");
             
-            if (ServerConfig.HathoraDeployOpts.RoomsPerProcess < 1)
-                helpboxLabelStrb.Append("`Rooms per Process`,");
+            if (ServerConfig.HathoraDeployOpts.RoomsPerProcess < 0)
+                helpboxLabelStrb.Append("`Rooms per Process` ");
             
-            if (ServerConfig.HathoraDeployOpts.ContainerPortSerializable.Port < 1)
+            if (ServerConfig.HathoraDeployOpts.ContainerPortSerializable.Port < 0)
                 helpboxLabelStrb.Append("`Container Port Number` ");
             
-            if (ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex < 1)
+            if (ServerConfig.HathoraDeployOpts.TransportType < 0)
                 helpboxLabelStrb.Append("`Transport Type`");
 
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
@@ -331,17 +325,17 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         #region Event Logic
         private void onSelectedPlanNamePopupIndexChanged(int _newSelectedIndex)
         {
-            ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex = _newSelectedIndex;
+            ServerConfig.HathoraDeployOpts.PlanNameIndex = _newSelectedIndex;
             SaveConfigChange(
-                nameof(ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex), 
+                nameof(ServerConfig.HathoraDeployOpts.PlanNameIndex), 
                 _newSelectedIndex.ToString());
         }
         
         private void onSelectedTransportTypePopupIndexChanged(int _newSelectedIndex)
         {
-            ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex = _newSelectedIndex;
+            ServerConfig.HathoraDeployOpts.TransportTypeIndex = _newSelectedIndex;
             SaveConfigChange(
-                nameof(ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex), 
+                nameof(ServerConfig.HathoraDeployOpts.TransportType), 
                 _newSelectedIndex.ToString());
         }
 
@@ -458,16 +452,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         
         
         #region Utils
-        /// <summary>
-        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes
-        /// </summary>
-        /// <returns></returns>
+        /// <returns>isReadyToEnableToDeployBtn</returns>
         private bool checkIsReadyToEnableToDeployBtn() =>
             !HathoraServerDeploy.IsDeploying &&
-            ServerConfig.HathoraDeployOpts.PlanNameSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX &&
             ServerConfig.HathoraDeployOpts.RoomsPerProcess > 0 &&
-            ServerConfig.HathoraDeployOpts.ContainerPortSerializable.Port > 0 &&
-            ServerConfig.HathoraDeployOpts.TransportTypeSelectedIndex >= HathoraUtils.SDK_ENUM_STARTING_INDEX;
+            ServerConfig.HathoraDeployOpts.ContainerPortSerializable.Port >= 1024;
 
         #endregion //Utils
 

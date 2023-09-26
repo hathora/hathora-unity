@@ -128,7 +128,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 : ""
             );
             
-            // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
                 helpboxLabelStrb.Append("`AppId` ");
             
