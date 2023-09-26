@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Editor.Server
@@ -12,7 +11,6 @@ namespace Hathora.Core.Scripts.Editor.Server
     public class HathoraServerConfigFinder : EditorWindow
     {
         private const string LAST_FOCUSED_SERVER_CONFIG_PATH = "HathoraServerConfigFinder.LastFocusedServerConfigPath";
-        private static List<HathoraServerConfig> dynamicConfigs = new();
         
         
         #region Menu Items
