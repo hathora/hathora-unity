@@ -150,14 +150,15 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         private void initHathoraSdk()
         {
-            if (CanInitSdk())
+            if (!CanInitSdk())
+                return;
+            
+            Security security = new()
             {
-                Security security = new()
-                {
-                    HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
-                };
-                this.HathoraSdk = new HathoraCloudSDK(security, hathoraServerConfig.HathoraCoreOpts.AppId);
-            }
+                HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
+            };
+            
+            this.HathoraSdk = new HathoraCloudSDK(security, hathoraServerConfig.HathoraCoreOpts.AppId);
         }
 
         /// <returns>isValid</returns>

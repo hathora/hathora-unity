@@ -288,7 +288,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             Security security = new()
             {
-                HathoraDevToken = ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
+                HathoraDevToken = ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
             };
             
             HathoraServerAppApiWrapper appApiWrapper = new(

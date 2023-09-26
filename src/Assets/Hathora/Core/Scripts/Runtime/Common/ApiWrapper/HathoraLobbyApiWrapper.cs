@@ -60,11 +60,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             string logPrefix = $"[{nameof(HathoraLobbyApiWrapper)}.{nameof(CreateLobbyAsync)}]";
 
             
-            CreateLobbySecurity createLobbySecurity = new()
-            {
-                PlayerAuth = _playerAuthToken
-            };
-
+            CreateLobbySecurity createLobbySecurity = new() { PlayerAuth = _playerAuthToken };
             CreateLobbyParams createLobbyParams = new()
             {
                 Region = _region,

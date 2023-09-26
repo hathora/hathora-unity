@@ -127,8 +127,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 
                 Security security = new()
                 {
-                    HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
+                    HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
                 };
+                
                 HathoraCloudSDK sdk = new(security, _serverConfig.HathoraCoreOpts.AppId);
                 
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
@@ -405,8 +406,9 @@ namespace Hathora.Core.Scripts.Editor.Server
                 
                 Security security = new()
                 {
-                    HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
+                    HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
                 };
+                
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
                     new HathoraCloudSDK(security, _serverConfig.HathoraCoreOpts.AppId),
                     _serverConfig);
