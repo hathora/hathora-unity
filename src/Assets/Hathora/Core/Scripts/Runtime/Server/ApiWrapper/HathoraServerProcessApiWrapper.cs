@@ -64,8 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(
-                    getProcessInfoRequest);
+                getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(getProcessInfoRequest);
             }
             catch (Exception e)
             {

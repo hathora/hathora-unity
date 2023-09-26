@@ -81,7 +81,9 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
 
             try
             {
-                createLobbyResponse = await LobbyApi.CreateLobbyAsync(createLobbySecurity, createLobbyRequestWrapper);
+                createLobbyResponse = await LobbyApi.CreateLobbyAsync(
+                    createLobbySecurity, 
+                    createLobbyRequestWrapper);
             }
             catch (Exception e)
             {

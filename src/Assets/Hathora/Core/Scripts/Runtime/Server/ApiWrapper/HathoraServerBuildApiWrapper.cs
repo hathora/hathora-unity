@@ -68,8 +68,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                createCloudBuildResponse = await BuildApi.CreateBuildAsync(
-                    createBuildRequestWrapper);
+                createCloudBuildResponse = await BuildApi.CreateBuildAsync(createBuildRequestWrapper);
             }
             catch (Exception e)
             {
@@ -134,9 +133,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     FileAccess.Read);
 
                 runBuildRequestWrapper.RequestBody.File.Content = toByteArray(fileStream);
-
-                runBuildResponse = await BuildApi.RunBuildAsync(
-                    runBuildRequestWrapper);
+                runBuildResponse = await BuildApi.RunBuildAsync(runBuildRequestWrapper);
 
                 // stream = runBuildResponse.RunBuild200TextPlainByteString; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
                 uploading = true;
@@ -237,8 +234,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(
-                    getBuildInfoRequest);
+                getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(getBuildInfoRequest);
             }
             catch (Exception e)
             {

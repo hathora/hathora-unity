@@ -90,15 +90,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 BuildId = _buildId,
             };
             
-            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>Request {nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
 
             // Get response async =>
             CreateDeploymentResponse createDeploymentResponse = null;
             
             try
             {
-                createDeploymentResponse = await DeployApi.CreateDeploymentAsync(
-                    createDeploymentRequest);
+                createDeploymentResponse = await DeployApi.CreateDeploymentAsync(createDeploymentRequest);
             }
             catch (Exception e)
             {
@@ -133,8 +132,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(
-                    getDeploymentsRequest);
+                getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(getDeploymentsRequest);
             }
             catch (Exception e)
             {
@@ -144,7 +142,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Process response
             List<Deployment> deployments = getDeploymentsResponse.Deployments;
-            Debug.Log($"{logPrefix} <color=yellow>num: '{deployments?.Count}'</color>");
+            Debug.Log($"{logPrefix} <color=yellow>num {nameof(deployments)}: '{deployments?.Count}'</color>");
             
             getDeploymentsResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return deployments;

@@ -178,8 +178,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
-                createRoomResponse = await RoomApi.CreateRoomAsync(
-                    createRoomRequestWrapper);
+                createRoomResponse = await RoomApi.CreateRoomAsync(createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
             {
@@ -226,8 +225,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             try
             {
-                getRoomInfoResponse = await RoomApi.GetRoomInfoAsync(
-                    getRoomInfoRequest);
+                getRoomInfoResponse = await RoomApi.GetRoomInfoAsync(getRoomInfoRequest);
             }
             catch (TaskCanceledException)
             {
