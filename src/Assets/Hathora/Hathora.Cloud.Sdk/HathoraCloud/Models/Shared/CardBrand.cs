@@ -14,29 +14,28 @@ namespace HathoraCloud.Models.Shared
     using System;
     using UnityEngine;
     
-    
     public enum CardBrand
     {
-    	[JsonProperty("amex")]
-		Amex,
-		[JsonProperty("cartes_bancaires")]
-		CartesBancaires,
-		[JsonProperty("diners")]
-		Diners,
-		[JsonProperty("discover")]
-		Discover,
-		[JsonProperty("jcb")]
-		Jcb,
-		[JsonProperty("mastercard")]
-		Mastercard,
-		[JsonProperty("visa")]
-		Visa,
-		[JsonProperty("unionpay")]
-		Unionpay,
-		[JsonProperty("card")]
-		Card,
+        [JsonProperty("amex")]
+        Amex,
+        [JsonProperty("cartes_bancaires")]
+        CartesBancaires,
+        [JsonProperty("diners")]
+        Diners,
+        [JsonProperty("discover")]
+        Discover,
+        [JsonProperty("jcb")]
+        Jcb,
+        [JsonProperty("mastercard")]
+        Mastercard,
+        [JsonProperty("visa")]
+        Visa,
+        [JsonProperty("unionpay")]
+        Unionpay,
+        [JsonProperty("card")]
+        Card,
     }
-    
+
     public static class CardBrandExtension
     {
         public static string Value(this CardBrand value)
@@ -48,7 +47,13 @@ namespace HathoraCloud.Models.Shared
         {
             foreach(var field in typeof(CardBrand).GetFields())
             {
-                var attribute = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false)[0] as JsonPropertyAttribute;
+                var attributes = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    continue;
+                }
+
+                var attribute = attributes[0] as JsonPropertyAttribute;
                 if (attribute != null && attribute.PropertyName == value)
                 {
                     return (CardBrand)field.GetValue(null);
@@ -58,5 +63,5 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum CardBrand");
         }
     }
-    
+
 }

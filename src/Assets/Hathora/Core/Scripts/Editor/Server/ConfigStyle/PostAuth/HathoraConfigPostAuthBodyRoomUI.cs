@@ -17,6 +17,7 @@ using HathoraCloud.Models.Shared;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Security = HathoraCloud.Models.Shared.Security;
 
 namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 {
@@ -413,8 +414,12 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             Region lastRegion = ServerConfig.HathoraLobbyRoomOpts.SelectedHathoraRegion;
             createNewCreateRoomCancelToken();
             
+            Security security = new()
+            {
+                HathoraDevToken = ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
+            };
             HathoraServerRoomApiWrapper serverRoomApiWrapper = new(
-                new HathoraCloudSDK(ServerConfig.HathoraCoreOpts.AppId),
+                new HathoraCloudSDK(security, ServerConfig.HathoraCoreOpts.AppId),
                 ServerConfig);
 
             (Room room, ConnectionInfoV2 connInfo) roomConnInfoTuple;

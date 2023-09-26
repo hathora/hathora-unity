@@ -14,34 +14,51 @@ namespace HathoraCloud.Models.Operations
     using UnityEngine.Networking;
     using UnityEngine;
     
-    
     [Serializable]
     public class CreateRoomDeprecatedResponse: IDisposable
     {
+
+        /// <summary>
+        /// HTTP response content type for this operation
+        /// </summary>
         [SerializeField]
         public string? ContentType { get; set; } = default!;
         
+
         [SerializeField]
         public string? CreateRoomDeprecated400ApplicationJSONString { get; set; }
         
+
         [SerializeField]
         public string? CreateRoomDeprecated402ApplicationJSONString { get; set; }
         
+
         [SerializeField]
         public string? CreateRoomDeprecated403ApplicationJSONString { get; set; }
         
+
         [SerializeField]
         public string? CreateRoomDeprecated404ApplicationJSONString { get; set; }
         
+
         [SerializeField]
         public string? CreateRoomDeprecated500ApplicationJSONString { get; set; }
         
+
         [SerializeField]
         public string? RoomId { get; set; }
         
+
+        /// <summary>
+        /// HTTP response status code for this operation
+        /// </summary>
         [SerializeField]
         public int StatusCode { get; set; } = default!;
         
+
+        /// <summary>
+        /// Raw HTTP response; suitable for custom response parsing
+        /// </summary>
         [SerializeField]
         public UnityWebRequest? RawResponse { get; set; }
         
@@ -51,5 +68,4 @@ namespace HathoraCloud.Models.Operations
             }
         }
     }
-    
 }

@@ -75,7 +75,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
             #region (!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan
             Debug.Log($"[HathoraClientSession.{nameof(InitNetSession)}] <color=orange>(!) SDK WORKAROUND: " +
                 "Adding client Authorization Token header to temporary `SDKConfig.ClientAuthToken` --Dylan</color>");
-            SDKConfig.ClientAuthToken = playerAuthToken;
+            // SDKConfig.ClientAuthToken = playerAuthToken;
             #endregion // (!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan
         }
         #endregion // Init

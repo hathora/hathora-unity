@@ -13,6 +13,7 @@ using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using UnityEditor;
 using UnityEngine;
+using Security = HathoraCloud.Models.Shared.Security;
 
 namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 {
@@ -285,8 +286,13 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onRefreshAppsListBtnClick");   
             isRefreshingExistingApps = true;
             
+            Security security = new()
+            {
+                HathoraDevToken = ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
+            };
+            
             HathoraServerAppApiWrapper appApiWrapper = new(
-                new HathoraCloudSDK(ServerConfig.HathoraCoreOpts.AppId), 
+                new HathoraCloudSDK(security, ServerConfig.HathoraCoreOpts.AppId), 
                 ServerConfig);
             
             List<ApplicationWithDeployment> apps = await appApiWrapper.GetAppsAsync();

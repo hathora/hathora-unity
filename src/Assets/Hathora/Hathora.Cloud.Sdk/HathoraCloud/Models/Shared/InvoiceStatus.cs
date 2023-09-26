@@ -14,17 +14,16 @@ namespace HathoraCloud.Models.Shared
     using System;
     using UnityEngine;
     
-    
     public enum InvoiceStatus
     {
-    	[JsonProperty("pending")]
-		Pending,
-		[JsonProperty("paid")]
-		Paid,
-		[JsonProperty("overdue")]
-		Overdue,
+        [JsonProperty("pending")]
+        Pending,
+        [JsonProperty("paid")]
+        Paid,
+        [JsonProperty("overdue")]
+        Overdue,
     }
-    
+
     public static class InvoiceStatusExtension
     {
         public static string Value(this InvoiceStatus value)
@@ -36,7 +35,13 @@ namespace HathoraCloud.Models.Shared
         {
             foreach(var field in typeof(InvoiceStatus).GetFields())
             {
-                var attribute = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false)[0] as JsonPropertyAttribute;
+                var attributes = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    continue;
+                }
+
+                var attribute = attributes[0] as JsonPropertyAttribute;
                 if (attribute != null && attribute.PropertyName == value)
                 {
                     return (InvoiceStatus)field.GetValue(null);
@@ -46,5 +51,5 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum InvoiceStatus");
         }
     }
-    
+
 }

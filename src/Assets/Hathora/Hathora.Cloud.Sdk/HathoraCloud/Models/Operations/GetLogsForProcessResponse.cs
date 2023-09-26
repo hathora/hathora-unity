@@ -14,25 +14,42 @@ namespace HathoraCloud.Models.Operations
     using UnityEngine.Networking;
     using UnityEngine;
     
-    
     [Serializable]
     public class GetLogsForProcessResponse: IDisposable
     {
+
+        /// <summary>
+        /// HTTP response content type for this operation
+        /// </summary>
         [SerializeField]
         public string? ContentType { get; set; } = default!;
         
+
         /// <summary>
         /// Ok
         /// </summary>
         [SerializeField]
         public string? GetLogsForProcess200TextPlainByteString { get; set; }
         
+
         [SerializeField]
         public string? GetLogsForProcess404ApplicationJSONString { get; set; }
         
+
+        [SerializeField]
+        public string? GetLogsForProcess500ApplicationJSONString { get; set; }
+        
+
+        /// <summary>
+        /// HTTP response status code for this operation
+        /// </summary>
         [SerializeField]
         public int StatusCode { get; set; } = default!;
         
+
+        /// <summary>
+        /// Raw HTTP response; suitable for custom response parsing
+        /// </summary>
         [SerializeField]
         public UnityWebRequest? RawResponse { get; set; }
         
@@ -42,5 +59,4 @@ namespace HathoraCloud.Models.Operations
             }
         }
     }
-    
 }

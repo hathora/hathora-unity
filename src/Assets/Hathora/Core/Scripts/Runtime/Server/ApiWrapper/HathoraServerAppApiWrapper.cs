@@ -48,9 +48,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getAppsResponse = await AppApi.GetAppsAsync(
-                    new GetAppsSecurity { HathoraDevToken = base.HathoraDevToken }
-                ); 
+                getAppsResponse = await AppApi.GetAppsAsync(); 
             }
             catch (Exception e)
             {

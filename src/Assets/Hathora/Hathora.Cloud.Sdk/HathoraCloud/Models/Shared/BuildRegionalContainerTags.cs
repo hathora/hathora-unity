@@ -8,26 +8,24 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-using Newtonsoft.Json.Converters;
-
 namespace HathoraCloud.Models.Shared
 {
     using Newtonsoft.Json;
     using System;
     using UnityEngine;
     
-    
     [Serializable]
     public class BuildRegionalContainerTags
     {
+
         [SerializeField]
         [JsonProperty("containerTag")]
         public string ContainerTag { get; set; } = default!;
         
+
         [SerializeField]
         [JsonProperty("region")]
         public Region Region { get; set; } = default!;
         
     }
-    
 }

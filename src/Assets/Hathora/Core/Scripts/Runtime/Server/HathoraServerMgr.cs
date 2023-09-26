@@ -13,6 +13,7 @@ using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
+using Security = HathoraCloud.Models.Shared.Security;
 
 namespace Hathora.Core.Scripts.Runtime.Server
 {
@@ -150,7 +151,13 @@ namespace Hathora.Core.Scripts.Runtime.Server
         private void initHathoraSdk()
         {
             if (CanInitSdk())
-                this.HathoraSdk = new HathoraCloudSDK(hathoraServerConfig.HathoraCoreOpts.AppId);
+            {
+                Security security = new()
+                {
+                    HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken
+                };
+                this.HathoraSdk = new HathoraCloudSDK(security, hathoraServerConfig.HathoraCoreOpts.AppId);
+            }
         }
 
         /// <returns>isValid</returns>

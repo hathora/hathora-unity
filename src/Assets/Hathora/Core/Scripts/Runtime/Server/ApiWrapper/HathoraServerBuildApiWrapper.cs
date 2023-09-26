@@ -54,15 +54,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(CreateBuildAsync)}]";
             
             // Prep request
-            HathoraCloud.Models.Shared.CreateBuildRequest createBuildRequest = new()
+            CreateBuildParams createBuildParmas = new()
             {
                 BuildTag = _buildTag,
             };
             
-            HathoraCloud.Models.Operations.CreateBuildRequest createBuildRequestWrapper = new()
+            CreateBuildRequest createBuildRequestWrapper = new()
             {
                 AppId = base.AppId,
-                CreateBuildRequestValue = createBuildRequest,
+                CreateBuildParams = createBuildParmas,
             };
             
             // Get response async =>
@@ -71,7 +71,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 createCloudBuildResponse = await BuildApi.CreateBuildAsync(
-                    new CreateBuildSecurity { HathoraDevToken = base.HathoraDevToken },
                     createBuildRequestWrapper);
             }
             catch (Exception e)
@@ -139,7 +138,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 runBuildRequestWrapper.RequestBody.File.Content = toByteArray(fileStream);
 
                 runBuildResponse = await BuildApi.RunBuildAsync(
-                    new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken },
                     runBuildRequestWrapper);
 
                 // stream = runBuildResponse.RunBuild200TextPlainByteString; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
@@ -242,7 +240,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(
-                    new GetBuildInfoSecurity { HathoraDevToken = base.HathoraDevToken },
                     getBuildInfoRequest);
             }
             catch (Exception e)

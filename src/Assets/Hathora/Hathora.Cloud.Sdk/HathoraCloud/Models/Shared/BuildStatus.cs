@@ -14,33 +14,32 @@ namespace HathoraCloud.Models.Shared
     using System;
     using UnityEngine;
     
-    
     /// <summary>
-    /// Current status of your build.
+    /// Current status of your build.&lt;br/&gt;
     /// 
     /// <remarks>
-    /// 
-    /// `created`: a build was created but not yet run
-    /// 
-    /// `running`: the build process is actively executing
-    /// 
-    /// `succeeded`: the game server artifact was successfully built and stored in the Hathora registries
-    /// 
+    /// <br/>
+    /// `created`: a build was created but not yet run<br/>
+    /// <br/>
+    /// `running`: the build process is actively executing<br/>
+    /// <br/>
+    /// `succeeded`: the game server artifact was successfully built and stored in the Hathora registries<br/>
+    /// <br/>
     /// `failed`: the build process was unsuccessful, most likely due to an error with the `Dockerfile`
     /// </remarks>
     /// </summary>
     public enum BuildStatus
     {
-    	[JsonProperty("created")]
-		Created,
-		[JsonProperty("running")]
-		Running,
-		[JsonProperty("succeeded")]
-		Succeeded,
-		[JsonProperty("failed")]
-		Failed,
+        [JsonProperty("created")]
+        Created,
+        [JsonProperty("running")]
+        Running,
+        [JsonProperty("succeeded")]
+        Succeeded,
+        [JsonProperty("failed")]
+        Failed,
     }
-    
+
     public static class BuildStatusExtension
     {
         public static string Value(this BuildStatus value)
@@ -52,7 +51,13 @@ namespace HathoraCloud.Models.Shared
         {
             foreach(var field in typeof(BuildStatus).GetFields())
             {
-                var attribute = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false)[0] as JsonPropertyAttribute;
+                var attributes = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    continue;
+                }
+
+                var attribute = attributes[0] as JsonPropertyAttribute;
                 if (attribute != null && attribute.PropertyName == value)
                 {
                     return (BuildStatus)field.GetValue(null);
@@ -62,5 +67,5 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum BuildStatus");
         }
     }
-    
+
 }

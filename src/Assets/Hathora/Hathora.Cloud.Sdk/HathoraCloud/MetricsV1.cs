@@ -18,17 +18,27 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations to get metrics by &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#process&quot;&gt;process&lt;/a&gt;. We store 72 hours of metrics data.
+    /// </summary>
     public interface IMetricsV1SDK
     {
-        Task<GetMetricsResponse> GetMetricsAsync(GetMetricsSecurity security, GetMetricsRequest? request = null);
+
+        /// <summary>
+        /// Get metrics for a <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a> using `appId` and `processId`.
+        /// </summary>
+        Task<GetMetricsResponse> GetMetricsAsync(GetMetricsRequest? request = null);
     }
 
+    /// <summary>
+    /// Operations to get metrics by &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#process&quot;&gt;process&lt;/a&gt;. We store 72 hours of metrics data.
+    /// </summary>
     public class MetricsV1SDK: IMetricsV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -43,10 +53,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Get metrics for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
-        /// </summary>
-        public async Task<GetMetricsResponse> GetMetricsAsync(GetMetricsSecurity security, GetMetricsRequest? request = null)
+        public async Task<GetMetricsResponse> GetMetricsAsync(GetMetricsRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -63,7 +70,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -87,7 +94,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.MetricsResponse = JsonConvert.DeserializeObject<MetricsResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.MetricsResponse = JsonConvert.DeserializeObject<MetricsResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;

@@ -18,19 +18,37 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations that allow you to generate a Hathora-signed &lt;a href=&quot;JWT&quot;&gt;JSON web token (JWT)&lt;/a&gt; for &lt;a href=&quot;https://hathora.dev/docs/lobbies-and-matchmaking/auth-service&quot;&gt;player authentication&lt;/a&gt;.
+    /// </summary>
     public interface IAuthV1SDK
     {
+
+        /// <summary>
+        /// Returns a unique player token for an anonymous user.
+        /// </summary>
         Task<LoginAnonymousResponse> LoginAnonymousAsync(LoginAnonymousRequest? request = null);
+
+        /// <summary>
+        /// Returns a unique player token using a Google-signed OIDC `idToken`.
+        /// </summary>
         Task<LoginGoogleResponse> LoginGoogleAsync(Models.Operations.LoginGoogleRequest request);
+
+        /// <summary>
+        /// Returns a unique player token with a specified nickname for a user.
+        /// </summary>
         Task<LoginNicknameResponse> LoginNicknameAsync(Models.Operations.LoginNicknameRequest request);
     }
 
+    /// <summary>
+    /// Operations that allow you to generate a Hathora-signed &lt;a href=&quot;JWT&quot;&gt;JSON web token (JWT)&lt;/a&gt; for &lt;a href=&quot;https://hathora.dev/docs/lobbies-and-matchmaking/auth-service&quot;&gt;player authentication&lt;/a&gt;.
+    /// </summary>
     public class AuthV1SDK: IAuthV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -45,9 +63,6 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns a unique player token for an anonymous user.
-        /// </summary>
         public async Task<LoginAnonymousResponse> LoginAnonymousAsync(LoginAnonymousRequest? request = null)
         {
             request.AppId ??= Config.AppId;
@@ -65,7 +80,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = _defaultClient;
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -89,7 +104,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.LoginResponse = JsonConvert.DeserializeObject<LoginResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.LoginResponse = JsonConvert.DeserializeObject<LoginResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -107,9 +122,6 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns a unique player token using a Google-signed OIDC `idToken`.
-        /// </summary>
         public async Task<LoginGoogleResponse> LoginGoogleAsync(Models.Operations.LoginGoogleRequest request)
         {
             request.AppId ??= Config.AppId;
@@ -137,7 +149,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = _defaultClient;
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -161,7 +173,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.LoginResponse = JsonConvert.DeserializeObject<LoginResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.LoginResponse = JsonConvert.DeserializeObject<LoginResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -188,9 +200,6 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns a unique player token with a specified nickname for a user.
-        /// </summary>
         public async Task<LoginNicknameResponse> LoginNicknameAsync(Models.Operations.LoginNicknameRequest request)
         {
             request.AppId ??= Config.AppId;
@@ -218,7 +227,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = _defaultClient;
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -242,7 +251,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.LoginResponse = JsonConvert.DeserializeObject<LoginResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.LoginResponse = JsonConvert.DeserializeObject<LoginResponse>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;

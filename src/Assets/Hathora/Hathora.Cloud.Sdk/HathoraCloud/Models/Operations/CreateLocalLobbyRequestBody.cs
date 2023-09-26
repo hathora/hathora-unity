@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-using Newtonsoft.Json.Converters;
-
 namespace HathoraCloud.Models.Operations
 {
     using HathoraCloud.Models.Shared;
@@ -17,10 +15,10 @@ namespace HathoraCloud.Models.Operations
     using System;
     using UnityEngine;
     
-    
     [Serializable]
     public class CreateLocalLobbyRequestBody
     {
+
         /// <summary>
         /// User input to initialize the game state. Object must be smaller than 64KB.
         /// </summary>
@@ -28,10 +26,10 @@ namespace HathoraCloud.Models.Operations
         [JsonProperty("initialConfig")]
         public LobbyInitialConfig InitialConfig { get; set; } = default!;
         
+
         [SerializeField]
         [JsonProperty("region")]
         public Region Region { get; set; } = default!;
         
     }
-    
 }

@@ -19,19 +19,37 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations to get data on active and stopped &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#process&quot;&gt;processes&lt;/a&gt;.
+    /// </summary>
     public interface IProcessesV1SDK
     {
-        Task<GetProcessInfoResponse> GetProcessInfoAsync(GetProcessInfoSecurity security, GetProcessInfoRequest? request = null);
-        Task<GetRunningProcessesResponse> GetRunningProcessesAsync(GetRunningProcessesSecurity security, GetRunningProcessesRequest? request = null);
-        Task<GetStoppedProcessesResponse> GetStoppedProcessesAsync(GetStoppedProcessesSecurity security, GetStoppedProcessesRequest? request = null);
+
+        /// <summary>
+        /// Get details for a <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a>.
+        /// </summary>
+        Task<GetProcessInfoResponse> GetProcessInfoAsync(GetProcessInfoRequest? request = null);
+
+        /// <summary>
+        /// Retrieve 10 most recently started <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a> objects for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. Filter the array by optionally passing in a `region`.
+        /// </summary>
+        Task<GetRunningProcessesResponse> GetRunningProcessesAsync(GetRunningProcessesRequest? request = null);
+
+        /// <summary>
+        /// Retrieve 10 most recently stopped <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a> objects for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. Filter the array by optionally passing in a `region`.
+        /// </summary>
+        Task<GetStoppedProcessesResponse> GetStoppedProcessesAsync(GetStoppedProcessesRequest? request = null);
     }
 
+    /// <summary>
+    /// Operations to get data on active and stopped &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#process&quot;&gt;processes&lt;/a&gt;.
+    /// </summary>
     public class ProcessesV1SDK: IProcessesV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -46,10 +64,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Get details for an existing [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
-        /// </summary>
-        public async Task<GetProcessInfoResponse> GetProcessInfoAsync(GetProcessInfoSecurity security, GetProcessInfoRequest? request = null)
+        public async Task<GetProcessInfoResponse> GetProcessInfoAsync(GetProcessInfoRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -66,7 +81,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -90,7 +105,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Process = JsonConvert.DeserializeObject<Process>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Process = JsonConvert.DeserializeObject<Process>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -104,14 +119,20 @@ namespace HathoraCloud
                 
                 return response;
             }
+            if((response.StatusCode == 500))
+            {
+                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
+                {
+                    response.GetProcessInfo500ApplicationJSONString = httpResponse.downloadHandler.text;
+                }
+                
+                return response;
+            }
             return response;
         }
         
 
-        /// <summary>
-        /// Returns an array of active [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Filter the array by optionally passing in a region.
-        /// </summary>
-        public async Task<GetRunningProcessesResponse> GetRunningProcessesAsync(GetRunningProcessesSecurity security, GetRunningProcessesRequest? request = null)
+        public async Task<GetRunningProcessesResponse> GetRunningProcessesAsync(GetRunningProcessesRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -128,7 +149,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -152,7 +173,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.ProcessWithRooms = JsonConvert.DeserializeObject<List<ProcessWithRooms>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.ProcessWithRooms = JsonConvert.DeserializeObject<List<ProcessWithRooms>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -170,10 +191,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns an array of stopped [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Filter the array by optionally passing in a region.
-        /// </summary>
-        public async Task<GetStoppedProcessesResponse> GetStoppedProcessesAsync(GetStoppedProcessesSecurity security, GetStoppedProcessesRequest? request = null)
+        public async Task<GetStoppedProcessesResponse> GetStoppedProcessesAsync(GetStoppedProcessesRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -190,7 +208,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -214,7 +232,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Processes = JsonConvert.DeserializeObject<List<Process>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Processes = JsonConvert.DeserializeObject<List<Process>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;

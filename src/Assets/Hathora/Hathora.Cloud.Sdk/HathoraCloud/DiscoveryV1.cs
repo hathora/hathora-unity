@@ -19,17 +19,27 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Service that allows clients to directly ping all Hathora regions to get latency information
+    /// </summary>
     public interface IDiscoveryV1SDK
     {
+
+        /// <summary>
+        /// Returns an array of all regions with a host and port that a client can directly ping. Open a websocket connection to `wss://&lt;host&gt;:&lt;port&gt;/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back.
+        /// </summary>
         Task<GetPingServiceEndpointsResponse> GetPingServiceEndpointsAsync();
     }
 
+    /// <summary>
+    /// Service that allows clients to directly ping all Hathora regions to get latency information
+    /// </summary>
     public class DiscoveryV1SDK: IDiscoveryV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -44,9 +54,6 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns an array of all regions with a host and port that a client can directly ping. Open a websocket connection to `wss://<host>:<port>/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back.
-        /// </summary>
         public async Task<GetPingServiceEndpointsResponse> GetPingServiceEndpointsAsync()
         {
             string baseUrl = _serverUrl;
@@ -63,7 +70,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = _defaultClient;
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -87,7 +94,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.DiscoveryResponse = JsonConvert.DeserializeObject<List<DiscoveryResponse>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.DiscoveryResponse = JsonConvert.DeserializeObject<List<DiscoveryResponse>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;

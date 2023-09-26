@@ -11,7 +11,6 @@ using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
-using CreateRoomRequest = HathoraCloud.Models.Shared.CreateRoomRequest;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
@@ -69,14 +68,14 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                CreateRoomRequest createRoomReq = new()
+                CreateRoomParams createRoomParams = new()
                 {
                     Region = _region,
                     RoomConfig = _roomConfig,
                 };
                   
                 createdRoomConnectionInfo = await ServerCreateRoomAsync(
-                    createRoomReq, 
+                    createRoomParams, 
                     _customCreateRoomId, 
                     _cancelToken);
             }
@@ -156,17 +155,17 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_cancelToken">TODO</param>
         /// <returns></returns>
         private async Task<ConnectionInfoV2> ServerCreateRoomAsync(
-            CreateRoomRequest _createRoomReq,
+            CreateRoomParams _createRoomParams,
             string _customRoomId = null,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(ServerCreateRoomAsync)}]";
             
             // Prep request data
-            HathoraCloud.Models.Operations.CreateRoomRequest createRoomRequestWrapper = new()
+            CreateRoomRequest createRoomRequestWrapper = new()
             {
                 RoomId = _customRoomId,
-                CreateRoomRequestValue = _createRoomReq,
+                CreateRoomParams = _createRoomParams,
             };
             
             Debug.Log($"{logPrefix} <color=yellow>{nameof(createRoomRequestWrapper)}: " +
@@ -180,7 +179,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // BUG: ExposedPort prop will always be null here; prop should be removed for CreateRoom.
                 // To get the ExposedPort, we need to poll until Room Status is Active
                 createRoomResponse = await RoomApi.CreateRoomAsync(
-                    new CreateRoomSecurity { HathoraDevToken = auth0DevToken },
                     createRoomRequestWrapper);
             }
             catch (TaskCanceledException)
@@ -229,7 +227,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getRoomInfoResponse = await RoomApi.GetRoomInfoAsync(
-                    new GetRoomInfoSecurity { HathoraDevToken = auth0DevToken },
                     getRoomInfoRequest);
             }
             catch (TaskCanceledException)
@@ -279,7 +276,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             try
             {
                 getActiveRoomsForProcessResponse = await RoomApi.GetActiveRoomsForProcessAsync(
-                    new GetActiveRoomsForProcessSecurity { HathoraDevToken = auth0DevToken },
                     getActiveRoomsForProcessRequest);
             }
             catch (TaskCanceledException)

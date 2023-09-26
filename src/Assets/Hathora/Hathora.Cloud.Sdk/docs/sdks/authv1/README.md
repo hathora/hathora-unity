@@ -1,4 +1,4 @@
-# authV1
+# AuthV1
 
 ## Overview
 
@@ -18,9 +18,13 @@ Returns a unique player token for an anonymous user.
 
 ```csharp
 using HathoraCloud;
+using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
@@ -50,10 +54,13 @@ Returns a unique player token using a Google-signed OIDC `idToken`.
 
 ```csharp
 using HathoraCloud;
-using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
@@ -87,10 +94,13 @@ Returns a unique player token with a specified nickname for a user.
 
 ```csharp
 using HathoraCloud;
-using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 

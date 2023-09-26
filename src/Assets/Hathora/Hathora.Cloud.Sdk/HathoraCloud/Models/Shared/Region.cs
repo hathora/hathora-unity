@@ -14,21 +14,30 @@ namespace HathoraCloud.Models.Shared
     using System;
     using UnityEngine;
     
-    
     public enum Region
     {
-		Seattle,
-		Washington_DC,
-		Chicago,
-		London,
-		Frankfurt,
-		Mumbai,
-		Singapore,
-		Tokyo,
-		Sydney,
-		Sao_Paulo,
+        [JsonProperty("Seattle")]
+        Seattle,
+        [JsonProperty("Washington_DC")]
+        WashingtonDC,
+        [JsonProperty("Chicago")]
+        Chicago,
+        [JsonProperty("London")]
+        London,
+        [JsonProperty("Frankfurt")]
+        Frankfurt,
+        [JsonProperty("Mumbai")]
+        Mumbai,
+        [JsonProperty("Singapore")]
+        Singapore,
+        [JsonProperty("Tokyo")]
+        Tokyo,
+        [JsonProperty("Sydney")]
+        Sydney,
+        [JsonProperty("Sao_Paulo")]
+        SaoPaulo,
     }
-    
+
     public static class RegionExtension
     {
         public static string Value(this Region value)
@@ -40,7 +49,13 @@ namespace HathoraCloud.Models.Shared
         {
             foreach(var field in typeof(Region).GetFields())
             {
-                var attribute = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false)[0] as JsonPropertyAttribute;
+                var attributes = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    continue;
+                }
+
+                var attribute = attributes[0] as JsonPropertyAttribute;
                 if (attribute != null && attribute.PropertyName == value)
                 {
                     return (Region)field.GetValue(null);
@@ -50,5 +65,5 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum Region");
         }
     }
-    
+
 }

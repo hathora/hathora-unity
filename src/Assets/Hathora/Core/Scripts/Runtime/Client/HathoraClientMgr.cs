@@ -16,6 +16,7 @@ using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
+using Security = HathoraCloud.Models.Shared.Security;
 
 namespace Hathora.Core.Scripts.Runtime.Client
 {
@@ -112,7 +113,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         
         private void initHathoraSdk()
         {
-            this.HathoraSdk = new HathoraCloudSDK(hathoraClientConfig.AppId);
+            this.HathoraSdk = new HathoraCloudSDK(null, hathoraClientConfig.AppId);
         }
 
         /// <summary>Init all Client API wrappers, passing HathoraSdk instance.</summary>
