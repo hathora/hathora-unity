@@ -63,21 +63,10 @@ namespace Hathora.Core.Scripts.Runtime.Client
             Singleton = this;
         }
 
-        /// <summary>
-        /// For a new Session, we simply update the PlayerAuthToken.
-        /// </summary>
-        /// <param name="playerAuthToken"></param>
-        public void InitNetSession(string playerAuthToken)
-        {
-            this.PlayerAuthToken = playerAuthToken;
-
-            
-            #region (!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan
-            Debug.Log($"[HathoraClientSession.{nameof(InitNetSession)}] <color=orange>(!) SDK WORKAROUND: " +
-                "Adding client Authorization Token header to temporary `SDKConfig.ClientAuthToken` --Dylan</color>");
-            // SDKConfig.ClientAuthToken = playerAuthToken;
-            #endregion // (!) TEMPORARY WORKAROUND FOR CLIENT AUTH TOKEN --Dylan
-        }
+        /// <summary>For a new Session, we simply update the PlayerAuthToken.</summary>
+        /// <param name="_playerAuthToken"></param>
+        public void InitNetSession(string _playerAuthToken) =>
+            this.PlayerAuthToken = _playerAuthToken;
         #endregion // Init
     }
 }
