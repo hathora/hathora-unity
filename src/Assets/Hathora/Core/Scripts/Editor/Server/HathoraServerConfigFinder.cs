@@ -1,9 +1,11 @@
 // Created by dylan@hathora.dev
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Hathora.Core.Scripts.Runtime.Server;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Hathora.Core.Scripts.Editor.Server
@@ -29,6 +31,30 @@ namespace Hathora.Core.Scripts.Editor.Server
             // Find the last known
             HathoraServerConfig config = AssetDatabase.LoadAssetAtPath<HathoraServerConfig>(assetPath);
             selectHathoraServerConfig(config);
+        }
+        
+        [MenuItem("Hathora/Create New HathoraServerConfig")]
+        public static void CreateNewServerConfig()
+        {
+            HathoraServerConfig newConfig = ScriptableObject.CreateInstance<HathoraServerConfig>();
+            
+            // Ensure target dir exists
+            const string dirPath = "Assets/Hathora";
+            if (!Directory.Exists(dirPath))
+                Directory.CreateDirectory(dirPath);
+            
+            // Set the asset path and asset name
+            string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath($"{dirPath}/{nameof(HathoraServerConfig)}.asset");
+
+            // Create the asset in the designated path
+            AssetDatabase.CreateAsset(newConfig, assetPathAndName);
+
+            // Save and refresh the asset db
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            
+            // Select the new config
+            selectHathoraServerConfig(newConfig);
         }
         #endregion // Menu Items
         
