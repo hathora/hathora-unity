@@ -334,7 +334,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
             if (string.IsNullOrEmpty(procId))
             {
-                string errMsg = $"{logPrefix} !Process";
+                string errMsg = $"{logPrefix} !Process: Did you serialize a `HathoraServerConfig` " +
+                    "to your scene's `HathoraServerMgr` (often nested in a `HathoraManager` root GameObject)?";
 
                 // Are we debugging in the Editor? Add +info
                 bool isMockDebuggingInEditor = UnityEngine.Application.isEditor && 
