@@ -35,7 +35,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Editor
         {
             string logPrefix = $"[EditorFishDemoBuildEnv.{nameof(ValidateWebglWssTlsEnv)}]";
             Debug.Log($"{logPrefix} Starting - <color=yellow>Expecting:</color>\n" +
-                $"- {nameof(IsCurrentSceneAtTopAndEnabled)}\n" +
+                $"- {nameof(isCurrentSceneAtTopAndEnabled)}\n" +
                 $"- {nameof(hasValidSceneClientAppId)}\n" +
                 $"- {nameof(hasValidSceneServerAppId)}\n" +
                 $"- {nameof(ensureClientServerAppIdsMatch)}\n" +
@@ -43,30 +43,36 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Editor
                 $"- {nameof(ensureFishNetworkManagerTransport)} ({nameof(FishnetDemoTransports.BayouWebgl_WssTls)})");
 
             // Common
-            Assert.IsTrue(IsCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(IsCurrentSceneAtTopAndEnabled)}");
+            Assert.IsTrue(isCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(isCurrentSceneAtTopAndEnabled)}");
             Assert.IsTrue(hasValidSceneClientAppId(), $"{logPrefix} Expected {nameof(hasValidSceneClientAppId)}");
             Assert.IsTrue(hasValidSceneServerAppId(), $"{logPrefix} Expected {nameof(hasValidSceneServerAppId)}");
             Assert.IsTrue(ensureClientServerAppIdsMatch(), $"{logPrefix} Expected {nameof(ensureClientServerAppIdsMatch)}");
+            // TODO: Ensure we're on WebGL Client platform target (Warn, since user may be planning to build Server; not Client)
             
             // Webgl (TLS/WSS) Specific
             Assert.IsTrue(ensureServerConfigTransportType(TransportType.Tls), 
                 $"{logPrefix} Expected {nameof(ensureServerConfigTransportType)} ({nameof(TransportType.Tls)})");
             
+            // FishNet Specific
+            // TODO: Ensure FishNet NetworkManager port matches HathoraServerManager's (Warn, since it could be multi-port)
+            
             // FishNet (TLS/WSS) Specific
             Assert.IsTrue(ensureFishNetworkManagerTransport(FishnetDemoTransports.BayouWebgl_WssTls), 
                 $"{logPrefix} Expected {nameof(ensureFishNetworkManagerTransport)} ({nameof(FishnetDemoTransports.BayouWebgl_WssTls)})");
-            
+            // TODO: Ensure NetworkManager's "Start on Headless" is checked (Warn)
+            // TODO: Ensure !SSL checked (Fatal)
+
             // Success
             Debug.Log($"{logPrefix} <color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>Passed validations.</color>");
         }
         
-        /// <summary>Validates the !WebGL UDP env for building standalone clients, when using the vanilla Mirrror Demo.</summary>
+        /// <summary>Validates the !WebGL UDP env for building standalone clients, when using the vanilla FishNet Demo.</summary>
         [MenuItem("Hathora/FishNet Demo/Validate Standalone (UDP) Client Env")]
         public static void ValidateStandaloneUdpEnv()
         {
             string logPrefix = $"[EditorFishDemoBuildEnv.{nameof(ValidateStandaloneUdpEnv)}]";
             Debug.Log($"{logPrefix} Starting - <color=yellow>Expecting:</color>\n" +
-                $"- {nameof(IsCurrentSceneAtTopAndEnabled)}\n" +
+                $"- {nameof(isCurrentSceneAtTopAndEnabled)}\n" +
                 $"- {nameof(hasValidSceneClientAppId)}\n" +
                 $"- {nameof(hasValidSceneServerAppId)}\n" +
                 $"- {nameof(ensureClientServerAppIdsMatch)}\n" +
@@ -74,18 +80,23 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Editor
                 $"- {nameof(ensureFishNetworkManagerTransport)} ({nameof(FishnetDemoTransports.Tugboat_Udp)})");
 
             // Common
-            Assert.IsTrue(IsCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(IsCurrentSceneAtTopAndEnabled)}");
+            Assert.IsTrue(isCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(isCurrentSceneAtTopAndEnabled)}");
             Assert.IsTrue(hasValidSceneClientAppId(), $"{logPrefix} Expected {nameof(hasValidSceneClientAppId)}");
             Assert.IsTrue(hasValidSceneServerAppId(), $"{logPrefix} Expected {nameof(hasValidSceneServerAppId)}");
             Assert.IsTrue(ensureClientServerAppIdsMatch(), $"{logPrefix} Expected {nameof(ensureClientServerAppIdsMatch)}");
-            
+            // TODO: Ensure we're on !WebGL Client platform target (Fatal)
+
             // Standalone (UDP) Specific
             Assert.IsTrue(ensureServerConfigTransportType(TransportType.Udp), 
                 $"{logPrefix} Expected {nameof(ensureServerConfigTransportType)} ({nameof(TransportType.Udp)})");
             
-            // Mirror (UDP) Specific
+            // FishNet Specific
+            // TODO: Ensure FishNet NetworkManager port matches HathoraServerManager's (Warn, since it could be multi-port)
+
+            // FishNet (UDP) Specific
             Assert.IsTrue(ensureFishNetworkManagerTransport(FishnetDemoTransports.Tugboat_Udp), 
                 $"{logPrefix} Expected {nameof(ensureFishNetworkManagerTransport)} ({nameof(FishnetDemoTransports.Tugboat_Udp)})");
+            // TODO: Ensure FishNet NetworkManager's "Start on Headless" is checked (Warn)
             
             // Success
             Debug.Log($"{logPrefix} <color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>Passed.</color>");
@@ -128,7 +139,9 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Editor
 
             if (serverConfig.HathoraDeployOpts.TransportType != _transportType)
             {
-                Debug.LogError($"{logPrefix} TransportType is not of type {_transportType}");
+                Debug.LogError($"{logPrefix} HathoraServerConfig TransportType<{serverConfig.HathoraDeployOpts.TransportType}> " +
+                    $"is not of expected type<{_transportType}>");
+                
                 return false;
             }
 
@@ -344,7 +357,7 @@ namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Editor
         /// Checks if the current scene is at the top of the build settings and enabled.
         /// </summary>
         /// <returns>True if the current scene is at the top and enabled</returns>
-        public static bool IsCurrentSceneAtTopAndEnabled()
+        private static bool isCurrentSceneAtTopAndEnabled()
         {
             Scene currentScene = SceneManager.GetActiveScene();
             EditorBuildSettingsScene[] buildScenes = EditorBuildSettings.scenes;

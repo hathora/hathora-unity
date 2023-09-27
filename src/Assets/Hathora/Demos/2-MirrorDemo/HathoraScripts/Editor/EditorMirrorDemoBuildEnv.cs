@@ -29,13 +29,13 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
 
         
         #region Menu
-        /// <summary>Validates the WebGL-WSS-TLS env for building to WebGL, when using the vanilla FishNet Demo.</summary>
+        /// <summary>Validates the WebGL-WSS-TLS env for building to WebGL, when using the vanilla Mirror Demo.</summary>
         [MenuItem("Hathora/Mirror Demo/Validate WebGL (WSS-TLS) Client Env")]
         public static void ValidateWebglWssTlsEnv()
         {
             string logPrefix = $"[EditorMirrorDemoBuildEnv.{nameof(ValidateWebglWssTlsEnv)}]";
             Debug.Log($"{logPrefix} Starting - <color=yellow>Expecting:</color>\n" +
-                $"- {nameof(IsCurrentSceneAtTopAndEnabled)}\n" +
+                $"- {nameof(isCurrentSceneAtTopAndEnabled)}\n" +
                 $"- {nameof(hasValidSceneClientAppId)}\n" +
                 $"- {nameof(hasValidSceneServerAppId)}\n" +
                 $"- {nameof(ensureClientServerAppIdsMatch)}\n" +
@@ -43,18 +43,24 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
                 $"- {nameof(ensureMirrorNetworkManagerTransport)} ({nameof(MirrorDemoTransports.SimpleWebTransport_WssTls)})");
             
             // Common
-            Assert.IsTrue(IsCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(IsCurrentSceneAtTopAndEnabled)}");
+            Assert.IsTrue(isCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(isCurrentSceneAtTopAndEnabled)}");
             Assert.IsTrue(hasValidSceneClientAppId(), $"{logPrefix} Expected {nameof(hasValidSceneClientAppId)}");
             Assert.IsTrue(hasValidSceneServerAppId(), $"{logPrefix} Expected {nameof(hasValidSceneServerAppId)}");
             Assert.IsTrue(ensureClientServerAppIdsMatch(), $"{logPrefix} Expected {nameof(ensureClientServerAppIdsMatch)}");
-            
+            // TODO: Ensure we're on WebGL Client platform target (Warn, since user may be planning to build Server; not Client)
+
             // Webgl (TLS/WSS) Specific
             Assert.IsTrue(ensureServerConfigTransportType(TransportType.Tls), 
                 $"{logPrefix} Expected {nameof(ensureServerConfigTransportType)} ({nameof(TransportType.Tls)})");
             
+            // Mirror Specific
+            // TODO: Ensure Mirror NetworkManager port matches HathoraServerManager's (Warn, since it could be multi-port)
+            
             // Mirror (TLS/WSS) Specific
             Assert.IsTrue(ensureMirrorNetworkManagerTransport(MirrorDemoTransports.SimpleWebTransport_WssTls), 
                 $"{logPrefix} Expected {nameof(ensureMirrorNetworkManagerTransport)} ({nameof(MirrorDemoTransports.SimpleWebTransport_WssTls)})");
+            // TODO: Ensure NetworkManager's "Start on Headless" is checked (Warn)
+            // TODO: Ensure !SSL checked (Fatal)
             
             // Success
             Debug.Log($"{logPrefix} <color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>Passed.</color>");
@@ -66,7 +72,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
         {
             string logPrefix = $"[EditorMirrorDemoBuildEnv.{nameof(ValidateStandaloneUdpEnv)}]";
             Debug.Log($"{logPrefix} Starting - <color=yellow>Expecting:</color>\n" +
-                $"- {nameof(IsCurrentSceneAtTopAndEnabled)}\n" +
+                $"- {nameof(isCurrentSceneAtTopAndEnabled)}\n" +
                 $"- {nameof(hasValidSceneClientAppId)}\n" +
                 $"- {nameof(hasValidSceneServerAppId)}\n" +
                 $"- {nameof(ensureClientServerAppIdsMatch)}\n" +
@@ -74,18 +80,25 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
                 $"- {nameof(ensureMirrorNetworkManagerTransport)} ({nameof(MirrorDemoTransports.Kcp_Udp)})");
 
             // Common
-            Assert.IsTrue(IsCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(IsCurrentSceneAtTopAndEnabled)}");
+            Assert.IsTrue(isCurrentSceneAtTopAndEnabled(), $"{logPrefix} Expected {nameof(isCurrentSceneAtTopAndEnabled)}");
             Assert.IsTrue(hasValidSceneClientAppId(), $"{logPrefix} Expected {nameof(hasValidSceneClientAppId)}");
             Assert.IsTrue(hasValidSceneServerAppId(), $"{logPrefix} Expected {nameof(hasValidSceneServerAppId)}");
             Assert.IsTrue(ensureClientServerAppIdsMatch(), $"{logPrefix} Expected {nameof(ensureClientServerAppIdsMatch)}");
-            
+            // TODO: Ensure we're on !WebGL Client platform target (Fatal)
+
             // Standalone (UDP) Specific
             Assert.IsTrue(ensureServerConfigTransportType(TransportType.Udp), 
                 $"{logPrefix} Expected {nameof(ensureServerConfigTransportType)} ({nameof(TransportType.Udp)})");
             
+            // Mirror Specific
+            // TODO: Ensure Mirror NetworkManager port matches HathoraServerManager's (Warn, since it could be multi-port)
+            
             // Mirror (UDP) Specific
             Assert.IsTrue(ensureMirrorNetworkManagerTransport(MirrorDemoTransports.Kcp_Udp), 
                 $"{logPrefix} Expected {nameof(ensureMirrorNetworkManagerTransport)} ({nameof(MirrorDemoTransports.Kcp_Udp)})");
+            
+            // TODO: Ensure Mirror NetworkManager port matches HathoraServerManager's (Fatal)
+            // TODO: Ensure Mirror NetworkManager's "Start on Headless" is checked (Warn)
             
             // Success
             Debug.Log($"{logPrefix} <color={HathoraEditorUtils.HATHORA_GREEN_COLOR_HEX}>Passed.</color>");
@@ -128,7 +141,9 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
 
             if (serverConfig.HathoraDeployOpts.TransportType != _transportType)
             {
-                Debug.LogError($"{logPrefix} TransportType is not of type {_transportType}");
+                Debug.LogError($"{logPrefix} HathoraServerConfig TransportType<{serverConfig.HathoraDeployOpts.TransportType}> " +
+                    $"is not of expected type<{_transportType}>");
+                
                 return false;
             }
 
@@ -312,7 +327,7 @@ namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
         /// Checks if the current scene is at the top of the build settings and enabled.
         /// </summary>
         /// <returns>True if the current scene is at the top and enabled</returns>
-        public static bool IsCurrentSceneAtTopAndEnabled()
+        private static bool isCurrentSceneAtTopAndEnabled()
         {
             Scene currentScene = SceneManager.GetActiveScene();
             EditorBuildSettingsScene[] buildScenes = EditorBuildSettings.scenes;
