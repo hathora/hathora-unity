@@ -13,6 +13,7 @@ using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
+using Security = HathoraCloud.Models.Shared.Security;
 
 namespace Hathora.Core.Scripts.Runtime.Server
 {
@@ -149,8 +150,15 @@ namespace Hathora.Core.Scripts.Runtime.Server
         
         private void initHathoraSdk()
         {
-            if (CanInitSdk())
-                this.HathoraSdk = new HathoraCloudSDK(hathoraServerConfig.HathoraCoreOpts.AppId);
+            if (!CanInitSdk())
+                return;
+            
+            Security security = new()
+            {
+                HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
+            };
+            
+            this.HathoraSdk = new HathoraCloudSDK(security, hathoraServerConfig.HathoraCoreOpts.AppId);
         }
 
         /// <returns>isValid</returns>
@@ -326,7 +334,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
             }
             if (string.IsNullOrEmpty(procId))
             {
-                string errMsg = $"{logPrefix} !Process";
+                string errMsg = $"{logPrefix} !Process: Did you serialize a `HathoraServerConfig` " +
+                    "to your scene's `HathoraServerMgr` (often nested in a `HathoraManager` root GameObject)?";
 
                 // Are we debugging in the Editor? Add +info
                 bool isMockDebuggingInEditor = UnityEngine.Application.isEditor && 

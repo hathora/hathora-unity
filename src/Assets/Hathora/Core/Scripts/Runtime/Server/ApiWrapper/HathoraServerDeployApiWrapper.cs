@@ -60,7 +60,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerDeployApiWrapper)}.{nameof(CreateDeploymentAsync)}]";
             
             // Prepare request
-            TransportType selectedTransportType = deployOpts.SelectedTransportType;
+            TransportType selectedTransportType = deployOpts.TransportType;
             
             #region DeploymentEnvConfigInner Workaround
             // #######################################################################################
@@ -78,29 +78,26 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 Env = envWorkaround ?? new List<DeploymentConfigEnv>(),
                 RoomsPerProcess = deployOpts.RoomsPerProcess, 
-                PlanName = deployOpts.SelectedPlanName, 
+                PlanName = deployOpts.PlanName, 
                 AdditionalContainerPorts = _additionalContainerPorts ?? new List<ContainerPort>(),
                 TransportType = selectedTransportType,
-                ContainerPort = deployOpts.ContainerPort.Port,
+                ContainerPort = deployOpts.ContainerPortSerializable.Port,
             };
 
             CreateDeploymentRequest createDeploymentRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 DeploymentConfig = deployConfig,
                 BuildId = _buildId,
             };
             
-            Debug.Log($"{logPrefix} <color=yellow>{nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>Request {nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
 
             // Get response async =>
             CreateDeploymentResponse createDeploymentResponse = null;
             
             try
             {
-                createDeploymentResponse = await DeployApi.CreateDeploymentAsync(
-                    new CreateDeploymentSecurity { HathoraDevToken = base.HathoraDevToken },
-                    createDeploymentRequest);
+                createDeploymentResponse = await DeployApi.CreateDeploymentAsync(createDeploymentRequest);
             }
             catch (Exception e)
             {
@@ -128,7 +125,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetDeploymentsRequest getDeploymentsRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
             };
 
             // Get response async =>
@@ -136,9 +132,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(
-                    new GetDeploymentsSecurity { HathoraDevToken = base.HathoraDevToken },
-                    getDeploymentsRequest);
+                getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(getDeploymentsRequest);
             }
             catch (Exception e)
             {
@@ -148,7 +142,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 
             // Process response
             List<Deployment> deployments = getDeploymentsResponse.Deployments;
-            Debug.Log($"{logPrefix} <color=yellow>num: '{deployments?.Count}'</color>");
+            Debug.Log($"{logPrefix} <color=yellow>num {nameof(deployments)}: '{deployments?.Count}'</color>");
             
             getDeploymentsResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return deployments;

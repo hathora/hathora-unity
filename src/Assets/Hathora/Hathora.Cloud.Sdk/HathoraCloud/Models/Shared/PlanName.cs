@@ -14,33 +14,32 @@ namespace HathoraCloud.Models.Shared
     using System;
     using UnityEngine;
     
-    
     /// <summary>
-    /// A plan defines how much CPU and memory is required to run an instance of your game server.
+    /// A plan defines how much CPU and memory is required to run an instance of your game server.&lt;br/&gt;
     /// 
     /// <remarks>
-    /// 
-    /// `tiny`: shared core, 1gb memory
-    /// 
-    /// `small`: 1 core, 2gb memory
-    /// 
-    /// `medium`: 2 core, 4gb memory
-    /// 
+    /// <br/>
+    /// `tiny`: shared core, 1gb memory<br/>
+    /// <br/>
+    /// `small`: 1 core, 2gb memory<br/>
+    /// <br/>
+    /// `medium`: 2 core, 4gb memory<br/>
+    /// <br/>
     /// `large`: 4 core, 8gb memory
     /// </remarks>
     /// </summary>
     public enum PlanName
     {
-    	[JsonProperty("tiny")]
-		Tiny,
-		[JsonProperty("small")]
-		Small,
-		[JsonProperty("medium")]
-		Medium,
-		[JsonProperty("large")]
-		Large,
+        [JsonProperty("tiny")]
+        Tiny,
+        [JsonProperty("small")]
+        Small,
+        [JsonProperty("medium")]
+        Medium,
+        [JsonProperty("large")]
+        Large,
     }
-    
+
     public static class PlanNameExtension
     {
         public static string Value(this PlanName value)
@@ -52,7 +51,13 @@ namespace HathoraCloud.Models.Shared
         {
             foreach(var field in typeof(PlanName).GetFields())
             {
-                var attribute = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false)[0] as JsonPropertyAttribute;
+                var attributes = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    continue;
+                }
+
+                var attribute = attributes[0] as JsonPropertyAttribute;
                 if (attribute != null && attribute.PropertyName == value)
                 {
                     return (PlanName)field.GetValue(null);
@@ -62,5 +67,5 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum PlanName");
         }
     }
-    
+
 }

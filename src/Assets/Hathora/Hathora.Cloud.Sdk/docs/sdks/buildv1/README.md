@@ -1,4 +1,4 @@
-# buildV1
+# BuildV1
 
 ## Overview
 
@@ -20,17 +20,18 @@ Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build).
 
 ```csharp
 using HathoraCloud;
-using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
-using(var res = await sdk.BuildV1.CreateBuildAsync(new CreateBuildSecurity() {
-        HathoraDevToken = "",
-    }, new Models.Operations.CreateBuildRequest() {
-        CreateBuildRequest = new Models.Shared.CreateBuildRequest() {
+using(var res = await sdk.BuildV1.CreateBuildAsync(new CreateBuildRequest() {
+        CreateBuildParams = new CreateBuildParams() {
             BuildTag = "0.1.14-14c793",
         },
     }))
@@ -41,10 +42,9 @@ using(var res = await sdk.BuildV1.CreateBuildAsync(new CreateBuildSecurity() {
 
 ### Parameters
 
-| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `request`                                                                             | [Models.Operations.CreateBuildRequest](../../models/operations/CreateBuildRequest.md) | :heavy_check_mark:                                                                    | The request object to use for the request.                                            |
-| `security`                                                                            | [CreateBuildSecurity](../../models/operations/CreateBuildSecurity.md)                 | :heavy_check_mark:                                                                    | The security requirements to use for the request.                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `request`                                                           | [CreateBuildRequest](../../models/operations/CreateBuildRequest.md) | :heavy_check_mark:                                                  | The request object to use for the request.                          |
 
 
 ### Response
@@ -60,15 +60,17 @@ Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All 
 
 ```csharp
 using HathoraCloud;
+using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
-using(var res = await sdk.BuildV1.DeleteBuildAsync(new DeleteBuildSecurity() {
-        HathoraDevToken = "",
-    }, new DeleteBuildRequest() {
+using(var res = await sdk.BuildV1.DeleteBuildAsync(new DeleteBuildRequest() {
         BuildId = 1,
     }))
 {
@@ -78,10 +80,9 @@ using(var res = await sdk.BuildV1.DeleteBuildAsync(new DeleteBuildSecurity() {
 
 ### Parameters
 
-| Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `request`                                                             | [DeleteBuildRequest](../../models/operations/DeleteBuildRequest.md)   | :heavy_check_mark:                                                    | The request object to use for the request.                            |
-| `security`                                                            | [DeleteBuildSecurity](../../models/operations/DeleteBuildSecurity.md) | :heavy_check_mark:                                                    | The security requirements to use for the request.                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `request`                                                           | [DeleteBuildRequest](../../models/operations/DeleteBuildRequest.md) | :heavy_check_mark:                                                  | The request object to use for the request.                          |
 
 
 ### Response
@@ -97,15 +98,17 @@ Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#bui
 
 ```csharp
 using HathoraCloud;
+using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
-using(var res = await sdk.BuildV1.GetBuildInfoAsync(new GetBuildInfoSecurity() {
-        HathoraDevToken = "",
-    }, new GetBuildInfoRequest() {
+using(var res = await sdk.BuildV1.GetBuildInfoAsync(new GetBuildInfoRequest() {
         BuildId = 1,
     }))
 {
@@ -115,10 +118,9 @@ using(var res = await sdk.BuildV1.GetBuildInfoAsync(new GetBuildInfoSecurity() {
 
 ### Parameters
 
-| Parameter                                                               | Type                                                                    | Required                                                                | Description                                                             |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `request`                                                               | [GetBuildInfoRequest](../../models/operations/GetBuildInfoRequest.md)   | :heavy_check_mark:                                                      | The request object to use for the request.                              |
-| `security`                                                              | [GetBuildInfoSecurity](../../models/operations/GetBuildInfoSecurity.md) | :heavy_check_mark:                                                      | The security requirements to use for the request.                       |
+| Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `request`                                                             | [GetBuildInfoRequest](../../models/operations/GetBuildInfoRequest.md) | :heavy_check_mark:                                                    | The request object to use for the request.                            |
 
 
 ### Response
@@ -134,15 +136,17 @@ Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#
 
 ```csharp
 using HathoraCloud;
+using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
-using(var res = await sdk.BuildV1.GetBuildsAsync(new GetBuildsSecurity() {
-        HathoraDevToken = "",
-    }, new GetBuildsRequest() {}))
+using(var res = await sdk.BuildV1.GetBuildsAsync(new GetBuildsRequest() {}))
 {
     // handle response
 }
@@ -150,10 +154,9 @@ using(var res = await sdk.BuildV1.GetBuildsAsync(new GetBuildsSecurity() {
 
 ### Parameters
 
-| Parameter                                                         | Type                                                              | Required                                                          | Description                                                       |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `request`                                                         | [GetBuildsRequest](../../models/operations/GetBuildsRequest.md)   | :heavy_check_mark:                                                | The request object to use for the request.                        |
-| `security`                                                        | [GetBuildsSecurity](../../models/operations/GetBuildsSecurity.md) | :heavy_check_mark:                                                | The security requirements to use for the request.                 |
+| Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
+| --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
+| `request`                                                       | [GetBuildsRequest](../../models/operations/GetBuildsRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
 
 
 ### Response
@@ -169,19 +172,21 @@ Builds a game server artifact from a tarball you provide. Pass in the `buildId` 
 
 ```csharp
 using HathoraCloud;
+using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
-using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildSecurity() {
-        HathoraDevToken = "",
-    }, new RunBuildRequest() {
+using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildRequest() {
         RequestBody = new RunBuildRequestBody() {
             File = new RunBuildRequestBodyFile() {
-                Content = "unde as bytes <<<>>>",
-                File = "nulla",
+                Content = "nulla as bytes <<<>>>",
+                File = "corrupti",
             },
         },
         BuildId = 1,
@@ -193,10 +198,9 @@ using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildSecurity() {
 
 ### Parameters
 
-| Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
-| --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `request`                                                       | [RunBuildRequest](../../models/operations/RunBuildRequest.md)   | :heavy_check_mark:                                              | The request object to use for the request.                      |
-| `security`                                                      | [RunBuildSecurity](../../models/operations/RunBuildSecurity.md) | :heavy_check_mark:                                              | The security requirements to use for the request.               |
+| Parameter                                                     | Type                                                          | Required                                                      | Description                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `request`                                                     | [RunBuildRequest](../../models/operations/RunBuildRequest.md) | :heavy_check_mark:                                            | The request object to use for the request.                    |
 
 
 ### Response

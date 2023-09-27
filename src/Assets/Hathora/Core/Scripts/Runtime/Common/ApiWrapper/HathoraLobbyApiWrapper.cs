@@ -59,28 +59,31 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         {
             string logPrefix = $"[{nameof(HathoraLobbyApiWrapper)}.{nameof(CreateLobbyAsync)}]";
 
-            HathoraCloud.Models.Shared.CreateLobbyRequest createLobbyRequest = new()
+            
+            CreateLobbySecurity createLobbySecurity = new() { PlayerAuth = _playerAuthToken };
+            CreateLobbyParams createLobbyParams = new()
             {
                 Region = _region,
                 Visibility = _lobbyVisibility,
                 InitialConfig = _initConfigObj, // TODO: SDK `InitialConfig` should take a serializable <object>
             };
             
-            HathoraCloud.Models.Operations.CreateLobbyRequest createLobbyRequestWrapper = new()
+            CreateLobbyRequest createLobbyRequestWrapper = new()
             {
-                CreateLobbyRequestValue = createLobbyRequest,
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
+                CreateLobbyParams = createLobbyParams,
                 RoomId = _roomId,
             };
 
-            Debug.Log($"{logPrefix} <color=yellow>{nameof(createLobbyRequest)}: " +
-                $"{ToJson(createLobbyRequest)}</color>");
+            Debug.Log($"{logPrefix} <color=yellow>{nameof(createLobbyParams)}: " +
+                $"{ToJson(createLobbyParams)}</color>");
 
             CreateLobbyResponse createLobbyResponse = null;
 
             try
             {
-                createLobbyResponse = await LobbyApi.CreateLobbyAsync(createLobbyRequestWrapper);
+                createLobbyResponse = await LobbyApi.CreateLobbyAsync(
+                    createLobbySecurity, 
+                    createLobbyRequestWrapper);
             }
             catch (Exception e)
             {
@@ -113,7 +116,6 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             // Prep request
             GetLobbyInfoRequest getLobbyInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = roomId,
             };
             

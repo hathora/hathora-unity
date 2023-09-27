@@ -14,18 +14,17 @@ namespace HathoraCloud.Models.Shared
     using System;
     using UnityEngine;
     
-    
     /// <summary>
-    /// `exposedPort` will only be available when the `status` of a room is "active".
+    /// `exposedPort` will only be available when the `status` of a room is &amp;quot;active&amp;quot;.
     /// </summary>
     public enum ConnectionInfoV2Status
     {
-    	[JsonProperty("starting")]
-		Starting,
-		[JsonProperty("active")]
-		Active,
+        [JsonProperty("starting")]
+        Starting,
+        [JsonProperty("active")]
+        Active,
     }
-    
+
     public static class ConnectionInfoV2StatusExtension
     {
         public static string Value(this ConnectionInfoV2Status value)
@@ -37,7 +36,13 @@ namespace HathoraCloud.Models.Shared
         {
             foreach(var field in typeof(ConnectionInfoV2Status).GetFields())
             {
-                var attribute = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false)[0] as JsonPropertyAttribute;
+                var attributes = field.GetCustomAttributes(typeof(JsonPropertyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    continue;
+                }
+
+                var attribute = attributes[0] as JsonPropertyAttribute;
                 if (attribute != null && attribute.PropertyName == value)
                 {
                     return (ConnectionInfoV2Status)field.GetValue(null);
@@ -47,5 +52,5 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum ConnectionInfoV2Status");
         }
     }
-    
+
 }

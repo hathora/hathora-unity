@@ -56,7 +56,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Process request
             GetProcessInfoRequest getProcessInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 ProcessId = _processId,
             };
             
@@ -65,9 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(
-                    new GetProcessInfoSecurity { HathoraDevToken = base.HathoraDevToken },
-                    getProcessInfoRequest);
+                getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(getProcessInfoRequest);
             }
             catch (Exception e)
             {

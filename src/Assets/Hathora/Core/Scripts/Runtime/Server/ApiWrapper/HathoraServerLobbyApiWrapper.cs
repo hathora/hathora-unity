@@ -49,7 +49,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetLobbyInfoRequest getLobbyInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 RoomId = _roomId,
             };
             

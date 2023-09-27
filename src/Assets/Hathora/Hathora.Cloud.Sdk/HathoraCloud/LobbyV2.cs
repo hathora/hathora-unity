@@ -19,23 +19,45 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations to create and manage lobbies using our &lt;a href=&quot;https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service&quot;&gt;Lobby Service&lt;/a&gt;.
+    /// </summary>
     public interface ILobbyV2SDK
     {
-        Task<CreateLobbyResponse> CreateLobbyAsync(Models.Operations.CreateLobbyRequest request);
-        Task<CreateLocalLobbyResponse> CreateLocalLobbyAsync(CreateLocalLobbyRequest request);
-        Task<CreatePrivateLobbyResponse> CreatePrivateLobbyAsync(CreatePrivateLobbyRequest request);
-        Task<CreatePublicLobbyResponse> CreatePublicLobbyAsync(CreatePublicLobbyRequest request);
+
+        /// <summary>
+        /// Create a new lobby for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. A lobby object is a wrapper around a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a> object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retreiving a list of public lobbies to display to players.
+        /// </summary>
+        Task<CreateLobbyResponse> CreateLobbyAsync(CreateLobbySecurity security, CreateLobbyRequest request);
+        Task<CreateLocalLobbyResponse> CreateLocalLobbyAsync(CreateLocalLobbySecurity security, CreateLocalLobbyRequest request);
+        Task<CreatePrivateLobbyResponse> CreatePrivateLobbyAsync(CreatePrivateLobbySecurity security, CreatePrivateLobbyRequest request);
+        Task<CreatePublicLobbyResponse> CreatePublicLobbyAsync(CreatePublicLobbySecurity security, CreatePublicLobbyRequest request);
+
+        /// <summary>
+        /// Get details for a lobby.
+        /// </summary>
         Task<GetLobbyInfoResponse> GetLobbyInfoAsync(GetLobbyInfoRequest? request = null);
+
+        /// <summary>
+        /// Get all active lobbies for a an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. Filter by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
+        /// </summary>
         Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest? request = null);
-        Task<SetLobbyStateResponse> SetLobbyStateAsync(SetLobbyStateSecurity security, Models.Operations.SetLobbyStateRequest request);
+
+        /// <summary>
+        /// Set the state of a lobby. State is intended to be set by the server and must be smaller than 1MB. Use this endpoint to store match data like live player count to enforce max number of clients or persist end-game data (i.e. winner or final scores).
+        /// </summary>
+        Task<SetLobbyStateResponse> SetLobbyStateAsync(SetLobbyStateRequest request);
     }
 
+    /// <summary>
+    /// Operations to create and manage lobbies using our &lt;a href=&quot;https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service&quot;&gt;Lobby Service&lt;/a&gt;.
+    /// </summary>
     public class LobbyV2SDK: ILobbyV2SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -50,10 +72,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Create a new lobby for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-        /// </summary>
-        public async Task<CreateLobbyResponse> CreateLobbyAsync(Models.Operations.CreateLobbyRequest request)
+        public async Task<CreateLobbyResponse> CreateLobbyAsync(CreateLobbySecurity security, CreateLobbyRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -68,9 +87,8 @@ namespace HathoraCloud
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
-            HeaderSerializer.PopulateHeaders(ref httpRequest, request);
             
-            var serializedBody = RequestBodySerializer.Serialize(request, "CreateLobbyRequestValue", "json");
+            var serializedBody = RequestBodySerializer.Serialize(request, "CreateLobbyParams", "json");
             if (serializedBody == null) 
             {
                 throw new ArgumentNullException("request body is required");
@@ -81,7 +99,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = _defaultClient;
+            var client = SecuritySerializer.Apply(_defaultClient, security);
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -105,7 +123,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -169,7 +187,7 @@ namespace HathoraCloud
         
 
         [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
-        public async Task<CreateLocalLobbyResponse> CreateLocalLobbyAsync(CreateLocalLobbyRequest request)
+        public async Task<CreateLocalLobbyResponse> CreateLocalLobbyAsync(CreateLocalLobbySecurity security, CreateLocalLobbyRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -184,7 +202,6 @@ namespace HathoraCloud
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
-            HeaderSerializer.PopulateHeaders(ref httpRequest, request);
             
             var serializedBody = RequestBodySerializer.Serialize(request, "RequestBody", "json");
             if (serializedBody == null) 
@@ -197,7 +214,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = _defaultClient;
+            var client = SecuritySerializer.Apply(_defaultClient, security);
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -221,7 +238,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -285,7 +302,7 @@ namespace HathoraCloud
         
 
         [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
-        public async Task<CreatePrivateLobbyResponse> CreatePrivateLobbyAsync(CreatePrivateLobbyRequest request)
+        public async Task<CreatePrivateLobbyResponse> CreatePrivateLobbyAsync(CreatePrivateLobbySecurity security, CreatePrivateLobbyRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -300,7 +317,6 @@ namespace HathoraCloud
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
-            HeaderSerializer.PopulateHeaders(ref httpRequest, request);
             
             var serializedBody = RequestBodySerializer.Serialize(request, "RequestBody", "json");
             if (serializedBody == null) 
@@ -313,7 +329,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = _defaultClient;
+            var client = SecuritySerializer.Apply(_defaultClient, security);
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -337,7 +353,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -401,7 +417,7 @@ namespace HathoraCloud
         
 
         [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
-        public async Task<CreatePublicLobbyResponse> CreatePublicLobbyAsync(CreatePublicLobbyRequest request)
+        public async Task<CreatePublicLobbyResponse> CreatePublicLobbyAsync(CreatePublicLobbySecurity security, CreatePublicLobbyRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -416,7 +432,6 @@ namespace HathoraCloud
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
-            HeaderSerializer.PopulateHeaders(ref httpRequest, request);
             
             var serializedBody = RequestBodySerializer.Serialize(request, "RequestBody", "json");
             if (serializedBody == null) 
@@ -429,7 +444,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = _defaultClient;
+            var client = SecuritySerializer.Apply(_defaultClient, security);
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -453,7 +468,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -516,9 +531,6 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Get details for an existing lobby using `appId` and `roomId`.
-        /// </summary>
         public async Task<GetLobbyInfoResponse> GetLobbyInfoAsync(GetLobbyInfoRequest? request = null)
         {
             request.AppId ??= Config.AppId;
@@ -536,7 +548,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = _defaultClient;
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -560,7 +572,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -578,9 +590,6 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Get all active lobbies for a given [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Filter the array by optionally passing in a `region`.
-        /// </summary>
         public async Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest? request = null)
         {
             request.AppId ??= Config.AppId;
@@ -598,7 +607,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = _defaultClient;
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -622,7 +631,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobbies = JsonConvert.DeserializeObject<List<Lobby>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobbies = JsonConvert.DeserializeObject<List<Lobby>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -631,10 +640,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Set the state of a lobby using `appId` and `roomId`. State is intended to be set by the server and must be smaller than 1MB.
-        /// </summary>
-        public async Task<SetLobbyStateResponse> SetLobbyStateAsync(SetLobbyStateSecurity security, Models.Operations.SetLobbyStateRequest request)
+        public async Task<SetLobbyStateResponse> SetLobbyStateAsync(SetLobbyStateRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -650,7 +656,7 @@ namespace HathoraCloud
             httpRequest.downloadHandler = downloadHandler;
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
-            var serializedBody = RequestBodySerializer.Serialize(request, "SetLobbyStateRequestValue", "json");
+            var serializedBody = RequestBodySerializer.Serialize(request, "SetLobbyStateParams", "json");
             if (serializedBody == null) 
             {
                 throw new ArgumentNullException("request body is required");
@@ -661,7 +667,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -685,7 +691,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Lobby = JsonConvert.DeserializeObject<Lobby>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;

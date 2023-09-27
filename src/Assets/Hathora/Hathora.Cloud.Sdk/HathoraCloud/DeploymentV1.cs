@@ -19,19 +19,37 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations that allow you configure and manage an application&amp;apos;s &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#build&quot;&gt;build&lt;/a&gt; at runtime.
+    /// </summary>
     public interface IDeploymentV1SDK
     {
-        Task<CreateDeploymentResponse> CreateDeploymentAsync(CreateDeploymentSecurity security, CreateDeploymentRequest request);
-        Task<GetDeploymentInfoResponse> GetDeploymentInfoAsync(GetDeploymentInfoSecurity security, GetDeploymentInfoRequest? request = null);
-        Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsSecurity security, GetDeploymentsRequest? request = null);
+
+        /// <summary>
+        /// Create a new <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a>. Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+        /// </summary>
+        Task<CreateDeploymentResponse> CreateDeploymentAsync(CreateDeploymentRequest request);
+
+        /// <summary>
+        /// Get details for a <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a>.
+        /// </summary>
+        Task<GetDeploymentInfoResponse> GetDeploymentInfoAsync(GetDeploymentInfoRequest? request = null);
+
+        /// <summary>
+        /// Returns an array of <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployments</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>.
+        /// </summary>
+        Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsRequest? request = null);
     }
 
+    /// <summary>
+    /// Operations that allow you configure and manage an application&amp;apos;s &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#build&quot;&gt;build&lt;/a&gt; at runtime.
+    /// </summary>
     public class DeploymentV1SDK: IDeploymentV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -46,10 +64,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment). Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
-        /// </summary>
-        public async Task<CreateDeploymentResponse> CreateDeploymentAsync(CreateDeploymentSecurity security, CreateDeploymentRequest request)
+        public async Task<CreateDeploymentResponse> CreateDeploymentAsync(CreateDeploymentRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -76,7 +91,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -100,7 +115,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Deployment = JsonConvert.DeserializeObject<Deployment>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Deployment = JsonConvert.DeserializeObject<Deployment>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -136,10 +151,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Get details for a [deployment](https://hathora.dev/docs/concepts/hathora-entities#deployment).
-        /// </summary>
-        public async Task<GetDeploymentInfoResponse> GetDeploymentInfoAsync(GetDeploymentInfoSecurity security, GetDeploymentInfoRequest? request = null)
+        public async Task<GetDeploymentInfoResponse> GetDeploymentInfoAsync(GetDeploymentInfoRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -156,7 +168,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -180,7 +192,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Deployment = JsonConvert.DeserializeObject<Deployment>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Deployment = JsonConvert.DeserializeObject<Deployment>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -198,10 +210,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns an array of [deployments](https://hathora.dev/docs/concepts/hathora-entities#deployment) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-        /// </summary>
-        public async Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsSecurity security, GetDeploymentsRequest? request = null)
+        public async Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -218,7 +227,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -242,7 +251,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Deployments = JsonConvert.DeserializeObject<List<Deployment>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Deployments = JsonConvert.DeserializeObject<List<Deployment>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;

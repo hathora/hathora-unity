@@ -101,8 +101,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 "Cannot find HathoraServerConfig ScriptableObject");
             
             #if UNITY_WEBGL
-            bool isTcpTransport = _serverConfig.HathoraDeployOpts.SelectedTransportType == TransportType.Tcp;
-            string selectedTransportTypeStr = Enum.GetName(typeof (TransportType), _serverConfig.HathoraDeployOpts.SelectedTransportType);
+            bool isTcpTransport = _serverConfig.HathoraDeployOpts.TransportType == TransportType.Tcp;
+            string selectedTransportTypeStr = Enum.GetName(typeof (TransportType), _serverConfig.HathoraDeployOpts.TransportType);
             if (!isTcpTransport)
             {
                 Debug.LogWarning($"{logPrefix} (!) Do you plan for your clients to connect with WebGL (TCP/WS)? " +
@@ -124,7 +124,13 @@ namespace Hathora.Core.Scripts.Editor.Server
                 HathoraServerPaths serverPaths = new(_serverConfig);
 
                 // Prepare APIs
-                HathoraCloudSDK sdk = new(_serverConfig.HathoraCoreOpts.AppId);
+                
+                Security security = new()
+                {
+                    HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
+                };
+                
+                HathoraCloudSDK sdk = new(security, _serverConfig.HathoraCoreOpts.AppId);
                 
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
                     sdk,
@@ -397,8 +403,14 @@ namespace Hathora.Core.Scripts.Editor.Server
                     normalizedPathToTarball,
                     _cancelToken);
 
+                
+                Security security = new()
+                {
+                    HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
+                };
+                
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
-                    new HathoraCloudSDK(_serverConfig.HathoraCoreOpts.AppId),
+                    new HathoraCloudSDK(security, _serverConfig.HathoraCoreOpts.AppId),
                     _serverConfig);
                 
                 build = await buildApiWrapper.GetBuildInfoAsync(_buildId, _cancelToken);

@@ -15,28 +15,42 @@ namespace HathoraCloud.Models.Operations
     using UnityEngine.Networking;
     using UnityEngine;
     
-    
     [Serializable]
     public class SetLobbyStateResponse: IDisposable
     {
+
+        /// <summary>
+        /// HTTP response content type for this operation
+        /// </summary>
         [SerializeField]
         public string? ContentType { get; set; } = default!;
         
+
         /// <summary>
         /// Ok
         /// </summary>
         [SerializeField]
         public Lobby? Lobby { get; set; }
         
+
         [SerializeField]
         public string? SetLobbyState404ApplicationJSONString { get; set; }
         
+
+        /// <summary>
+        /// HTTP response status code for this operation
+        /// </summary>
         [SerializeField]
         public int StatusCode { get; set; } = default!;
         
+
+        /// <summary>
+        /// Raw HTTP response; suitable for custom response parsing
+        /// </summary>
         [SerializeField]
         public UnityWebRequest? RawResponse { get; set; }
         
+
         [SerializeField]
         public string? SetLobbyState422ApplicationJSONString { get; set; }
         
@@ -46,5 +60,4 @@ namespace HathoraCloud.Models.Operations
             }
         }
     }
-    
 }

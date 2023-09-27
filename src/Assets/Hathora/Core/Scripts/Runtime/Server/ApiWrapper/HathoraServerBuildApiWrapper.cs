@@ -7,11 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
 using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
-using HathoraCloud.Utils;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
@@ -54,15 +52,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(CreateBuildAsync)}]";
             
             // Prep request
-            HathoraCloud.Models.Shared.CreateBuildRequest createBuildRequest = new()
+            CreateBuildParams createBuildParmas = new()
             {
                 BuildTag = _buildTag,
             };
             
-            HathoraCloud.Models.Operations.CreateBuildRequest createBuildRequestWrapper = new()
+            CreateBuildRequest createBuildRequestWrapper = new()
             {
                 AppId = base.AppId,
-                CreateBuildRequestValue = createBuildRequest,
+                CreateBuildParams = createBuildParmas,
             };
             
             // Get response async =>
@@ -70,9 +68,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                createCloudBuildResponse = await BuildApi.CreateBuildAsync(
-                    new CreateBuildSecurity { HathoraDevToken = base.HathoraDevToken },
-                    createBuildRequestWrapper);
+                createCloudBuildResponse = await BuildApi.CreateBuildAsync(createBuildRequestWrapper);
             }
             catch (Exception e)
             {
@@ -117,7 +113,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             RunBuildRequest runBuildRequestWrapper = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 BuildId = _buildId,
                 RequestBody = runBuildRequest,
             };
@@ -138,10 +133,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     FileAccess.Read);
 
                 runBuildRequestWrapper.RequestBody.File.Content = toByteArray(fileStream);
-
-                runBuildResponse = await BuildApi.RunBuildAsync(
-                    new RunBuildSecurity { HathoraDevToken = base.HathoraDevToken },
-                    runBuildRequestWrapper);
+                runBuildResponse = await BuildApi.RunBuildAsync(runBuildRequestWrapper);
 
                 // stream = runBuildResponse.RunBuild200TextPlainByteString; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
                 uploading = true;
@@ -234,7 +226,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Prepare request
             GetBuildInfoRequest getBuildInfoRequest = new()
             {
-                AppId = base.AppId, // TODO: SDK already has Config via constructor - redundant
                 BuildId = _buildId,
             };
             
@@ -243,9 +234,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             
             try
             {
-                getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(
-                    new GetBuildInfoSecurity { HathoraDevToken = base.HathoraDevToken },
-                    getBuildInfoRequest);
+                getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(getBuildInfoRequest);
             }
             catch (Exception e)
             {

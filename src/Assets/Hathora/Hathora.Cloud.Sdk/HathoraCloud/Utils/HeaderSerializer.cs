@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-using System.Linq;
-using UnityEngine;
-
 namespace HathoraCloud.Utils
 {
     using System.Collections;
@@ -28,21 +25,7 @@ namespace HathoraCloud.Utils
             }
 
             var props = request.GetType().GetProperties();
-            
-            
-            #region CLIENT AUTH TOKEN WORKAROUND --Dylan
-            bool isRequestProp = props.Any(p => p.Name.Contains("Request"));
-            if (isRequestProp && !string.IsNullOrEmpty(SDKConfig.ClientAuthToken))
-            {
-                Debug.Log("[HathoraSdk.HeaderSerializer.PopulateHeaders] <color=orange>(!) SDK WORKAROUND: " +
-                    "Adding Bearer Token header to Request from temporary `SDKConfig.ClientAuthToken` --Dylan</color>");
-                
-                // (!) Clients do NOT use "Bearer" tokens (that's the Server dev token); they use AuthToken (!prefix) >>
-                httpRequest.SetRequestHeader("Authorization", SDKConfig.ClientAuthToken);
-            }
-            #endregion // CLIENT AUTH TOKEN WORKAROUND --Dylan
 
-            
             foreach (var prop in props)
             {
                 var val = prop.GetValue(request);

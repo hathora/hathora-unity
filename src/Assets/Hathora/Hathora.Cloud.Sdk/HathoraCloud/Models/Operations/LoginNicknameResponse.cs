@@ -15,25 +15,38 @@ namespace HathoraCloud.Models.Operations
     using UnityEngine.Networking;
     using UnityEngine;
     
-    
     [Serializable]
     public class LoginNicknameResponse: IDisposable
     {
+
+        /// <summary>
+        /// HTTP response content type for this operation
+        /// </summary>
         [SerializeField]
         public string? ContentType { get; set; } = default!;
         
+
         [SerializeField]
         public string? LoginNickname404ApplicationJSONString { get; set; }
         
+
         /// <summary>
         /// Ok
         /// </summary>
         [SerializeField]
         public LoginResponse? LoginResponse { get; set; }
         
+
+        /// <summary>
+        /// HTTP response status code for this operation
+        /// </summary>
         [SerializeField]
         public int StatusCode { get; set; } = default!;
         
+
+        /// <summary>
+        /// Raw HTTP response; suitable for custom response parsing
+        /// </summary>
         [SerializeField]
         public UnityWebRequest? RawResponse { get; set; }
         
@@ -43,5 +56,4 @@ namespace HathoraCloud.Models.Operations
             }
         }
     }
-    
 }

@@ -19,21 +19,47 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations that allow you create and manage your &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#build&quot;&gt;builds&lt;/a&gt;.
+    /// </summary>
     public interface IBuildV1SDK
     {
-        Task<CreateBuildResponse> CreateBuildAsync(CreateBuildSecurity security, Models.Operations.CreateBuildRequest request);
-        Task<DeleteBuildResponse> DeleteBuildAsync(DeleteBuildSecurity security, DeleteBuildRequest? request = null);
-        Task<GetBuildInfoResponse> GetBuildInfoAsync(GetBuildInfoSecurity security, GetBuildInfoRequest? request = null);
-        Task<GetBuildsResponse> GetBuildsAsync(GetBuildsSecurity security, GetBuildsRequest? request = null);
-        Task<RunBuildResponse> RunBuildAsync(RunBuildSecurity security, RunBuildRequest request);
+
+        /// <summary>
+        /// Creates a new <a href="https://hathora.dev/docs/concepts/hathora-entities#build">build</a>. Responds with a `buildId` that you must pass to <a href="">`RunBuild()`</a> to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
+        /// </summary>
+        Task<CreateBuildResponse> CreateBuildAsync(CreateBuildRequest request);
+
+        /// <summary>
+        /// Delete a <a href="https://hathora.dev/docs/concepts/hathora-entities#build">build</a>. All associated metadata is deleted.
+        /// </summary>
+        Task<DeleteBuildResponse> DeleteBuildAsync(DeleteBuildRequest? request = null);
+
+        /// <summary>
+        /// Get details for a <a href="https://hathora.dev/docs/concepts/hathora-entities#build">build</a>.
+        /// </summary>
+        Task<GetBuildInfoResponse> GetBuildInfoAsync(GetBuildInfoRequest? request = null);
+
+        /// <summary>
+        /// Returns an array of <a href="https://hathora.dev/docs/concepts/hathora-entities#build">builds</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>.
+        /// </summary>
+        Task<GetBuildsResponse> GetBuildsAsync(GetBuildsRequest? request = null);
+
+        /// <summary>
+        /// Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from <a href="">`CreateBuild()`</a>.
+        /// </summary>
+        Task<RunBuildResponse> RunBuildAsync(RunBuildRequest request);
     }
 
+    /// <summary>
+    /// Operations that allow you create and manage your &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#build&quot;&gt;builds&lt;/a&gt;.
+    /// </summary>
     public class BuildV1SDK: IBuildV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.112.0";
+        private const string _sdkVersion = "0.15.0";
+        private const string _sdkGenVersion = "2.129.1";
         private const string _openapiDocVersion = "0.0.1";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
@@ -48,10 +74,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
-        /// </summary>
-        public async Task<CreateBuildResponse> CreateBuildAsync(CreateBuildSecurity security, Models.Operations.CreateBuildRequest request)
+        public async Task<CreateBuildResponse> CreateBuildAsync(CreateBuildRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -67,7 +90,7 @@ namespace HathoraCloud
             httpRequest.downloadHandler = downloadHandler;
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
-            var serializedBody = RequestBodySerializer.Serialize(request, "CreateBuildRequestValue", "json");
+            var serializedBody = RequestBodySerializer.Serialize(request, "CreateBuildParams", "json");
             if (serializedBody == null) 
             {
                 throw new ArgumentNullException("request body is required");
@@ -78,7 +101,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -102,7 +125,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Build = JsonConvert.DeserializeObject<Build>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Build = JsonConvert.DeserializeObject<Build>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -129,10 +152,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
-        /// </summary>
-        public async Task<DeleteBuildResponse> DeleteBuildAsync(DeleteBuildSecurity security, DeleteBuildRequest? request = null)
+        public async Task<DeleteBuildResponse> DeleteBuildAsync(DeleteBuildRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -149,7 +169,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -205,10 +225,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
-        /// </summary>
-        public async Task<GetBuildInfoResponse> GetBuildInfoAsync(GetBuildInfoSecurity security, GetBuildInfoRequest? request = null)
+        public async Task<GetBuildInfoResponse> GetBuildInfoAsync(GetBuildInfoRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -225,7 +242,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -249,7 +266,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Build = JsonConvert.DeserializeObject<Build>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Build = JsonConvert.DeserializeObject<Build>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -267,10 +284,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-        /// </summary>
-        public async Task<GetBuildsResponse> GetBuildsAsync(GetBuildsSecurity security, GetBuildsRequest? request = null)
+        public async Task<GetBuildsResponse> GetBuildsAsync(GetBuildsRequest? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -287,7 +301,7 @@ namespace HathoraCloud
             httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
             
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -311,7 +325,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.Builds = JsonConvert.DeserializeObject<List<Build>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter() }});
+                    response.Builds = JsonConvert.DeserializeObject<List<Build>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -329,10 +343,7 @@ namespace HathoraCloud
         }
         
 
-        /// <summary>
-        /// Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
-        /// </summary>
-        public async Task<RunBuildResponse> RunBuildAsync(RunBuildSecurity security, RunBuildRequest request)
+        public async Task<RunBuildResponse> RunBuildAsync(RunBuildRequest request)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -359,7 +370,7 @@ namespace HathoraCloud
                 httpRequest.SetRequestHeader("Content-Type", serializedBody.ContentType);
             }
             
-            var client = SecuritySerializer.Apply(_defaultClient, security);
+            var client = _securityClient;
             
             var httpResponse = await client.SendAsync(httpRequest);
             switch (httpResponse.result)
@@ -374,7 +385,6 @@ namespace HathoraCloud
 
             // var contentType = httpResponse.GetResponseHeader("Content-Type"); // bug(SOA): Fixes contentType --Dylan
             var contentType = "text/plain";
-            
             var response = new RunBuildResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
