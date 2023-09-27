@@ -3,7 +3,7 @@
 using Hathora.Demos.Shared.Scripts.Common;
 using UnityEngine;
 
-namespace Hathora.Demos.Boilerplate.Scripts
+namespace HathoraBoiler.Scripts
 {
     /// <summary>
     /// Acts as the liason between NetworkManager and HathoraClientMgr.
