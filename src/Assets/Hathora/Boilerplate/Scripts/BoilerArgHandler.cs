@@ -1,19 +1,229 @@
 // Created by dylan@hathora.dev
 
-using Hathora.Demos.Shared.Scripts.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace Hathora.Demos.Boilerplate.Scripts
+namespace HathoraBoiler.Scripts
 {
-    public class BoilerArgHandler : HathoraArgHandlerBase
+    /// <summary>
+    /// Commandline helper - run via `YourBuild.exe -mode {server|client|host}`.
+    /// (!) `-scene` is loaded / awaited before any other cmd.
+    /// Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
+    /// </summary>
+    public class BoilerArgHandler
     {
-        protected override void Awake() {}
-        protected override void Start() {}
+        #region vars
+        private static bool _sceneArgConsumed = false;
         
-        protected override void ArgModeStartServer()
+        /// <summary>We only trigger this once</summary>
+        public static bool SceneArgConsumed
         {
-            base.ArgModeStartServer();
+            get => _sceneArgConsumed;
+            set 
+            {
+                if (value)
+                    Debug.Log($"[BoilerArgHandler] SceneArgConsumed @ " +
+                        SceneManager.GetActiveScene().name);
+                
+                _sceneArgConsumed = value;
+            }
+        }
+        
+        private static bool _modeArgConsumed;
+        
+        /// <summary>We only trigger this once</summary>
+        public static bool ModeArgConsumed
+        {
+            get => _modeArgConsumed;
+            set 
+            {
+                if (value)
+                    Debug.Log($"[BoilerArgHandler] ModeArgConsumed @ {SceneManager.GetActiveScene().name}");
+                
+                _modeArgConsumed = value;
+            }
+        }
+        #endregion // vars
 
+
+        #region Init
+        private void Awake() {}
+        private async void Start() => await InitArgsAsync();
+        
+        /// <summary>
+        /// (!) Some args like `-scene` and `-mode` are statically consumed only once
+        /// (eg: reloading the scene won't apply them).</summary>
+        private async Task InitArgsAsync()
+        {
+            string logPrefix = $"[BoilerArgHandler.{nameof(InitArgsAsync)}]";
+            
+            Dictionary<string, string> args = GetCommandlineArgs();
+            string argsStr = string.Join(" ", args.Select(kvp => $"{kvp.Key} {kvp.Value}"));
+            Debug.Log($"{logPrefix} Handling args: `{argsStr}`");
+
+            try
+            {
+                // -scene {string} // Load scene by name
+                bool hasSceneArg = args.TryGetValue("-scene", out string sceneName) && !string.IsNullOrEmpty(sceneName); 
+                    
+                if (!Application.isEditor)
+                    Debug.Log($"{logPrefix} Has `-scene` arg? {hasSceneArg}");
+                    
+                if (hasSceneArg)
+                    await InitArgScene(sceneName);
+            
+                // -----------------
+                // -_mode {server|client|host} // Logs and start netcode
+                bool hasModeArg = args.TryGetValue("-mode", out string mode) && !string.IsNullOrEmpty(mode);
+                
+                if (!Application.isEditor)
+                    Debug.Log($"{logPrefix} Has `-mode` arg? {hasModeArg}");
+                
+                if (hasModeArg)
+                    InitArgMode(mode);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[BoilerArgHandler.InitArgsAsync] Error: {e.Message}");
+                throw;
+            }
+        }
+        
+        private async Task InitArgScene(string _sceneName)
+        {
+            Debug.Log($"[BoilerArgHandler] InitArgScene: {_sceneName}");
+
+            // Get current scene name
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName == _sceneName)
+            {
+                _sceneArgConsumed = true;
+                return; // We're already in this scene
+            }
+
+            if (SceneArgConsumed)
+            {
+                Debug.LogWarning("[BoilerArgHandler.InitMode] SceneArgConsumed, already");
+                return;
+            }
+
+            try
+            {
+                await loadSceneOnceFromArgAsync(_sceneName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[BoilerArgHandler.InitArgScene] Error: {e}");
+                throw;
+            }
+        }
+        #endregion // Init
+
+        
+        /// <summary>
+        /// After using this once, you won't be able to do it again
+        /// (to prevent multiple arg handling stack overflows).
+        /// 
+        /// Mostly used for args or initial scene selection.
+        /// </summary>
+        /// <param name="_sceneName">CLI Arg passed from `-scene {sceneName}`.</param>
+        private static async Task loadSceneOnceFromArgAsync(string _sceneName)
+        {
+            string logPrefix = $"[BoilerArgHandler.{nameof(loadSceneOnceFromArgAsync)}]";
+            Debug.Log($"{logPrefix} sceneName: {_sceneName}");
+
+            if (SceneArgConsumed)
+            {
+                Debug.LogWarning($"{logPrefix} LoadSceneOnceAsync already consumed! Aborting.");
+                return;
+            }
+
+            SceneArgConsumed = true;
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(
+                _sceneName, 
+                LoadSceneMode.Single);
+
+            while (!asyncLoad.isDone)
+                await Task.Yield();
+        }
+        
+        /// <summary>
+        /// - "server" -> StartServer()
+        /// - "client" -> StartClient()
+        /// - "host" -> StartHost() // server+client together
+        /// </summary>
+        private void InitArgMode(string _mode)
+        {
+            Debug.Log($"[BoilerArgHandler] InitArgMode: {_mode}");
+
+            if (ModeArgConsumed)
+            {
+                Debug.LogWarning("[BoilerArgHandler.InitMode] ModeArgConsumed, already");
+                return;
+            }
+            
+            Debug.Log($"[BoilerArgHandler.InitMode] {_mode}");
+            ModeArgConsumed = true;
+
+            switch (_mode)
+            {
+                case "server":
+                    ArgModeStartServer();
+                    break;
+                
+                case "client":
+                    ArgModeStartClient();
+                    break;
+                
+                case "host":
+                    ArgModeStartHost();
+                    break;
+            }
+        }
+
+        
+        #region Utils
+        private static Dictionary<string, string> GetCommandlineArgs()
+        {
+            Dictionary<string, string> argDictionary = new();
+
+            string[] args = System.Environment.GetCommandLineArgs();
+
+            for (int i = 0; i < args.Length; ++i)
+            {
+                string arg = args[i].ToLower();
+
+                if (!arg.StartsWith("-"))
+                    continue;
+                
+                string value = i < args.Length - 1 
+                    ? args[i + 1].ToLower() 
+                    : null;
+                
+                value = value?.StartsWith("-") ?? false 
+                    ? null 
+                    : value;
+
+                argDictionary.Add(arg, value);
+            }
+            return argDictionary;
+        }
+        
+        void OnDisable()
+        {
+            // Static vars may persist between Editor play sessions. 
+            _sceneArgConsumed = false;
+            _modeArgConsumed = false;
+        }
+        #endregion // Utils
+        
+        
+        private void ArgModeStartServer()
+        {
             bool alreadyStartedServer = false; // TODO: Check your NetworkManager to ensure it's not already started
             if (alreadyStartedServer)
                 return;
@@ -22,10 +232,8 @@ namespace Hathora.Demos.Boilerplate.Scripts
             // NetworkManager.Instance.StartServer(); // TODO
         }
 
-        protected override void ArgModeStartClient()
+        private void ArgModeStartClient()
         {
-            base.ArgModeStartClient();
-
             bool alreadyStartedClient = false; // TODO: Check your NetworkManager to ensure it's not already started
             if (alreadyStartedClient)
                 return;
@@ -34,10 +242,8 @@ namespace Hathora.Demos.Boilerplate.Scripts
             // NetworkManager.Instance.StartClient(); // TODO
         }
 
-        protected override void ArgModeStartHost()
+        private void ArgModeStartHost()
         {
-            base.ArgModeStartHost();
-            
             bool alreadyStartedClientOrServer = false; // TODO: Check your NetworkManager to ensure it's not already started
             if (alreadyStartedClientOrServer)
                 return;
