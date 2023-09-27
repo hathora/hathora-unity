@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 {
     /// <summary>
-    /// Commandline helper - run via `-mode {server|client|host}`
+    /// Commandline helper - run via `YourBuild.exe -mode {server|client|host}`
     /// </summary>
     public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
