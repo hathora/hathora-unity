@@ -256,7 +256,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             
             SaveConfigChange(
                 nameof(ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken), 
-                _inputStr);
+                _inputStr,
+                _skipLog: true); // Don't log secrets
 
             bool keyDeleted = string.IsNullOrEmpty(_inputStr); 
             if (keyDeleted)
