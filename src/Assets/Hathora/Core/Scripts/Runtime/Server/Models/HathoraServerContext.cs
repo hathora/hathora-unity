@@ -24,7 +24,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         #region Vars
         public string EnvVarProcessId { get; private set; }
         public Process ProcessInfo { get; set; }
-        public Lobby Lobby { get; set; }
+        public LobbyV3 Lobby { get; set; }
         public List<RoomWithoutAllocations> ActiveRoomsForProcess { get; set; }
         #endregion // Vars
         
@@ -92,37 +92,29 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             (!_expectingLobby || Lobby != null);
 
         /// <summary>
-        /// You probably want to parse the InitialConfig to your own model.
+        /// Parse the RoomConfig
         /// </summary>
-        /// <typeparam name="TInitConfig"></typeparam>
+        /// <typeparam name="TRoomConfig">You probably want to parse the RoomConfig to your own model.</typeparam>
         /// <returns></returns>
-        public TInitConfig GetLobbyInitConfig<TInitConfig>()
+        public TRoomConfig ParseRoomConfig<TRoomConfig>()
         {
-            string logPrefix = $"[{nameof(HathoraServerContext)}.{nameof(GetLobbyInitConfig)}]";
+            string logPrefix = $"[{nameof(HathoraServerContext)}.{nameof(ParseRoomConfig)}]";
 
-            object initConfigObj = Lobby?.InitialConfig;
-            if (initConfigObj == null)
+            string roomConfigJsonStr = Lobby?.RoomConfig;
+            if (string.IsNullOrEmpty(roomConfigJsonStr))
             {
-                Debug.LogError($"{logPrefix} !initConfigObj");
+                Debug.LogError($"{logPrefix} !{nameof(roomConfigJsonStr)}");
                 return default;
             }
 
             try
             {
-                string jsonString = initConfigObj as string;
-                
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    Debug.LogError($"{logPrefix} !jsonString");
-                    return default;
-                }
-                
-                TInitConfig initConfigParsed = JsonConvert.DeserializeObject<TInitConfig>(jsonString);
+                TRoomConfig initConfigParsed = JsonConvert.DeserializeObject<TRoomConfig>(roomConfigJsonStr);
                 return initConfigParsed;
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} Error parsing initConfigObj: {e}");
+                Debug.LogError($"{logPrefix} Error parsing {nameof(roomConfigJsonStr)}: {e}");
                 throw;
             }
         }
@@ -139,7 +131,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             string _envVarProcessId,
             Process _processInfo,
             List<RoomWithoutAllocations> _activeRoomsForProcess,
-            Lobby _lobby)
+            LobbyV3 _lobby)
         {
             this.EnvVarProcessId = _envVarProcessId;
             this.ProcessInfo = _processInfo;

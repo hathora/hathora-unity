@@ -1,4 +1,5 @@
 # RoomV1
+(*RoomV1*)
 
 ### Available Operations
 
@@ -30,7 +31,7 @@ var sdk = new HathoraCloudSDK(
 
 using(var res = await sdk.RoomV1.CreateRoomDeprecatedAsync(new CreateRoomDeprecatedRequest() {
         CreateRoomParams = new CreateRoomParams() {
-            Region = HathoraCloud.Models.Shared.Region.London,
+            Region = HathoraCloud.Models.Shared.Region.Sydney,
             RoomConfig = "{\"name\":\"my-room\"}",
         },
         RoomId = "2swovpy1fnunu",

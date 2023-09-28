@@ -86,7 +86,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         /// <summary>ClientMgr callback</summary>
         /// <param name="_lobbies"></param>
-        protected virtual async void OnGetActivePublicLobbiesDone(List<Lobby> _lobbies)
+        protected virtual async void OnGetActivePublicLobbiesDone(List<LobbyV3> _lobbies)
         {
             sdkDemoUi.ViewLobbiesSeeLogsFadeTxt.text = "See Logs";
 
@@ -100,7 +100,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
                 throw;
             }
             
-            foreach (Lobby lobby in _lobbies)
+            foreach (LobbyV3 lobby in _lobbies)
             {
                 Debug.Log($"[NetPlayerUI] OnViewLobbies - lobby found: " +
                     $"RoomId={lobby.RoomId}, CreatedAt={lobby.CreatedAt}, CreatedBy={lobby.CreatedBy}");
@@ -112,7 +112,7 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
 
         /// <summary>ClientMgr callback</summary>
         /// <param name="_lobby"></param>
-        protected virtual void OnCreateLobbyDone(Lobby _lobby)
+        protected virtual void OnCreateLobbyDone(LobbyV3 _lobby)
         {
             if (_lobby == null)
                 OnCreatedOrJoinedLobbyFail();
