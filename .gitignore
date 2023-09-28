@@ -93,4 +93,7 @@ utils/mono_crash.mem.*.blob
 /Assets
 src/Dockerfile
 
+# Misc
 .DS_Store
+*.csproj.meta
+*.sln.meta
