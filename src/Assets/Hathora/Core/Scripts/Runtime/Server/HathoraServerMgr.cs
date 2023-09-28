@@ -373,6 +373,8 @@ namespace Hathora.Core.Scripts.Runtime.Server
 			
             // ----------------
             // We have Room info, but we *may* need Lobby: Get from RoomId =>
+            // TODO: This may soon change, where Room info may include Lobby info.
+            // TODO: When implemented, remove this block (minus validation).
             LobbyV3 lobby = null;
             try
             {
