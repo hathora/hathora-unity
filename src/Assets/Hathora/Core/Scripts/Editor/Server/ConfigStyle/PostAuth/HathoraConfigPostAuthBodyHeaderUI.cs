@@ -291,8 +291,17 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             HathoraServerAppApiWrapper appApiWrapper = new(
                 new HathoraCloudSDK(security, ServerConfig.HathoraCoreOpts.AppId), 
                 ServerConfig);
-            
-            List<ApplicationWithDeployment> apps = await appApiWrapper.GetAppsAsync();
+
+            List<ApplicationWithDeployment> apps = null;
+            apps = await appApiWrapper.GetAppsAsync();
+
+            if (apps == null)
+            {
+                Debug.LogError($"{logPrefix} !apps - Wiping dev token");
+                onDevTokenChanged(string.Empty);
+                isRefreshingExistingApps = false;
+                return;
+            }
             
             // TODO: SDK models should be serializable (instead of using a wrapper)
             List<ApplicationWithDeploymentSerializable> appsSerializable = apps.ConvertAll(app =>
