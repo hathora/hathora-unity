@@ -60,7 +60,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         
         /// <summary>Direct SDK access: Inits with info from `HathoraClientConfig`</summary>
         public HathoraCloudSDK HathoraSdk { get; private set; }
-
+        
 
         #region Public Events
         /// <summary>Event triggers when auth is done (check isSuccess)</summary>
