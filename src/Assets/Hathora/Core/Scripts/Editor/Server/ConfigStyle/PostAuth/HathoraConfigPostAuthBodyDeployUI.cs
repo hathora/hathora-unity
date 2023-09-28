@@ -23,6 +23,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         
         // Foldouts
         private bool isDeploymentFoldout;
+        
+        /// <summary>For state persistence on which dropdown group was last clicked</summary>
+        protected const string SERVER_DEPLOY_SETTINGS_FOLDOUT_STATE_KEY = "ServerDeploySettingsFoldoutState";
         #endregion // Vars
 
 
@@ -62,9 +65,20 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertDeploymentSettingsFoldout()
         {
+            // Retrieve the saved foldout state from EditorPrefs
+            isDeploymentFoldout = EditorPrefs.GetBool(
+                SERVER_DEPLOY_SETTINGS_FOLDOUT_STATE_KEY, 
+                defaultValue: false);
+            
+            // Create the foldout
             isDeploymentFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
                 isDeploymentFoldout, 
                 "Hathora Deployment Configuration");
+            
+            // Save the new foldout state to EditorPrefs
+            EditorPrefs.SetBool(
+                SERVER_DEPLOY_SETTINGS_FOLDOUT_STATE_KEY, 
+                isDeploymentFoldout);
             
             if (!isDeploymentFoldout)
             {
