@@ -106,7 +106,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             GUILayout.BeginHorizontal();
             
             insertExistingAppsPopupList(); // This actually drops down, despite the name
-            insertExistingAppsRefreshBtn(); // !await
+            _ = insertExistingAppsRefreshBtn(); // !await
             
             GUILayout.EndHorizontal(); 
             EditorGUI.EndDisabledGroup();
@@ -151,7 +151,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 "Select an application to use</color>", LeftAlignLabelStyle);
         } 
 
-        private void insertExistingAppsRefreshBtn()
+        private async Task insertExistingAppsRefreshBtn()
         {
             bool recentlyAuthed = ServerConfig.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed;
             bool disableBtn = isRefreshingExistingApps || recentlyAuthed;
@@ -168,7 +168,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (clickedAppRefreshBtn || recentlyAuthed)
             {
                 // TODO: Replace disabled btn with a separate cancel btn
-                onRefreshAppsListBtnClick();
+                await onRefreshAppsListBtnClick();
                 ServerConfig.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = false;
             }
         }
@@ -281,7 +281,9 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         
         private async Task onRefreshAppsListBtnClick()
         {
-            Debug.Log("[HathoraConfigPostAuthBodyHeaderUI] onRefreshAppsListBtnClick");   
+            string logPrefix = $"[HathoraConfigPostAuthBodyHeaderUI.{nameof(onRefreshAppsListBtnClick)}"; 
+            Debug.Log($"{logPrefix} Start");
+            
             isRefreshingExistingApps = true;
             
             Security security = new()
@@ -315,7 +317,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             }
             catch (Exception e)
             {
-                Debug.LogError("Error setting " +
+                Debug.LogError($"{logPrefix} Error setting " +
                     $"{nameof(ServerConfig.HathoraCoreOpts.ExistingAppsWithDeploymentSerializable)}: {e}");
                 throw;
             }
@@ -325,9 +327,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 ServerConfig.HathoraCoreOpts.ExistingAppsSelectedIndex < apps.Count;
 
             if (!hasSelectedApp && apps.Count > 0)
-            {
                 setSelectedApp(0);
-            }
 
             isRefreshingExistingApps = false;
         }
