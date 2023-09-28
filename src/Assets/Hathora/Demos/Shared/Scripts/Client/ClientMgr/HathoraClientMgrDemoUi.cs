@@ -214,13 +214,13 @@ namespace Hathora.Demos.Shared.Scripts.Client.ClientMgr
         {
             setShowLobbyTxt("<color=yellow>Creating Lobby...</color>");
 
-            InitConfigExample initConfig = new(); // gameMode = 0
+            RoomConfigExample roomConfig = new(); // gameMode = 0
             const Region region = HathoraUtils.DEFAULT_REGION;
 
             try
             {
                 await ClientMgr.CreateLobbyAsync(
-                    initConfig, 
+                    roomConfig, 
                     region, // TODO: Get from UI
                     _roomId: null,
                     LobbyVisibility.Public); // TODO: Get from UI

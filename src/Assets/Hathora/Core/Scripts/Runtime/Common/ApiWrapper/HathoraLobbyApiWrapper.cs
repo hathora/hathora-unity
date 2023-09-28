@@ -44,7 +44,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         /// Pass your own serializable model (or json string):
         /// - These are the initial values included in the Lobby.
         /// - Eg: `MaxNumPlayers`
-        /// - Required, since a 'Lobby' without an InitConfig is just a 'Room'. 
+        /// - Required, since a 'Lobby' without an RoomConfig is just a 'Room'. 
         /// </param>
         /// <param name="_roomId">Null will auto-generate</param>
         /// <param name="_cancelToken"></param>

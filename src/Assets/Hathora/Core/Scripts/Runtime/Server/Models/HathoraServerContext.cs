@@ -91,10 +91,10 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             FirstActiveRoomForProcess != null &&
             (!_expectingLobby || Lobby != null);
 
-        /// <summary>
-        /// Parse the RoomConfig
-        /// </summary>
-        /// <typeparam name="TRoomConfig">You probably want to parse the RoomConfig to your own model.</typeparam>
+        /// <summary>Parse the RoomConfig into your own model.</summary>
+        /// <typeparam name="TRoomConfig">
+        /// Your serializable model; the same model passed when the room was created. 
+        /// </typeparam>
         /// <returns></returns>
         public TRoomConfig ParseRoomConfig<TRoomConfig>()
         {
@@ -109,8 +109,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
 
             try
             {
-                TRoomConfig initConfigParsed = JsonConvert.DeserializeObject<TRoomConfig>(roomConfigJsonStr);
-                return initConfigParsed;
+                TRoomConfig parsedRoomConfig = JsonConvert.DeserializeObject<TRoomConfig>(roomConfigJsonStr);
+                return parsedRoomConfig;
             }
             catch (Exception e)
             {

@@ -169,7 +169,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// </summary>
         /// <param name="_region">Leaving null will pass `HathoraUtils.DEFAULT_REGION`</param>
         /// <param name="_visibility"></param>
-        /// <param name="_initConfigObj">
+        /// <param name="_roomConfigSerializable">
         /// Pass your own model OR stringified json, minimally "{}"
         /// </param>
         /// <param name="_roomId">
@@ -177,7 +177,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// </param>
         /// <param name="_cancelToken"></param>
         public async Task<LobbyV3> CreateLobbyAsync(
-            object _initConfigObj,
+            object _roomConfigSerializable,
             Region _region = HathoraUtils.DEFAULT_REGION,
             string _roomId = null,
             LobbyVisibility _visibility = LobbyVisibility.Public,
@@ -188,7 +188,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
 
             LobbyV3 lobby = await apis.LobbyApiWrapper.CreateLobbyAsync(
                 hathoraClientSession.PlayerAuthToken,
-                _initConfigObj,
+                _roomConfigSerializable,
                 _region,
                 _visibility,
                 _roomId,
