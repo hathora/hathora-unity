@@ -10,6 +10,7 @@
 #nullable enable
 namespace HathoraCloud.Models.Operations
 {
+    using HathoraCloud.Models.Shared;
     using HathoraCloud.Utils;
     using System;
     using UnityEngine;
@@ -20,7 +21,7 @@ namespace HathoraCloud.Models.Operations
 
         [SerializeField]
         [SpeakeasyMetadata("request:mediaType=application/json")]
-        public string RequestBody { get; set; } = default!;
+        public UpdateRoomConfigParams UpdateRoomConfigParams { get; set; } = default!;
         
 
         [SerializeField]

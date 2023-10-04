@@ -1,6 +1,10 @@
 # RoomV1
 (*RoomV1*)
 
+## Overview
+
+Deprecated. Use RoomV2.
+
 ### Available Operations
 
 * [~~CreateRoomDeprecated~~](#createroomdeprecated) - :warning: **Deprecated**
@@ -31,7 +35,7 @@ var sdk = new HathoraCloudSDK(
 
 using(var res = await sdk.RoomV1.CreateRoomDeprecatedAsync(new CreateRoomDeprecatedRequest() {
         CreateRoomParams = new CreateRoomParams() {
-            Region = HathoraCloud.Models.Shared.Region.Sydney,
+            Region = HathoraCloud.Models.Shared.Region.Chicago,
             RoomConfig = "{\"name\":\"my-room\"}",
         },
         RoomId = "2swovpy1fnunu",

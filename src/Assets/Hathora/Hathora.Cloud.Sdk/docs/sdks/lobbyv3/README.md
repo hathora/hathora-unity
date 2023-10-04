@@ -1,16 +1,20 @@
 # LobbyV3
 (*LobbyV3*)
 
+## Overview
+
+Operations to create and manage lobbies using our [Lobby Service](https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service).
+
 ### Available Operations
 
-* [CreateLobby](#createlobby) - Create a new [lobby](https://hathora.dev/docs/concepts/hathora-entities#lobby) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
-* [GetLobbyInfoByRoomId](#getlobbyinfobyroomid) - Get details for an existing [lobby](https://hathora.dev/docs/concepts/hathora-entities#lobby) using `appId` and `roomId`.
-* [GetLobbyInfoByShortCode](#getlobbyinfobyshortcode) - Get details for an existing [lobby](https://hathora.dev/docs/concepts/hathora-entities#lobby) using `appId` and `roomId`.
-* [ListActivePublicLobbies](#listactivepubliclobbies) - Get all active [lobbies](https://hathora.dev/docs/concepts/hathora-entities#lobby) for a given [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Filter the array by optionally passing in a `region`.
+* [CreateLobby](#createlobby) - Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retreiving a list of public lobbies to display to players.
+* [GetLobbyInfoByRoomId](#getlobbyinfobyroomid) - Get details for a lobby.
+* [GetLobbyInfoByShortCode](#getlobbyinfobyshortcode) - Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then the most recently created lobby will be returned.
+* [ListActivePublicLobbies](#listactivepubliclobbies) - Get all active lobbies for a given [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
 
 ## CreateLobby
 
-Create a new [lobby](https://hathora.dev/docs/concepts/hathora-entities#lobby) for an existing [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`.
+Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retreiving a list of public lobbies to display to players.
 
 ### Example Usage
 
@@ -27,7 +31,7 @@ using(var res = await sdk.LobbyV3.CreateLobbyAsync(new CreateLobbySecurity() {
         PlayerAuth = "",
     }, new CreateLobbyRequest() {
         CreateLobbyV3Params = new CreateLobbyV3Params() {
-            Region = HathoraCloud.Models.Shared.Region.Chicago,
+            Region = HathoraCloud.Models.Shared.Region.Seattle,
             RoomConfig = "{\"name\":\"my-room\"}",
             Visibility = HathoraCloud.Models.Shared.LobbyVisibility.Private,
         },
@@ -53,7 +57,7 @@ using(var res = await sdk.LobbyV3.CreateLobbyAsync(new CreateLobbySecurity() {
 
 ## GetLobbyInfoByRoomId
 
-Get details for an existing [lobby](https://hathora.dev/docs/concepts/hathora-entities#lobby) using `appId` and `roomId`.
+Get details for a lobby.
 
 ### Example Usage
 
@@ -91,7 +95,7 @@ using(var res = await sdk.LobbyV3.GetLobbyInfoByRoomIdAsync(new GetLobbyInfoByRo
 
 ## GetLobbyInfoByShortCode
 
-Get details for an existing [lobby](https://hathora.dev/docs/concepts/hathora-entities#lobby) using `appId` and `roomId`.
+Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then the most recently created lobby will be returned.
 
 ### Example Usage
 
@@ -129,7 +133,7 @@ using(var res = await sdk.LobbyV3.GetLobbyInfoByShortCodeAsync(new GetLobbyInfoB
 
 ## ListActivePublicLobbies
 
-Get all active [lobbies](https://hathora.dev/docs/concepts/hathora-entities#lobby) for a given [application](https://hathora.dev/docs/concepts/hathora-entities#application) using `appId`. Filter the array by optionally passing in a `region`.
+Get all active lobbies for a given [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
 
 ### Example Usage
 
@@ -146,7 +150,7 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV3.ListActivePublicLobbiesAsync(new ListActivePublicLobbiesRequest() {
-        Region = HathoraCloud.Models.Shared.Region.London,
+        Region = HathoraCloud.Models.Shared.Region.Seattle,
     }))
 {
     // handle response

@@ -19,37 +19,44 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations to create and manage lobbies using our <a href="https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service">Lobby Service</a>.
+    /// </summary>
     public interface ILobbyV3SDK
     {
 
         /// <summary>
-        /// Create a new <a href="https://hathora.dev/docs/concepts/hathora-entities#lobby">lobby</a> for an existing <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a> using `appId`.
+        /// Create a new lobby for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. A lobby object is a wrapper around a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a> object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retreiving a list of public lobbies to display to players.
         /// </summary>
         Task<CreateLobbyResponse> CreateLobbyAsync(CreateLobbySecurity security, CreateLobbyRequest request);
 
         /// <summary>
-        /// Get details for an existing <a href="https://hathora.dev/docs/concepts/hathora-entities#lobby">lobby</a> using `appId` and `roomId`.
+        /// Get details for a lobby.
         /// </summary>
         Task<GetLobbyInfoByRoomIdResponse> GetLobbyInfoByRoomIdAsync(GetLobbyInfoByRoomIdRequest? request = null);
 
         /// <summary>
-        /// Get details for an existing <a href="https://hathora.dev/docs/concepts/hathora-entities#lobby">lobby</a> using `appId` and `roomId`.
+        /// Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then the most recently created lobby will be returned.
         /// </summary>
         Task<GetLobbyInfoByShortCodeResponse> GetLobbyInfoByShortCodeAsync(GetLobbyInfoByShortCodeRequest? request = null);
 
         /// <summary>
-        /// Get all active <a href="https://hathora.dev/docs/concepts/hathora-entities#lobby">lobbies</a> for a given <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a> using `appId`. Filter the array by optionally passing in a `region`.
+        /// Get all active lobbies for a given <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. Filter the array by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
         /// </summary>
         Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest? request = null);
     }
 
+    /// <summary>
+    /// Operations to create and manage lobbies using our <a href="https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service">Lobby Service</a>.
+    /// </summary>
     public class LobbyV3SDK: ILobbyV3SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
         private const string _sdkVersion = "0.1.0";
-        private const string _sdkGenVersion = "2.131.1";
+        private const string _sdkGenVersion = "2.144.7";
         private const string _openapiDocVersion = "0.0.1";
+        private const string _userAgent = "speakeasy-sdk/unity 0.1.0 2.144.7 0.0.1 hathora-unity-sdk";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
@@ -77,7 +84,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             var serializedBody = RequestBodySerializer.Serialize(request, "CreateLobbyV3Params", "json");
             if (serializedBody == null) 
@@ -192,7 +199,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;
@@ -252,7 +259,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;
@@ -312,7 +319,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;

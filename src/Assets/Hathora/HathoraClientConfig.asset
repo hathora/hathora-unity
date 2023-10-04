@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ed3ff9ba0bb1114a9faee767b0b5b43, type: 3}
   m_Name: HathoraClientConfig
   m_EditorClassIdentifier: 
-  _appId: 
+  _appId: app-a6a9493e-d591-4c2b-996a-8697ba395e09

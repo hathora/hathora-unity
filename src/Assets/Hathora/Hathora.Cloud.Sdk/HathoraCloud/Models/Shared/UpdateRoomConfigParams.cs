@@ -8,28 +8,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace HathoraCloud.Models.Operations
+namespace HathoraCloud.Models.Shared
 {
-    using HathoraCloud.Models.Shared;
-    using HathoraCloud.Utils;
+    using Newtonsoft.Json;
     using System;
     using UnityEngine;
     
     [Serializable]
-    public class ListActivePublicLobbiesRequest
+    public class UpdateRoomConfigParams
     {
 
-        [SerializeField]
-        [SpeakeasyMetadata("pathParam:style=simple,explode=false,name=appId")]
-        public string? AppId { get; set; }
-        
-
         /// <summary>
-        /// If omitted, active public lobbies in all regions will be returned.
+        /// Optional configuration parameters for the room. Can be any string including stringified JSON. It is accessible from the room via <a href="">`GetRoomInfo()`</a>.
         /// </summary>
         [SerializeField]
-        [SpeakeasyMetadata("queryParam:style=form,explode=true,name=region")]
-        public Region? Region { get; set; }
+        [JsonProperty("roomConfig")]
+        public string RoomConfig { get; set; } = default!;
         
     }
 }

@@ -36,7 +36,7 @@ var sdk = new HathoraCloudSDK(
 
 using(var res = await sdk.RoomV2.CreateRoomAsync(new CreateRoomRequest() {
         CreateRoomParams = new CreateRoomParams() {
-            Region = HathoraCloud.Models.Shared.Region.Seattle,
+            Region = HathoraCloud.Models.Shared.Region.Sydney,
             RoomConfig = "{\"name\":\"my-room\"}",
         },
         RoomId = "2swovpy1fnunu",
@@ -303,7 +303,9 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.RoomV2.UpdateRoomConfigAsync(new UpdateRoomConfigRequest() {
-        RequestBody = "{\"name\":\"my-room\"}",
+        UpdateRoomConfigParams = new UpdateRoomConfigParams() {
+            RoomConfig = "{\"name\":\"my-room\"}",
+        },
         RoomId = "2swovpy1fnunu",
     }))
 {

@@ -1,6 +1,10 @@
 # LobbyV1
 (*LobbyV1*)
 
+## Overview
+
+Deprecated. Use LobbyV3.
+
 ### Available Operations
 
 * [~~CreatePrivateLobbyDeprecated~~](#createprivatelobbydeprecated) - :warning: **Deprecated**
@@ -26,7 +30,7 @@ using(var res = await sdk.LobbyV1.CreatePrivateLobbyDeprecatedAsync(new CreatePr
         PlayerAuth = "",
     }, new CreatePrivateLobbyDeprecatedRequest() {
         Local = false,
-        Region = HathoraCloud.Models.Shared.Region.Singapore,
+        Region = HathoraCloud.Models.Shared.Region.London,
     }))
 {
     // handle response
@@ -65,7 +69,7 @@ using(var res = await sdk.LobbyV1.CreatePublicLobbyDeprecatedAsync(new CreatePub
         PlayerAuth = "",
     }, new CreatePublicLobbyDeprecatedRequest() {
         Local = false,
-        Region = HathoraCloud.Models.Shared.Region.Singapore,
+        Region = HathoraCloud.Models.Shared.Region.Frankfurt,
     }))
 {
     // handle response
@@ -105,7 +109,7 @@ var sdk = new HathoraCloudSDK(
 
 using(var res = await sdk.LobbyV1.ListActivePublicLobbiesDeprecatedV1Async(new ListActivePublicLobbiesDeprecatedV1Request() {
         Local = false,
-        Region = HathoraCloud.Models.Shared.Region.London,
+        Region = HathoraCloud.Models.Shared.Region.Sydney,
     }))
 {
     // handle response

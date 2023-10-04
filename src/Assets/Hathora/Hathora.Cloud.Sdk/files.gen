@@ -212,6 +212,7 @@ HathoraCloud/Models/Shared/Room.cs
 HathoraCloud/Models/Shared/RoomAllocation.cs
 HathoraCloud/Models/Shared/ConnectionInfoV2Status.cs
 HathoraCloud/Models/Shared/ConnectionInfoV2.cs
+HathoraCloud/Models/Shared/UpdateRoomConfigParams.cs
 HathoraCloud/Models/Shared/Security.cs
 USAGE.md
 docs/models/operations/CreateAppResponse.md
@@ -396,6 +397,7 @@ docs/models/shared/Room.md
 docs/models/shared/RoomAllocation.md
 docs/models/shared/ConnectionInfoV2Status.md
 docs/models/shared/ConnectionInfoV2.md
+docs/models/shared/UpdateRoomConfigParams.md
 docs/models/shared/Security.md
 docs/sdks/hathoracloud/README.md
 docs/sdks/appv1/README.md

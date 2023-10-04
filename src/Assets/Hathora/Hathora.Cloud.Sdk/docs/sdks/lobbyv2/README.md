@@ -3,7 +3,7 @@
 
 ## Overview
 
-Operations to create and manage lobbies using our [Lobby Service](https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service).
+Deprecated. Use LobbyV3.
 
 ### Available Operations
 
@@ -35,7 +35,7 @@ using(var res = await sdk.LobbyV2.CreateLobbyDeprecatedAsync(new CreateLobbyDepr
     }, new CreateLobbyDeprecatedRequest() {
         CreateLobbyParams = new CreateLobbyParams() {
             InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Frankfurt,
+            Region = HathoraCloud.Models.Shared.Region.Tokyo,
             Visibility = HathoraCloud.Models.Shared.LobbyVisibility.Private,
         },
         RoomId = "2swovpy1fnunu",
@@ -78,7 +78,7 @@ using(var res = await sdk.LobbyV2.CreateLocalLobbyAsync(new CreateLocalLobbySecu
     }, new CreateLocalLobbyRequest() {
         RequestBody = new CreateLocalLobbyRequestBody() {
             InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Chicago,
+            Region = HathoraCloud.Models.Shared.Region.Sydney,
         },
         RoomId = "2swovpy1fnunu",
     }))
@@ -120,7 +120,7 @@ using(var res = await sdk.LobbyV2.CreatePrivateLobbyAsync(new CreatePrivateLobby
     }, new CreatePrivateLobbyRequest() {
         RequestBody = new CreatePrivateLobbyRequestBody() {
             InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Sydney,
+            Region = HathoraCloud.Models.Shared.Region.Chicago,
         },
         RoomId = "2swovpy1fnunu",
     }))
@@ -162,7 +162,7 @@ using(var res = await sdk.LobbyV2.CreatePublicLobbyAsync(new CreatePublicLobbySe
     }, new CreatePublicLobbyRequest() {
         RequestBody = new CreatePublicLobbyRequestBody() {
             InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Seattle,
+            Region = HathoraCloud.Models.Shared.Region.Sydney,
         },
         RoomId = "2swovpy1fnunu",
     }))
@@ -241,7 +241,7 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.ListActivePublicLobbiesDeprecatedV2Async(new ListActivePublicLobbiesDeprecatedV2Request() {
-        Region = HathoraCloud.Models.Shared.Region.SaoPaulo,
+        Region = HathoraCloud.Models.Shared.Region.Frankfurt,
     }))
 {
     // handle response

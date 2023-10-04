@@ -68,7 +68,7 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.ProcessesV1.GetRunningProcessesAsync(new GetRunningProcessesRequest() {
-        Region = HathoraCloud.Models.Shared.Region.London,
+        Region = HathoraCloud.Models.Shared.Region.Tokyo,
     }))
 {
     // handle response
@@ -106,7 +106,7 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.ProcessesV1.GetStoppedProcessesAsync(new GetStoppedProcessesRequest() {
-        Region = HathoraCloud.Models.Shared.Region.SaoPaulo,
+        Region = HathoraCloud.Models.Shared.Region.Sydney,
     }))
 {
     // handle response
