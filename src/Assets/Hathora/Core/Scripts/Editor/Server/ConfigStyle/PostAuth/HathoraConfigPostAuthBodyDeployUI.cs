@@ -410,12 +410,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 else
                     onDeployAppFail();
             }
-
-            // catch (TaskCanceledException)
-            // {
-            //     onDeployAppFail();
-            //     throw;
-            // }
             catch (Exception e)
             {
                 Debug.LogError($"[HathoraConfigPostAuthBodyDeployUI.DeployApp] Error: {e}");
