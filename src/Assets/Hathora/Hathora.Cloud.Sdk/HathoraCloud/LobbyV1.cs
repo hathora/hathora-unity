@@ -19,20 +19,27 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Deprecated. Use LobbyV3.
+    /// </summary>
     public interface ILobbyV1SDK
     {
         Task<CreatePrivateLobbyDeprecatedResponse> CreatePrivateLobbyDeprecatedAsync(CreatePrivateLobbyDeprecatedSecurity security, CreatePrivateLobbyDeprecatedRequest? request = null);
         Task<CreatePublicLobbyDeprecatedResponse> CreatePublicLobbyDeprecatedAsync(CreatePublicLobbyDeprecatedSecurity security, CreatePublicLobbyDeprecatedRequest? request = null);
-        Task<ListActivePublicLobbiesDeprecatedResponse> ListActivePublicLobbiesDeprecatedAsync(ListActivePublicLobbiesDeprecatedRequest? request = null);
+        Task<ListActivePublicLobbiesDeprecatedV1Response> ListActivePublicLobbiesDeprecatedV1Async(ListActivePublicLobbiesDeprecatedV1Request? request = null);
     }
 
+    /// <summary>
+    /// Deprecated. Use LobbyV3.
+    /// </summary>
     public class LobbyV1SDK: ILobbyV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.15.0";
-        private const string _sdkGenVersion = "2.129.1";
+        private const string _sdkVersion = "0.1.0";
+        private const string _sdkGenVersion = "2.144.7";
         private const string _openapiDocVersion = "0.0.1";
+        private const string _userAgent = "speakeasy-sdk/unity 0.1.0 2.144.7 0.0.1 hathora-unity-sdk";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
@@ -61,7 +68,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = SecuritySerializer.Apply(_defaultClient, security);
@@ -78,6 +85,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new CreatePrivateLobbyDeprecatedResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
@@ -166,7 +174,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = SecuritySerializer.Apply(_defaultClient, security);
@@ -183,6 +191,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new CreatePublicLobbyDeprecatedResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
@@ -257,7 +266,7 @@ namespace HathoraCloud
         
 
         [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
-        public async Task<ListActivePublicLobbiesDeprecatedResponse> ListActivePublicLobbiesDeprecatedAsync(ListActivePublicLobbiesDeprecatedRequest? request = null)
+        public async Task<ListActivePublicLobbiesDeprecatedV1Response> ListActivePublicLobbiesDeprecatedV1Async(ListActivePublicLobbiesDeprecatedV1Request? request = null)
         {
             request.AppId ??= Config.AppId;
             string baseUrl = _serverUrl;
@@ -271,7 +280,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;
@@ -288,7 +297,8 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
-            var response = new ListActivePublicLobbiesDeprecatedResponse
+            
+            var response = new ListActivePublicLobbiesDeprecatedV1Response
             {
                 StatusCode = (int)httpResponse.responseCode,
                 ContentType = contentType,
@@ -307,7 +317,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.ListActivePublicLobbiesDeprecated401ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ListActivePublicLobbiesDeprecatedV1401ApplicationJSONString = httpResponse.downloadHandler.text;
                 }
                 
                 return response;
@@ -316,7 +326,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.ListActivePublicLobbiesDeprecated404ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ListActivePublicLobbiesDeprecatedV1404ApplicationJSONString = httpResponse.downloadHandler.text;
                 }
                 
                 return response;

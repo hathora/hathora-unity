@@ -289,7 +289,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
         /// - (!) If cached info is ok, instead call `GetCachedHathoraServerContextAsync()`.
         /// - Servers deployed in Hathora will have a special env var containing the ProcessId (HATHORA_PROCESS_ID).
         /// - If env var exists, we're deployed in Hathora.
-        /// - Note the result GetLobbyInitConfig() util: Parse this `object` to your own model.
+        /// - Note the result ParseRoomConfig() util: Parse this `object` to your own model.
         /// - Calls automatically @ Awake => triggers `OnInitializedEvent` on success.
         /// - Caches locally @ serverContext; public get via GetCachedServerContextAsync().
         /// </summary>
@@ -373,11 +373,13 @@ namespace Hathora.Core.Scripts.Runtime.Server
 			
             // ----------------
             // We have Room info, but we *may* need Lobby: Get from RoomId =>
-            Lobby lobby = null;
+            // TODO: This may soon change, where Room info may include Lobby info.
+            // TODO: When implemented, remove this block (minus validation).
+            LobbyV3 lobby = null;
             try
             {
                 // Try catch since we may not have a Lobby, which could be ok
-                lobby = await Apis.LobbyApiWrapper.GetLobbyInfoAsync(
+                lobby = await Apis.LobbyApiWrapper.GetLobbyInfoByRoomIdAsync(
                     firstActiveRoom.RoomId,
                     _cancelToken);
             }
