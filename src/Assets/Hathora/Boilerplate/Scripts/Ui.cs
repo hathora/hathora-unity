@@ -6,7 +6,7 @@ using UnityEngine;
 namespace HathoraBoiler.Scripts
 {
     /// <summary>UI Event handlers to forward to logic</summary>
-    public class BoilerUi : MonoBehaviour
+    public class Ui : MonoBehaviour
     {
         #region Vars
         [SerializeField, Tooltip("Initially hide (or leave empty), then show when connected/started")]
@@ -20,7 +20,7 @@ namespace HathoraBoiler.Scripts
         /// </summary>
         private void Start()
         {
-            BoilerStateMgr.OnClientStartedEvent += OnClientStarted;
+            StateMgr.OnClientStartedEvent += OnClientStarted;
             // TODO: ^ If you add more, don't forget to cleanup (-=) at OnDestroy()
         }
 
@@ -35,14 +35,14 @@ namespace HathoraBoiler.Scripts
         #region UI Interactions
         public void OnStartServerBtnClick()
         {
-            Debug.Log($"[{nameof(BoilerUi)}] {nameof(OnStartServerBtnClick)}");
-            BoilerStateMgr.Singleton.StartServer();
+            Debug.Log($"[{nameof(Ui)}] {nameof(OnStartServerBtnClick)}");
+            StateMgr.Singleton.StartServer();
         }
 
         public void OnStartClientBtnClick()
         {
-            Debug.Log($"[{nameof(BoilerUi)}] {nameof(OnStartClientBtnClick)}");
-            BoilerStateMgr.Singleton.StartClient();
+            Debug.Log($"[{nameof(Ui)}] {nameof(OnStartClientBtnClick)}");
+            StateMgr.Singleton.StartClient();
         }
         #endregion UI Interactions
         
@@ -51,7 +51,7 @@ namespace HathoraBoiler.Scripts
         /// <summary>Dispose of events we subbed to at Start()</summary>
         private void OnDestroy()
         {
-            BoilerStateMgr.OnClientStartedEvent -= OnClientStarted;
+            StateMgr.OnClientStartedEvent -= OnClientStarted;
         }
         #endregion // Utils
     }
