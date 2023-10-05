@@ -204,12 +204,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: HathoraBoilerplate
       objectReference: {fileID: 0}
-    - target: {fileID: 4708901917013319255, guid: f26d01da241c7c849b040200a19c9074,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 9e07773d59b5c534185abdf4c6637268,
-        type: 3}
     - target: {fileID: 8187373313711007947, guid: f26d01da241c7c849b040200a19c9074,
         type: 3}
       propertyPath: m_LocalPosition.x
