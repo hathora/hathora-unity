@@ -94,3 +94,5 @@ utils/mono_crash.mem.*.blob
 src/Dockerfile
 
 .DS_Store
+*.csproj.meta
+*.sln.meta
