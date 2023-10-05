@@ -14,9 +14,9 @@ namespace HathoraBoiler.Scripts
     /// (!) `-scene` is loaded / awaited before any other cmd.
     /// Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
     /// </summary>
-    public class BoilerArgHandler
+    public class BoilerArgHandler : MonoBehaviour
     {
-        #region vars
+        #region Vars
         private static bool _sceneArgConsumed = false;
         
         /// <summary>We only trigger this once</summary>
@@ -47,7 +47,7 @@ namespace HathoraBoiler.Scripts
                 _modeArgConsumed = value;
             }
         }
-        #endregion // vars
+        #endregion // Vars
 
 
         #region Init
