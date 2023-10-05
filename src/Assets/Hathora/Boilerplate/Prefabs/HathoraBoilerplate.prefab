@@ -147,6 +147,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: HathoraBoilerCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4177034684591404564, guid: 9121d93013f7fd742873e622840a8cd5,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9e07773d59b5c534185abdf4c6637268,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
