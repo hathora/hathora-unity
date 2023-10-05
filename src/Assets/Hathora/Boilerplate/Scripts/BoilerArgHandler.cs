@@ -7,32 +7,15 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Hathora.Demos.Shared.Scripts.Common
+namespace HathoraBoiler.Scripts
 {
     /// <summary>
     /// Commandline helper - run via `YourBuild.exe -mode {server|client|host}`.
     /// (!) `-scene` is loaded / awaited before any other cmd.
     /// Unity: Command Line Helper | https://docs-multiplayer.unity3d.com/netcode/current/tutorials/command-line-helper/index.html  
     /// </summary>
-    public abstract class HathoraArgHandlerBase : MonoBehaviour
+    public class BoilerArgHandler
     {
-        #region Mock Testing
-        [SerializeField, Tooltip("For mock -arg testing within the Editor")]
-        private bool mockArgsInEditor;
-        protected bool MockArgsInEditor => mockArgsInEditor;
-        
-        /// <summary>Keys already include the `-` prefix.</summary>
-        private static readonly Dictionary<string, string> MOCK_ARGS_DICT = new()
-        {
-            {"-scene", "HathoraDemoScene-Mirror"}, // "HathoraDemoScene-FishNet" || "HathoraDemoScene-Mirror"
-            {"-mode", "server"}, // "server" || "client" || "host
-        };
-
-        readonly string MOCK_ARGS_DICT_STR = string.Join(" ", MOCK_ARGS_DICT.Select(kvp => 
-            $"{kvp.Key} {kvp.Value}"));
-        #endregion // Mock Testing
-        
-        
         #region vars
         private static bool _sceneArgConsumed = false;
         
@@ -43,13 +26,12 @@ namespace Hathora.Demos.Shared.Scripts.Common
             set 
             {
                 if (value)
-                    Debug.Log($"[HathoraArgHandlerBase] SceneArgConsumed @ " +
+                    Debug.Log($"[BoilerArgHandler] SceneArgConsumed @ " +
                         SceneManager.GetActiveScene().name);
                 
                 _sceneArgConsumed = value;
             }
         }
-
         
         private static bool _modeArgConsumed;
         
@@ -60,7 +42,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
             set 
             {
                 if (value)
-                    Debug.Log($"[HathoraArgHandlerBase] ModeArgConsumed @ {SceneManager.GetActiveScene().name}");
+                    Debug.Log($"[BoilerArgHandler] ModeArgConsumed @ {SceneManager.GetActiveScene().name}");
                 
                 _modeArgConsumed = value;
             }
@@ -68,26 +50,18 @@ namespace Hathora.Demos.Shared.Scripts.Common
         #endregion // vars
 
 
-        protected virtual async void Awake() {}
-        protected virtual async void Start() => await InitArgsAsync();
-
+        #region Init
+        private void Awake() {}
+        private async void Start() => await InitArgsAsync();
+        
         /// <summary>
         /// (!) Some args like `-scene` and `-mode` are statically consumed only once
         /// (eg: reloading the scene won't apply them).</summary>
-        protected virtual async Task InitArgsAsync()
+        private async Task InitArgsAsync()
         {
-            string logPrefix = $"[HathoraArgHandlerBase.{nameof(InitArgsAsync)}]";
+            string logPrefix = $"[BoilerArgHandler.{nameof(InitArgsAsync)}]";
             
             Dictionary<string, string> args = GetCommandlineArgs();
-
-            if (Application.isEditor && mockArgsInEditor)
-            {
-                Debug.LogWarning($"{logPrefix} (!) Init: <color=yellow>" +
-                    $"MOCK_ARG_IN_EDITOR</color>: `{MOCK_ARGS_DICT_STR}`");
-               
-                args = MOCK_ARGS_DICT; // Override for debugging
-            }
-            
             string argsStr = string.Join(" ", args.Select(kvp => $"{kvp.Key} {kvp.Value}"));
             Debug.Log($"{logPrefix} Handling args: `{argsStr}`");
 
@@ -114,14 +88,14 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraArgHandlerBase.InitArgsAsync] Error: {e.Message}");
+                Debug.LogError($"[BoilerArgHandler.InitArgsAsync] Error: {e.Message}");
                 throw;
             }
         }
-
-        protected virtual async Task InitArgScene(string _sceneName)
+        
+        private async Task InitArgScene(string _sceneName)
         {
-            Debug.Log($"[HathoraArgHandlerBase] InitArgScene: {_sceneName}");
+            Debug.Log($"[BoilerArgHandler] InitArgScene: {_sceneName}");
 
             // Get current scene name
             string currentSceneName = SceneManager.GetActiveScene().name;
@@ -133,7 +107,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
 
             if (SceneArgConsumed)
             {
-                Debug.LogWarning("[HathoraArgHandlerBase.InitMode] SceneArgConsumed, already");
+                Debug.LogWarning("[BoilerArgHandler.InitMode] SceneArgConsumed, already");
                 return;
             }
 
@@ -143,10 +117,12 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
             catch (Exception e)
             {
-                Debug.LogError($"[HathoraArgHandlerBase.InitArgScene] Error: {e}");
+                Debug.LogError($"[BoilerArgHandler.InitArgScene] Error: {e}");
                 throw;
             }
         }
+        #endregion // Init
+
         
         /// <summary>
         /// After using this once, you won't be able to do it again
@@ -157,7 +133,7 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// <param name="_sceneName">CLI Arg passed from `-scene {sceneName}`.</param>
         private static async Task loadSceneOnceFromArgAsync(string _sceneName)
         {
-            string logPrefix = $"[HathoraArgHandlerBase.{nameof(loadSceneOnceFromArgAsync)}]";
+            string logPrefix = $"[BoilerArgHandler.{nameof(loadSceneOnceFromArgAsync)}]";
             Debug.Log($"{logPrefix} sceneName: {_sceneName}");
 
             if (SceneArgConsumed)
@@ -180,17 +156,17 @@ namespace Hathora.Demos.Shared.Scripts.Common
         /// - "client" -> StartClient()
         /// - "host" -> StartHost() // server+client together
         /// </summary>
-        protected virtual void InitArgMode(string _mode)
+        private void InitArgMode(string _mode)
         {
-            Debug.Log($"[HathoraArgHandlerBase] InitArgMode: {_mode}");
+            Debug.Log($"[BoilerArgHandler] InitArgMode: {_mode}");
 
             if (ModeArgConsumed)
             {
-                Debug.LogWarning("[HathoraArgHandlerBase.InitMode] ModeArgConsumed, already");
+                Debug.LogWarning("[BoilerArgHandler.InitMode] ModeArgConsumed, already");
                 return;
             }
             
-            Debug.Log($"[HathoraArgHandlerBase.InitMode] {_mode}");
+            Debug.Log($"[BoilerArgHandler.InitMode] {_mode}");
             ModeArgConsumed = true;
 
             switch (_mode)
@@ -209,26 +185,9 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
         }
 
-        protected virtual void ArgModeStartServer() =>
-            Debug.Log("[HathoraArgHandlerBase] StartServer");
-
-        protected virtual void ArgModeStartClient() =>
-            Debug.Log("[HathoraArgHandlerBase] StartClient");
-
-        /// <summary>
-        /// Both server *and* client.
-        /// Most NetCode just allows StartServer() -> StartClient(); override if not.
-        /// </summary>
-        protected virtual void ArgModeStartHost()
-        {
-            Debug.Log("[HathoraArgHandlerBase.StartHost] (server+client) Starting...");
-            ArgModeStartServer();
-            ArgModeStartClient();
-        }
-        
         
         #region Utils
-        protected static Dictionary<string, string> GetCommandlineArgs()
+        private static Dictionary<string, string> GetCommandlineArgs()
         {
             Dictionary<string, string> argDictionary = new();
 
@@ -253,14 +212,44 @@ namespace Hathora.Demos.Shared.Scripts.Common
             }
             return argDictionary;
         }
-        #endregion // Utils
-        
         
         void OnDisable()
         {
             // Static vars may persist between Editor play sessions. 
             _sceneArgConsumed = false;
             _modeArgConsumed = false;
+        }
+        #endregion // Utils
+        
+        
+        private void ArgModeStartServer()
+        {
+            bool alreadyStartedServer = false; // TODO: Check your NetworkManager to ensure it's not already started
+            if (alreadyStartedServer)
+                return;
+            
+            Debug.Log($"[{nameof(BoilerArgHandler)}] {nameof(ArgModeStartServer)}");
+            // NetworkManager.Instance.StartServer(); // TODO
+        }
+
+        private void ArgModeStartClient()
+        {
+            bool alreadyStartedClient = false; // TODO: Check your NetworkManager to ensure it's not already started
+            if (alreadyStartedClient)
+                return;
+            
+            Debug.Log($"[{nameof(BoilerArgHandler)}] {nameof(ArgModeStartClient)}");
+            // NetworkManager.Instance.StartClient(); // TODO
+        }
+
+        private void ArgModeStartHost()
+        {
+            bool alreadyStartedClientOrServer = false; // TODO: Check your NetworkManager to ensure it's not already started
+            if (alreadyStartedClientOrServer)
+                return;
+            
+            Debug.Log($"[{nameof(BoilerArgHandler)}] {nameof(ArgModeStartClient)} (Server+Client)");
+            // NetworkManager.Instance.StartHost(); // TODO
         }
     }
 }
