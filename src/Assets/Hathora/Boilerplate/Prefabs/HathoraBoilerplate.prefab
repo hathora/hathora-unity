@@ -368,7 +368,8 @@ PrefabInstance:
       value: HathoraManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1519380329387524257, guid: 3840cc1acee7025488d4c052f4fd9300, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3840cc1acee7025488d4c052f4fd9300, type: 3}
