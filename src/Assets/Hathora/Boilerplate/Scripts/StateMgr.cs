@@ -13,7 +13,7 @@ namespace HathoraBoiler.Scripts
     /// - Contains events like: OnClientStarted, OnClientStopped.
     /// - Tracks `ClientState` like: Stopped, Starting, Started.
     /// </summary>
-    public class BoilerStateMgr : MonoBehaviour
+    public class StateMgr : MonoBehaviour
     {
         #region Core vars
         [SerializeField, Tooltip("Log all client state changes")]
@@ -23,7 +23,7 @@ namespace HathoraBoiler.Scripts
         /// <summary>When a connection stops, errs out or we get d/c'd, what should we show to clients?</summary>
         protected const string CONNECTION_STOPPED_FRIENDLY_STR = "Connection Stopped";
         
-        public static BoilerStateMgr Singleton { get; private set; }
+        public static StateMgr Singleton { get; private set; }
         
         // TODO: You may want to add a shortcut to your NetworkManager instance, or Transport instance(s).  
         #endregion // Core vars
@@ -73,7 +73,7 @@ namespace HathoraBoiler.Scripts
         {
             if (Singleton != null)
             {
-                Debug.LogError($"[{nameof(BoilerStateMgr)}]**ERR @ " +
+                Debug.LogError($"[{nameof(StateMgr)}]**ERR @ " +
                     $"{nameof(setSingleton)}: Destroying dupe");
                 
                 Destroy(gameObject);
@@ -108,7 +108,7 @@ namespace HathoraBoiler.Scripts
         protected virtual void OnClientConnecting()
         {
             if (verboseLogs)
-                Debug.Log($"[{nameof(BoilerStateMgr)}] {nameof(OnClientConnecting)}");
+                Debug.Log($"[{nameof(StateMgr)}] {nameof(OnClientConnecting)}");
             
             ClientState = ClientTrackedState.Connecting;
             OnClientConnectingEvent?.Invoke(); 
@@ -123,7 +123,7 @@ namespace HathoraBoiler.Scripts
         protected virtual void OnClientStarting()
         {
             if (verboseLogs)
-                Debug.Log($"[{nameof(BoilerStateMgr)}] {nameof(OnClientStarting)}");
+                Debug.Log($"[{nameof(StateMgr)}] {nameof(OnClientStarting)}");
             
             ClientState = ClientTrackedState.Starting;
             OnClientStartingEvent?.Invoke();
@@ -133,7 +133,7 @@ namespace HathoraBoiler.Scripts
         protected virtual void OnClientStarted()
         {
             if (verboseLogs)
-                Debug.Log($"[{nameof(BoilerStateMgr)}] {nameof(OnClientStarted)}");
+                Debug.Log($"[{nameof(StateMgr)}] {nameof(OnClientStarted)}");
 
             ClientState = ClientTrackedState.Started;
             OnClientStartedEvent?.Invoke();
@@ -143,7 +143,7 @@ namespace HathoraBoiler.Scripts
         protected virtual void OnClientStopped()
         {
             if (verboseLogs)
-                Debug.Log($"[{nameof(BoilerStateMgr)}] {nameof(OnClientStopped)}");
+                Debug.Log($"[{nameof(StateMgr)}] {nameof(OnClientStopped)}");
             
             ClientState = ClientTrackedState.Stopped;
             OnClientStoppedEvent?.Invoke();
@@ -157,7 +157,7 @@ namespace HathoraBoiler.Scripts
         protected virtual void OnStartClientFail(string _friendlyReason)
         {
             if (verboseLogs)
-                Debug.Log($"[{nameof(BoilerStateMgr)}.{nameof(OnClientStopped)}] {_friendlyReason}");
+                Debug.Log($"[{nameof(StateMgr)}.{nameof(OnClientStopped)}] {_friendlyReason}");
             
             OnStartClientFailEvent?.Invoke(_friendlyReason);
             OnClientStopped();
@@ -233,7 +233,7 @@ namespace HathoraBoiler.Scripts
             if (string.IsNullOrEmpty(_hostPort))
                 return StartClient();
             
-            string logPrefix = $"[{nameof(BoilerStateMgr)}] {nameof(StartClient)}]"; 
+            string logPrefix = $"[{nameof(StateMgr)}] {nameof(StartClient)}]"; 
             Debug.Log($"{logPrefix} Start");
             
             // Validate host:prot
@@ -278,7 +278,7 @@ namespace HathoraBoiler.Scripts
         /// </returns>
         public bool StartClient()
         {
-            string logPrefix = $"[{nameof(BoilerStateMgr)}.{nameof(StartClient)}";
+            string logPrefix = $"[{nameof(StateMgr)}.{nameof(StartClient)}";
             Debug.Log($"{logPrefix} Start");
             
             // Validate
@@ -322,7 +322,7 @@ namespace HathoraBoiler.Scripts
         /// <returns>isValid</returns>
         private bool validateIsReadyToConnect()
         {
-            Debug.Log($"[{nameof(BoilerStateMgr)}] {nameof(validateIsReadyToConnect)}");
+            Debug.Log($"[{nameof(StateMgr)}] {nameof(validateIsReadyToConnect)}");
 
             // TODO: Validate with your NetworkManager you're ready to connect.
             // - eg: Ensure a connection hasn't already started
