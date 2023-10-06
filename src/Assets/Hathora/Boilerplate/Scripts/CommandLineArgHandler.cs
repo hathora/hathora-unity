@@ -88,14 +88,16 @@ namespace HathoraIntegration.Scripts
             }
             catch (Exception e)
             {
-                Debug.LogError($"[CommandLineArgHandler.InitArgsAsync] Error: {e.Message}");
+                Debug.LogError($"{logPrefix} Error: {e.Message}");
                 throw;
             }
         }
         
         private async Task InitArgScene(string _sceneName)
         {
-            Debug.Log($"[CommandLineArgHandler] InitArgScene: {_sceneName}");
+            string logPrefix = $"[CommandLineArgHandler.{nameof(InitArgScene)}]";
+
+            Debug.Log($"{logPrefix} sceneName: {_sceneName}");
 
             // Get current scene name
             string currentSceneName = SceneManager.GetActiveScene().name;
@@ -107,7 +109,7 @@ namespace HathoraIntegration.Scripts
 
             if (SceneArgConsumed)
             {
-                Debug.LogWarning("[CommandLineArgHandler.InitMode] SceneArgConsumed, already");
+                Debug.LogWarning($"{logPrefix} {nameof(SceneArgConsumed)}, already");
                 return;
             }
 
@@ -117,7 +119,7 @@ namespace HathoraIntegration.Scripts
             }
             catch (Exception e)
             {
-                Debug.LogError($"[CommandLineArgHandler.InitArgScene] Error: {e}");
+                Debug.LogError($"{logPrefix} Error: {e}");
                 throw;
             }
         }
@@ -138,7 +140,7 @@ namespace HathoraIntegration.Scripts
 
             if (SceneArgConsumed)
             {
-                Debug.LogWarning($"{logPrefix} LoadSceneOnceAsync already consumed! Aborting.");
+                Debug.LogWarning($"{logPrefix} {nameof(SceneArgConsumed)} already consumed! Aborting.");
                 return;
             }
 
@@ -158,15 +160,16 @@ namespace HathoraIntegration.Scripts
         /// </summary>
         private void InitArgMode(string _mode)
         {
-            Debug.Log($"[CommandLineArgHandler] InitArgMode: {_mode}");
+            string logPrefix = $"[CommandLineArgHandler.{nameof(InitArgMode)}]";
+
+            Debug.Log($"{logPrefix} mode: {_mode}");
 
             if (ModeArgConsumed)
             {
-                Debug.LogWarning("[CommandLineArgHandler.InitMode] ModeArgConsumed, already");
+                Debug.LogWarning($"{logPrefix} {nameof(ModeArgConsumed)}, already");
                 return;
             }
             
-            Debug.Log($"[CommandLineArgHandler.InitMode] {_mode}");
             ModeArgConsumed = true;
 
             switch (_mode)
@@ -183,6 +186,36 @@ namespace HathoraIntegration.Scripts
                     ArgModeStartHost();
                     break;
             }
+        }
+        
+        private void ArgModeStartServer()
+        {
+            bool alreadyStartedServer = false; // TODO: Check your NetworkManager to ensure it's not already started
+            if (alreadyStartedServer)
+                return;
+            
+            Debug.Log($"[{nameof(CommandLineArgHandler)}] {nameof(ArgModeStartServer)}");
+            // NetworkManager.Instance.StartServer(); // TODO
+        }
+
+        private void ArgModeStartClient()
+        {
+            bool alreadyStartedClient = false; // TODO: Check your NetworkManager to ensure it's not already started
+            if (alreadyStartedClient)
+                return;
+            
+            Debug.Log($"[{nameof(CommandLineArgHandler)}] {nameof(ArgModeStartClient)}");
+            // NetworkManager.Instance.StartClient(); // TODO
+        }
+
+        private void ArgModeStartHost()
+        {
+            bool alreadyStartedClientOrServer = false; // TODO: Check your NetworkManager to ensure it's not already started
+            if (alreadyStartedClientOrServer)
+                return;
+            
+            Debug.Log($"[{nameof(CommandLineArgHandler)}] {nameof(ArgModeStartHost)} (Server+Client)");
+            // NetworkManager.Instance.StartHost(); // TODO
         }
 
         
@@ -220,36 +253,5 @@ namespace HathoraIntegration.Scripts
             _modeArgConsumed = false;
         }
         #endregion // Utils
-        
-        
-        private void ArgModeStartServer()
-        {
-            bool alreadyStartedServer = false; // TODO: Check your NetworkManager to ensure it's not already started
-            if (alreadyStartedServer)
-                return;
-            
-            Debug.Log($"[{nameof(CommandLineArgHandler)}] {nameof(ArgModeStartServer)}");
-            // NetworkManager.Instance.StartServer(); // TODO
-        }
-
-        private void ArgModeStartClient()
-        {
-            bool alreadyStartedClient = false; // TODO: Check your NetworkManager to ensure it's not already started
-            if (alreadyStartedClient)
-                return;
-            
-            Debug.Log($"[{nameof(CommandLineArgHandler)}] {nameof(ArgModeStartClient)}");
-            // NetworkManager.Instance.StartClient(); // TODO
-        }
-
-        private void ArgModeStartHost()
-        {
-            bool alreadyStartedClientOrServer = false; // TODO: Check your NetworkManager to ensure it's not already started
-            if (alreadyStartedClientOrServer)
-                return;
-            
-            Debug.Log($"[{nameof(CommandLineArgHandler)}] {nameof(ArgModeStartClient)} (Server+Client)");
-            // NetworkManager.Instance.StartHost(); // TODO
-        }
     }
 }
