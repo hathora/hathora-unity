@@ -20,7 +20,7 @@ namespace HathoraCloud
     using UnityEngine.Networking;
 
     /// <summary>
-    /// Operations that allow you manage your &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#application&quot;&gt;applications&lt;/a&gt;.
+    /// Operations that allow you manage your <a href="https://hathora.dev/docs/concepts/hathora-entities#application">applications</a>.
     /// </summary>
     public interface IAppV1SDK
     {
@@ -52,15 +52,16 @@ namespace HathoraCloud
     }
 
     /// <summary>
-    /// Operations that allow you manage your &lt;a href=&quot;https://hathora.dev/docs/concepts/hathora-entities#application&quot;&gt;applications&lt;/a&gt;.
+    /// Operations that allow you manage your <a href="https://hathora.dev/docs/concepts/hathora-entities#application">applications</a>.
     /// </summary>
     public class AppV1SDK: IAppV1SDK
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.15.0";
-        private const string _sdkGenVersion = "2.129.1";
+        private const string _sdkVersion = "0.1.0";
+        private const string _sdkGenVersion = "2.144.7";
         private const string _openapiDocVersion = "0.0.1";
+        private const string _userAgent = "speakeasy-sdk/unity 0.1.0 2.144.7 0.0.1 hathora-unity-sdk";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
@@ -87,7 +88,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             var serializedBody = RequestBodySerializer.Serialize(request, "Request", "json");
             if (serializedBody == null) 
@@ -114,6 +115,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new CreateAppResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
@@ -165,7 +167,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbDELETE);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;
@@ -182,6 +184,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new DeleteAppResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
@@ -229,7 +232,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;
@@ -246,6 +249,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new GetAppInfoResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
@@ -287,7 +291,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             
             var client = _securityClient;
@@ -304,6 +308,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new GetAppsResponse
             {
                 StatusCode = (int)httpResponse.responseCode,
@@ -337,7 +342,7 @@ namespace HathoraCloud
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
-            httpRequest.SetRequestHeader("user-agent", $"speakeasy-sdk/{_target} {_sdkVersion} {_sdkGenVersion} {_openapiDocVersion}");
+            httpRequest.SetRequestHeader("user-agent", _userAgent);
             
             var serializedBody = RequestBodySerializer.Serialize(request, "AppConfig", "json");
             if (serializedBody == null) 
@@ -364,6 +369,7 @@ namespace HathoraCloud
             }
 
             var contentType = httpResponse.GetResponseHeader("Content-Type");
+            
             var response = new UpdateAppResponse
             {
                 StatusCode = (int)httpResponse.responseCode,

@@ -23,10 +23,10 @@ namespace Hathora.Core.Scripts.Runtime.Client
         public bool IsAuthed => !string.IsNullOrEmpty(PlayerAuthToken);
 
         /// <summary>The last known Lobby.</summary>
-        public Lobby Lobby { get; set; }
+        public LobbyV3 Lobby { get; set; }
         
         /// <summary>The last known List of Lobby for a server browser. </summary>
-        public List<Lobby> Lobbies { get; set; }
+        public List<LobbyV3> Lobbies { get; set; }
         public string RoomId => Lobby?.RoomId;
 
         /// <summary>

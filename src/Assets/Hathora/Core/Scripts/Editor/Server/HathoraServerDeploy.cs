@@ -14,6 +14,7 @@ using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using HathoraCloud;
 using HathoraCloud.Models.Shared;
+using UnityEditor;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
@@ -185,7 +186,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 // Get the most-recent deployments env vars + additional ports, if any
                 List<DeploymentEnv> envVars = null;
                 List<ContainerPort> additionalContainerPorts = null;
-                if (oldDeployments.Count > 0)
+                if (oldDeployments?.Count > 0)
                 {
                     // The order is unknown - sort by create date and get the latest one
                     Deployment lastDeployment = oldDeployments.OrderByDescending(item => 
@@ -226,7 +227,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 Assert.IsNotNull(buildInfo, $"{logPrefix} Expected buildInfo");
 
                 // Building seems to unselect Hathora _serverConfig on success
-                HathoraServerConfigFinder.ShowWindowOnly();
+                HathoraServerConfigFinder.SelectLastKnownServerConfig();
 
                 OnBuildReqComplete?.Invoke(buildInfo);
                 _cancelToken.ThrowIfCancellationRequested();
