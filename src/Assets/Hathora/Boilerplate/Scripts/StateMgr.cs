@@ -5,7 +5,7 @@ using Hathora.Core.Scripts.Runtime.Client;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
 
-namespace HathoraBoiler.Scripts
+namespace HathoraIntegration.Scripts
 {
     /// <summary>
     /// Acts as the liason between NetworkManager and HathoraClientMgr.

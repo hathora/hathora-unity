@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace HathoraBoiler.Scripts
+namespace HathoraIntegration.Scripts
 {
     /// <summary>
     /// Commandline helper - run via `YourBuild.exe -mode {server|client|host}`.

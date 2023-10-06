@@ -3,7 +3,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace HathoraBoiler.Scripts
+namespace HathoraIntegration.Scripts
 {
     /// <summary>UI Event handlers to forward to logic</summary>
     public class Ui : MonoBehaviour
