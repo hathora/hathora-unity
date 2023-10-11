@@ -23,15 +23,16 @@ namespace HathoraCloud.Models.Shared
         /// </summary>
         [SerializeField]
         [JsonProperty("initialConfig")]
-        public object InitialConfig { get; set; } = default!; // (!) Swapped from `LobbyInitialConfig` to `object` type --Dylan
+        public LobbyInitialConfig InitialConfig { get; set; } = default!;
         
+
         [SerializeField]
         [JsonProperty("region")]
         public Region Region { get; set; } = default!;
         
 
         /// <summary>
-        /// Types of lobbies a player can create.&lt;br/&gt;
+        /// Types of lobbies a player can create.<br/>
         /// 
         /// <remarks>
         /// <br/>

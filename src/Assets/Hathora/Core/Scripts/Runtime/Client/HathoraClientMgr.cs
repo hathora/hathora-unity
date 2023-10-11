@@ -60,7 +60,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         
         /// <summary>Direct SDK access: Inits with info from `HathoraClientConfig`</summary>
         public HathoraCloudSDK HathoraSdk { get; private set; }
-
+        
 
         #region Public Events
         /// <summary>Event triggers when auth is done (check isSuccess)</summary>
@@ -68,13 +68,13 @@ namespace Hathora.Core.Scripts.Runtime.Client
         public static event Action<bool> OnAuthLoginDoneEvent;
         
         /// <summary>lobby</summary>
-        public static event Action<Lobby> OnCreateLobbyDoneEvent;
+        public static event Action<LobbyV3> OnCreateLobbyDoneEvent;
         
         /// <summary>connectionInfo:ConnectionInfoV2</summary>
         public static event Action<ConnectionInfoV2> OnGetActiveConnectionInfoDoneEvent;
         
         /// <summary>lobbies:List (sorted by Newest @ top)</summary>
-        public static event Action<List<Lobby>> OnGetActivePublicLobbiesDoneEvent;
+        public static event Action<List<LobbyV3>> OnGetActivePublicLobbiesDoneEvent;
         #endregion // Public Events
         
         
@@ -169,15 +169,15 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// </summary>
         /// <param name="_region">Leaving null will pass `HathoraUtils.DEFAULT_REGION`</param>
         /// <param name="_visibility"></param>
-        /// <param name="_initConfigObj">
+        /// <param name="_roomConfigSerializable">
         /// Pass your own model OR stringified json, minimally "{}"
         /// </param>
         /// <param name="_roomId">
         /// Leave null to auto-generate an Id (recommended to prevent potential dupe issues)
         /// </param>
         /// <param name="_cancelToken"></param>
-        public async Task<Lobby> CreateLobbyAsync(
-            object _initConfigObj,
+        public async Task<LobbyV3> CreateLobbyAsync(
+            object _roomConfigSerializable,
             Region _region = HathoraUtils.DEFAULT_REGION,
             string _roomId = null,
             LobbyVisibility _visibility = LobbyVisibility.Public,
@@ -186,9 +186,9 @@ namespace Hathora.Core.Scripts.Runtime.Client
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
 
-            Lobby lobby = await apis.LobbyApiWrapper.CreateLobbyAsync(
+            LobbyV3 lobby = await apis.LobbyApiWrapper.CreateLobbyAsync(
                 hathoraClientSession.PlayerAuthToken,
-                _initConfigObj,
+                _roomConfigSerializable,
                 _region,
                 _visibility,
                 _roomId,
@@ -206,14 +206,14 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// - Sets `Lobby` cache on done (not necessarily success)
         /// - Callback @ virtual OnCreateLobbyCompleteAsync(lobby)
         /// </summary>
-        public async Task<Lobby> GetLobbyInfoAsync(
+        public async Task<LobbyV3> GetLobbyInfoAsync(
             string _roomId, 
             CancellationToken _cancelToken = default)
         {
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
 
-            Lobby lobby = await apis.LobbyApiWrapper.GetLobbyInfoAsync(
+            LobbyV3 lobby = await apis.LobbyApiWrapper.GetLobbyInfoByRoomIdAsync(
                 _roomId,
                 _cancelToken);
         
@@ -231,14 +231,14 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// </summary>
         /// <param name="_listActivePublicLobbiesRequest">Null region returns all Regions</param>
         /// <param name="_cancelToken"></param>
-        public async Task<List<Lobby>> GetActivePublicLobbiesAsync(
+        public async Task<List<LobbyV3>> GetActivePublicLobbiesAsync(
             ListActivePublicLobbiesRequest _listActivePublicLobbiesRequest,
             CancellationToken _cancelToken = default)
         {
             Assert.IsTrue(hathoraClientSession.IsAuthed, 
                 "expected hathoraClientSession.IsAuthed");
             
-            List<Lobby> lobbies = await apis.LobbyApiWrapper.ListPublicLobbiesAsync(
+            List<LobbyV3> lobbies = await apis.LobbyApiWrapper.ListPublicLobbiesAsync(
                 _listActivePublicLobbiesRequest,
                 _cancelToken);
 
@@ -304,10 +304,10 @@ namespace Hathora.Core.Scripts.Runtime.Client
 
         /// <summary>GetActivePublicLobbies() callback.</summary>
         /// <param name="_lobbies"></param>
-        protected virtual void OnGetActivePublicLobbiesDone(List<Lobby> _lobbies)
+        protected virtual void OnGetActivePublicLobbiesDone(List<LobbyV3> _lobbies)
         {
             // Sort lobbies by create date -> Pass to UI
-            List<Lobby> sortedFromNewestToOldest = _lobbies.OrderByDescending(lobby => 
+            List<LobbyV3> sortedFromNewestToOldest = _lobbies.OrderByDescending(lobby => 
                 lobby.CreatedAt).ToList();
             
             OnGetActivePublicLobbiesDoneEvent?.Invoke(sortedFromNewestToOldest);
@@ -317,7 +317,7 @@ namespace Hathora.Core.Scripts.Runtime.Client
         /// On success, most users will want to call GetActiveConnectionInfo().
         /// </summary>
         /// <param name="_lobby"></param>
-        protected virtual void OnCreateLobbyDoneAsync(Lobby _lobby) => 
+        protected virtual void OnCreateLobbyDoneAsync(LobbyV3 _lobby) => 
             OnCreateLobbyDoneEvent?.Invoke(_lobby);
         #endregion // Virtual callbacks w/Events
         

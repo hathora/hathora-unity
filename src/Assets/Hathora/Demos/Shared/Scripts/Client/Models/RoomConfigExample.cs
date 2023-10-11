@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 
 namespace Hathora.Demos.Shared.Scripts.Client.Models
 {
-    /// <summary>Arbitrary example/demo for how to use `InitialConfig`.</summary>
-    public class InitConfigExample
+    /// <summary>Arbitrary example/demo for how to use `RoomConfig` json string prop.</summary>
+    public class RoomConfigExample
     {
         /// <summary>Arbitrary example.</summary>
         [JsonProperty("gameMode")]

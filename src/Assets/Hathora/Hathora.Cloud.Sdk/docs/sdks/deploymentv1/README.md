@@ -1,4 +1,5 @@
 # DeploymentV1
+(*DeploymentV1*)
 
 ## Overview
 
@@ -34,7 +35,7 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
                 new ContainerPort() {
                     Name = "default",
                     Port = 8000,
-                    TransportType = HathoraCloud.Models.Shared.TransportType.Tls,
+                    TransportType = HathoraCloud.Models.Shared.TransportType.Udp,
                 },
             },
             ContainerPort = 4000,
@@ -46,7 +47,7 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
             },
             PlanName = HathoraCloud.Models.Shared.PlanName.Tiny,
             RoomsPerProcess = 3,
-            TransportType = HathoraCloud.Models.Shared.TransportType.Udp,
+            TransportType = HathoraCloud.Models.Shared.TransportType.Tcp,
         },
         BuildId = 1,
     }))

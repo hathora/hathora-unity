@@ -1,4 +1,5 @@
 # AppV1
+(*AppV1*)
 
 ## Overview
 
@@ -34,7 +35,7 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
         AuthConfiguration = new AuthConfiguration() {
             Anonymous = new RecordStringNever() {},
             Google = new AuthConfigurationGoogle() {
-                ClientId = "distinctio",
+                ClientId = "models ah Southeast",
             },
             Nickname = new RecordStringNever() {},
         },
@@ -181,7 +182,7 @@ using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppRequest() {
             AuthConfiguration = new AuthConfiguration() {
                 Anonymous = new RecordStringNever() {},
                 Google = new AuthConfigurationGoogle() {
-                    ClientId = "quibusdam",
+                    ClientId = "Lane",
                 },
                 Nickname = new RecordStringNever() {},
             },

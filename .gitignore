@@ -93,7 +93,9 @@ utils/mono_crash.mem.*.blob
 /Assets
 src/Dockerfile
 
-# Misc
 .DS_Store
-*.csproj.meta
+src/Assets/Hathora/Hathora.Cloud.Sdk/HathoraCloud.sln.meta
+
+# Ignore all sln/csproj meta files
 *.sln.meta
+*.csproj.meta

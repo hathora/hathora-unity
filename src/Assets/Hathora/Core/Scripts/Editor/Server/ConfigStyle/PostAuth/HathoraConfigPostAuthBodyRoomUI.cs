@@ -37,7 +37,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         private readonly List<int> originalIndices;
         
         // Foldouts
-        private bool isCreateRoomLobbyFoldout;
+        private bool isRoomFoldout;
+        
+        /// <summary>For state persistence on which dropdown group was last clicked</summary>
+        protected const string SERVER_ROOM_SETTINGS_FOLDOUT_STATE_KEY = "ServerRoomSettingsFoldoutState";
         #endregion // Vars
 
 
@@ -100,11 +103,22 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
         private void insertCreateRoomFoldout()
         {
-            isCreateRoomLobbyFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
-                isCreateRoomLobbyFoldout, 
+            // Retrieve the saved foldout state from EditorPrefs
+            isRoomFoldout = EditorPrefs.GetBool(
+                SERVER_ROOM_SETTINGS_FOLDOUT_STATE_KEY, 
+                defaultValue: false);
+            
+            // Create the foldout
+            isRoomFoldout = EditorGUILayout.BeginFoldoutHeaderGroup(
+                isRoomFoldout, 
                 "Create Room");
             
-            if (!isCreateRoomLobbyFoldout)
+            // Save the new foldout state to EditorPrefs
+            EditorPrefs.SetBool(
+                SERVER_ROOM_SETTINGS_FOLDOUT_STATE_KEY, 
+                isRoomFoldout);
+            
+            if (!isRoomFoldout)
             {
                 EditorGUILayout.EndFoldoutHeaderGroup();
                 return;

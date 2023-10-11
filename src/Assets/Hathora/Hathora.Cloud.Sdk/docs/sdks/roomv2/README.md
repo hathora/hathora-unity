@@ -1,4 +1,5 @@
 # RoomV2
+(*RoomV2*)
 
 ## Overview
 
@@ -13,6 +14,7 @@ Operations to create, manage, and connect to [rooms](https://hathora.dev/docs/co
 * [GetInactiveRoomsForProcess](#getinactiveroomsforprocess) - Get all inactive [rooms](https://hathora.dev/docs/concepts/hathora-entities#room) for a given [process](https://hathora.dev/docs/concepts/hathora-entities#process).
 * [GetRoomInfo](#getroominfo) - Retreive current and historical allocation data for a [room](https://hathora.dev/docs/concepts/hathora-entities#room).
 * [SuspendRoom](#suspendroom) - Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The room is unallocated from the process but can be rescheduled later using the same `roomId`.
+* [UpdateRoomConfig](#updateroomconfig)
 
 ## CreateRoom
 
@@ -34,7 +36,7 @@ var sdk = new HathoraCloudSDK(
 
 using(var res = await sdk.RoomV2.CreateRoomAsync(new CreateRoomRequest() {
         CreateRoomParams = new CreateRoomParams() {
-            Region = HathoraCloud.Models.Shared.Region.SaoPaulo,
+            Region = HathoraCloud.Models.Shared.Region.Sydney,
             RoomConfig = "{\"name\":\"my-room\"}",
         },
         RoomId = "2swovpy1fnunu",
@@ -282,4 +284,43 @@ using(var res = await sdk.RoomV2.SuspendRoomAsync(new SuspendRoomRequest() {
 ### Response
 
 **[SuspendRoomResponse](../../models/operations/SuspendRoomResponse.md)**
+
+
+## UpdateRoomConfig
+
+### Example Usage
+
+```csharp
+using HathoraCloud;
+using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
+
+var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "",
+    },
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
+);
+
+using(var res = await sdk.RoomV2.UpdateRoomConfigAsync(new UpdateRoomConfigRequest() {
+        UpdateRoomConfigParams = new UpdateRoomConfigParams() {
+            RoomConfig = "{\"name\":\"my-room\"}",
+        },
+        RoomId = "2swovpy1fnunu",
+    }))
+{
+    // handle response
+}
+```
+
+### Parameters
+
+| Parameter                                                                     | Type                                                                          | Required                                                                      | Description                                                                   |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `request`                                                                     | [UpdateRoomConfigRequest](../../models/operations/UpdateRoomConfigRequest.md) | :heavy_check_mark:                                                            | The request object to use for the request.                                    |
+
+
+### Response
+
+**[UpdateRoomConfigResponse](../../models/operations/UpdateRoomConfigResponse.md)**
 
