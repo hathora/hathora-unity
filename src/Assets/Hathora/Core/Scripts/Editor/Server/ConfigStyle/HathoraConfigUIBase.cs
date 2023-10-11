@@ -739,11 +739,17 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             return inputInt;
         }
         
-        protected void SaveConfigChange(string _logKeyName, string _logKeyVal)
+        protected void SaveConfigChange(
+            string _logKeyName, 
+            string _logKeyVal, 
+            bool _skipLog = false)
          {
-             Debug.Log($"[HathoraConfigUIBase] Set new ServerConfig vals for: " +
-                 $"`{_logKeyName}` to: `{_logKeyVal}`");
-             
+             if (!_skipLog)
+             {
+                 Debug.Log($"[HathoraConfigUIBase] Set new ServerConfig vals for: " +
+                     $"`{_logKeyName}` to: `{_logKeyVal}`");    
+             }
+
              SerializedConfig.ApplyModifiedProperties();
              EditorUtility.SetDirty(ServerConfig); // Mark the object as dirty
              AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
