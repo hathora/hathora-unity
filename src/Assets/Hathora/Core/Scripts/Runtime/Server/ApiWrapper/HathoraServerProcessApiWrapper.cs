@@ -64,7 +64,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Get response async =>
             GetProcessInfoResponse getProcessInfoResponse = null;
             
-            // Poll until we get the `Active` status.
+            // Poll until process has ExposePort available
             int pollSecondsTicked; // Duration to be logged later
             
             for (pollSecondsTicked = 0; pollSecondsTicked < _pollTimeoutSecs; pollSecondsTicked++)
