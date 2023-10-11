@@ -48,6 +48,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         public async Task<Process> GetProcessInfoAsync(
             string _processId,
             bool _returnNullOnStoppedProcess = true,
+            int _pollIntervalSecs = 1, 
+            int _pollTimeoutSecs = 30,
             CancellationToken _cancelToken = default)
         {
             const string logPrefix = "[HathoraServerProcessApiWrapper.GetProcessInfoAsync]";
@@ -62,30 +64,41 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             // Get response async =>
             GetProcessInfoResponse getProcessInfoResponse = null;
             
-            try
+            // Poll until we get the `Active` status.
+            int pollSecondsTicked; // Duration to be logged later
+            
+            for (pollSecondsTicked = 0; pollSecondsTicked < _pollTimeoutSecs; pollSecondsTicked++)
             {
-                getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(getProcessInfoRequest);
+                _cancelToken.ThrowIfCancellationRequested();
+                
+                try
+                {
+                    getProcessInfoResponse = await ProcessesApi.GetProcessInfoAsync(getProcessInfoRequest);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError($"{logPrefix} {nameof(ProcessesApi.GetProcessInfoAsync)} => Error: {e.Message}");
+                    return null; // fail
+                }
+
+                if (getProcessInfoResponse.Process?.ExposedPort?.Port != null)
+                    break;
+                
+                await Task.Delay(TimeSpan.FromSeconds(_pollIntervalSecs), _cancelToken);
             }
-            catch (Exception e)
+
+            // -----------------------------------------
+            // We're done polling -- success or timeout?
+            if (getProcessInfoResponse?.Process?.ExposedPort?.Port == null)
             {
-                Debug.LogError($"{logPrefix} {nameof(ProcessesApi.GetProcessInfoAsync)} => Error: {e.Message}");
-                return null; // fail
+                Debug.LogError($"{logPrefix} {nameof(ProcessesApi.GetProcessInfoAsync)} => Error: Timed out");
+                return null;
             }
 
             // Process result
             Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(getProcessInfoResponse.Process)}: {ToJson(getProcessInfoResponse.Process)}</color>");
 
             Process process = getProcessInfoResponse.Process;
-
-            bool isStoppedProcess = process?.StoppingAt != null; 
-            if (isStoppedProcess)
-            {
-                Debug.LogError($"{logPrefix} Got Process info, but reported <color=orange>Stopped</color> " +
-                    $"(returnNullOnStoppedProcess=={_returnNullOnStoppedProcess})");
-
-                if (_returnNullOnStoppedProcess)
-                    return null;
-            }
 
             getProcessInfoResponse.RawResponse?.Dispose(); // Prevent mem leaks
             return process;
