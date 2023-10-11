@@ -323,7 +323,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             Process processInfo = await Apis.ServerProcessApiWrapper.GetProcessInfoAsync(
                 hathoraProcessIdEnvVar, 
                 _returnNullOnStoppedProcess: true,
-                _cancelToken);
+                _cancelToken: _cancelToken);
             
             string procId = processInfo?.ProcessId;
             

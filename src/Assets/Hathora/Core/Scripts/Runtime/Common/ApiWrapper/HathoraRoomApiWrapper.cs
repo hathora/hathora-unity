@@ -42,7 +42,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         public virtual async Task<ConnectionInfoV2> GetConnectionInfoAsync(
             string _roomId, 
             int _pollIntervalSecs = 1, 
-            int _pollTimeoutSecs = 15,
+            int _pollTimeoutSecs = 120,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraRoomApiWrapper)}.{nameof(GetConnectionInfoAsync)}]";
