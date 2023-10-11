@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 using Application = UnityEngine.Application;
@@ -14,11 +15,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.Utils
 {
     public static class HathoraUtils
     {
-        /// <summary>
-        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes
-        /// TODO: If this ever becomes 0, delete this const and update all refs.
-        /// </summary>
-        public const int SDK_ENUM_STARTING_INDEX = 1;
+        public const Region DEFAULT_REGION = Region.Seattle;
 
         /// <summary>
         /// eg: "E1HKfn68Pkms5zsZsvKONw=="

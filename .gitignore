@@ -71,7 +71,6 @@ sysinfo.txt
 # Temporary auto-generated Android Assets
 /src/[Aa]ssets/[Ss]treamingAssets/aa.meta
 /src/[Aa]ssets/[Ss]treamingAssets/aa/*
-/src/.idea
 /src/Build*
 /Utils/logs/*
 /Utils/uploadToHathora/*
@@ -91,3 +90,12 @@ src/Assets/Hathora/Core/Scripts/Editor/Common/SuperSave.*
 *.*~
 src/.hathora/LocalContainer
 utils/mono_crash.mem.*.blob
+/Assets
+src/Dockerfile
+
+.DS_Store
+src/Assets/Hathora/Hathora.Cloud.Sdk/HathoraCloud.sln.meta
+
+# Ignore all sln/csproj meta files
+*.sln.meta
+*.csproj.meta

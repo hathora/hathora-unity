@@ -1,8 +1,8 @@
 // Created by dylan@hathora.dev
 
 using System;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Client;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
 
 namespace Hathora.Demos.Shared.Scripts.Common

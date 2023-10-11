@@ -1,8 +1,8 @@
 // dylan@hathora.dev
 
-using Hathora.Cloud.Sdk.Model;
 using UnityEngine;
 using System;
+using HathoraCloud.Models.Shared;
 using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
@@ -11,24 +11,18 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
     public class HathoraLobbyRoomOpts
     {
         #region Hathora Region
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        [FormerlySerializedAs("_hathoraRegionSelectedIndexUi")]
         [SerializeField]
-        private int _hathoraRegionSelectedIndex = (int)Region.Seattle;
+        private int _hathoraRegionIndex = (int)Region.Seattle;
 
         /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public int HathoraRegionSelectedIndex
+        public int HathoraRegionIndex
         {
-            get => _hathoraRegionSelectedIndex;
-            set => _hathoraRegionSelectedIndex = value;
+            get => _hathoraRegionIndex;
+            set => _hathoraRegionIndex = value;
         }
 
-        /// <summary>
-        /// (!) Hathora SDK Enums starts at index 1; not 0: Care of indexes.
-        /// Since this Enum isn't alphabatized, also care if you Sort() the list.
-        /// </summary>
-        public Region SelectedHathoraRegion => 
-            (Region)_hathoraRegionSelectedIndex;
+        public Region HathoraRegion => 
+            (Region)_hathoraRegionIndex;
         #endregion // Hathora Region
         
         

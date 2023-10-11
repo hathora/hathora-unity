@@ -1,12 +1,11 @@
 // dylan@hathora.dev
 
 using System;
-using System.Collections.Generic;
 using System.Text;
-using Hathora.Cloud.Sdk.Model;
-using Hathora.Core.Scripts.Runtime.Common.Models;
-using Hathora.Core.Scripts.Runtime.Common.Utils;
+using Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers;
+using HathoraCloud.Models.Shared;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Hathora.Core.Scripts.Runtime.Server.Models
 {
@@ -28,85 +27,54 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         
         
         #region Plan Name
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
-        private int _planNameSelectedIndex = (int)PlanName.Tiny;
+        private int _planNameIndexIndex = (int)PlanName.Tiny;
+        public int PlanNameIndex
+        {
+            get => _planNameIndexIndex;
+            set => _planNameIndexIndex = value;
+        }
 
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public int PlanNameSelectedIndex { get; set; }
-
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public PlanName SelectedPlanName => 
-            (PlanName)_planNameSelectedIndex;
+        public PlanName PlanName => 
+            (PlanName)_planNameIndexIndex;
         #endregion // Plan Name
         
         
-        #region Container Port Wrapper
+        #region Container Port
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
         [SerializeField]
-        private ContainerPortWrapper _containerPortWrapper = new();
+        private ContainerPortSerializable _containerPortSerializableSerializable = new();
 
         /// <summary>Default: Tiny. Billing Option: You only get charged for active rooms.</summary>
-        public ContainerPortWrapper ContainerPortWrapper
+        public ContainerPortSerializable ContainerPortSerializable
         {
-            get => _containerPortWrapper;
-            set => _containerPortWrapper = value;
+            get => _containerPortSerializableSerializable;
+            set => _containerPortSerializableSerializable = value;
         }
-        #endregion // Container Port Wrapper
+        #endregion // Container Port
 
 
         #region Transport Type 
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public TransportType SelectedTransportType => 
-            (TransportType)_transportTypeSelectedIndex;
-        
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
         [SerializeField]
-        private int _transportTypeSelectedIndex = (int)TransportType.Udp;
-       
-        /// <summary>(!) Hathora SDK Enums starts at index 1; not 0: Care of indexes</summary>
-        public int TransportTypeSelectedIndex
+        private int _transportTypeIndex = (int)TransportType.Udp;
+        public int TransportTypeIndex
         {
-            get => _transportTypeSelectedIndex;
-            set => _transportTypeSelectedIndex = value;
+            get => _transportTypeIndex;
+            set => _transportTypeIndex = value;
         }
+        
+        public TransportType TransportType => 
+            (TransportType)_transportTypeIndex;
         #endregion // Transport Type 
-        
-        #region Env Vars
-        // /// <summary>(!) Like an `.env` file, these are all strings.</summary>
-        // [SerializeField]
-        // private List<HathoraEnvVars> _envVars = new();
-        //
-        // /// <summary>(!) Like an `.env` file, these are all strings.</summary>
-        // public List<HathoraEnvVars> EnvVars
-        // {
-        //     get => _envVars;
-        //     set => _envVars = value;
-        // }
-        #endregion // Env Vars
-
-        
-        #region Advanced Deploy Opts
-        // /// <summary>You probably don't need to touch these, unless debugging</summary>
-        // [SerializeField]
-        // private HathoraDeployAdvancedOpts _advancedDeployOpts = new();
-        //
-        // /// <summary>You probably don't need to touch these, unless debugging</summary>
-        // public HathoraDeployAdvancedOpts AdvancedDeployOpts
-        // {
-        //     get => _advancedDeployOpts;
-        //     set => _advancedDeployOpts = value;
-        // }
-        #endregion // Advanced Deploy Opts
 
         
         #region Last Deployment
         /// <summary>If you deployed something, we set the cached result</summary>
         // [SerializeField] // TODO: Make serializable. For now, this won't persist between Unity sessions.
-        private DeploymentWrapper _lastDeployment;
+        private Deployment _lastDeployment;
         
         /// <summary>If you deployed something, we set the cached result</summary>
-        public DeploymentWrapper LastDeployment
+        public Deployment LastDeployment
         {
             get => _lastDeployment;
             set => _lastDeployment = value;

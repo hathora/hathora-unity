@@ -86,7 +86,7 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
 
             InsertSpace2x();
             
-            bool enableBuildBtn = ServerConfig.MeetsBuildAndDeployBtnReqs();
+            bool enableBuildBtn = ServerConfig.MeetsBuildBtnReqs();
             if (!enableBuildBtn && !HathoraServerDeploy.IsDeploying)
                 insertGenerateServerBuildBtnHelpboxOnMissingReqs();
             else
@@ -142,7 +142,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
                 : ""
             );
             
-            // (!) Hathora SDK Enums start at index 1 (not 0)
             if (!_serverConfig.HathoraCoreOpts.HasAppId)
                 helpboxLabelStrb.Append("`AppId` ");
             

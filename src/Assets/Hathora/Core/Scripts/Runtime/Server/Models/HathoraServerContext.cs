@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Hathora.Cloud.Sdk.Model;
 using Hathora.Core.Scripts.Runtime.Common.Utils;
+using HathoraCloud.Models.Operations;
+using HathoraCloud.Models.Shared;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -23,8 +24,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         #region Vars
         public string EnvVarProcessId { get; private set; }
         public Process ProcessInfo { get; set; }
-        public Lobby Lobby { get; set; }
-        public List<PickRoomExcludeKeyofRoomAllocations> ActiveRoomsForProcess { get; set; }
+        public LobbyV3 Lobby { get; set; }
+        public List<RoomWithoutAllocations> ActiveRoomsForProcess { get; set; }
         #endregion // Vars
         
 
@@ -79,49 +80,41 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
             return ipPort;
         }
         
-        public PickRoomExcludeKeyofRoomAllocations FirstActiveRoomForProcess => 
+        public RoomWithoutAllocations FirstActiveRoomForProcess => 
             ActiveRoomsForProcess?.FirstOrDefault();
 
-        /// <summary>Checks for (Process, Room and Lobby) != null.</summary>
+        /// <summary>Checks for ( Process, Room, [Lobby] ) != null and Process !stopped.</summary>
         /// <returns>isValid</returns>
         public bool CheckIsValid(bool _expectingLobby) =>
             ProcessInfo != null &&
-            ProcessInfo.StoppingAt == null &&
+            ProcessInfo.StoppingAt != default &&
             FirstActiveRoomForProcess != null &&
             (!_expectingLobby || Lobby != null);
 
-        /// <summary>
-        /// You probably want to parse the InitialConfig to your own model.
-        /// </summary>
-        /// <typeparam name="TInitConfig"></typeparam>
+        /// <summary>Parse the RoomConfig into your own model.</summary>
+        /// <typeparam name="TRoomConfig">
+        /// Your serializable model; the same model passed when the room was created. 
+        /// </typeparam>
         /// <returns></returns>
-        public TInitConfig GetLobbyInitConfig<TInitConfig>()
+        public TRoomConfig ParseRoomConfig<TRoomConfig>()
         {
-            string logPrefix = $"[{nameof(HathoraServerContext)}.{nameof(GetLobbyInitConfig)}]";
+            string logPrefix = $"[{nameof(HathoraServerContext)}.{nameof(ParseRoomConfig)}]";
 
-            object initConfigObj = Lobby?.InitialConfig;
-            if (initConfigObj == null)
+            string roomConfigJsonStr = Lobby?.RoomConfig;
+            if (string.IsNullOrEmpty(roomConfigJsonStr))
             {
-                Debug.LogError($"{logPrefix} !initConfigObj");
+                Debug.LogError($"{logPrefix} !{nameof(roomConfigJsonStr)}");
                 return default;
             }
 
             try
             {
-                string jsonString = initConfigObj as string;
-                
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    Debug.LogError($"{logPrefix} !jsonString");
-                    return default;
-                }
-                
-                TInitConfig initConfigParsed = JsonConvert.DeserializeObject<TInitConfig>(jsonString);
-                return initConfigParsed;
+                TRoomConfig parsedRoomConfig = JsonConvert.DeserializeObject<TRoomConfig>(roomConfigJsonStr);
+                return parsedRoomConfig;
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} Error parsing initConfigObj: {e}");
+                Debug.LogError($"{logPrefix} Error parsing {nameof(roomConfigJsonStr)}: {e}");
                 throw;
             }
         }
@@ -137,8 +130,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public HathoraServerContext(
             string _envVarProcessId,
             Process _processInfo,
-            List<PickRoomExcludeKeyofRoomAllocations> _activeRoomsForProcess,
-            Lobby _lobby)
+            List<RoomWithoutAllocations> _activeRoomsForProcess,
+            LobbyV3 _lobby)
         {
             this.EnvVarProcessId = _envVarProcessId;
             this.ProcessInfo = _processInfo;
