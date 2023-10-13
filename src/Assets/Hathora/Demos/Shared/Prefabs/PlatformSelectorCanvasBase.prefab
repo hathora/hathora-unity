@@ -1102,7 +1102,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u2022 Great for testing vanilla deployment with Mirror\n\u2022 Upload
+  m_text: "\u2022 Great for testing basic server deployment\n\u2022 Upload
     to <color=#EEDDFF><b>Hathora</b></color> with `-mode server` and test ping/pong
     RPCs"
   m_isRightToLeft: 0
