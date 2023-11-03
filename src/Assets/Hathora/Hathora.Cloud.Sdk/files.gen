@@ -203,10 +203,6 @@ HathoraCloud/Models/Shared/RoomWithoutAllocationsCurrentAllocation.cs
 HathoraCloud/Models/Shared/RoomWithoutAllocations.cs
 HathoraCloud/Models/Shared/RoomStatus.cs
 HathoraCloud/Models/Shared/CreateRoomParams.cs
-HathoraCloud/Models/Shared/StartingConnectionInfoStatus.cs
-HathoraCloud/Models/Shared/StartingConnectionInfo.cs
-HathoraCloud/Models/Shared/ActiveConnectionInfoStatus.cs
-HathoraCloud/Models/Shared/ActiveConnectionInfo.cs
 HathoraCloud/Models/Shared/RoomCurrentAllocation.cs
 HathoraCloud/Models/Shared/Room.cs
 HathoraCloud/Models/Shared/RoomAllocation.cs
@@ -388,10 +384,6 @@ docs/models/shared/RoomWithoutAllocationsCurrentAllocation.md
 docs/models/shared/RoomWithoutAllocations.md
 docs/models/shared/RoomStatus.md
 docs/models/shared/CreateRoomParams.md
-docs/models/shared/StartingConnectionInfoStatus.md
-docs/models/shared/StartingConnectionInfo.md
-docs/models/shared/ActiveConnectionInfoStatus.md
-docs/models/shared/ActiveConnectionInfo.md
 docs/models/shared/RoomCurrentAllocation.md
 docs/models/shared/Room.md
 docs/models/shared/RoomAllocation.md

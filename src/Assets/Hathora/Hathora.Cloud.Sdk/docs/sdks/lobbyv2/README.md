@@ -3,11 +3,11 @@
 
 ## Overview
 
-Deprecated. Use LobbyV3.
+Deprecated. Use [LobbyV3](https://hathora.dev/api#tag/LobbyV3).
 
 ### Available Operations
 
-* [CreateLobbyDeprecated](#createlobbydeprecated) - Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retreiving a list of public lobbies to display to players.
+* [CreateLobbyDeprecated](#createlobbydeprecated) - Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retrieving a list of public lobbies to display to players.
 * [~~CreateLocalLobby~~](#createlocallobby) - :warning: **Deprecated**
 * [~~CreatePrivateLobby~~](#createprivatelobby) - :warning: **Deprecated**
 * [~~CreatePublicLobby~~](#createpubliclobby) - :warning: **Deprecated**
@@ -17,7 +17,7 @@ Deprecated. Use LobbyV3.
 
 ## CreateLobbyDeprecated
 
-Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retreiving a list of public lobbies to display to players.
+Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retrieving a list of public lobbies to display to players.
 
 ### Example Usage
 
@@ -31,15 +31,15 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.CreateLobbyDeprecatedAsync(new CreateLobbyDeprecatedSecurity() {
-        PlayerAuth = "",
-    }, new CreateLobbyDeprecatedRequest() {
-        CreateLobbyParams = new CreateLobbyParams() {
-            InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Tokyo,
-            Visibility = HathoraCloud.Models.Shared.LobbyVisibility.Private,
-        },
-        RoomId = "2swovpy1fnunu",
-    }))
+    PlayerAuth = "",
+}, new CreateLobbyDeprecatedRequest() {
+    CreateLobbyParams = new CreateLobbyParams() {
+        InitialConfig = new LobbyInitialConfig() {},
+        Region = HathoraCloud.Models.Shared.Region.Tokyo,
+        Visibility = HathoraCloud.Models.Shared.LobbyVisibility.Private,
+    },
+    RoomId = "2swovpy1fnunu",
+}))
 {
     // handle response
 }
@@ -74,14 +74,14 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.CreateLocalLobbyAsync(new CreateLocalLobbySecurity() {
-        PlayerAuth = "",
-    }, new CreateLocalLobbyRequest() {
-        RequestBody = new CreateLocalLobbyRequestBody() {
-            InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Sydney,
-        },
-        RoomId = "2swovpy1fnunu",
-    }))
+    PlayerAuth = "",
+}, new CreateLocalLobbyRequest() {
+    RequestBody = new CreateLocalLobbyRequestBody() {
+        InitialConfig = new LobbyInitialConfig() {},
+        Region = HathoraCloud.Models.Shared.Region.Sydney,
+    },
+    RoomId = "2swovpy1fnunu",
+}))
 {
     // handle response
 }
@@ -116,14 +116,14 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.CreatePrivateLobbyAsync(new CreatePrivateLobbySecurity() {
-        PlayerAuth = "",
-    }, new CreatePrivateLobbyRequest() {
-        RequestBody = new CreatePrivateLobbyRequestBody() {
-            InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Chicago,
-        },
-        RoomId = "2swovpy1fnunu",
-    }))
+    PlayerAuth = "",
+}, new CreatePrivateLobbyRequest() {
+    RequestBody = new CreatePrivateLobbyRequestBody() {
+        InitialConfig = new LobbyInitialConfig() {},
+        Region = HathoraCloud.Models.Shared.Region.Chicago,
+    },
+    RoomId = "2swovpy1fnunu",
+}))
 {
     // handle response
 }
@@ -158,14 +158,14 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.CreatePublicLobbyAsync(new CreatePublicLobbySecurity() {
-        PlayerAuth = "",
-    }, new CreatePublicLobbyRequest() {
-        RequestBody = new CreatePublicLobbyRequestBody() {
-            InitialConfig = new LobbyInitialConfig() {},
-            Region = HathoraCloud.Models.Shared.Region.Sydney,
-        },
-        RoomId = "2swovpy1fnunu",
-    }))
+    PlayerAuth = "",
+}, new CreatePublicLobbyRequest() {
+    RequestBody = new CreatePublicLobbyRequestBody() {
+        InitialConfig = new LobbyInitialConfig() {},
+        Region = HathoraCloud.Models.Shared.Region.Sydney,
+    },
+    RoomId = "2swovpy1fnunu",
+}))
 {
     // handle response
 }
@@ -203,8 +203,8 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.GetLobbyInfoAsync(new GetLobbyInfoRequest() {
-        RoomId = "2swovpy1fnunu",
-    }))
+    RoomId = "2swovpy1fnunu",
+}))
 {
     // handle response
 }
@@ -240,9 +240,7 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
 );
 
-using(var res = await sdk.LobbyV2.ListActivePublicLobbiesDeprecatedV2Async(new ListActivePublicLobbiesDeprecatedV2Request() {
-        Region = HathoraCloud.Models.Shared.Region.Frankfurt,
-    }))
+using(var res = await sdk.LobbyV2.ListActivePublicLobbiesDeprecatedV2Async(new ListActivePublicLobbiesDeprecatedV2Request() {}))
 {
     // handle response
 }
@@ -279,11 +277,11 @@ var sdk = new HathoraCloudSDK(
 );
 
 using(var res = await sdk.LobbyV2.SetLobbyStateAsync(new SetLobbyStateRequest() {
-        SetLobbyStateParams = new SetLobbyStateParams() {
-            State = new SetLobbyStateParamsState() {},
-        },
-        RoomId = "2swovpy1fnunu",
-    }))
+    SetLobbyStateParams = new SetLobbyStateParams() {
+        State = new SetLobbyStateParamsState() {},
+    },
+    RoomId = "2swovpy1fnunu",
+}))
 {
     // handle response
 }
