@@ -55,7 +55,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
         /// - Eg: `MaxNumPlayers`
         /// - Required, since a 'Lobby' without an RoomConfig is just a 'Room'. 
         /// </param>
-        /// <param name="_roomId">Null will auto-generate</param>
+        /// <param name="_shortCode">Ideal for user-defined identifiers for lobbies</param>
+        /// <param name="_roomId">Leave null to auto-generate a globally unique roomId (recommended)</param>
         /// <param name="_cancelToken"></param>
         /// <param name="_region">(!) Index starts at 1 (not 0)</param>
         /// <returns>Lobby on success</returns>
@@ -64,6 +65,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             object _roomConfigSerializable,
             Region _region = HathoraUtils.DEFAULT_REGION,
             LobbyVisibility _lobbyVisibility = LobbyVisibility.Public,
+            string _shortCode = null,
             string _roomId = null,
             CancellationToken _cancelToken = default)
         {
@@ -79,7 +81,8 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             CreateLobbyRequest createLobbyRequestWrapper = new()
             {
                 CreateLobbyV3Params = createLobbyParams,
-                ShortCode = _roomId,
+                ShortCode = _shortCode,
+                RoomId = _roomId,
             };
             CreateLobbySecurity createLobbySecurity = new() { PlayerAuth = _playerAuthToken };
 
