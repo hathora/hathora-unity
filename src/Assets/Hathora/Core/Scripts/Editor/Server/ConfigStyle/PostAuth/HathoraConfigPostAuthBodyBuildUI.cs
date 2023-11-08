@@ -158,7 +158,8 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
         {
             // Post the help box *before* we disable the button so it's easier to see (if toggleable)
             string labelStr = "This will generate a Linux Server Build for your game. " +
-                "It will also generate a /{Application.productName}/.hathora/Dockerfile";
+                "It will also generate a Dockerfile. NOTE: this action will update your Build Settings to be 'Dedicated Server - Linux'";
+            
             
             EditorGUILayout.HelpBox(labelStr, MessageType.Info);
         }
