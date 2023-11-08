@@ -12,6 +12,7 @@ using Hathora.Core.Scripts.Runtime.Common.Utils;
 using Hathora.Core.Scripts.Runtime.Server;
 using Hathora.Core.Scripts.Runtime.Server.Models;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -72,31 +73,16 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             cleanCreateBuildDir(_serverConfig, configPaths.PathToBuildDir);
             _cancelToken.ThrowIfCancellationRequested();
-            
-            #region bug (when restored later): Recompiles - you lose all logs [including HathoraServerConfig logs]
-            // // ----------------
-            // // This will change your selected build setting: Cache here, revert later
-            BuildTarget originalBuildTarget = EditorUserBuildSettings.activeBuildTarget;
-            BuildTargetGroup originalBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(originalBuildTarget);
-            // int originalArchitecture = PlayerSettings.GetArchitecture(originalBuildTargetGroup);
-            ScriptingImplementation originalScriptingBackend = PlayerSettings.GetScriptingBackend(originalBuildTargetGroup);
-            // ApiCompatibilityLevel originalApiCompatibility = PlayerSettings.GetApiCompatibilityLevel(originalBuildTargetGroup);
-            //
-            // // Sanity check: Does the 1st scene match the current scene we're on?
-            // // Many devs intend to build on the scene they're working on 1st, but forget to swap the order
-            // EditorBuildSettingsScene firstSceneInBuildSettings = EditorBuildSettings.scenes[0]; 
-            // if (firstSceneInBuildSettings.path != SceneManager.GetActiveScene().path)
-            // {
-            //     Debug.Log($"{logPrefix} <color=orange>(!)</color> The 1st scene in build " +
-            //         $"settings ({firstSceneInBuildSettings.path}) !matches the current Editor " +
-            //         $"scene ({SceneManager.GetActiveScene().path}); intended?");
-            // }
-            #endregion // bug (when restored later): Recompiles - you lose all logs [including HathoraServerConfig logs]
 
-            // Set scripting backend to Mono since we unlikely support IL2CPP for Linux (unless Unity Editor is Linux)
+            // Set scripting backend to Mono by default (faster build times). Requires "Linux Build Support (Mono)" module installed
             PlayerSettings.SetScriptingBackend(
-                BuildTargetGroup.Standalone,
+                NamedBuildTarget.Server,
                 ScriptingImplementation.Mono2x);
+
+            // Uncomment below if IL2CPP is preferred (slower build, but better performance). Requires "Linux Build Support (IL2CPP)" module installed
+            // PlayerSettings.SetScriptingBackend(
+            //     NamedBuildTarget.Server,
+            //     ScriptingImplementation.IL2CPP);
             
             // ----------------
             // Generate build opts
@@ -156,19 +142,6 @@ namespace Hathora.Core.Scripts.Editor.Server
                 Selection.activeObject = previousSelection; // Restore focus
                 return buildReport; // fail
             }
-            
-            #region bug: Recompiles - you lose all logs [including HathoraServerConfig logs]
-            // // ----------------
-            // // Delay since we don't want the rest of the block to cutoff (This causes a recompile)
-            EditorApplication.delayCall += () =>
-            {
-                // Revert build settings since we changed them to headless Linux server
-                PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
-                // EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
-                // PlayerSettings.SetArchitecture(originalBuildTargetGroup, originalArchitecture);
-                // PlayerSettings.SetApiCompatibilityLevel(originalBuildTargetGroup, originalApiCompatibility);
-            };
-            #endregion // bug: Recompiles - you lose all logs [including HathoraServerConfig logs]
             
             strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
 
@@ -248,13 +221,8 @@ namespace Hathora.Core.Scripts.Editor.Server
                 scenes = scenePaths,
                 locationPathName = _serverBuildExeFullPath,
                 target = BuildTarget.StandaloneLinux64,
-                options = _serverConfig.LinuxHathoraAutoBuildOpts.IsDevBuild 
-                    ? BuildOptions.Development 
-                    : BuildOptions.None,
+                subtarget = (int)StandaloneBuildSubtarget.Server
             };
-            
-            // Ensure build is a headless Linux server (formerly set via `options = BuildOptions.EnableHeadlessMode`)
-            EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Server;
 
             return buildPlayerOpts;
         }
