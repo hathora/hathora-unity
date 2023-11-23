@@ -21,6 +21,8 @@ To do so open the Package Manager via `Window > Package Manager` and click the `
 
 ## SDK Example Usage
 <!-- Start SDK Example Usage -->
+### Example
+
 ```csharp
 using HathoraCloud;
 using HathoraCloud.Models.Shared;
@@ -36,7 +38,7 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
     AppName = "minecraft",
     AuthConfiguration = new AuthConfiguration() {
         Anonymous = new RecordStringNever() {},
-        Google = new AuthConfigurationGoogle() {
+        Google = new Google() {
             ClientId = "string",
         },
         Nickname = new RecordStringNever() {},
@@ -99,13 +101,13 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
 
 ### [LobbyV2](docs/sdks/lobbyv2/README.md)
 
-* [CreateLobbyDeprecated](docs/sdks/lobbyv2/README.md#createlobbydeprecated) - Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retrieving a list of public lobbies to display to players.
+* [~~CreateLobbyDeprecated~~](docs/sdks/lobbyv2/README.md#createlobbydeprecated) - Create a new lobby for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). A lobby object is a wrapper around a [room](https://hathora.dev/docs/concepts/hathora-entities#room) object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retrieving a list of public lobbies to display to players. :warning: **Deprecated**
 * [~~CreateLocalLobby~~](docs/sdks/lobbyv2/README.md#createlocallobby) - :warning: **Deprecated**
 * [~~CreatePrivateLobby~~](docs/sdks/lobbyv2/README.md#createprivatelobby) - :warning: **Deprecated**
 * [~~CreatePublicLobby~~](docs/sdks/lobbyv2/README.md#createpubliclobby) - :warning: **Deprecated**
-* [GetLobbyInfo](docs/sdks/lobbyv2/README.md#getlobbyinfo) - Get details for a lobby.
-* [ListActivePublicLobbiesDeprecatedV2](docs/sdks/lobbyv2/README.md#listactivepubliclobbiesdeprecatedv2) - Get all active lobbies for a an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
-* [SetLobbyState](docs/sdks/lobbyv2/README.md#setlobbystate) - Set the state of a lobby. State is intended to be set by the server and must be smaller than 1MB. Use this endpoint to store match data like live player count to enforce max number of clients or persist end-game data (i.e. winner or final scores).
+* [~~GetLobbyInfo~~](docs/sdks/lobbyv2/README.md#getlobbyinfo) - Get details for a lobby. :warning: **Deprecated**
+* [~~ListActivePublicLobbiesDeprecatedV2~~](docs/sdks/lobbyv2/README.md#listactivepubliclobbiesdeprecatedv2) - Get all active lobbies for a an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client. :warning: **Deprecated**
+* [~~SetLobbyState~~](docs/sdks/lobbyv2/README.md#setlobbystate) - Set the state of a lobby. State is intended to be set by the server and must be smaller than 1MB. Use this endpoint to store match data like live player count to enforce max number of clients or persist end-game data (i.e. winner or final scores). :warning: **Deprecated**
 
 ### [LobbyV3](docs/sdks/lobbyv3/README.md)
 
@@ -165,14 +167,14 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
 
 
 <!-- Start Global Parameters -->
-# Global Parameters
+## Global Parameters
 
 A parameter is configured globally. This parameter may be set on the SDK client instance itself during initialization. When configured as an option during SDK initialization, This global value will be used as the default on the operations that use it. When such operations are called, there is a place in each to override the global value, if needed.
 
 For example, you can set `appId` to `"app-af469a92-5b45-4565-b3c4-b79878de67d2"` at SDK initialization and then you do not have to pass the same value on calls to operations like `DeleteApp`. But if you want to do so you may, which will locally override the global setting. See the example code below for a demonstration.
 
 
-## Available Globals
+### Available Globals
 
 The following global parameter is available.
 
@@ -181,8 +183,7 @@ The following global parameter is available.
 | appId | string |  | The appId parameter. |
 
 
-
-## Example
+### Example
 
 ```csharp
 using HathoraCloud;
