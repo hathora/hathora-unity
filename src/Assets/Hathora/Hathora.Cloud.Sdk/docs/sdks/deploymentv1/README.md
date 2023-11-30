@@ -21,6 +21,7 @@ Create a new [deployment](https://hathora.dev/docs/concepts/hathora-entities#dep
 using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
+using System.Collections.Generic;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
@@ -35,7 +36,7 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
             new ContainerPort() {
                 Name = "default",
                 Port = 8000,
-                TransportType = HathoraCloud.Models.Shared.TransportType.Udp,
+                TransportType = TransportType.Udp,
             },
         },
         ContainerPort = 4000,
@@ -45,9 +46,9 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
                 Value = "TRUE",
             },
         },
-        PlanName = HathoraCloud.Models.Shared.PlanName.Tiny,
+        PlanName = PlanName.Tiny,
         RoomsPerProcess = 3,
-        TransportType = HathoraCloud.Models.Shared.TransportType.Tcp,
+        TransportType = TransportType.Tcp,
     },
     BuildId = 1,
 }))

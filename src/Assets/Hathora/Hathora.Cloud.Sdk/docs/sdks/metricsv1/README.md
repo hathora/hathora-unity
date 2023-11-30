@@ -19,6 +19,7 @@ Get metrics for a [process](https://hathora.dev/docs/concepts/hathora-entities#p
 using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
+using System.Collections.Generic;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
@@ -30,7 +31,7 @@ var sdk = new HathoraCloudSDK(
 using(var res = await sdk.MetricsV1.GetMetricsAsync(new GetMetricsRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
     Metrics = new List<MetricName>() {
-        HathoraCloud.Models.Shared.MetricName.RateEgress,
+        MetricName.RateEgress,
     },
 }))
 {
