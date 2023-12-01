@@ -185,9 +185,9 @@ var sdk = new HathoraCloudSDK(
 
 using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildRequest() {
     RequestBody = new RunBuildRequestBody() {
-        File = new RunBuildRequestBodyFile() {
-            Content = "Ukkktj?kA= as bytes <<<>>>",
-            File = "string",
+        File = new File() {
+            Content = "0xcBBBDB7B76 as bytes <<<>>>",
+            FileName = "times_mini.wav",
         },
     },
     BuildId = 1,

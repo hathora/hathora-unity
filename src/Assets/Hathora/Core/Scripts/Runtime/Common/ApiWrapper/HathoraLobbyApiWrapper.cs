@@ -139,7 +139,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             
             if (getLobbyInfoByRoomIdResponse.StatusCode == 404)
             {
-                Debug.LogError($"{logPrefix} 404: {getLobbyInfoByRoomIdResponse.GetLobbyInfoByRoomId404ApplicationJSONString} - " +
+                Debug.LogError($"{logPrefix} 404: {getLobbyInfoByRoomIdResponse.ApiError.Message} - " +
                     "Tip: If a server made a Room without a lobby, instead use the Room api (rather than Lobby api)");
             }
             
@@ -181,7 +181,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             
             if (getLobbyInfoByShortCodeResponse.StatusCode == 404)
             {
-                Debug.LogError($"{logPrefix} 404: {getLobbyInfoByShortCodeResponse.GetLobbyInfoByShortCode404ApplicationJSONString} - " +
+                Debug.LogError($"{logPrefix} 404: {getLobbyInfoByShortCodeResponse.ApiError?.Message} - " +
                     "Tip: If a server made a Room without a lobby, instead use the Room api (rather than Lobby api)");
             }
             
@@ -225,7 +225,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
                     $"instead use the {nameof(HathoraRoomApiWrapper)} (not {nameof(HathoraLobbyApiWrapper)})");
             }
 
-            List<LobbyV3> lobbies = activePublicLobbiesResponse.LobbyV3s;
+            List<LobbyV3> lobbies = activePublicLobbiesResponse.Classes;
             Debug.Log($"{logPrefix} => numLobbiesFound: {lobbies?.Count ?? 0}");
             
             activePublicLobbiesResponse.RawResponse?.Dispose(); // Prevent mem leaks

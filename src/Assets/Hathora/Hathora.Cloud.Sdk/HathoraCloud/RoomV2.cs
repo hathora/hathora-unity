@@ -22,7 +22,7 @@ namespace HathoraCloud
     /// <summary>
     /// Operations to create, manage, and connect to <a href="https://hathora.dev/docs/concepts/hathora-entities#room">rooms</a>.
     /// </summary>
-    public interface IRoomV2SDK
+    public interface IRoomV2
     {
 
         /// <summary>
@@ -65,19 +65,19 @@ namespace HathoraCloud
     /// <summary>
     /// Operations to create, manage, and connect to <a href="https://hathora.dev/docs/concepts/hathora-entities#room">rooms</a>.
     /// </summary>
-    public class RoomV2SDK: IRoomV2SDK
+    public class RoomV2: IRoomV2
     {
         public SDKConfig Config { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.22.1";
-        private const string _sdkGenVersion = "2.173.0";
+        private const string _sdkVersion = "0.26.0";
+        private const string _sdkGenVersion = "2.195.2";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.22.1 2.173.0 0.0.1 hathora-unity-sdk";
+        private const string _userAgent = "speakeasy-sdk/unity 0.26.0 2.195.2 0.0.1 hathora-cloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
 
-        public RoomV2SDK(ISpeakeasyHttpClient defaultClient, ISpeakeasyHttpClient securityClient, string serverUrl, SDKConfig config)
+        public RoomV2(ISpeakeasyHttpClient defaultClient, ISpeakeasyHttpClient securityClient, string serverUrl, SDKConfig config)
         {
             _defaultClient = defaultClient;
             _securityClient = securityClient;
@@ -89,11 +89,7 @@ namespace HathoraCloud
         public async Task<CreateRoomResponse> CreateRoomAsync(CreateRoomRequest request)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/create", request);
             
 
@@ -144,47 +140,11 @@ namespace HathoraCloud
                 
                 return response;
             }
-            if((response.StatusCode == 400))
+            if((response.StatusCode == 400) || (response.StatusCode == 402) || (response.StatusCode == 403) || (response.StatusCode == 404) || (response.StatusCode == 500))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.CreateRoom400ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 402))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.CreateRoom402ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 403))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.CreateRoom403ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 404))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.CreateRoom404ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 500))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.CreateRoom500ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -196,11 +156,7 @@ namespace HathoraCloud
         public async Task<DestroyRoomResponse> DestroyRoomAsync(DestroyRoomRequest? request = null)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/destroy/{roomId}", request);
             
 
@@ -237,20 +193,11 @@ namespace HathoraCloud
                 
                 return response;
             }
-            if((response.StatusCode == 404))
+            if((response.StatusCode == 404) || (response.StatusCode == 500))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.DestroyRoom404ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 500))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.DestroyRoom500ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -262,11 +209,7 @@ namespace HathoraCloud
         public async Task<GetActiveRoomsForProcessResponse> GetActiveRoomsForProcessAsync(GetActiveRoomsForProcessRequest? request = null)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/list/{processId}/active", request);
             
 
@@ -302,7 +245,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.RoomWithoutAllocations = JsonConvert.DeserializeObject<List<RoomWithoutAllocations>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
+                    response.Classes = JsonConvert.DeserializeObject<List<RoomWithoutAllocations>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -311,7 +254,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.GetActiveRoomsForProcess404ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -323,11 +266,7 @@ namespace HathoraCloud
         public async Task<GetConnectionInfoResponse> GetConnectionInfoAsync(GetConnectionInfoRequest? request = null)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/connectioninfo/{roomId}", request);
             
 
@@ -368,29 +307,11 @@ namespace HathoraCloud
                 
                 return response;
             }
-            if((response.StatusCode == 400))
+            if((response.StatusCode == 400) || (response.StatusCode == 404) || (response.StatusCode == 500))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.GetConnectionInfo400ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 404))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.GetConnectionInfo404ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 500))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.GetConnectionInfo500ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -402,11 +323,7 @@ namespace HathoraCloud
         public async Task<GetInactiveRoomsForProcessResponse> GetInactiveRoomsForProcessAsync(GetInactiveRoomsForProcessRequest? request = null)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/list/{processId}/inactive", request);
             
 
@@ -442,7 +359,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.RoomWithoutAllocations = JsonConvert.DeserializeObject<List<RoomWithoutAllocations>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
+                    response.Classes = JsonConvert.DeserializeObject<List<RoomWithoutAllocations>>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -451,7 +368,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.GetInactiveRoomsForProcess404ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -463,11 +380,7 @@ namespace HathoraCloud
         public async Task<GetRoomInfoResponse> GetRoomInfoAsync(GetRoomInfoRequest? request = null)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/info/{roomId}", request);
             
 
@@ -512,7 +425,7 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.GetRoomInfo404ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -524,11 +437,7 @@ namespace HathoraCloud
         public async Task<SuspendRoomResponse> SuspendRoomAsync(SuspendRoomRequest? request = null)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/suspend/{roomId}", request);
             
 
@@ -565,20 +474,11 @@ namespace HathoraCloud
                 
                 return response;
             }
-            if((response.StatusCode == 404))
+            if((response.StatusCode == 404) || (response.StatusCode == 500))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.SuspendRoom404ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 500))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.SuspendRoom500ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
@@ -590,11 +490,7 @@ namespace HathoraCloud
         public async Task<UpdateRoomConfigResponse> UpdateRoomConfigAsync(UpdateRoomConfigRequest request)
         {
             request.AppId ??= Config.AppId;
-            string baseUrl = _serverUrl;
-            if (baseUrl.EndsWith("/"))
-            {
-                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
-            }
+            string baseUrl = this.Config.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/rooms/v2/{appId}/update/{roomId}", request);
             
 
@@ -641,20 +537,11 @@ namespace HathoraCloud
                 
                 return response;
             }
-            if((response.StatusCode == 404))
+            if((response.StatusCode == 404) || (response.StatusCode == 500))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {
-                    response.UpdateRoomConfig404ApplicationJSONString = httpResponse.downloadHandler.text;
-                }
-                
-                return response;
-            }
-            if((response.StatusCode == 500))
-            {
-                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
-                {
-                    response.UpdateRoomConfig500ApplicationJSONString = httpResponse.downloadHandler.text;
+                    response.ApiError = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = new JsonConverter[] { new FlexibleObjectDeserializer(), new DateOnlyConverter(), new EnumSerializer() }});
                 }
                 
                 return response;
