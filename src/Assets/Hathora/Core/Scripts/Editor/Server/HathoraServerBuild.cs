@@ -43,6 +43,7 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <returns>isSuccess</returns>
         public static async Task<BuildReport> BuildHathoraLinuxServer(
             HathoraServerConfig _serverConfig,
+            SerializedObject _serializedConfig,
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerBuild)}.{nameof(BuildHathoraLinuxServer)}]";
@@ -73,16 +74,20 @@ namespace Hathora.Core.Scripts.Editor.Server
             
             cleanCreateBuildDir(_serverConfig, configPaths.PathToBuildDir);
             _cancelToken.ThrowIfCancellationRequested();
+            
+            // Cache build settings so we can revert after
+            BuildTarget originalBuildTarget = EditorUserBuildSettings.activeBuildTarget;
+            StandaloneBuildSubtarget originalBuildSubtarget = EditorUserBuildSettings.standaloneBuildSubtarget;
+            BuildTargetGroup originalBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(originalBuildTarget);
+            ScriptingImplementation originalScriptingBackend = PlayerSettings.GetScriptingBackend(originalBuildTargetGroup);
 
-            // Set scripting backend to Mono by default (faster build times). Requires "Linux Build Support (Mono)" module installed
+            // Set scripting backend to based on selection in server config file
+            ScriptingImplementation scriptingImpl = _serverConfig.LinuxHathoraAutoBuildOpts.SelectedScriptingBackend == HathoraAutoBuildOpts.ScriptingBackend.IL2CPP ?
+                ScriptingImplementation.IL2CPP : ScriptingImplementation.Mono2x;
             PlayerSettings.SetScriptingBackend(
                 NamedBuildTarget.Server,
-                ScriptingImplementation.Mono2x);
-
-            // Uncomment below if IL2CPP is preferred (slower build, but better performance). Requires "Linux Build Support (IL2CPP)" module installed
-            // PlayerSettings.SetScriptingBackend(
-            //     NamedBuildTarget.Server,
-            //     ScriptingImplementation.IL2CPP);
+                scriptingImpl);
+            strb.AppendLine("Configuring scripting backend: " + scriptingImpl);
             
             // ----------------
             // Generate build opts
@@ -143,16 +148,24 @@ namespace Hathora.Core.Scripts.Editor.Server
                 return buildReport; // fail
             }
             
+            // Revert to cached build/player settings to leaves things as they were
+            EditorApplication.delayCall += () =>
+            {
+                // Revert build settings back to what it was prior
+                EditorUserBuildSettings.SwitchActiveBuildTarget(originalBuildTargetGroup, originalBuildTarget);
+                PlayerSettings.SetScriptingBackend(originalBuildTargetGroup, originalScriptingBackend);
+                EditorUserBuildSettings.standaloneBuildSubtarget = originalBuildSubtarget;
+            };
+
             strb.AppendLine($"**BUILD SUCCESS: {resultStr}**");
 
             // ----------------
             // Open the build directory - this will lose focus of the inspector
-            // TODO: Play a small, subtle chime sfx?
             strb.AppendLine("Opening build dir ...").AppendLine();
             Debug.Log($"{logPrefix} Build succeeded @ path: `{configPaths.PathToBuildDir}`");
             
             EditorUtility.RevealInFinder(configPaths.PathToBuildExe);
-            cacheFinishedBuildReportLogs(_serverConfig, buildReport);
+            cacheFinishedBuildReportLogs(_serverConfig, _serializedConfig, buildReport);
 
             // ----------------
             // Restore focus and return the build report
@@ -179,6 +192,7 @@ namespace Hathora.Core.Scripts.Editor.Server
 
         private static void cacheFinishedBuildReportLogs(
             HathoraServerConfig _serverConfig, 
+            SerializedObject _serializedConfig,
             BuildReport _buildReport)
         {
             _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildReport = _buildReport;
@@ -202,6 +216,12 @@ namespace Hathora.Core.Scripts.Editor.Server
             // {green}Completed{/green} {date} {time} (in {hh}h:{mm}m:{ss}s)
             // BUILD DONE
             // #########################################################
+
+            _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStr = _serverConfig.LinuxHathoraAutoBuildOpts.LastBuildLogsStrb.ToString();
+            Debug.Log("Persist build logs.");
+            _serializedConfig.ApplyModifiedProperties();
+            EditorUtility.SetDirty(_serverConfig); // Mark the object as dirty
+            AssetDatabase.SaveAssets(); // Save changes to the ScriptableObject asset
         }
 
         /// <summary></summary>
