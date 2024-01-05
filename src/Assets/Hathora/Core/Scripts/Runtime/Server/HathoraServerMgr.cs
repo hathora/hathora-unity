@@ -92,7 +92,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
 
         
         #region Init
-        protected virtual async void Awake()
+        protected virtual void Awake()
         {
 #if !UNITY_SERVER && !UNITY_EDITOR
             Debug.Log("(!) [HathoraServerMgr.Awake] Destroying - not a server");
@@ -205,11 +205,11 @@ namespace Hathora.Core.Scripts.Runtime.Server
                 Debug.Log($"<color=orange>(!)</color> {logPrefix} !HathoraServerConfig: Np in Editor, " +
                     "but if you want server runtime calls when you build as UNITY_SERVER, " +
                     $"serialize {gameObject.name}.{nameof(HathoraServerMgr)}");
-
+                return false;
 #else
                 // We're probably a Client - just silently stop this. Clients don't have a dev key.
-#endif
                 return false;
+#endif
             }
 
             return true;
