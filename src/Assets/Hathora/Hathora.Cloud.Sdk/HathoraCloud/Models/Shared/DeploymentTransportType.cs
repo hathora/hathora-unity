@@ -8,7 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-#pragma warning disable 0618
 namespace HathoraCloud.Models.Shared
 {
     using Newtonsoft.Json;
@@ -25,6 +24,7 @@ namespace HathoraCloud.Models.Shared
         Tls,
     }
 
+#pragma warning disable 0618
     public static class DeploymentTransportTypeExtension
     {
         public static string Value(this DeploymentTransportType value)
@@ -52,6 +52,6 @@ namespace HathoraCloud.Models.Shared
             throw new Exception($"Unknown value {value} for enum DeploymentTransportType");
         }
     }
+#pragma warning restore 0618
 
 }
-#pragma warning restore 0618

@@ -56,12 +56,12 @@ namespace HathoraCloud
     /// </summary>
     public class BuildV1: IBuildV1
     {
-        public SDKConfig Config { get; private set; }
+        public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.26.0";
-        private const string _sdkGenVersion = "2.195.2";
+        private const string _sdkVersion = "0.28.4";
+        private const string _sdkGenVersion = "2.239.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.26.0 2.195.2 0.0.1 hathora-cloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.28.4 2.239.0 0.0.1 hathora-cloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
@@ -71,18 +71,17 @@ namespace HathoraCloud
             _defaultClient = defaultClient;
             _securityClient = securityClient;
             _serverUrl = serverUrl;
-            Config = config;
+            SDKConfiguration = config;
         }
         
 
         public async Task<CreateBuildResponse> CreateBuildAsync(CreateBuildRequest request)
         {
-            request ??= new();
-            request.AppId ??= Config.AppId;
-            string baseUrl = this.Config.GetTemplatedServerDetails();
+            request.AppId ??= SDKConfiguration.AppId;
+            
+            string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/builds/v1/{appId}/create", request);
             
-
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
@@ -145,12 +144,15 @@ namespace HathoraCloud
 
         public async Task<DeleteBuildResponse> DeleteBuildAsync(DeleteBuildRequest? request = null)
         {
-            request ??= new();
-            request.AppId ??= Config.AppId;
-            string baseUrl = this.Config.GetTemplatedServerDetails();
+            if (request == null)
+            {
+                request = new DeleteBuildRequest();
+            }
+            request.AppId ??= SDKConfiguration.AppId;
+            
+            string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/builds/v1/{appId}/delete/{buildId}", request);
             
-
             var httpRequest = new UnityWebRequest(urlString, "DELETE");
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
@@ -199,12 +201,15 @@ namespace HathoraCloud
 
         public async Task<GetBuildInfoResponse> GetBuildInfoAsync(GetBuildInfoRequest? request = null)
         {
-            request ??= new();
-            request.AppId ??= Config.AppId;
-            string baseUrl = this.Config.GetTemplatedServerDetails();
+            if (request == null)
+            {
+                request = new GetBuildInfoRequest();
+            }
+            request.AppId ??= SDKConfiguration.AppId;
+            
+            string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/builds/v1/{appId}/info/{buildId}", request);
             
-
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
@@ -257,12 +262,15 @@ namespace HathoraCloud
 
         public async Task<GetBuildsResponse> GetBuildsAsync(GetBuildsRequest? request = null)
         {
-            request ??= new();
-            request.AppId ??= Config.AppId;
-            string baseUrl = this.Config.GetTemplatedServerDetails();
+            if (request == null)
+            {
+                request = new GetBuildsRequest();
+            }
+            request.AppId ??= SDKConfiguration.AppId;
+            
+            string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/builds/v1/{appId}/list", request);
             
-
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbGET);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;
@@ -315,12 +323,11 @@ namespace HathoraCloud
 
         public async Task<RunBuildResponse> RunBuildAsync(RunBuildRequest request)
         {
-            request ??= new();
-            request.AppId ??= Config.AppId;
-            string baseUrl = this.Config.GetTemplatedServerDetails();
+            request.AppId ??= SDKConfiguration.AppId;
+            
+            string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/builds/v1/{appId}/run/{buildId}", request);
             
-
             var httpRequest = new UnityWebRequest(urlString, UnityWebRequest.kHttpVerbPOST);
             DownloadHandlerStream downloadHandler = new DownloadHandlerStream();
             httpRequest.downloadHandler = downloadHandler;

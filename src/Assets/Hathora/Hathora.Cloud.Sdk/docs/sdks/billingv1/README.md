@@ -18,13 +18,13 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
 using(var res = await sdk.BillingV1.GetBalanceAsync())
 {
+
     // handle response
 }
 ```
@@ -45,13 +45,13 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
 using(var res = await sdk.BillingV1.GetInvoicesAsync())
 {
+
     // handle response
 }
 ```
@@ -72,13 +72,13 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
 using(var res = await sdk.BillingV1.GetPaymentMethodAsync())
 {
+
     // handle response
 }
 ```
@@ -99,15 +99,17 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.BillingV1.InitStripeCustomerPortalUrlAsync(new CustomerPortalUrl() {
+CustomerPortalUrl req = new CustomerPortalUrl() {
     ReturnUrl = "string",
-}))
+};
+
+using(var res = await sdk.BillingV1.InitStripeCustomerPortalUrlAsync(req))
 {
+
     // handle response
 }
 ```
@@ -116,7 +118,7 @@ using(var res = await sdk.BillingV1.InitStripeCustomerPortalUrlAsync(new Custome
 
 | Parameter                                                     | Type                                                          | Required                                                      | Description                                                   |
 | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| `request`                                                     | [CustomerPortalUrl](../../models/shared/CustomerPortalUrl.md) | :heavy_check_mark:                                            | The request object to use for the request.                    |
+| `request`                                                     | [CustomerPortalUrl](../../Models/Shared/CustomerPortalUrl.md) | :heavy_check_mark:                                            | The request object to use for the request.                    |
 
 
 ### Response

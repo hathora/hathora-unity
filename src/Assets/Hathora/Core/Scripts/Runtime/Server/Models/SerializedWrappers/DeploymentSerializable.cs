@@ -104,8 +104,8 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
         }
         
         [SerializeField, JsonProperty("requestedMemoryMB")]
-        private double _requestedMemoryMB;
-        public double RequestedMemoryMB 
+        private int _requestedMemoryMB;
+        public int RequestedMemoryMB 
         { 
             get => _requestedMemoryMB;
             set => _requestedMemoryMB = value;

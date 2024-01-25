@@ -38,7 +38,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             Debug.Log($"[{nameof(HathoraLobbyApiWrapper)}.Constructor] " +
                 "Initializing Common API...");
             
-            this.LobbyApi = _hathoraSdk.LobbyV3 as LobbyV3SDK;
+            this.LobbyApi = _hathoraSdk.LobbyV3SDK as LobbyV3SDK;
         }
 
 

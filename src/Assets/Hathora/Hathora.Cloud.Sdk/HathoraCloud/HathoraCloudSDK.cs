@@ -63,7 +63,7 @@ namespace HathoraCloud
         /// <summary>
         /// Operations to create and manage lobbies using our <a href="https://hathora.dev/docs/lobbies-and-matchmaking/lobby-service">Lobby Service</a>.
         /// </summary>
-        public ILobbyV3SDK LobbyV3 { get; }
+        public ILobbyV3SDK LobbyV3SDK { get; }
 
         /// <summary>
         /// Operations to get logs by <a href="https://hathora.dev/docs/concepts/hathora-entities#application">applications</a>, <a href="https://hathora.dev/docs/concepts/hathora-entities#process">processes</a>, and <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployments</a>. We store 20GB of logs data.
@@ -77,9 +77,14 @@ namespace HathoraCloud
         public IMetricsV1 MetricsV1 { get; }
 
         /// <summary>
-        /// Operations to get data on active and stopped <a href="https://hathora.dev/docs/concepts/hathora-entities#process">processes</a>.
+        /// Deprecated. Use <a href="https://hathora.dev/api#tag/ProcessesV2">ProcessesV2</a>.
         /// </summary>
         public IProcessesV1 ProcessesV1 { get; }
+
+        /// <summary>
+        /// Operations to get data on active and stopped <a href="https://hathora.dev/docs/concepts/hathora-entities#process">processes</a>.
+        /// </summary>
+        public IProcessesV2 ProcessesV2 { get; }
 
         /// <summary>
         /// Deprecated. Use <a href="https://hathora.dev/api#tag/RoomV2">RoomV2</a>.
@@ -119,13 +124,13 @@ namespace HathoraCloud
     /// </summary>
     public class HathoraCloudSDK: IHathoraCloudSDK
     {
-        public SDKConfig Config { get; private set; }
+        public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _target = "unity";
-        private const string _sdkVersion = "0.26.0";
-        private const string _sdkGenVersion = "2.195.2";
+        private const string _sdkVersion = "0.28.4";
+        private const string _sdkGenVersion = "2.239.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.26.0 2.195.2 0.0.1 hathora-cloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.28.4 2.239.0 0.0.1 hathora-cloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private ISpeakeasyHttpClient _securityClient;
@@ -137,11 +142,12 @@ namespace HathoraCloud
         public IDiscoveryV1 DiscoveryV1 { get; private set; }
         public ILobbyV1 LobbyV1 { get; private set; }
         public ILobbyV2 LobbyV2 { get; private set; }
-        public ILobbyV3SDK LobbyV3 { get; private set; }
+        public ILobbyV3SDK LobbyV3SDK { get; private set; }
         public ILogV1 LogV1 { get; private set; }
         public IManagementV1 ManagementV1 { get; private set; }
         public IMetricsV1 MetricsV1 { get; private set; }
         public IProcessesV1 ProcessesV1 { get; private set; }
+        public IProcessesV2 ProcessesV2 { get; private set; }
         public IRoomV1 RoomV1 { get; private set; }
         public IRoomV2 RoomV2 { get; private set; }
 
@@ -162,27 +168,28 @@ namespace HathoraCloud
                 _securityClient = SecuritySerializer.Apply(_defaultClient, security);
             }
             
-            Config = new SDKConfig()
+            SDKConfiguration = new SDKConfig()
             {
                 AppId = appId,
                 serverUrl = _serverUrl
             };
 
-            AppV1 = new AppV1(_defaultClient, _securityClient, _serverUrl, Config);
-            AuthV1 = new AuthV1(_defaultClient, _securityClient, _serverUrl, Config);
-            BillingV1 = new BillingV1(_defaultClient, _securityClient, _serverUrl, Config);
-            BuildV1 = new BuildV1(_defaultClient, _securityClient, _serverUrl, Config);
-            DeploymentV1 = new DeploymentV1(_defaultClient, _securityClient, _serverUrl, Config);
-            DiscoveryV1 = new DiscoveryV1(_defaultClient, _securityClient, _serverUrl, Config);
-            LobbyV1 = new LobbyV1(_defaultClient, _securityClient, _serverUrl, Config);
-            LobbyV2 = new LobbyV2(_defaultClient, _securityClient, _serverUrl, Config);
-            LobbyV3 = new LobbyV3SDK(_defaultClient, _securityClient, _serverUrl, Config);
-            LogV1 = new LogV1(_defaultClient, _securityClient, _serverUrl, Config);
-            ManagementV1 = new ManagementV1(_defaultClient, _securityClient, _serverUrl, Config);
-            MetricsV1 = new MetricsV1(_defaultClient, _securityClient, _serverUrl, Config);
-            ProcessesV1 = new ProcessesV1(_defaultClient, _securityClient, _serverUrl, Config);
-            RoomV1 = new RoomV1(_defaultClient, _securityClient, _serverUrl, Config);
-            RoomV2 = new RoomV2(_defaultClient, _securityClient, _serverUrl, Config);
+            AppV1 = new AppV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            AuthV1 = new AuthV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            BillingV1 = new BillingV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            BuildV1 = new BuildV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            DeploymentV1 = new DeploymentV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            DiscoveryV1 = new DiscoveryV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            LobbyV1 = new LobbyV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            LobbyV2 = new LobbyV2(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            LobbyV3SDK = new LobbyV3SDK(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            LogV1 = new LogV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            ManagementV1 = new ManagementV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            MetricsV1 = new MetricsV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            ProcessesV1 = new ProcessesV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            ProcessesV2 = new ProcessesV2(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            RoomV1 = new RoomV1(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
+            RoomV2 = new RoomV2(_defaultClient, _securityClient, _serverUrl, SDKConfiguration);
         }
     }
 }

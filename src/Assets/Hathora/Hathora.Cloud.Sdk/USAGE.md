@@ -1,16 +1,15 @@
-<!-- Start SDK Example Usage -->
+<!-- Start SDK Example Usage [usage] -->
 ```csharp
 using HathoraCloud;
 using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
+AppConfig req = new AppConfig() {
     AppName = "minecraft",
     AuthConfiguration = new AuthConfiguration() {
         Anonymous = new RecordStringNever() {},
@@ -19,9 +18,12 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
         },
         Nickname = new RecordStringNever() {},
     },
-}))
+};
+
+using(var res = await sdk.AppV1.CreateAppAsync(req))
 {
+
     // handle response
 }
 ```
-<!-- End SDK Example Usage -->
+<!-- End SDK Example Usage [usage] -->

@@ -25,12 +25,11 @@ using System.Collections.Generic;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymentRequest() {
+CreateDeploymentRequest req = new CreateDeploymentRequest() {
     DeploymentConfig = new DeploymentConfig() {
         AdditionalContainerPorts = new List<ContainerPort>() {
             new ContainerPort() {
@@ -51,8 +50,11 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
         TransportType = TransportType.Tcp,
     },
     BuildId = 1,
-}))
+};
+
+using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(req))
 {
+
     // handle response
 }
 ```
@@ -61,7 +63,7 @@ using(var res = await sdk.DeploymentV1.CreateDeploymentAsync(new CreateDeploymen
 
 | Parameter                                                                     | Type                                                                          | Required                                                                      | Description                                                                   |
 | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `request`                                                                     | [CreateDeploymentRequest](../../models/operations/CreateDeploymentRequest.md) | :heavy_check_mark:                                                            | The request object to use for the request.                                    |
+| `request`                                                                     | [CreateDeploymentRequest](../../Models/Operations/CreateDeploymentRequest.md) | :heavy_check_mark:                                                            | The request object to use for the request.                                    |
 
 
 ### Response
@@ -82,15 +84,17 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.DeploymentV1.GetDeploymentInfoAsync(new GetDeploymentInfoRequest() {
+GetDeploymentInfoRequest req = new GetDeploymentInfoRequest() {
     DeploymentId = 1,
-}))
+};
+
+using(var res = await sdk.DeploymentV1.GetDeploymentInfoAsync(req))
 {
+
     // handle response
 }
 ```
@@ -99,7 +103,7 @@ using(var res = await sdk.DeploymentV1.GetDeploymentInfoAsync(new GetDeploymentI
 
 | Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `request`                                                                       | [GetDeploymentInfoRequest](../../models/operations/GetDeploymentInfoRequest.md) | :heavy_check_mark:                                                              | The request object to use for the request.                                      |
+| `request`                                                                       | [GetDeploymentInfoRequest](../../Models/Operations/GetDeploymentInfoRequest.md) | :heavy_check_mark:                                                              | The request object to use for the request.                                      |
 
 
 ### Response
@@ -120,13 +124,15 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.DeploymentV1.GetDeploymentsAsync(new GetDeploymentsRequest() {}))
+GetDeploymentsRequest req = new GetDeploymentsRequest() {};
+
+using(var res = await sdk.DeploymentV1.GetDeploymentsAsync(req))
 {
+
     // handle response
 }
 ```
@@ -135,7 +141,7 @@ using(var res = await sdk.DeploymentV1.GetDeploymentsAsync(new GetDeploymentsReq
 
 | Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `request`                                                                 | [GetDeploymentsRequest](../../models/operations/GetDeploymentsRequest.md) | :heavy_check_mark:                                                        | The request object to use for the request.                                |
+| `request`                                                                 | [GetDeploymentsRequest](../../Models/Operations/GetDeploymentsRequest.md) | :heavy_check_mark:                                                        | The request object to use for the request.                                |
 
 
 ### Response

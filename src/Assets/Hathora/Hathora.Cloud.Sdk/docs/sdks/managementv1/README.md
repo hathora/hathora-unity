@@ -15,15 +15,17 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.ManagementV1.SendVerificationEmailAsync(new VerificationEmailRequest() {
+VerificationEmailRequest req = new VerificationEmailRequest() {
     UserId = "string",
-}))
+};
+
+using(var res = await sdk.ManagementV1.SendVerificationEmailAsync(req))
 {
+
     // handle response
 }
 ```
@@ -32,7 +34,7 @@ using(var res = await sdk.ManagementV1.SendVerificationEmailAsync(new Verificati
 
 | Parameter                                                                   | Type                                                                        | Required                                                                    | Description                                                                 |
 | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `request`                                                                   | [VerificationEmailRequest](../../models/shared/VerificationEmailRequest.md) | :heavy_check_mark:                                                          | The request object to use for the request.                                  |
+| `request`                                                                   | [VerificationEmailRequest](../../Models/Shared/VerificationEmailRequest.md) | :heavy_check_mark:                                                          | The request object to use for the request.                                  |
 
 
 ### Response

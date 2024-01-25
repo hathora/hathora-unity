@@ -24,7 +24,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         #region Vars
         public string EnvVarProcessId { get; private set; }
         public Region EnvVarRegion { get; private set; }
-        public Process ProcessInfo { get; set; }
+        public ProcessV2 ProcessInfo { get; set; }
         public LobbyV3 Lobby { get; set; }
         public List<RoomWithoutAllocations> ActiveRoomsForProcess { get; set; }
         #endregion // Vars
@@ -132,7 +132,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models
         public HathoraServerContext(
             string _envVarProcessId,
             Region _envVarRegion,
-            Process _processInfo,
+            ProcessV2 _processInfo,
             List<RoomWithoutAllocations> _activeRoomsForProcess,
             LobbyV3 _lobby)
         {

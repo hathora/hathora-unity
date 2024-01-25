@@ -11,6 +11,7 @@ using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
+using CreateRoomResponse = HathoraCloud.Models.Operations.CreateRoomResponse;
 
 namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
 {
@@ -64,7 +65,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerRoomApiWrapper)}.{nameof(ServerCreateRoomAwaitActiveAsync)}]";
             
             // (1/3) Create Room
-            ConnectionInfoV2 createdRoomConnectionInfo = null;
+            HathoraCloud.Models.Shared.CreateRoomResponse createdRoomConnectionInfo = null;
             
             try
             {
@@ -156,7 +157,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// <param name="_customRoomId"></param>
         /// <param name="_cancelToken">TODO</param>
         /// <returns></returns>
-        private async Task<ConnectionInfoV2> ServerCreateRoomAsync(
+        private async Task<HathoraCloud.Models.Shared.CreateRoomResponse> ServerCreateRoomAsync(
             CreateRoomParams _createRoomParams,
             string _customRoomId = null,
             CancellationToken _cancelToken = default)
@@ -195,12 +196,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             
             // Process response
-            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(createRoomResponse.ConnectionInfoV2)}: " +
-                $"{ToJson(createRoomResponse.ConnectionInfoV2)}</color>");
+            Debug.Log($"{logPrefix} Success: <color=yellow>{nameof(createRoomResponse.CreateRoomResponseValue)}: " +
+                $"{ToJson(createRoomResponse.CreateRoomResponseValue)}</color>");
 
             // Everything else in this result object is currently irrelevant except the RoomId
             createRoomResponse.RawResponse?.Dispose(); // Prevent mem leaks
-            return createRoomResponse.ConnectionInfoV2;
+            return createRoomResponse.CreateRoomResponseValue;
         }
         
         /// <summary>

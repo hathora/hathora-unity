@@ -25,12 +25,11 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
+AppConfig req = new AppConfig() {
     AppName = "minecraft",
     AuthConfiguration = new AuthConfiguration() {
         Anonymous = new RecordStringNever() {},
@@ -39,8 +38,11 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
         },
         Nickname = new RecordStringNever() {},
     },
-}))
+};
+
+using(var res = await sdk.AppV1.CreateAppAsync(req))
 {
+
     // handle response
 }
 ```
@@ -49,7 +51,7 @@ using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
 
 | Parameter                                     | Type                                          | Required                                      | Description                                   |
 | --------------------------------------------- | --------------------------------------------- | --------------------------------------------- | --------------------------------------------- |
-| `request`                                     | [AppConfig](../../models/shared/AppConfig.md) | :heavy_check_mark:                            | The request object to use for the request.    |
+| `request`                                     | [AppConfig](../../Models/Shared/AppConfig.md) | :heavy_check_mark:                            | The request object to use for the request.    |
 
 
 ### Response
@@ -70,13 +72,15 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.DeleteAppAsync(new DeleteAppRequest() {}))
+DeleteAppRequest req = new DeleteAppRequest() {};
+
+using(var res = await sdk.AppV1.DeleteAppAsync(req))
 {
+
     // handle response
 }
 ```
@@ -85,7 +89,7 @@ using(var res = await sdk.AppV1.DeleteAppAsync(new DeleteAppRequest() {}))
 
 | Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
 | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `request`                                                       | [DeleteAppRequest](../../models/operations/DeleteAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
+| `request`                                                       | [DeleteAppRequest](../../Models/Operations/DeleteAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
 
 
 ### Response
@@ -106,13 +110,15 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.GetAppInfoAsync(new GetAppInfoRequest() {}))
+GetAppInfoRequest req = new GetAppInfoRequest() {};
+
+using(var res = await sdk.AppV1.GetAppInfoAsync(req))
 {
+
     // handle response
 }
 ```
@@ -121,7 +127,7 @@ using(var res = await sdk.AppV1.GetAppInfoAsync(new GetAppInfoRequest() {}))
 
 | Parameter                                                         | Type                                                              | Required                                                          | Description                                                       |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `request`                                                         | [GetAppInfoRequest](../../models/operations/GetAppInfoRequest.md) | :heavy_check_mark:                                                | The request object to use for the request.                        |
+| `request`                                                         | [GetAppInfoRequest](../../Models/Operations/GetAppInfoRequest.md) | :heavy_check_mark:                                                | The request object to use for the request.                        |
 
 
 ### Response
@@ -141,13 +147,13 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
 using(var res = await sdk.AppV1.GetAppsAsync())
 {
+
     // handle response
 }
 ```
@@ -171,12 +177,11 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppRequest() {
+UpdateAppRequest req = new UpdateAppRequest() {
     AppConfig = new AppConfig() {
         AppName = "minecraft",
         AuthConfiguration = new AuthConfiguration() {
@@ -187,8 +192,11 @@ using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppRequest() {
             Nickname = new RecordStringNever() {},
         },
     },
-}))
+};
+
+using(var res = await sdk.AppV1.UpdateAppAsync(req))
 {
+
     // handle response
 }
 ```
@@ -197,7 +205,7 @@ using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppRequest() {
 
 | Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
 | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `request`                                                       | [UpdateAppRequest](../../models/operations/UpdateAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
+| `request`                                                       | [UpdateAppRequest](../../Models/Operations/UpdateAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
 
 
 ### Response
