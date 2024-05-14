@@ -28,34 +28,43 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.CreateRoomDeprecatedAsync(new CreateRoomDeprecatedRequest() {
+CreateRoomDeprecatedRequest req = new CreateRoomDeprecatedRequest() {
     CreateRoomParams = new CreateRoomParams() {
         Region = Region.Chicago,
         RoomConfig = "{\"name\":\"my-room\"}",
     },
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.CreateRoomDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `request`                                                                             | [CreateRoomDeprecatedRequest](../../models/operations/CreateRoomDeprecatedRequest.md) | :heavy_check_mark:                                                                    | The request object to use for the request.                                            |
+| `request`                                                                             | [CreateRoomDeprecatedRequest](../../Models/Operations/CreateRoomDeprecatedRequest.md) | :heavy_check_mark:                                                                    | The request object to use for the request.                                            |
 
 
 ### Response
 
-**[CreateRoomDeprecatedResponse](../../models/operations/CreateRoomDeprecatedResponse.md)**
+**[CreateRoomDeprecatedResponse](../../Models/Operations/CreateRoomDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400,401,402,403,404,429,500             | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~DestroyRoomDeprecated~~
 
@@ -70,30 +79,39 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.DestroyRoomDeprecatedAsync(new DestroyRoomDeprecatedRequest() {
+DestroyRoomDeprecatedRequest req = new DestroyRoomDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.DestroyRoomDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
 | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `request`                                                                               | [DestroyRoomDeprecatedRequest](../../models/operations/DestroyRoomDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
+| `request`                                                                               | [DestroyRoomDeprecatedRequest](../../Models/Operations/DestroyRoomDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
 
 
 ### Response
 
-**[DestroyRoomDeprecatedResponse](../../models/operations/DestroyRoomDeprecatedResponse.md)**
+**[DestroyRoomDeprecatedResponse](../../Models/Operations/DestroyRoomDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~GetActiveRoomsForProcessDeprecated~~
 
@@ -108,30 +126,39 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.GetActiveRoomsForProcessDeprecatedAsync(new GetActiveRoomsForProcessDeprecatedRequest() {
+GetActiveRoomsForProcessDeprecatedRequest req = new GetActiveRoomsForProcessDeprecatedRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.GetActiveRoomsForProcessDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                         | Type                                                                                                              | Required                                                                                                          | Description                                                                                                       |
 | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `request`                                                                                                         | [GetActiveRoomsForProcessDeprecatedRequest](../../models/operations/GetActiveRoomsForProcessDeprecatedRequest.md) | :heavy_check_mark:                                                                                                | The request object to use for the request.                                                                        |
+| `request`                                                                                                         | [GetActiveRoomsForProcessDeprecatedRequest](../../Models/Operations/GetActiveRoomsForProcessDeprecatedRequest.md) | :heavy_check_mark:                                                                                                | The request object to use for the request.                                                                        |
 
 
 ### Response
 
-**[GetActiveRoomsForProcessDeprecatedResponse](../../models/operations/GetActiveRoomsForProcessDeprecatedResponse.md)**
+**[GetActiveRoomsForProcessDeprecatedResponse](../../Models/Operations/GetActiveRoomsForProcessDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404                                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~GetConnectionInfoDeprecated~~
 
@@ -144,32 +171,37 @@ using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraCloudSDK(
-    security: new Security() {
-        HathoraDevToken = "",
-    },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.GetConnectionInfoDeprecatedAsync(new GetConnectionInfoDeprecatedRequest() {
+GetConnectionInfoDeprecatedRequest req = new GetConnectionInfoDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.GetConnectionInfoDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                           | Type                                                                                                | Required                                                                                            | Description                                                                                         |
 | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `request`                                                                                           | [GetConnectionInfoDeprecatedRequest](../../models/operations/GetConnectionInfoDeprecatedRequest.md) | :heavy_check_mark:                                                                                  | The request object to use for the request.                                                          |
+| `request`                                                                                           | [GetConnectionInfoDeprecatedRequest](../../Models/Operations/GetConnectionInfoDeprecatedRequest.md) | :heavy_check_mark:                                                                                  | The request object to use for the request.                                                          |
 
 
 ### Response
 
-**[GetConnectionInfoDeprecatedResponse](../../models/operations/GetConnectionInfoDeprecatedResponse.md)**
+**[GetConnectionInfoDeprecatedResponse](../../Models/Operations/GetConnectionInfoDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400,402,404,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~GetInactiveRoomsForProcessDeprecated~~
 
@@ -184,30 +216,39 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.GetInactiveRoomsForProcessDeprecatedAsync(new GetInactiveRoomsForProcessDeprecatedRequest() {
+GetInactiveRoomsForProcessDeprecatedRequest req = new GetInactiveRoomsForProcessDeprecatedRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.GetInactiveRoomsForProcessDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                             | Type                                                                                                                  | Required                                                                                                              | Description                                                                                                           |
 | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `request`                                                                                                             | [GetInactiveRoomsForProcessDeprecatedRequest](../../models/operations/GetInactiveRoomsForProcessDeprecatedRequest.md) | :heavy_check_mark:                                                                                                    | The request object to use for the request.                                                                            |
+| `request`                                                                                                             | [GetInactiveRoomsForProcessDeprecatedRequest](../../Models/Operations/GetInactiveRoomsForProcessDeprecatedRequest.md) | :heavy_check_mark:                                                                                                    | The request object to use for the request.                                                                            |
 
 
 ### Response
 
-**[GetInactiveRoomsForProcessDeprecatedResponse](../../models/operations/GetInactiveRoomsForProcessDeprecatedResponse.md)**
+**[GetInactiveRoomsForProcessDeprecatedResponse](../../Models/Operations/GetInactiveRoomsForProcessDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404                                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~GetRoomInfoDeprecated~~
 
@@ -222,30 +263,39 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.GetRoomInfoDeprecatedAsync(new GetRoomInfoDeprecatedRequest() {
+GetRoomInfoDeprecatedRequest req = new GetRoomInfoDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.GetRoomInfoDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
 | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `request`                                                                               | [GetRoomInfoDeprecatedRequest](../../models/operations/GetRoomInfoDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
+| `request`                                                                               | [GetRoomInfoDeprecatedRequest](../../Models/Operations/GetRoomInfoDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
 
 
 ### Response
 
-**[GetRoomInfoDeprecatedResponse](../../models/operations/GetRoomInfoDeprecatedResponse.md)**
+**[GetRoomInfoDeprecatedResponse](../../Models/Operations/GetRoomInfoDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404                                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~SuspendRoomDeprecated~~
 
@@ -260,27 +310,36 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.RoomV1.SuspendRoomDeprecatedAsync(new SuspendRoomDeprecatedRequest() {
+SuspendRoomDeprecatedRequest req = new SuspendRoomDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.RoomV1.SuspendRoomDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
 | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `request`                                                                               | [SuspendRoomDeprecatedRequest](../../models/operations/SuspendRoomDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
+| `request`                                                                               | [SuspendRoomDeprecatedRequest](../../Models/Operations/SuspendRoomDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
 
 
 ### Response
 
-**[SuspendRoomDeprecatedResponse](../../models/operations/SuspendRoomDeprecatedResponse.md)**
+**[SuspendRoomDeprecatedResponse](../../Models/Operations/SuspendRoomDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |

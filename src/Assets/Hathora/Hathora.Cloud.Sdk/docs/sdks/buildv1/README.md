@@ -3,20 +3,22 @@
 
 ## Overview
 
-Operations that allow you create and manage your [builds](https://hathora.dev/docs/concepts/hathora-entities#build).
+Deprecated. Use [BuildV2](https://hathora.dev/api#tag/BuildV2).
 
 ### Available Operations
 
-* [CreateBuild](#createbuild) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
-* [DeleteBuild](#deletebuild) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
-* [GetBuildInfo](#getbuildinfo) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
-* [GetBuilds](#getbuilds) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
-* [RunBuild](#runbuild) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
+* [~~CreateBuildDeprecated~~](#createbuilddeprecated) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build. :warning: **Deprecated**
+* [~~DeleteBuildDeprecated~~](#deletebuilddeprecated) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted. :warning: **Deprecated**
+* [~~GetBuildInfoDeprecated~~](#getbuildinfodeprecated) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build). :warning: **Deprecated**
+* [~~GetBuildsDeprecated~~](#getbuildsdeprecated) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
+* [~~RunBuildDeprecated~~](#runbuilddeprecated) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild). :warning: **Deprecated**
 
-## CreateBuild
+## ~~CreateBuildDeprecated~~
 
 Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build.
 
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
 ### Example Usage
 
 ```csharp
@@ -26,37 +28,48 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.BuildV1.CreateBuildAsync(new CreateBuildRequest() {
+CreateBuildDeprecatedRequest req = new CreateBuildDeprecatedRequest() {
     CreateBuildParams = new CreateBuildParams() {
         BuildTag = "0.1.14-14c793",
     },
-}))
+};
+
+
+using(var res = await sdk.BuildV1.CreateBuildDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `request`                                                           | [CreateBuildRequest](../../models/operations/CreateBuildRequest.md) | :heavy_check_mark:                                                  | The request object to use for the request.                          |
+| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `request`                                                                               | [CreateBuildDeprecatedRequest](../../Models/Operations/CreateBuildDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
 
 
 ### Response
 
-**[CreateBuildResponse](../../models/operations/CreateBuildResponse.md)**
+**[CreateBuildDeprecatedResponse](../../Models/Operations/CreateBuildDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
-## DeleteBuild
+## ~~DeleteBuildDeprecated~~
 
 Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted.
 
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
 ### Example Usage
 
 ```csharp
@@ -66,35 +79,46 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.BuildV1.DeleteBuildAsync(new DeleteBuildRequest() {
+DeleteBuildDeprecatedRequest req = new DeleteBuildDeprecatedRequest() {
     BuildId = 1,
-}))
+};
+
+
+using(var res = await sdk.BuildV1.DeleteBuildDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `request`                                                           | [DeleteBuildRequest](../../models/operations/DeleteBuildRequest.md) | :heavy_check_mark:                                                  | The request object to use for the request.                          |
+| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `request`                                                                               | [DeleteBuildDeprecatedRequest](../../Models/Operations/DeleteBuildDeprecatedRequest.md) | :heavy_check_mark:                                                                      | The request object to use for the request.                                              |
 
 
 ### Response
 
-**[DeleteBuildResponse](../../models/operations/DeleteBuildResponse.md)**
+**[DeleteBuildDeprecatedResponse](../../Models/Operations/DeleteBuildDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,422,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
-## GetBuildInfo
+## ~~GetBuildInfoDeprecated~~
 
 Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build).
 
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
 ### Example Usage
 
 ```csharp
@@ -104,35 +128,46 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.BuildV1.GetBuildInfoAsync(new GetBuildInfoRequest() {
+GetBuildInfoDeprecatedRequest req = new GetBuildInfoDeprecatedRequest() {
     BuildId = 1,
-}))
+};
+
+
+using(var res = await sdk.BuildV1.GetBuildInfoDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
-| Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `request`                                                             | [GetBuildInfoRequest](../../models/operations/GetBuildInfoRequest.md) | :heavy_check_mark:                                                    | The request object to use for the request.                            |
+| Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `request`                                                                                 | [GetBuildInfoDeprecatedRequest](../../Models/Operations/GetBuildInfoDeprecatedRequest.md) | :heavy_check_mark:                                                                        | The request object to use for the request.                                                |
 
 
 ### Response
 
-**[GetBuildInfoResponse](../../models/operations/GetBuildInfoResponse.md)**
+**[GetBuildInfoDeprecatedResponse](../../Models/Operations/GetBuildInfoDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404                                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
-## GetBuilds
+## ~~GetBuildsDeprecated~~
 
 Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application).
 
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
 ### Example Usage
 
 ```csharp
@@ -142,33 +177,44 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.BuildV1.GetBuildsAsync(new GetBuildsRequest() {}))
+GetBuildsDeprecatedRequest req = new GetBuildsDeprecatedRequest() {};
+
+
+using(var res = await sdk.BuildV1.GetBuildsDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
-| Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
-| --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `request`                                                       | [GetBuildsRequest](../../models/operations/GetBuildsRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
+| Parameter                                                                           | Type                                                                                | Required                                                                            | Description                                                                         |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `request`                                                                           | [GetBuildsDeprecatedRequest](../../Models/Operations/GetBuildsDeprecatedRequest.md) | :heavy_check_mark:                                                                  | The request object to use for the request.                                          |
 
 
 ### Response
 
-**[GetBuildsResponse](../../models/operations/GetBuildsResponse.md)**
+**[GetBuildsDeprecatedResponse](../../Models/Operations/GetBuildsDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404                                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
-## RunBuild
+## ~~RunBuildDeprecated~~
 
 Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild).
 
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
 ### Example Usage
 
 ```csharp
@@ -178,33 +224,42 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.BuildV1.RunBuildAsync(new RunBuildRequest() {
-    RequestBody = new RunBuildRequestBody() {
+RunBuildDeprecatedRequest req = new RunBuildDeprecatedRequest() {
+    RequestBody = new RunBuildDeprecatedRequestBody() {
         File = new File() {
-            Content = "0xcBBBDB7B76 as bytes <<<>>>",
-            FileName = "times_mini.wav",
+            Content = "0x96Cf4be63b as bytes <<<>>>",
+            FileName = "east_though_senegal.mpeg",
         },
     },
     BuildId = 1,
-}))
+};
+
+
+using(var res = await sdk.BuildV1.RunBuildDeprecatedAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
-| Parameter                                                     | Type                                                          | Required                                                      | Description                                                   |
-| ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| `request`                                                     | [RunBuildRequest](../../models/operations/RunBuildRequest.md) | :heavy_check_mark:                                            | The request object to use for the request.                    |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `request`                                                                         | [RunBuildDeprecatedRequest](../../Models/Operations/RunBuildDeprecatedRequest.md) | :heavy_check_mark:                                                                | The request object to use for the request.                                        |
 
 
 ### Response
 
-**[RunBuildResponse](../../models/operations/RunBuildResponse.md)**
+**[RunBuildDeprecatedResponse](../../Models/Operations/RunBuildDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |

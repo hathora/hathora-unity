@@ -12,6 +12,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Type = System.Type;
 
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Editor
 {

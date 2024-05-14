@@ -25,37 +25,40 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.CreateAppAsync(new AppConfig() {
+AppConfig req = new AppConfig() {
     AppName = "minecraft",
-    AuthConfiguration = new AuthConfiguration() {
-        Anonymous = new RecordStringNever() {},
-        Google = new Google() {
-            ClientId = "string",
-        },
-        Nickname = new RecordStringNever() {},
-    },
-}))
+    AuthConfiguration = new AuthConfiguration() {},
+};
+
+
+using(var res = await sdk.AppV1.CreateAppAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                     | Type                                          | Required                                      | Description                                   |
 | --------------------------------------------- | --------------------------------------------- | --------------------------------------------- | --------------------------------------------- |
-| `request`                                     | [AppConfig](../../models/shared/AppConfig.md) | :heavy_check_mark:                            | The request object to use for the request.    |
+| `request`                                     | [AppConfig](../../Models/Shared/AppConfig.md) | :heavy_check_mark:                            | The request object to use for the request.    |
 
 
 ### Response
 
-**[CreateAppResponse](../../models/operations/CreateAppResponse.md)**
+**[CreateAppResponse](../../Models/Operations/CreateAppResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,422,429,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## DeleteApp
 
@@ -70,28 +73,37 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.DeleteAppAsync(new DeleteAppRequest() {}))
+DeleteAppRequest req = new DeleteAppRequest() {};
+
+
+using(var res = await sdk.AppV1.DeleteAppAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
 | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `request`                                                       | [DeleteAppRequest](../../models/operations/DeleteAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
+| `request`                                                       | [DeleteAppRequest](../../Models/Operations/DeleteAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
 
 
 ### Response
 
-**[DeleteAppResponse](../../models/operations/DeleteAppResponse.md)**
+**[DeleteAppResponse](../../Models/Operations/DeleteAppResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## GetAppInfo
 
@@ -106,28 +118,37 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.GetAppInfoAsync(new GetAppInfoRequest() {}))
+GetAppInfoRequest req = new GetAppInfoRequest() {};
+
+
+using(var res = await sdk.AppV1.GetAppInfoAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                         | Type                                                              | Required                                                          | Description                                                       |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `request`                                                         | [GetAppInfoRequest](../../models/operations/GetAppInfoRequest.md) | :heavy_check_mark:                                                | The request object to use for the request.                        |
+| `request`                                                         | [GetAppInfoRequest](../../Models/Operations/GetAppInfoRequest.md) | :heavy_check_mark:                                                | The request object to use for the request.                        |
 
 
 ### Response
 
-**[GetAppInfoResponse](../../models/operations/GetAppInfoResponse.md)**
+**[GetAppInfoResponse](../../Models/Operations/GetAppInfoResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404                                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## GetApps
 
@@ -141,22 +162,28 @@ using HathoraCloud.Models.Shared;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+
 
 using(var res = await sdk.AppV1.GetAppsAsync())
 {
     // handle response
 }
+
+
 ```
 
 
 ### Response
 
-**[GetAppsResponse](../../models/operations/GetAppsResponse.md)**
+**[GetAppsResponse](../../Models/Operations/GetAppsResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## UpdateApp
 
@@ -171,36 +198,39 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.AppV1.UpdateAppAsync(new UpdateAppRequest() {
+UpdateAppRequest req = new UpdateAppRequest() {
     AppConfig = new AppConfig() {
         AppName = "minecraft",
-        AuthConfiguration = new AuthConfiguration() {
-            Anonymous = new RecordStringNever() {},
-            Google = new Google() {
-                ClientId = "string",
-            },
-            Nickname = new RecordStringNever() {},
-        },
+        AuthConfiguration = new AuthConfiguration() {},
     },
-}))
+};
+
+
+using(var res = await sdk.AppV1.UpdateAppAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                       | Type                                                            | Required                                                        | Description                                                     |
 | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `request`                                                       | [UpdateAppRequest](../../models/operations/UpdateAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
+| `request`                                                       | [UpdateAppRequest](../../Models/Operations/UpdateAppRequest.md) | :heavy_check_mark:                                              | The request object to use for the request.                      |
 
 
 ### Response
 
-**[UpdateAppResponse](../../models/operations/UpdateAppResponse.md)**
+**[UpdateAppResponse](../../Models/Operations/UpdateAppResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,422,429,500                     | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |

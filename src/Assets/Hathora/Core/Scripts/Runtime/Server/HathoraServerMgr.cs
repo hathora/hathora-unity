@@ -186,7 +186,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
                 HathoraDevToken = hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
             };
             
-            this.HathoraSdk = new HathoraCloudSDK(security, hathoraServerConfig.HathoraCoreOpts.AppId);
+            this.HathoraSdk = new HathoraCloudSDK(security, null, hathoraServerConfig.HathoraCoreOpts.AppId);
         }
 
         /// <returns>isValid</returns>
@@ -348,7 +348,7 @@ namespace Hathora.Core.Scripts.Runtime.Server
             // ----------------
             // Get Process from env var "HATHORA_PROCESS_ID" => We probably cached this, already, @ )
             // We await => just in case we called this early, to prevent race conditions
-            Process processInfo = await Apis.ServerProcessApiWrapper.GetProcessInfoAsync(
+            ProcessV2 processInfo = await Apis.ServerProcessApiWrapper.GetProcessInfoAsync(
                 hathoraProcessIdEnvVar, 
                 _returnNullOnStoppedProcess: true,
                 _cancelToken: _cancelToken);

@@ -16,8 +16,14 @@ namespace HathoraCloud.Utils
 
     internal static class SecuritySerializer
     {
-        public static ISpeakeasyHttpClient Apply(ISpeakeasyHttpClient client, object security)
+        public static ISpeakeasyHttpClient Apply(ISpeakeasyHttpClient client, Func<object> securitySource)
         {
+            if (securitySource == null)
+            {
+                return client;
+            }
+
+            var security = securitySource();
             if (security == null)
             {
                 return client;
@@ -169,10 +175,10 @@ namespace HathoraCloud.Utils
                     }
                     break;
                 case "openIdConnect":
-                    client.AddHeader(valueMetadata.Name, Utilities.ValueToString(value));
+                    client.AddHeader(valueMetadata.Name, Utilities.PrefixBearer(Utilities.ValueToString(value)));
                     break;
                 case "oauth2":
-                    client.AddHeader(valueMetadata.Name, Utilities.ValueToString(value));
+                    client.AddHeader(valueMetadata.Name, Utilities.PrefixBearer(Utilities.ValueToString(value)));
                     break;
                 case "http":
                     switch (schemeMetadata.SubType)
