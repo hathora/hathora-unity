@@ -84,7 +84,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 ContainerPort = deployOpts.ContainerPortSerializable.Port,
             };
 
-            CreateDeploymentRequest createDeploymentRequest = new()
+            CreateDeploymentDeprecatedRequest createDeploymentRequest = new()
             {
                 DeploymentConfig = deployConfig,
                 BuildId = _buildId,
@@ -93,15 +93,15 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             Debug.Log($"{logPrefix} <color=yellow>Request {nameof(deployConfig)}: {ToJson(deployConfig)}</color>");
 
             // Get response async =>
-            CreateDeploymentResponse createDeploymentResponse = null;
+            CreateDeploymentDeprecatedResponse createDeploymentResponse = null;
             
             try
             {
-                createDeploymentResponse = await DeployApi.CreateDeploymentAsync(createDeploymentRequest);
+                createDeploymentResponse = await DeployApi.CreateDeploymentDeprecatedAsync(createDeploymentRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(DeployApi.CreateDeploymentAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(DeployApi.CreateDeploymentDeprecatedAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
@@ -113,7 +113,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         }
 
         /// <summary>
-        /// Wrapper for `CreateDeploymentAsync` to upload and deploy a cloud deploy to Hathora.
+        /// Wrapper for `CreateDeploymentDeprecatedAsync` to upload and deploy a cloud deploy to Hathora.
         /// </summary>
         /// <param name="_cancelToken">TODO</param>
         /// <returns>Returns Deployment on success</returns>
@@ -123,20 +123,20 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerDeployApiWrapper)}.{nameof(CreateDeploymentAsync)}]";
 
             // Prepare request
-            GetDeploymentsRequest getDeploymentsRequest = new()
+            GetDeploymentsDeprecatedRequest getDeploymentsRequest = new()
             {
             };
 
             // Get response async =>
-            GetDeploymentsResponse getDeploymentsResponse = null;
+            GetDeploymentsDeprecatedResponse getDeploymentsResponse = null;
             
             try
             {
-                getDeploymentsResponse = await DeployApi.GetDeploymentsAsync(getDeploymentsRequest);
+                getDeploymentsResponse = await DeployApi.GetDeploymentsDeprecatedAsync(getDeploymentsRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(DeployApi.GetDeploymentsAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(DeployApi.GetDeploymentsDeprecatedAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 

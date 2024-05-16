@@ -289,10 +289,10 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             };
             
             HathoraServerAppApiWrapper appApiWrapper = new(
-                new HathoraCloudSDK(security, ServerConfig.HathoraCoreOpts.AppId), 
+                new HathoraCloudSDK(security, null, ServerConfig.HathoraCoreOpts.AppId), 
                 ServerConfig);
 
-            List<ApplicationWithDeployment> apps = null;
+            List<ApplicationWithLatestDeploymentAndBuild> apps = null;
             apps = await appApiWrapper.GetAppsAsync();
 
             if (apps == null)

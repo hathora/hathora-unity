@@ -57,22 +57,22 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 BuildTag = _buildTag,
             };
             
-            CreateBuildRequest createBuildRequestWrapper = new()
+            CreateBuildDeprecatedRequest createBuildRequestWrapper = new()
             {
                 AppId = base.AppId,
                 CreateBuildParams = createBuildParmas,
             };
             
             // Get response async =>
-            CreateBuildResponse createCloudBuildResponse = null;
+            CreateBuildDeprecatedResponse createCloudBuildResponse = null;
             
             try
             {
-                createCloudBuildResponse = await BuildApi.CreateBuildAsync(createBuildRequestWrapper);
+                createCloudBuildResponse = await BuildApi.CreateBuildDeprecatedAsync(createBuildRequestWrapper);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(BuildApi.CreateBuildAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(BuildApi.CreateBuildDeprecatedAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
@@ -106,19 +106,19 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                 // Content = // Apply below in try/catch since we need to await
             };
             
-            RunBuildRequestBody runBuildRequest = new()
+            RunBuildDeprecatedRequestBody runBuildRequest = new()
             {
                 File = requestFile,
             };
             
-            RunBuildRequest runBuildRequestWrapper = new()
+            RunBuildDeprecatedRequest runBuildRequestWrapper = new()
             {
                 BuildId = _buildId,
                 RequestBody = runBuildRequest,
             };
                 
             // Get response async =>
-            RunBuildResponse runBuildResponse = null;
+            RunBuildDeprecatedResponse runBuildResponse = null;
             // MemoryQueueBufferStream stream = null; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
             uploading = true;
 
@@ -133,7 +133,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     FileAccess.Read);
 
                 runBuildRequestWrapper.RequestBody.File.Content = toByteArray(fileStream);
-                runBuildResponse = await BuildApi.RunBuildAsync(runBuildRequestWrapper);
+                runBuildResponse = await BuildApi.RunBuildDeprecatedAsync(runBuildRequestWrapper);
 
                 // stream = runBuildResponse.RunBuild200TextPlainByteString; // `RunBuild200TextPlainBinaryString` replaced with `RunBuild200TextPlainByteString`
                 uploading = true;
@@ -144,7 +144,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(BuildApi.RunBuildAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(BuildApi.RunBuildDeprecatedAsync)} => Error: {e.Message}");
                 return null; // fail
             }
             finally
@@ -229,26 +229,26 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string logPrefix = $"[{nameof(HathoraServerBuildApiWrapper)}.{nameof(GetBuildInfoAsync)}]";
 
             // Prepare request
-            GetBuildInfoRequest getBuildInfoRequest = new()
+            GetBuildInfoDeprecatedRequest getBuildInfoRequest = new()
             {
                 BuildId = _buildId,
             };
             
             // Get response async =>
-            GetBuildInfoResponse getBuildInfoResponse = null;
+            GetBuildInfoDeprecatedResponse getBuildInfoResponse = null;
             
             try
             {
-                getBuildInfoResponse = await BuildApi.GetBuildInfoAsync(getBuildInfoRequest);
+                getBuildInfoResponse = await BuildApi.GetBuildInfoDeprecatedAsync(getBuildInfoRequest);
             }
             catch (Exception e)
             {
-                Debug.LogError($"{logPrefix} {nameof(BuildApi.GetBuildInfoAsync)} => Error: {e.Message}");
+                Debug.LogError($"{logPrefix} {nameof(BuildApi.GetBuildInfoDeprecatedAsync)} => Error: {e.Message}");
                 return null; // fail
             }
 
             Build build = getBuildInfoResponse.Build;
-            bool isSuccess = build is { Status: Status.Succeeded };
+            bool isSuccess = build is { Status: BuildStatus.Succeeded };
             
             Debug.Log($"{logPrefix} Success? {isSuccess}, <color=yellow>" +
                 $"{nameof(getBuildInfoResponse)}: {ToJson(getBuildInfoResponse.Build)}</color>");

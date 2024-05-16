@@ -71,7 +71,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
                     return null; // fail
                 }
 
-                if (getConnectionInfoResponse.ConnectionInfoV2?.Status == ConnectionInfoV2Status.Active)
+                if (getConnectionInfoResponse.ConnectionInfoV2?.Status == RoomReadyStatus.Active)
                     break;
                 
                 await Task.Delay(TimeSpan.FromSeconds(_pollIntervalSecs), _cancelToken);
@@ -81,7 +81,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             // We're done polling -- sucess or timeout?
             ConnectionInfoV2 connectionInfo = getConnectionInfoResponse?.ConnectionInfoV2;
 
-            if (connectionInfo?.Status != ConnectionInfoV2Status.Active)
+            if (connectionInfo?.Status != RoomReadyStatus.Active)
             {
                 Debug.LogError($"{logPrefix} Error: Timed out");
                 return null;

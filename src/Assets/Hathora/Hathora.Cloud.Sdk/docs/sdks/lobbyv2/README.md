@@ -28,37 +28,47 @@ using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraCloudSDK(
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.CreateLobbyDeprecatedAsync(new CreateLobbyDeprecatedSecurity() {
-    PlayerAuth = "",
-}, new CreateLobbyDeprecatedRequest() {
+CreateLobbyDeprecatedRequest req = new CreateLobbyDeprecatedRequest() {
     CreateLobbyParams = new CreateLobbyParams() {
         InitialConfig = new LobbyInitialConfig() {},
         Region = Region.Tokyo,
         Visibility = LobbyVisibility.Private,
     },
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.LobbyV2.CreateLobbyDeprecatedAsync(
+    new CreateLobbyDeprecatedSecurity() {
+    PlayerAuth = "<YOUR_BEARER_TOKEN_HERE>",
+},
+    req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                                | Type                                                                                                                     | Required                                                                                                                 | Description                                                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                | [CreateLobbyDeprecatedRequest](../../models/operations/CreateLobbyDeprecatedRequest.md)                                  | :heavy_check_mark:                                                                                                       | The request object to use for the request.                                                                               |
+| `request`                                                                                                                | [CreateLobbyDeprecatedRequest](../../Models/Operations/CreateLobbyDeprecatedRequest.md)                                  | :heavy_check_mark:                                                                                                       | The request object to use for the request.                                                                               |
 | `security`                                                                                                               | [HathoraCloud.Models.Operations.CreateLobbyDeprecatedSecurity](../../models/operations/CreateLobbyDeprecatedSecurity.md) | :heavy_check_mark:                                                                                                       | The security requirements to use for the request.                                                                        |
 
 
 ### Response
 
-**[CreateLobbyDeprecatedResponse](../../models/operations/CreateLobbyDeprecatedResponse.md)**
+**[CreateLobbyDeprecatedResponse](../../Models/Operations/CreateLobbyDeprecatedResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400,401,402,404,422,429,500             | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~CreateLocalLobby~~
 
@@ -71,36 +81,46 @@ using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraCloudSDK(
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.CreateLocalLobbyAsync(new CreateLocalLobbySecurity() {
-    PlayerAuth = "",
-}, new CreateLocalLobbyRequest() {
+CreateLocalLobbyRequest req = new CreateLocalLobbyRequest() {
     RequestBody = new CreateLocalLobbyRequestBody() {
         InitialConfig = new LobbyInitialConfig() {},
-        Region = Region.Sydney,
+        Region = Region.SaoPaulo,
     },
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.LobbyV2.CreateLocalLobbyAsync(
+    new CreateLocalLobbySecurity() {
+    PlayerAuth = "<YOUR_BEARER_TOKEN_HERE>",
+},
+    req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                      | Type                                                                                                           | Required                                                                                                       | Description                                                                                                    |
 | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `request`                                                                                                      | [CreateLocalLobbyRequest](../../models/operations/CreateLocalLobbyRequest.md)                                  | :heavy_check_mark:                                                                                             | The request object to use for the request.                                                                     |
+| `request`                                                                                                      | [CreateLocalLobbyRequest](../../Models/Operations/CreateLocalLobbyRequest.md)                                  | :heavy_check_mark:                                                                                             | The request object to use for the request.                                                                     |
 | `security`                                                                                                     | [HathoraCloud.Models.Operations.CreateLocalLobbySecurity](../../models/operations/CreateLocalLobbySecurity.md) | :heavy_check_mark:                                                                                             | The security requirements to use for the request.                                                              |
 
 
 ### Response
 
-**[CreateLocalLobbyResponse](../../models/operations/CreateLocalLobbyResponse.md)**
+**[CreateLocalLobbyResponse](../../Models/Operations/CreateLocalLobbyResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400,401,402,404,422,429,500             | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~CreatePrivateLobby~~
 
@@ -113,36 +133,46 @@ using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraCloudSDK(
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.CreatePrivateLobbyAsync(new CreatePrivateLobbySecurity() {
-    PlayerAuth = "",
-}, new CreatePrivateLobbyRequest() {
+CreatePrivateLobbyRequest req = new CreatePrivateLobbyRequest() {
     RequestBody = new CreatePrivateLobbyRequestBody() {
         InitialConfig = new LobbyInitialConfig() {},
         Region = Region.Chicago,
     },
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.LobbyV2.CreatePrivateLobbyAsync(
+    new CreatePrivateLobbySecurity() {
+    PlayerAuth = "<YOUR_BEARER_TOKEN_HERE>",
+},
+    req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                          | Type                                                                                                               | Required                                                                                                           | Description                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                          | [CreatePrivateLobbyRequest](../../models/operations/CreatePrivateLobbyRequest.md)                                  | :heavy_check_mark:                                                                                                 | The request object to use for the request.                                                                         |
+| `request`                                                                                                          | [CreatePrivateLobbyRequest](../../Models/Operations/CreatePrivateLobbyRequest.md)                                  | :heavy_check_mark:                                                                                                 | The request object to use for the request.                                                                         |
 | `security`                                                                                                         | [HathoraCloud.Models.Operations.CreatePrivateLobbySecurity](../../models/operations/CreatePrivateLobbySecurity.md) | :heavy_check_mark:                                                                                                 | The security requirements to use for the request.                                                                  |
 
 
 ### Response
 
-**[CreatePrivateLobbyResponse](../../models/operations/CreatePrivateLobbyResponse.md)**
+**[CreatePrivateLobbyResponse](../../Models/Operations/CreatePrivateLobbyResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400,401,402,404,422,429,500             | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~CreatePublicLobby~~
 
@@ -155,36 +185,46 @@ using HathoraCloud;
 using HathoraCloud.Models.Operations;
 using HathoraCloud.Models.Shared;
 
-var sdk = new HathoraCloudSDK(
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.CreatePublicLobbyAsync(new CreatePublicLobbySecurity() {
-    PlayerAuth = "",
-}, new CreatePublicLobbyRequest() {
+CreatePublicLobbyRequest req = new CreatePublicLobbyRequest() {
     RequestBody = new CreatePublicLobbyRequestBody() {
         InitialConfig = new LobbyInitialConfig() {},
-        Region = Region.Sydney,
+        Region = Region.SaoPaulo,
     },
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.LobbyV2.CreatePublicLobbyAsync(
+    new CreatePublicLobbySecurity() {
+    PlayerAuth = "<YOUR_BEARER_TOKEN_HERE>",
+},
+    req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                        | Type                                                                                                             | Required                                                                                                         | Description                                                                                                      |
 | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `request`                                                                                                        | [CreatePublicLobbyRequest](../../models/operations/CreatePublicLobbyRequest.md)                                  | :heavy_check_mark:                                                                                               | The request object to use for the request.                                                                       |
+| `request`                                                                                                        | [CreatePublicLobbyRequest](../../Models/Operations/CreatePublicLobbyRequest.md)                                  | :heavy_check_mark:                                                                                               | The request object to use for the request.                                                                       |
 | `security`                                                                                                       | [HathoraCloud.Models.Operations.CreatePublicLobbySecurity](../../models/operations/CreatePublicLobbySecurity.md) | :heavy_check_mark:                                                                                               | The security requirements to use for the request.                                                                |
 
 
 ### Response
 
-**[CreatePublicLobbyResponse](../../models/operations/CreatePublicLobbyResponse.md)**
+**[CreatePublicLobbyResponse](../../Models/Operations/CreatePublicLobbyResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400,401,402,404,422,429,500             | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~GetLobbyInfo~~
 
@@ -199,32 +239,37 @@ using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraCloudSDK(
-    security: new Security() {
-        HathoraDevToken = "",
-    },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.GetLobbyInfoAsync(new GetLobbyInfoRequest() {
+GetLobbyInfoRequest req = new GetLobbyInfoRequest() {
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.LobbyV2.GetLobbyInfoAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           |
 | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `request`                                                             | [GetLobbyInfoRequest](../../models/operations/GetLobbyInfoRequest.md) | :heavy_check_mark:                                                    | The request object to use for the request.                            |
+| `request`                                                             | [GetLobbyInfoRequest](../../Models/Operations/GetLobbyInfoRequest.md) | :heavy_check_mark:                                                    | The request object to use for the request.                            |
 
 
 ### Response
 
-**[GetLobbyInfoResponse](../../models/operations/GetLobbyInfoResponse.md)**
+**[GetLobbyInfoResponse](../../Models/Operations/GetLobbyInfoResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 404                                     | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~ListActivePublicLobbiesDeprecatedV2~~
 
@@ -239,30 +284,34 @@ using HathoraCloud;
 using HathoraCloud.Models.Shared;
 using HathoraCloud.Models.Operations;
 
-var sdk = new HathoraCloudSDK(
-    security: new Security() {
-        HathoraDevToken = "",
-    },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+var sdk = new HathoraCloudSDK(appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.ListActivePublicLobbiesDeprecatedV2Async(new ListActivePublicLobbiesDeprecatedV2Request() {}))
+ListActivePublicLobbiesDeprecatedV2Request req = new ListActivePublicLobbiesDeprecatedV2Request() {};
+
+
+using(var res = await sdk.LobbyV2.ListActivePublicLobbiesDeprecatedV2Async(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                                                                           | Type                                                                                                                | Required                                                                                                            | Description                                                                                                         |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `request`                                                                                                           | [ListActivePublicLobbiesDeprecatedV2Request](../../models/operations/ListActivePublicLobbiesDeprecatedV2Request.md) | :heavy_check_mark:                                                                                                  | The request object to use for the request.                                                                          |
+| `request`                                                                                                           | [ListActivePublicLobbiesDeprecatedV2Request](../../Models/Operations/ListActivePublicLobbiesDeprecatedV2Request.md) | :heavy_check_mark:                                                                                                  | The request object to use for the request.                                                                          |
 
 
 ### Response
 
-**[ListActivePublicLobbiesDeprecatedV2Response](../../models/operations/ListActivePublicLobbiesDeprecatedV2Response.md)**
+**[ListActivePublicLobbiesDeprecatedV2Response](../../Models/Operations/ListActivePublicLobbiesDeprecatedV2Response.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
 
 ## ~~SetLobbyState~~
 
@@ -279,30 +328,39 @@ using HathoraCloud.Models.Operations;
 
 var sdk = new HathoraCloudSDK(
     security: new Security() {
-        HathoraDevToken = "",
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2"
-);
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
 
-using(var res = await sdk.LobbyV2.SetLobbyStateAsync(new SetLobbyStateRequest() {
+SetLobbyStateRequest req = new SetLobbyStateRequest() {
     SetLobbyStateParams = new SetLobbyStateParams() {
         State = new SetLobbyStateParamsState() {},
     },
     RoomId = "2swovpy1fnunu",
-}))
+};
+
+
+using(var res = await sdk.LobbyV2.SetLobbyStateAsync(req))
 {
     // handle response
 }
+
+
 ```
 
 ### Parameters
 
 | Parameter                                                               | Type                                                                    | Required                                                                | Description                                                             |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `request`                                                               | [SetLobbyStateRequest](../../models/operations/SetLobbyStateRequest.md) | :heavy_check_mark:                                                      | The request object to use for the request.                              |
+| `request`                                                               | [SetLobbyStateRequest](../../Models/Operations/SetLobbyStateRequest.md) | :heavy_check_mark:                                                      | The request object to use for the request.                              |
 
 
 ### Response
 
-**[SetLobbyStateResponse](../../models/operations/SetLobbyStateResponse.md)**
+**[SetLobbyStateResponse](../../Models/Operations/SetLobbyStateResponse.md)**
+### Errors
 
+| Error Object                            | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401,404,422,429                         | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |

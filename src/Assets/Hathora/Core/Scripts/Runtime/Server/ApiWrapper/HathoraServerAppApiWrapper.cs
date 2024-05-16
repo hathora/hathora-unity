@@ -38,7 +38,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         /// </summary>
         /// <param name="_cancelToken">TODO: This may be implemented in the future</param>
         /// <returns>Returns App on success</returns>
-        public async Task<List<ApplicationWithDeployment>> GetAppsAsync(
+        public async Task<List<ApplicationWithLatestDeploymentAndBuild>> GetAppsAsync(
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerAppApiWrapper)}.{nameof(GetAppsAsync)}]";
@@ -57,7 +57,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             }
 
             // Get inner response to return -> Log/Validate
-            List<ApplicationWithDeployment> applicationWithDeployment = getAppsResponse.Classes;
+            List<ApplicationWithLatestDeploymentAndBuild> applicationWithDeployment = getAppsResponse.Classes;
             Debug.Log($"{logPrefix} num: '{applicationWithDeployment?.Count ?? 0}'");
             
             getAppsResponse.RawResponse?.Dispose(); // Prevent mem leaks

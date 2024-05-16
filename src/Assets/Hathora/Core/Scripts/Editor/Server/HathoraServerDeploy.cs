@@ -131,7 +131,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                     HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
                 };
                 
-                HathoraCloudSDK sdk = new(security, _serverConfig.HathoraCoreOpts.AppId);
+                HathoraCloudSDK sdk = new(security, null, _serverConfig.HathoraCoreOpts.AppId);
                 
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
                     sdk,
@@ -371,7 +371,7 @@ namespace Hathora.Core.Scripts.Editor.Server
 
             Assert.AreEqual(
                 _buildWithLogs.build?.Status,
-                Status.Succeeded,
+                BuildStatus.Succeeded,
                 $"[{nameof(HathoraServerDeploy)}.{nameof(appendServerLogOutput)}] " +
                     "buildWithLogs.build?.Status != Succeeded");
         }
@@ -420,7 +420,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 };
                 
                 HathoraServerBuildApiWrapper buildApiWrapper = new(
-                    new HathoraCloudSDK(security, _serverConfig.HathoraCoreOpts.AppId),
+                    new HathoraCloudSDK(security, null, _serverConfig.HathoraCoreOpts.AppId),
                     _serverConfig);
                 
                 build = await buildApiWrapper.GetBuildInfoAsync(_buildId, _cancelToken);
