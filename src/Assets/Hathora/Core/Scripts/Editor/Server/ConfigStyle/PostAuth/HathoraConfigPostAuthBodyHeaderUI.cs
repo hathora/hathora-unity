@@ -166,7 +166,11 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             if (clickedAppRefreshBtn || recentlyAuthed)
             {
                 // TODO: Replace disabled btn with a separate cancel btn
-                await onRefreshAppsListBtnClick();
+                if (!isRefreshingExistingApps) // needed to prevent extra calls being triggered (causing 429 error)
+                {
+                    await onRefreshAppsListBtnClick();
+                }
+
                 ServerConfig.HathoraCoreOpts.DevAuthOpts.RecentlyAuthed = false;
             }
         }
