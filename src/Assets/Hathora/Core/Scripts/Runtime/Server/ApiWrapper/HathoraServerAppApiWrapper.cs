@@ -42,6 +42,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             CancellationToken _cancelToken = default)
         {
             string logPrefix = $"[{nameof(HathoraServerAppApiWrapper)}.{nameof(GetAppsAsync)}]";
+            Debug.Log($"{logPrefix} making GetAppsAsync request");
 
             // Get response async => 
             GetAppsResponse getAppsResponse = null;
