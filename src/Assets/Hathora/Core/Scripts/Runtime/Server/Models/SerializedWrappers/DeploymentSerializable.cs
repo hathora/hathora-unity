@@ -111,16 +111,16 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
         }
         
         [SerializeField, JsonProperty("deploymentId")]
-        private int _deploymentId;
-        public int DeploymentId 
+        private string _deploymentId;
+        public string DeploymentId 
         { 
             get => _deploymentId;
             set => _deploymentId = value;
         }
         
         [SerializeField, JsonProperty("buildId")]
-        private int _buildId;
-        public int BuildId 
+        private string _buildId;
+        public string BuildId 
         { 
             get => _buildId;
             set => _buildId = value;
@@ -136,7 +136,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
         }
         
         
-        public DeploymentSerializable(ApplicationWithLatestDeploymentAndBuildDeployment _deployment)
+        public DeploymentSerializable(Deployment _deployment)
         {
             if (_deployment == null)
                 return;
@@ -155,9 +155,9 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
             this.Env = _deployment.Env;
         }
 
-        public ApplicationWithLatestDeploymentAndBuildDeployment ToDeploymentType()
+        public Deployment ToDeploymentType()
         {
-            ApplicationWithLatestDeploymentAndBuildDeployment deployment = new()
+            Deployment deployment = new()
             {
                 // PlanName = this.PlanName,
                 RoomsPerProcess = this.RoomsPerProcess,

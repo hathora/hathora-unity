@@ -291,7 +291,6 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle.PostAuth
             {
                 HathoraDevToken = ServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
             };
-            
             HathoraServerAppApiWrapper appApiWrapper = new(
                 new HathoraCloudSDK(security, null, ServerConfig.HathoraCoreOpts.AppId), 
                 ServerConfig);

@@ -17,7 +17,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
     /// </summary>
     public class HathoraRoomApiWrapper : HathoraApiWrapperBase
     {
-        protected RoomV2 RoomApi { get; }
+        protected IRoomsV2 RoomApi { get; }
 
         public HathoraRoomApiWrapper(HathoraCloudSDK _hathoraSdk)
         : base(_hathoraSdk)
@@ -25,7 +25,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             Debug.Log($"[{nameof(HathoraRoomApiWrapper)}.Constructor] " +
                 "Initializing Common API...");
             
-            this.RoomApi = _hathoraSdk.RoomV2 as RoomV2;
+            this.RoomApi = _hathoraSdk.RoomsV2;
         }
 
         

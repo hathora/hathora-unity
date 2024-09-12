@@ -102,7 +102,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.Models.SerializedWrappers
         [FormerlySerializedAs("_deploymentWrapper")]
         [SerializeField, JsonProperty("deployment")]
         private DeploymentSerializable deploymentSerializable;
-        public ApplicationWithLatestDeploymentAndBuildDeployment Deployment 
+        public Deployment Deployment 
         { 
             get
             {
