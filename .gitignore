@@ -92,9 +92,7 @@ src/.hathora/LocalContainer
 utils/mono_crash.mem.*.blob
 /Assets
 src/Dockerfile
-
 .DS_Store
-src/Assets/Hathora/Hathora.Cloud.Sdk/HathoraCloud.sln.meta
 
 # Ignore all sln/csproj meta files
 *.sln.meta
