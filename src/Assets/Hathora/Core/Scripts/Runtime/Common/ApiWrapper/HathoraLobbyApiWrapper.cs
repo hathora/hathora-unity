@@ -21,7 +21,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
     /// </summary>
     public class HathoraLobbyApiWrapper : HathoraApiWrapperBase
     {
-        protected LobbyV3SDK LobbyApi { get; }
+        protected ILobbiesV3 LobbyApi { get; }
 
         public enum GetLobbyBy
         {
@@ -38,7 +38,7 @@ namespace Hathora.Core.Scripts.Runtime.Common.ApiWrapper
             Debug.Log($"[{nameof(HathoraLobbyApiWrapper)}.Constructor] " +
                 "Initializing Common API...");
             
-            this.LobbyApi = _hathoraSdk.LobbyV3SDK as LobbyV3SDK;
+            this.LobbyApi = _hathoraSdk.LobbiesV3;
         }
 
 
