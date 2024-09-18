@@ -186,12 +186,12 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             {
                 // The user explicitly cancelled, or the Task timed out
                 Debug.Log($"{logPrefix} Task cancelled");
-                return null;
+                throw;
             }
             catch (Exception e)
             {
                 Debug.LogError($"{logPrefix} {nameof(RoomApi.CreateRoomAsync)} => Error: {e.Message}");
-                return null; // fail
+                throw; // fail
             }
             
             // Process response
