@@ -312,6 +312,7 @@ namespace HathoraCloud.Utils
         }
     }
 
+#if !UNITY_6000_0_OR_NEWER
     public static class ExtensionMethods
     {
         ///<summmary>
@@ -327,4 +328,5 @@ namespace HathoraCloud.Utils
             return ((Task)tcs.Task).GetAwaiter();
         }
     }
+#endif
 }
