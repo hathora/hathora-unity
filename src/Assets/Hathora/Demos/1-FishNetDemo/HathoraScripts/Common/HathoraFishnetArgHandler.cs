@@ -8,12 +8,12 @@ using UnityEngine;
 namespace Hathora.Demos._1_FishNetDemo.HathoraScripts.Common
 {
     /// <summary>
-    /// Commandline helper - run via `-mode {server|client|host}`.
+    /// Commandline helper - run via `YourBuild.exe -mode {server|client|host}`.
     /// </summary>
     public class HathoraFishnetArgHandler : HathoraArgHandlerBase
     {
-        private void Start() => 
-            _ = base.InitArgsAsync();
+        protected override void Awake() {}
+        protected override void Start() {}
 
         protected override void ArgModeStartServer()
         {

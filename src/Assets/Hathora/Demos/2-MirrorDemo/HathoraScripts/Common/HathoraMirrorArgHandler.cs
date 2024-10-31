@@ -9,12 +9,12 @@ using UnityEngine.Assertions;
 namespace Hathora.Demos._2_MirrorDemo.HathoraScripts.Common
 {
     /// <summary>
-    /// Commandline helper - run via `-mode {server|client|host}`
+    /// Commandline helper - run via `YourBuild.exe -mode {server|client|host}`
     /// </summary>
     public class HathoraMirrorArgHandler : HathoraArgHandlerBase
     {
-        private async void Start() => 
-            await base.InitArgsAsync();
+        protected override void Awake() {}
+        protected override void Start() {}
 
         protected override void ArgModeStartServer()
         {
