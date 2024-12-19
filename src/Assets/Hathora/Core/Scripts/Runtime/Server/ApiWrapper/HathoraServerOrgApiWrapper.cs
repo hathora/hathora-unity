@@ -81,7 +81,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string currentDateTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
             CreateOrgTokenRequest createTokenRequest = new CreateOrgTokenRequest() {
                 CreateOrgToken = new CreateOrgToken() {
-                    Name = "unity-plugin-token" + currentDateTime,
+                    Name = "unity-plugin-token_" + currentDateTime,
                     Scopes = Scopes.CreateArrayOfScope(userScopes)
                 },
                 // TODO: this assumes one org per user
@@ -101,7 +101,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string createdOrgToken =
                 createOrgTokenResponse.CreatedOrgToken != null && createOrgTokenResponse.CreatedOrgToken.PlainTextToken.Length > 0 ?
                     createOrgTokenResponse.CreatedOrgToken.PlainTextToken : "";
-            Debug.Log($"{logPrefix} num: 'orgToken created, named: " + "unity-plugin-token" + currentDateTime);
+            Debug.Log($"{logPrefix} num: 'orgToken created, named: " + "unity-plugin-token_" + currentDateTime);
             
             createOrgTokenResponse.RawResponse?.Dispose(); // Prevent mem leaks
             
