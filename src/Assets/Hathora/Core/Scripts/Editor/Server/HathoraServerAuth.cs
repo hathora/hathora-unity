@@ -46,10 +46,10 @@ namespace Hathora.Core.Scripts.Editor.Server
             Debug.Log("DevAuthLogin - test");
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
-            string refreshToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);
+            string accessToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);
             
             HathoraServerOrgApiWrapper orgApiWrapper = new();
-            string createdOrgToken = await orgApiWrapper.CreateOrgTokenAsync(refreshToken);
+            string createdOrgToken = await orgApiWrapper.CreateOrgTokenAsync(accessToken);
             
             bool isSuccess = onGetTokenDone(
                 _hathoraServerConfig, 
