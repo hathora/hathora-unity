@@ -43,7 +43,6 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <returns>isSuccess</returns>
         public static async Task<bool> DevAuthLogin(HathoraServerConfig _hathoraServerConfig)
         {
-            Debug.Log("DevAuthLogin - test");
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
             string accessToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);

@@ -40,7 +40,6 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
             string bearerToken,
             CancellationToken _cancelToken = default)
         {
-            Debug.Log("CreateOrgTokenAsync - test");
             var sdk = new HathoraCloudSDK(
                 security: new Security()
                 {
