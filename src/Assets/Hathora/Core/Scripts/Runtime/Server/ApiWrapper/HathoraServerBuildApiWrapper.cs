@@ -273,6 +273,30 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
         
         #region Utils
 
+        /// <summary>
+        /// Wrapper for UnityWebRequest to Task 
+        /// </summary>
+        /// <param name="webRequest"></param>
+        /// <returns>Task</returns>
+        private static Task AwaitWebRequest(UnityWebRequest webRequest)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            webRequest.SendWebRequest().completed += (asyncOperation) =>
+            {
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    tcs.SetException(new Exception(webRequest.error));
+                }
+                else
+                {
+                    tcs.SetResult(null);
+                }
+            };
+
+            return tcs.Task;
+        }
+        
         public async Task UploadToMultipartUrl(List<BuildPart> multipartUploadParts, double maxChunkSize, string completeUploadPostRequestUrl, string filePath)
         {
             Debug.Log($"~~~~~~{multipartUploadParts.Count} parts, maxChunkSize: {maxChunkSize}");
@@ -303,7 +327,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     postRequest.downloadHandler = new DownloadHandlerBuffer();
                     postRequest.SetRequestHeader("Content-Type", "application/xml");
 
-                    await postRequest.SendWebRequest();
+                    await  AwaitWebRequest(postRequest); //postRequest.SendWebRequest();
 
                     if (postRequest.result == UnityWebRequest.Result.Success)
                     {
@@ -349,7 +373,7 @@ namespace Hathora.Core.Scripts.Runtime.Server.ApiWrapper
                     putRequest.uploadHandler = new UploadHandlerRaw(fileChunk);
                     putRequest.SetRequestHeader("Content-Type", "application/octet-stream");
 
-                    await putRequest.SendWebRequest();
+                    await AwaitWebRequest(putRequest);
 
                     if (putRequest.result != UnityWebRequest.Result.Success)
                     {
