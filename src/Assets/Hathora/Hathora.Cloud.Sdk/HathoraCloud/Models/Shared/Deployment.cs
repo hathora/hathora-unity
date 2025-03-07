@@ -81,6 +81,13 @@ namespace HathoraCloud.Models.Shared
         public string DeploymentId { get; set; } = default!;
 
         /// <summary>
+        /// Arbitrary metadata associated with a deployment.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("deploymentTag")]
+        public string? DeploymentTag { get; set; }
+
+        /// <summary>
         /// The environment variable that our process will have access to at runtime.
         /// </summary>
         [SerializeField]

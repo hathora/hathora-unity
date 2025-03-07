@@ -25,34 +25,50 @@ namespace HathoraCloud
     {
 
         /// <summary>
+        /// CreateDeploymentV1Deprecated
+        /// 
+        /// <remarks>
         /// Create a new <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a>. Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+        /// </remarks>
         /// </summary>
         Task<CreateDeploymentV1DeprecatedResponse> CreateDeploymentV1DeprecatedAsync(CreateDeploymentV1DeprecatedRequest request);
 
         /// <summary>
+        /// GetDeploymentInfoV1Deprecated
+        /// 
+        /// <remarks>
         /// Get details for a <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a>.
+        /// </remarks>
         /// </summary>
         Task<GetDeploymentInfoV1DeprecatedResponse> GetDeploymentInfoV1DeprecatedAsync(GetDeploymentInfoV1DeprecatedRequest request);
 
         /// <summary>
+        /// GetDeploymentsV1Deprecated
+        /// 
+        /// <remarks>
         /// Returns an array of <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployments</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>.
+        /// </remarks>
         /// </summary>
-        Task<GetDeploymentsV1DeprecatedResponse> GetDeploymentsV1DeprecatedAsync(GetDeploymentsV1DeprecatedRequest request);
+        Task<GetDeploymentsV1DeprecatedResponse> GetDeploymentsV1DeprecatedAsync(GetDeploymentsV1DeprecatedRequest? request = null);
 
         /// <summary>
+        /// GetLatestDeploymentV1Deprecated
+        /// 
+        /// <remarks>
         /// Get the latest <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>.
+        /// </remarks>
         /// </summary>
-        Task<GetLatestDeploymentV1DeprecatedResponse> GetLatestDeploymentV1DeprecatedAsync(GetLatestDeploymentV1DeprecatedRequest request);
+        Task<GetLatestDeploymentV1DeprecatedResponse> GetLatestDeploymentV1DeprecatedAsync(GetLatestDeploymentV1DeprecatedRequest? request = null);
     }
 
     public class DeploymentsV1: IDeploymentsV1
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -250,12 +266,8 @@ namespace HathoraCloud
         
 
         [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
-        public async Task<GetDeploymentsV1DeprecatedResponse> GetDeploymentsV1DeprecatedAsync(GetDeploymentsV1DeprecatedRequest request)
+        public async Task<GetDeploymentsV1DeprecatedResponse> GetDeploymentsV1DeprecatedAsync(GetDeploymentsV1DeprecatedRequest? request = null)
         {
-            if (request == null)
-            {
-                request = new GetDeploymentsV1DeprecatedRequest();
-            }
             request.AppId ??= SDKConfiguration.AppId;
             
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
@@ -338,12 +350,8 @@ namespace HathoraCloud
         
 
         [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
-        public async Task<GetLatestDeploymentV1DeprecatedResponse> GetLatestDeploymentV1DeprecatedAsync(GetLatestDeploymentV1DeprecatedRequest request)
+        public async Task<GetLatestDeploymentV1DeprecatedResponse> GetLatestDeploymentV1DeprecatedAsync(GetLatestDeploymentV1DeprecatedRequest? request = null)
         {
-            if (request == null)
-            {
-                request = new GetLatestDeploymentV1DeprecatedRequest();
-            }
             request.AppId ??= SDKConfiguration.AppId;
             
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();

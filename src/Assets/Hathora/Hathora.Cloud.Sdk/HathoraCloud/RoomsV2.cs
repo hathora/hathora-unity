@@ -25,39 +25,71 @@ namespace HathoraCloud
     {
 
         /// <summary>
+        /// CreateRoom
+        /// 
+        /// <remarks>
         /// Create a new <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a> for an existing <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. Poll the <a href="">`GetConnectionInfo()`</a> endpoint to get connection details for an active room.
+        /// </remarks>
         /// </summary>
         Task<CreateRoomResponse> CreateRoomAsync(CreateRoomRequest request);
 
         /// <summary>
+        /// DestroyRoom
+        /// 
+        /// <remarks>
         /// Destroy a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a>. All associated metadata is deleted.
+        /// </remarks>
         /// </summary>
         Task<DestroyRoomResponse> DestroyRoomAsync(DestroyRoomRequest request);
 
         /// <summary>
+        /// GetActiveRoomsForProcess
+        /// 
+        /// <remarks>
         /// Get all active <a href="https://hathora.dev/docs/concepts/hathora-entities#room">rooms</a> for a given <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a>.
+        /// </remarks>
         /// </summary>
         Task<GetActiveRoomsForProcessResponse> GetActiveRoomsForProcessAsync(GetActiveRoomsForProcessRequest request);
 
         /// <summary>
+        /// GetConnectionInfo
+        /// 
+        /// <remarks>
         /// Poll this endpoint to get connection details to a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a>. Clients can call this endpoint without authentication.
+        /// </remarks>
         /// </summary>
         Task<GetConnectionInfoResponse> GetConnectionInfoAsync(GetConnectionInfoRequest request);
 
         /// <summary>
+        /// GetInactiveRoomsForProcess
+        /// 
+        /// <remarks>
         /// Get all inactive <a href="https://hathora.dev/docs/concepts/hathora-entities#room">rooms</a> for a given <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a>.
+        /// </remarks>
         /// </summary>
         Task<GetInactiveRoomsForProcessResponse> GetInactiveRoomsForProcessAsync(GetInactiveRoomsForProcessRequest request);
 
         /// <summary>
+        /// GetRoomInfo
+        /// 
+        /// <remarks>
         /// Retreive current and historical allocation data for a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a>.
+        /// </remarks>
         /// </summary>
         Task<GetRoomInfoResponse> GetRoomInfoAsync(GetRoomInfoRequest request);
 
         /// <summary>
+        /// SuspendRoomV2Deprecated
+        /// 
+        /// <remarks>
         /// Suspend a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a>. The room is unallocated from the process but can be rescheduled later using the same `roomId`.
+        /// </remarks>
         /// </summary>
         Task<SuspendRoomV2DeprecatedResponse> SuspendRoomV2DeprecatedAsync(SuspendRoomV2DeprecatedRequest request);
+
+        /// <summary>
+        /// UpdateRoomConfig
+        /// </summary>
         Task<UpdateRoomConfigResponse> UpdateRoomConfigAsync(UpdateRoomConfigRequest request);
     }
 
@@ -65,10 +97,10 @@ namespace HathoraCloud
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -744,7 +776,7 @@ namespace HathoraCloud
             if (httpCode == 204)
             {
             }
-            else if (new List<int>{401, 404, 429, 500}.Contains(httpCode))
+            else if (new List<int>{401, 404, 422, 429, 500}.Contains(httpCode))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {                    

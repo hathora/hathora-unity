@@ -41,7 +41,9 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
 
             if (!File.Exists(refreshTokenPath))
                 return null;
-            
+
+            return null;
+            // TODO fix this to work with orgtokens
             Debug.Log("[Hathora.Auth0Login.CheckForExistingCachedTokenAsync] " +
                 $"Found already-present auth token file at: `{refreshTokenPath}`");
             return File.ReadAllText(refreshTokenPath); // (!) The Async variant is bugged, freezing Unity

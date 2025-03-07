@@ -28,7 +28,11 @@ namespace HathoraCloud
     {
 
         /// <summary>
+        /// GetPingServiceEndpointsDeprecated
+        /// 
+        /// <remarks>
         /// Returns an array of V1 regions with a host and port that a client can directly ping. Open a websocket connection to `wss://&lt;host&gt;:&lt;port&gt;/ws` and send a packet. To calculate ping, measure the time it takes to get an echo packet back.
+        /// </remarks>
         /// </summary>
         Task<GetPingServiceEndpointsDeprecatedResponse> GetPingServiceEndpointsDeprecatedAsync();
     }
@@ -40,10 +44,10 @@ namespace HathoraCloud
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;

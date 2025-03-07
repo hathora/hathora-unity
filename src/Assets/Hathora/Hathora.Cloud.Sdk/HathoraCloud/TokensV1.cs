@@ -28,17 +28,29 @@ namespace HathoraCloud
     {
 
         /// <summary>
+        /// CreateOrgToken
+        /// 
+        /// <remarks>
         /// Create a new organization token.
+        /// </remarks>
         /// </summary>
         Task<CreateOrgTokenResponse> CreateOrgTokenAsync(CreateOrgTokenRequest request);
 
         /// <summary>
+        /// GetOrgTokens
+        /// 
+        /// <remarks>
         /// List all organization tokens for a given org.
+        /// </remarks>
         /// </summary>
         Task<GetOrgTokensResponse> GetOrgTokensAsync(GetOrgTokensRequest request);
 
         /// <summary>
+        /// RevokeOrgToken
+        /// 
+        /// <remarks>
         /// Revoke an organization token.
+        /// </remarks>
         /// </summary>
         Task<RevokeOrgTokenResponse> RevokeOrgTokenAsync(RevokeOrgTokenRequest request);
     }
@@ -50,10 +62,10 @@ namespace HathoraCloud
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -70,6 +82,12 @@ namespace HathoraCloud
         
         public async Task<CreateOrgTokenResponse> CreateOrgTokenAsync(CreateOrgTokenRequest request)
         {
+            if (request == null)
+            {
+                request = new CreateOrgTokenRequest();
+            }
+            request.OrgId ??= SDKConfiguration.OrgId;
+            
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/tokens/v1/orgs/{orgId}/create", request);
 
@@ -159,6 +177,12 @@ namespace HathoraCloud
         
         public async Task<GetOrgTokensResponse> GetOrgTokensAsync(GetOrgTokensRequest request)
         {
+            if (request == null)
+            {
+                request = new GetOrgTokensRequest();
+            }
+            request.OrgId ??= SDKConfiguration.OrgId;
+            
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/tokens/v1/orgs/{orgId}", request);
 
@@ -241,6 +265,12 @@ namespace HathoraCloud
         
         public async Task<RevokeOrgTokenResponse> RevokeOrgTokenAsync(RevokeOrgTokenRequest request)
         {
+            if (request == null)
+            {
+                request = new RevokeOrgTokenRequest();
+            }
+            request.OrgId ??= SDKConfiguration.OrgId;
+            
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
             var urlString = URLBuilder.Build(baseUrl, "/tokens/v1/orgs/{orgId}/tokens/{orgTokenId}/revoke", request);
 

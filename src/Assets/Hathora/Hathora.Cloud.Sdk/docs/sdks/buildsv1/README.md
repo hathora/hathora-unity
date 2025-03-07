@@ -5,11 +5,11 @@
 
 ### Available Operations
 
-* [~~CreateBuildDeprecated~~](#createbuilddeprecated) - Creates a new [build](https://hathora.dev/docs/concepts/hathora-entities#build). Responds with a `buildId` that you must pass to [`RunBuild()`](https://hathora.dev/api#tag/BuildV1/operation/RunBuild) to build the game server artifact. You can optionally pass in a `buildTag` to associate an external version with a build. :warning: **Deprecated**
-* [~~DeleteBuildDeprecated~~](#deletebuilddeprecated) - Delete a [build](https://hathora.dev/docs/concepts/hathora-entities#build). All associated metadata is deleted. :warning: **Deprecated**
-* [~~GetBuildInfoDeprecated~~](#getbuildinfodeprecated) - Get details for a [build](https://hathora.dev/docs/concepts/hathora-entities#build). :warning: **Deprecated**
-* [~~GetBuildsDeprecated~~](#getbuildsdeprecated) - Returns an array of [builds](https://hathora.dev/docs/concepts/hathora-entities#build) for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). :warning: **Deprecated**
-* [~~RunBuildDeprecated~~](#runbuilddeprecated) - Builds a game server artifact from a tarball you provide. Pass in the `buildId` generated from [`CreateBuild()`](https://hathora.dev/api#tag/BuildV1/operation/CreateBuild). :warning: **Deprecated**
+* [~~CreateBuildDeprecated~~](#createbuilddeprecated) - CreateBuildDeprecated :warning: **Deprecated**
+* [~~DeleteBuildDeprecated~~](#deletebuilddeprecated) - DeleteBuildDeprecated :warning: **Deprecated**
+* [~~GetBuildInfoDeprecated~~](#getbuildinfodeprecated) - GetBuildInfoDeprecated :warning: **Deprecated**
+* [~~GetBuildsDeprecated~~](#getbuildsdeprecated) - GetBuildsDeprecated :warning: **Deprecated**
+* [~~RunBuildDeprecated~~](#runbuilddeprecated) - RunBuildDeprecated :warning: **Deprecated**
 
 ## ~~CreateBuildDeprecated~~
 
@@ -28,7 +28,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 CreateBuildDeprecatedRequest req = new CreateBuildDeprecatedRequest() {
     CreateBuildParams = new CreateBuildParams() {
@@ -57,11 +58,10 @@ using(var res = await sdk.BuildsV1.CreateBuildDeprecatedAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
-
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~DeleteBuildDeprecated~~
 
@@ -80,7 +80,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 DeleteBuildDeprecatedRequest req = new DeleteBuildDeprecatedRequest() {
     BuildId = 1,
@@ -107,11 +108,10 @@ using(var res = await sdk.BuildsV1.DeleteBuildDeprecatedAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,422,429,500                     | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
-
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetBuildInfoDeprecated~~
 
@@ -130,7 +130,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 GetBuildInfoDeprecatedRequest req = new GetBuildInfoDeprecatedRequest() {
     BuildId = 1,
@@ -157,11 +158,10 @@ using(var res = await sdk.BuildsV1.GetBuildInfoDeprecatedAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,429                             | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
-
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetBuildsDeprecated~~
 
@@ -180,7 +180,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 GetBuildsDeprecatedRequest req = new GetBuildsDeprecatedRequest() {};
 
@@ -205,11 +206,10 @@ using(var res = await sdk.BuildsV1.GetBuildsDeprecatedAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,429                             | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
-
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~RunBuildDeprecated~~
 
@@ -228,13 +228,14 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 RunBuildDeprecatedRequest req = new RunBuildDeprecatedRequest() {
     RequestBody = new RunBuildDeprecatedRequestBody() {
         File = new File() {
-            Content = System.Text.Encoding.UTF8.GetBytes("0x96Cf4be63b"),
-            FileName = "your_file_here",
+            Content = System.Text.Encoding.UTF8.GetBytes("0x9C4e3B3eB2"),
+            FileName = "example.file",
         },
     },
     BuildId = 1,
@@ -261,7 +262,7 @@ using(var res = await sdk.BuildsV1.RunBuildDeprecatedAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400,401,404,429,500                     | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

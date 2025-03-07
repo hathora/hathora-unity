@@ -7,11 +7,13 @@ Operations to get metrics by [process](https://hathora.dev/docs/concepts/hathora
 
 ### Available Operations
 
-* [GetMetrics](#getmetrics) - Get metrics for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
+* [~~GetMetricsDeprecated~~](#getmetricsdeprecated) - GetMetricsDeprecated :warning: **Deprecated**
 
-## GetMetrics
+## ~~GetMetricsDeprecated~~
 
 Get metrics for a [process](https://hathora.dev/docs/concepts/hathora-entities#process) using `appId` and `processId`.
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -25,14 +27,15 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-GetMetricsRequest req = new GetMetricsRequest() {
+GetMetricsDeprecatedRequest req = new GetMetricsDeprecatedRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
 };
 
 
-using(var res = await sdk.MetricsV1.GetMetricsAsync(req))
+using(var res = await sdk.MetricsV1.GetMetricsDeprecatedAsync(req))
 {
     // handle response
 }
@@ -42,17 +45,17 @@ using(var res = await sdk.MetricsV1.GetMetricsAsync(req))
 
 ### Parameters
 
-| Parameter                                                         | Type                                                              | Required                                                          | Description                                                       |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `request`                                                         | [GetMetricsRequest](../../Models/Operations/GetMetricsRequest.md) | :heavy_check_mark:                                                | The request object to use for the request.                        |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `request`                                                                             | [GetMetricsDeprecatedRequest](../../Models/Operations/GetMetricsDeprecatedRequest.md) | :heavy_check_mark:                                                                    | The request object to use for the request.                                            |
 
 ### Response
 
-**[GetMetricsResponse](../../Models/Operations/GetMetricsResponse.md)**
+**[GetMetricsDeprecatedResponse](../../Models/Operations/GetMetricsDeprecatedResponse.md)**
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,422,429,500                     | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

@@ -10,7 +10,9 @@
 #nullable enable
 namespace HathoraCloud.Models.Shared
 {
+    using HathoraCloud.Models.Shared;
     using Newtonsoft.Json;
+    using System.Collections.Generic;
     using System;
     using UnityEngine;
     
@@ -23,11 +25,25 @@ namespace HathoraCloud.Models.Shared
         public bool IsSingleTenant { get; set; } = default!;
 
         /// <summary>
+        /// The name of an organization.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("name")]
+        public string? Name { get; set; }
+
+        /// <summary>
         /// System generated unique identifier for an organization. Not guaranteed to have a specific format.
         /// </summary>
         [SerializeField]
         [JsonProperty("orgId")]
         public string OrgId { get; set; } = default!;
+
+        /// <summary>
+        /// The scopes the user who loaded this has on this org.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("scopes")]
+        public List<Scope>? Scopes { get; set; }
 
         [SerializeField]
         [JsonProperty("stripeCustomerId")]

@@ -3,13 +3,13 @@
 
 ## Overview
 
-Deprecated. Use [ProcessesV2](https://hathora.dev/api#tag/ProcessesV2).
+Deprecated. Use [ProcessesV3](https://hathora.dev/api#tag/ProcessesV3).
 
 ### Available Operations
 
-* [~~GetProcessInfoDeprecated~~](#getprocessinfodeprecated) - Get details for a [process](https://hathora.dev/docs/concepts/hathora-entities#process). :warning: **Deprecated**
-* [~~GetRunningProcesses~~](#getrunningprocesses) - Retrieve 10 most recently started [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
-* [~~GetStoppedProcesses~~](#getstoppedprocesses) - Retrieve 10 most recently stopped [process](https://hathora.dev/docs/concepts/hathora-entities#process) objects for an [application](https://hathora.dev/docs/concepts/hathora-entities#application). Filter the array by optionally passing in a `region`. :warning: **Deprecated**
+* [~~GetProcessInfoDeprecated~~](#getprocessinfodeprecated) - GetProcessInfoDeprecated :warning: **Deprecated**
+* [~~GetRunningProcesses~~](#getrunningprocesses) - GetRunningProcesses :warning: **Deprecated**
+* [~~GetStoppedProcesses~~](#getstoppedprocesses) - GetStoppedProcesses :warning: **Deprecated**
 
 ## ~~GetProcessInfoDeprecated~~
 
@@ -28,7 +28,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 GetProcessInfoDeprecatedRequest req = new GetProcessInfoDeprecatedRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
@@ -55,11 +56,10 @@ using(var res = await sdk.ProcessesV1.GetProcessInfoDeprecatedAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,429,500                         | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
-
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetRunningProcesses~~
 
@@ -78,7 +78,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 GetRunningProcessesRequest req = new GetRunningProcessesRequest() {};
 
@@ -103,11 +104,10 @@ using(var res = await sdk.ProcessesV1.GetRunningProcessesAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,429                             | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
-
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetStoppedProcesses~~
 
@@ -126,7 +126,8 @@ var sdk = new HathoraCloudSDK(
     security: new Security() {
         HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
     },
-    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2");
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
 GetStoppedProcessesRequest req = new GetStoppedProcessesRequest() {};
 
@@ -151,7 +152,7 @@ using(var res = await sdk.ProcessesV1.GetStoppedProcessesAsync(req))
 
 ### Errors
 
-| Error Object                            | Status Code                             | Content Type                            |
+| Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401,404,429                             | application/json                        |
-| HathoraCloud.Models.Errors.SDKException | 4xx-5xx                                 | */*                                     |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

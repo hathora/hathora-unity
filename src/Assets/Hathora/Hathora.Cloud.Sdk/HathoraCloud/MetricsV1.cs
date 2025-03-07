@@ -28,9 +28,13 @@ namespace HathoraCloud
     {
 
         /// <summary>
+        /// GetMetricsDeprecated
+        /// 
+        /// <remarks>
         /// Get metrics for a <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a> using `appId` and `processId`.
+        /// </remarks>
         /// </summary>
-        Task<GetMetricsResponse> GetMetricsAsync(GetMetricsRequest request);
+        Task<GetMetricsDeprecatedResponse> GetMetricsDeprecatedAsync(GetMetricsDeprecatedRequest request);
     }
 
     /// <summary>
@@ -40,10 +44,10 @@ namespace HathoraCloud
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -57,12 +61,12 @@ namespace HathoraCloud
         }
         
 
-        
-        public async Task<GetMetricsResponse> GetMetricsAsync(GetMetricsRequest request)
+        [Obsolete("This method will be removed in a future release, please migrate away from it as soon as possible")]
+        public async Task<GetMetricsDeprecatedResponse> GetMetricsDeprecatedAsync(GetMetricsDeprecatedRequest request)
         {
             if (request == null)
             {
-                request = new GetMetricsRequest();
+                request = new GetMetricsDeprecatedRequest();
             }
             request.AppId ??= SDKConfiguration.AppId;
             
@@ -102,7 +106,7 @@ namespace HathoraCloud
                 contentType = httpResponse.GetResponseHeader("Content-Type") ?? "application/octet-stream";
             }
             int httpCode = errorCode ?? (int)httpResponse.responseCode;
-            var response = new GetMetricsResponse
+            var response = new GetMetricsDeprecatedResponse
             {
                 StatusCode = httpCode,
                 ContentType = contentType,
@@ -112,8 +116,8 @@ namespace HathoraCloud
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {                    
-                    var obj = JsonConvert.DeserializeObject<MetricsData>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = Utilities.GetDefaultJsonDeserializers() });
-                    response.MetricsData = obj;
+                    var obj = JsonConvert.DeserializeObject<DeprecatedProcessMetricsData>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = Utilities.GetDefaultJsonDeserializers() });
+                    response.DeprecatedProcessMetricsData = obj;
                 }
                 else
                 {

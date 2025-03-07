@@ -25,34 +25,50 @@ namespace HathoraCloud
     {
 
         /// <summary>
+        /// CreateLobby
+        /// 
+        /// <remarks>
         /// Create a new lobby for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. A lobby object is a wrapper around a <a href="https://hathora.dev/docs/concepts/hathora-entities#room">room</a> object. With a lobby, you get additional functionality like configuring the visibility of the room, managing the state of a match, and retrieving a list of public lobbies to display to players.
+        /// </remarks>
         /// </summary>
         Task<CreateLobbyResponse> CreateLobbyAsync(CreateLobbySecurity security, CreateLobbyRequest request);
 
         /// <summary>
+        /// GetLobbyInfoByRoomId
+        /// 
+        /// <remarks>
         /// Get details for a lobby.
+        /// </remarks>
         /// </summary>
         Task<GetLobbyInfoByRoomIdResponse> GetLobbyInfoByRoomIdAsync(GetLobbyInfoByRoomIdRequest request);
 
         /// <summary>
+        /// GetLobbyInfoByShortCode
+        /// 
+        /// <remarks>
         /// Get details for a lobby. If 2 or more lobbies have the same `shortCode`, then the most recently created lobby will be returned.
+        /// </remarks>
         /// </summary>
         Task<GetLobbyInfoByShortCodeResponse> GetLobbyInfoByShortCodeAsync(GetLobbyInfoByShortCodeRequest request);
 
         /// <summary>
+        /// ListActivePublicLobbies
+        /// 
+        /// <remarks>
         /// Get all active lobbies for a given <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>. Filter the array by optionally passing in a `region`. Use this endpoint to display all public lobbies that a player can join in the game client.
+        /// </remarks>
         /// </summary>
-        Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest request);
+        Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest? request = null);
     }
 
     public class LobbiesV3: ILobbiesV3
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -326,12 +342,8 @@ namespace HathoraCloud
         
 
         
-        public async Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest request)
+        public async Task<ListActivePublicLobbiesResponse> ListActivePublicLobbiesAsync(ListActivePublicLobbiesRequest? request = null)
         {
-            if (request == null)
-            {
-                request = new ListActivePublicLobbiesRequest();
-            }
             request.AppId ??= SDKConfiguration.AppId;
             
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();

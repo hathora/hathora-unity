@@ -21,38 +21,60 @@ namespace HathoraCloud
     using System;
     using UnityEngine.Networking;
 
+    /// <summary>
+    /// Operations that allow you configure and manage an application&apos;s <a href="https://hathora.dev/docs/concepts/hathora-entities#build">build</a> at runtime.
+    /// </summary>
     public interface IDeploymentsV3
     {
 
         /// <summary>
+        /// CreateDeployment
+        /// 
+        /// <remarks>
         /// Create a new <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a>. Creating a new deployment means all new rooms created will use the latest deployment configuration, but existing games in progress will not be affected.
+        /// </remarks>
         /// </summary>
         Task<CreateDeploymentResponse> CreateDeploymentAsync(CreateDeploymentRequest request);
 
         /// <summary>
+        /// GetDeployment
+        /// 
+        /// <remarks>
         /// Get details for a <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a>.
+        /// </remarks>
         /// </summary>
         Task<GetDeploymentResponse> GetDeploymentAsync(GetDeploymentRequest request);
 
         /// <summary>
-        /// Returns an array of <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployments</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>.
+        /// GetDeployments
+        /// 
+        /// <remarks>
+        /// Returns an array of <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployments</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>, optionally filtered by deploymentTag.
+        /// </remarks>
         /// </summary>
-        Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsRequest request);
+        Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsRequest? request = null);
 
         /// <summary>
+        /// GetLatestDeployment
+        /// 
+        /// <remarks>
         /// Get the latest <a href="https://hathora.dev/docs/concepts/hathora-entities#deployment">deployment</a> for an <a href="https://hathora.dev/docs/concepts/hathora-entities#application">application</a>.
+        /// </remarks>
         /// </summary>
-        Task<GetLatestDeploymentResponse> GetLatestDeploymentAsync(GetLatestDeploymentRequest request);
+        Task<GetLatestDeploymentResponse> GetLatestDeploymentAsync(GetLatestDeploymentRequest? request = null);
     }
 
+    /// <summary>
+    /// Operations that allow you configure and manage an application&apos;s <a href="https://hathora.dev/docs/concepts/hathora-entities#build">build</a> at runtime.
+    /// </summary>
     public class DeploymentsV3: IDeploymentsV3
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.0";
-        private const string _sdkGenVersion = "2.409.3";
+        private const string _sdkVersion = "0.30.1";
+        private const string _sdkGenVersion = "2.481.0";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.0 2.409.3 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -250,12 +272,8 @@ namespace HathoraCloud
         
 
         
-        public async Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsRequest request)
+        public async Task<GetDeploymentsResponse> GetDeploymentsAsync(GetDeploymentsRequest? request = null)
         {
-            if (request == null)
-            {
-                request = new GetDeploymentsRequest();
-            }
             request.AppId ??= SDKConfiguration.AppId;
             
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();
@@ -338,12 +356,8 @@ namespace HathoraCloud
         
 
         
-        public async Task<GetLatestDeploymentResponse> GetLatestDeploymentAsync(GetLatestDeploymentRequest request)
+        public async Task<GetLatestDeploymentResponse> GetLatestDeploymentAsync(GetLatestDeploymentRequest? request = null)
         {
-            if (request == null)
-            {
-                request = new GetLatestDeploymentRequest();
-            }
             request.AppId ??= SDKConfiguration.AppId;
             
             string baseUrl = this.SDKConfiguration.GetTemplatedServerDetails();

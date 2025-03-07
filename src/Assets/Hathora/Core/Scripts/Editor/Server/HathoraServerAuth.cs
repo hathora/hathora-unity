@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Editor.Server.Auth0;
 using Hathora.Core.Scripts.Runtime.Server;
+using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Editor.Server
@@ -42,13 +43,17 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <returns>isSuccess</returns>
         public static async Task<bool> DevAuthLogin(HathoraServerConfig _hathoraServerConfig)
         {
+            Debug.Log("DevAuthLogin - test");
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
             string refreshToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);
             
+            HathoraServerOrgApiWrapper orgApiWrapper = new();
+            string createdOrgToken = await orgApiWrapper.CreateOrgTokenAsync(refreshToken);
+            
             bool isSuccess = onGetTokenDone(
                 _hathoraServerConfig, 
-                refreshToken);
+                createdOrgToken); 
             
             return isSuccess;
         }

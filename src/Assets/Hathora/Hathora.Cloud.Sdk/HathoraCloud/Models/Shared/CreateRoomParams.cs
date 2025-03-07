@@ -24,6 +24,13 @@ namespace HathoraCloud.Models.Shared
         [JsonProperty("clientIPs")]
         public List<string>? ClientIPs { get; set; }
 
+        /// <summary>
+        /// System generated id for a deployment.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("deploymentId")]
+        public string? DeploymentId { get; set; }
+
         [SerializeField]
         [JsonProperty("region")]
         public Region Region { get; set; } = default!;
