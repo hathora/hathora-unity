@@ -368,10 +368,26 @@ Based on:
 ### Generated
 - [unity v0.29.0] .
 
-## 2024-09-05 00:03:18
+## 2024-09-12 00:03:31
 ### Changes
 Based on:
 - OpenAPI Doc  
-- Speakeasy CLI 1.390.5 (2.409.3) https://github.com/speakeasy-api/speakeasy
+- Speakeasy CLI 1.396.2 (2.415.0) https://github.com/speakeasy-api/speakeasy
 ### Generated
 - [unity v0.30.0] .
+
+## 2025-02-21 00:03:39
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.498.1 (2.518.1) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [unity v0.30.1] .
+
+## 2025-03-07 00:03:31
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.513.2 (2.545.2) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [unity v0.30.2] .

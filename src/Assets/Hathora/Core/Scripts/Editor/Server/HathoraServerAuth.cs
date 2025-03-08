@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hathora.Core.Scripts.Editor.Server.Auth0;
 using Hathora.Core.Scripts.Runtime.Server;
+using Hathora.Core.Scripts.Runtime.Server.ApiWrapper;
 using UnityEngine;
 
 namespace Hathora.Core.Scripts.Editor.Server
@@ -44,11 +45,14 @@ namespace Hathora.Core.Scripts.Editor.Server
         {
             createNewAuthCancelToken();
             Auth0Login auth = new(); 
-            string refreshToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);
+            string accessToken = await auth.GetTokenAsync(cancelToken: AuthCancelTokenSrc.Token);
+            
+            HathoraServerOrgApiWrapper orgApiWrapper = new();
+            string createdOrgToken = await orgApiWrapper.CreateOrgTokenAsync(accessToken);
             
             bool isSuccess = onGetTokenDone(
                 _hathoraServerConfig, 
-                refreshToken);
+                createdOrgToken); 
             
             return isSuccess;
         }
@@ -56,13 +60,13 @@ namespace Hathora.Core.Scripts.Editor.Server
         /// <summary>
         /// </summary>
         /// <param name="_hathoraServerConfig"></param>
-        /// <param name="_refreshToken"></param>
+        /// <param name="_authToken"></param>
         /// <returns>isSuccess</returns>
         private static bool onGetTokenDone(
             HathoraServerConfig _hathoraServerConfig,
-            string _refreshToken)
+            string _authToken)
         {
-            if (string.IsNullOrEmpty(_refreshToken))
+            if (string.IsNullOrEmpty(_authToken))
             {
                 // Fail >>
                 if (AuthCancelTokenSrc != null && HasCancellableAuthToken)
@@ -71,7 +75,7 @@ namespace Hathora.Core.Scripts.Editor.Server
                 return false; // !isSuccess
             }
             
-            SetAuthToken(_hathoraServerConfig, _refreshToken);
+            SetAuthToken(_hathoraServerConfig, _authToken);
             return true; // isSuccess
         }
 
@@ -90,7 +94,7 @@ namespace Hathora.Core.Scripts.Editor.Server
 
         /// <summary>Shortcut to set dev auth token with log</summary>
         /// <param name="_hathoraServerConfig"></param>
-        /// <param name="_token">You probably want the refreshToken</param>
+        /// <param name="_token">You probably want the authToken</param>
         public static void SetAuthToken(HathoraServerConfig _hathoraServerConfig, string _token)
         {
             _hathoraServerConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken = _token;

@@ -147,7 +147,20 @@ namespace Hathora.Core.Scripts.Editor.Server.ConfigStyle
             
             // Content within the scroller >>
             base.BeginPaddedBox();
-            InsertLabel(ServerConfig.HathoraDeployOpts.LastDeployLogsStrb.ToString());
+            
+            //Need to delete hidden symbols for Unity format
+            string str = ServerConfig.HathoraDeployOpts.LastDeployLogsStrb.ToString(); 
+            string cleanedStr = "";
+            foreach (var c in str)
+            {
+                if (!char.IsControl(c) || c == '\n')
+                {
+                    cleanedStr += c;
+                }
+            }
+            
+            InsertLabel(cleanedStr);
+            
             base.EndPaddedBox();
             
             GUILayout.EndScrollView();

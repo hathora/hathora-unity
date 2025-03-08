@@ -22,7 +22,7 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
         private const string issuerUri = "https://auth.hathora.com";
         private const string audienceUri = "https://cloud.hathora.com";
 
-        private static string getRefreshTokenCachePath() =>
+        private static string getAccessTokenCachePath() =>
             Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 "._serverConfig",
@@ -37,14 +37,14 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
         public static string CheckForExistingCachedTokenAsync()
         {
             // Share the same path as the CLI
-            string refreshTokenPath = getRefreshTokenCachePath();
+            string accessTokenPath = getAccessTokenCachePath();
 
-            if (!File.Exists(refreshTokenPath))
+            if (!File.Exists(accessTokenPath))
                 return null;
-            
+
             Debug.Log("[Hathora.Auth0Login.CheckForExistingCachedTokenAsync] " +
-                $"Found already-present auth token file at: `{refreshTokenPath}`");
-            return File.ReadAllText(refreshTokenPath); // (!) The Async variant is bugged, freezing Unity
+                $"Found already-present auth token file at: `{accessTokenPath}`");
+            return File.ReadAllText(accessTokenPath); // (!) The Async variant is bugged, freezing Unity
         }
         
         public async Task<string> GetTokenAsync(CancellationToken cancelToken)
@@ -52,21 +52,21 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
             Auth0DeviceResponse deviceAuthorizationResponse = await requestDeviceAuthorizationAsync();
             if (deviceAuthorizationResponse == null)
             {
-                Debug.Log("Error: Failed to get device authorizatio");
+                Debug.Log("Error: Failed to get device authorization");
                 return null;
             }
 
-            string refreshTokenCachePath = getRefreshTokenCachePath();
+            string accessTokenCachePath = getAccessTokenCachePath();
             
             return await openBrowserAwaitAuth(
                 deviceAuthorizationResponse, 
-                refreshTokenCachePath,
+                accessTokenCachePath,
                 cancelToken);
         }
 
         private async Task<string> openBrowserAwaitAuth(
             Auth0DeviceResponse deviceAuthorizationResponse, 
-            string refreshTokenFilePath,
+            string accessTokenFilePath,
             CancellationToken cancelToken)
         {
             Debug.Log("Opening browser for login; ensure you see the following code: " +
@@ -75,11 +75,11 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
             // Open browser with the provided verification URI.
             Application.OpenURL(deviceAuthorizationResponse.VerificationUriComplete);
 
-            string refreshToken = null;
+            string accessToken = null;
             
             try
             {
-                refreshToken = await pollForTokenAsync(
+                accessToken = await pollForTokenAsync(
                     deviceAuthorizationResponse.DeviceCode, 
                     cancelToken);
             }
@@ -95,22 +95,22 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
                 return null;
             }
 
-            if (refreshToken == null)
+            if (accessToken == null)
             {
-                // Debug.LogError("[Auth0Login]**ERR @ openBrowserAwaitAuth => Failed to get refreshToken");
+                // Debug.LogError("[Auth0Login]**ERR @ openBrowserAwaitAuth => Failed to get accessToken");
                 return null;
             }
             
             // Ensure dir exists
-            string directoryPath = Path.GetDirectoryName(refreshTokenFilePath);
+            string directoryPath = Path.GetDirectoryName(accessTokenFilePath);
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
             try
             {
                 await File.WriteAllTextAsync(
-                    refreshTokenFilePath,
-            refreshToken, 
+                    accessTokenFilePath,
+                    accessToken, 
                     cancelToken);
             }
             catch (Exception e)
@@ -120,9 +120,9 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
             }
             
             Debug.Log($"[Auth0Login] Successful dev auth; " +
-                $"cached credentials to {refreshTokenFilePath}");
+                $"cached credentials to {accessTokenFilePath}");
 
-            return refreshToken;
+            return accessToken;
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
         private async Task<string> pollForTokenAsync(string deviceCode, CancellationToken cancelToken)
         {
             string url = $"{issuerUri}/oauth/token";
-            string refreshToken = null;
+            string accessToken = null;
 
             Auth0TokenRequest tokenRequest = new()
             {
@@ -181,7 +181,7 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(requestBody);
 
             // ---------------------------------
-            while (refreshToken == null)
+            while (accessToken == null)
             {
                 await Task.Delay(5000, cancelToken);
 
@@ -206,7 +206,8 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
                     Auth0TokenResponse tokenResponse = JsonConvert.DeserializeObject<Auth0TokenResponse>(
                         request.downloadHandler.text);
             
-                    refreshToken = tokenResponse.RefreshToken;
+                    // refreshToken = tokenResponse.RefreshToken;
+                    accessToken = tokenResponse.AccessToken;
                 }
                 else if (request.responseCode != 403 || !request.downloadHandler.text.Contains("authorization_pending"))
                 {
@@ -217,7 +218,7 @@ namespace Hathora.Core.Scripts.Editor.Server.Auth0
                 }
             }
 
-            return refreshToken;
+            return accessToken;
         }
     }
 }

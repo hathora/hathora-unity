@@ -49,7 +49,7 @@ namespace FishNet.Component.Prediction
 
             public void Update(Rigidbody rb)
             {
-                Velocity = rb.velocity;
+                Velocity = rb.linearVelocity;
                 AngularVelocity = rb.angularVelocity;
                 SimulatedScene = rb.gameObject.scene;
                 IsKinematic = rb.isKinematic;
@@ -98,7 +98,7 @@ namespace FishNet.Component.Prediction
 
             public void Update(Rigidbody2D rb)
             {
-                Velocity = rb.velocity;
+                Velocity = rb.linearVelocity;
                 AngularVelocity = rb.angularVelocity;
                 SimulatedScene = rb.gameObject.scene;
                 Simulated = rb.simulated;
@@ -252,7 +252,7 @@ namespace FishNet.Component.Prediction
                     if (rb == null)
                         return false;
 
-                    rb.velocity = rbData.Velocity;
+                    rb.linearVelocity = rbData.Velocity;
                     rb.angularVelocity = rbData.AngularVelocity;
                     rb.isKinematic = rbData.IsKinematic;
                     SceneManager.MoveGameObjectToScene(rb.transform.root.gameObject, rbData.SimulatedScene);
@@ -279,7 +279,7 @@ namespace FishNet.Component.Prediction
                     if (rb == null)
                         return false;
 
-                    rb.velocity = rbData.Velocity;
+                    rb.linearVelocity = rbData.Velocity;
                     rb.angularVelocity = rbData.AngularVelocity;
                     rb.simulated = rbData.Simulated;
                     rb.isKinematic = rbData.IsKinematic;
