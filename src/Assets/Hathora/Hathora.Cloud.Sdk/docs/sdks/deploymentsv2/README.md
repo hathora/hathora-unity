@@ -54,6 +54,7 @@ CreateDeploymentV2DeprecatedRequest req = new CreateDeploymentV2DeprecatedReques
         TransportType = TransportType.Tls,
     },
     BuildId = 1,
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -79,7 +80,8 @@ using(var res = await sdk.DeploymentsV2.CreateDeploymentV2DeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 422, 429, 500            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 422, 429                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetDeploymentInfoV2Deprecated~~
@@ -104,6 +106,7 @@ var sdk = new HathoraCloudSDK(
 
 GetDeploymentInfoV2DeprecatedRequest req = new GetDeploymentInfoV2DeprecatedRequest() {
     DeploymentId = 1,
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -152,7 +155,9 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-GetDeploymentsV2DeprecatedRequest req = new GetDeploymentsV2DeprecatedRequest() {};
+GetDeploymentsV2DeprecatedRequest req = new GetDeploymentsV2DeprecatedRequest() {
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
 
 
 using(var res = await sdk.DeploymentsV2.GetDeploymentsV2DeprecatedAsync(req))
@@ -200,7 +205,9 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-GetLatestDeploymentV2DeprecatedRequest req = new GetLatestDeploymentV2DeprecatedRequest() {};
+GetLatestDeploymentV2DeprecatedRequest req = new GetLatestDeploymentV2DeprecatedRequest() {
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
 
 
 using(var res = await sdk.DeploymentsV2.GetLatestDeploymentV2DeprecatedAsync(req))

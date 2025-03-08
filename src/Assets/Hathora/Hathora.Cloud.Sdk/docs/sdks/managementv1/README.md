@@ -50,5 +50,6 @@ using(var res = await sdk.ManagementV1.SendVerificationEmailAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 429, 500                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 429                                | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

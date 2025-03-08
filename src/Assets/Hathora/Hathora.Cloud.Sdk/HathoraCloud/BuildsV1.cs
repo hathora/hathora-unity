@@ -74,10 +74,10 @@ namespace HathoraCloud
     {
         public SDKConfig SDKConfiguration { get; private set; }
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.1";
-        private const string _sdkGenVersion = "2.481.0";
+        private const string _sdkVersion = "0.30.2";
+        private const string _sdkGenVersion = "2.545.2";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.2 2.545.2 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private ISpeakeasyHttpClient _defaultClient;
         private Func<Security>? _securitySource;
@@ -161,7 +161,7 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (new List<int>{401, 404, 422, 429, 500}.Contains(httpCode))
+            else if (new List<int>{401, 404, 422, 429}.Contains(httpCode))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {                    
@@ -173,7 +173,23 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (httpCode >= 400 && httpCode < 500 || httpCode >= 500 && httpCode < 600)
+            else if (httpCode == 500)
+            {
+                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
+                {                    
+                    var obj = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = Utilities.GetDefaultJsonDeserializers() });
+                    throw obj!;
+                }
+                else
+                {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+                }
+            }
+            else if (httpCode >= 400 && httpCode < 500)
+            {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+            }
+            else if (httpCode >= 500 && httpCode < 600)
             {
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
             }
@@ -240,7 +256,7 @@ namespace HathoraCloud
             if (httpCode == 204)
             {
             }
-            else if (new List<int>{401, 404, 422, 429, 500}.Contains(httpCode))
+            else if (new List<int>{401, 404, 422, 429}.Contains(httpCode))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {                    
@@ -252,7 +268,23 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (httpCode >= 400 && httpCode < 500 || httpCode >= 500 && httpCode < 600)
+            else if (httpCode == 500)
+            {
+                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
+                {                    
+                    var obj = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = Utilities.GetDefaultJsonDeserializers() });
+                    throw obj!;
+                }
+                else
+                {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+                }
+            }
+            else if (httpCode >= 400 && httpCode < 500)
+            {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+            }
+            else if (httpCode >= 500 && httpCode < 600)
             {
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
             }
@@ -340,7 +372,11 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (httpCode >= 400 && httpCode < 500 || httpCode >= 500 && httpCode < 600)
+            else if (httpCode >= 400 && httpCode < 500)
+            {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+            }
+            else if (httpCode >= 500 && httpCode < 600)
             {
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
             }
@@ -424,7 +460,11 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (httpCode >= 400 && httpCode < 500 || httpCode >= 500 && httpCode < 600)
+            else if (httpCode >= 400 && httpCode < 500)
+            {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+            }
+            else if (httpCode >= 500 && httpCode < 600)
             {
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
             }
@@ -506,7 +546,7 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (new List<int>{400, 401, 404, 429, 500}.Contains(httpCode))
+            else if (new List<int>{400, 401, 404, 429}.Contains(httpCode))
             {
                 if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
                 {                    
@@ -518,7 +558,23 @@ namespace HathoraCloud
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
                 }
             }
-            else if (httpCode >= 400 && httpCode < 500 || httpCode >= 500 && httpCode < 600)
+            else if (httpCode == 500)
+            {
+                if(Utilities.IsContentTypeMatch("application/json",response.ContentType))
+                {                    
+                    var obj = JsonConvert.DeserializeObject<ApiError>(httpResponse.downloadHandler.text, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, Converters = Utilities.GetDefaultJsonDeserializers() });
+                    throw obj!;
+                }
+                else
+                {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+                }
+            }
+            else if (httpCode >= 400 && httpCode < 500)
+            {
+                throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
+            }
+            else if (httpCode >= 500 && httpCode < 600)
             {
                 throw new SDKException("API error occurred", httpCode, httpResponse.downloadHandler.text, httpResponse);
             }

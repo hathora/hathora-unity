@@ -43,6 +43,7 @@ CreateRoomDeprecatedRequest req = new CreateRoomDeprecatedRequest() {
         Region = Region.London,
         RoomConfig = "{\"name\":\"my-room\"}",
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
 };
 
@@ -69,7 +70,8 @@ using(var res = await sdk.RoomsV1.CreateRoomDeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429, 500       | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~DestroyRoomDeprecated~~
@@ -94,6 +96,7 @@ var sdk = new HathoraCloudSDK(
 
 DestroyRoomDeprecatedRequest req = new DestroyRoomDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -119,7 +122,8 @@ using(var res = await sdk.RoomsV1.DestroyRoomDeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetActiveRoomsForProcessDeprecated~~
@@ -144,6 +148,7 @@ var sdk = new HathoraCloudSDK(
 
 GetActiveRoomsForProcessDeprecatedRequest req = new GetActiveRoomsForProcessDeprecatedRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -191,6 +196,7 @@ var sdk = new HathoraCloudSDK(
 
 GetConnectionInfoDeprecatedRequest req = new GetConnectionInfoDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -216,7 +222,8 @@ using(var res = await sdk.RoomsV1.GetConnectionInfoDeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 402, 404, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 402, 404, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetInactiveRoomsForProcessDeprecated~~
@@ -241,6 +248,7 @@ var sdk = new HathoraCloudSDK(
 
 GetInactiveRoomsForProcessDeprecatedRequest req = new GetInactiveRoomsForProcessDeprecatedRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -291,6 +299,7 @@ var sdk = new HathoraCloudSDK(
 
 GetRoomInfoDeprecatedRequest req = new GetRoomInfoDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -341,6 +350,7 @@ var sdk = new HathoraCloudSDK(
 
 SuspendRoomDeprecatedRequest req = new SuspendRoomDeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -366,5 +376,6 @@ using(var res = await sdk.RoomsV1.SuspendRoomDeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

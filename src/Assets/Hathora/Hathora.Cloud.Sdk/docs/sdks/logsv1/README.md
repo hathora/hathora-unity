@@ -28,6 +28,7 @@ var sdk = new HathoraCloudSDK(
 
 DownloadLogForProcessRequest req = new DownloadLogForProcessRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -76,6 +77,7 @@ var sdk = new HathoraCloudSDK(
 
 GetLogsForProcessRequest req = new GetLogsForProcessRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     TailLines = 100,
 };
 
@@ -102,5 +104,6 @@ using(var res = await sdk.LogsV1.GetLogsForProcessAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 410, 429, 500            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 410, 429                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

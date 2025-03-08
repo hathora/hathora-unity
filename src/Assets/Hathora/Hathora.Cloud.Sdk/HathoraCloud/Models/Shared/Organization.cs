@@ -20,9 +20,23 @@ namespace HathoraCloud.Models.Shared
     public class Organization
     {
 
+        /// <summary>
+        /// The features enabled for this org and user.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("enabledFeatureFlags")]
+        public List<string>? EnabledFeatureFlags { get; set; }
+
         [SerializeField]
         [JsonProperty("isSingleTenant")]
         public bool IsSingleTenant { get; set; } = default!;
+
+        /// <summary>
+        /// The maximum memory in MB that can be used by any process in this org.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("maxRequestedMemoryMB")]
+        public double MaxRequestedMemoryMB { get; set; } = default!;
 
         /// <summary>
         /// The name of an organization.
@@ -39,11 +53,18 @@ namespace HathoraCloud.Models.Shared
         public string OrgId { get; set; } = default!;
 
         /// <summary>
+        /// The maximum lifespan in hours of a pod.
+        /// </summary>
+        [SerializeField]
+        [JsonProperty("podMaxLifespanHrs")]
+        public double? PodMaxLifespanHrs { get; set; }
+
+        /// <summary>
         /// The scopes the user who loaded this has on this org.
         /// </summary>
         [SerializeField]
         [JsonProperty("scopes")]
-        public List<Scope>? Scopes { get; set; }
+        public List<Scope> Scopes { get; set; } = default!;
 
         [SerializeField]
         [JsonProperty("stripeCustomerId")]

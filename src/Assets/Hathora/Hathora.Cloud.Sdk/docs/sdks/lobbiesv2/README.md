@@ -36,6 +36,7 @@ CreateLobbyDeprecatedRequest req = new CreateLobbyDeprecatedRequest() {
         Region = Region.SaoPaulo,
         Visibility = LobbyVisibility.Private,
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
 };
 
@@ -67,7 +68,8 @@ using(var res = await sdk.LobbiesV2.CreateLobbyDeprecatedAsync(
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429, 500       | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~CreateLocalLobby~~
@@ -92,6 +94,7 @@ CreateLocalLobbyRequest req = new CreateLocalLobbyRequest() {
         InitialConfig = "<value>",
         Region = Region.Johannesburg,
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
 };
 
@@ -123,7 +126,8 @@ using(var res = await sdk.LobbiesV2.CreateLocalLobbyAsync(
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429, 500       | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~CreatePrivateLobby~~
@@ -148,6 +152,7 @@ CreatePrivateLobbyRequest req = new CreatePrivateLobbyRequest() {
         InitialConfig = "<value>",
         Region = Region.London,
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
 };
 
@@ -179,7 +184,8 @@ using(var res = await sdk.LobbiesV2.CreatePrivateLobbyAsync(
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429, 500       | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~CreatePublicLobby~~
@@ -204,6 +210,7 @@ CreatePublicLobbyRequest req = new CreatePublicLobbyRequest() {
         InitialConfig = "<value>",
         Region = Region.Johannesburg,
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
 };
 
@@ -235,7 +242,8 @@ using(var res = await sdk.LobbiesV2.CreatePublicLobbyAsync(
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429, 500       | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetLobbyInfo~~
@@ -257,6 +265,7 @@ var sdk = new HathoraCloudSDK(
 
 GetLobbyInfoRequest req = new GetLobbyInfoRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -302,7 +311,9 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-ListActivePublicLobbiesDeprecatedV2Request req = new ListActivePublicLobbiesDeprecatedV2Request() {};
+ListActivePublicLobbiesDeprecatedV2Request req = new ListActivePublicLobbiesDeprecatedV2Request() {
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
 
 
 using(var res = await sdk.LobbiesV2.ListActivePublicLobbiesDeprecatedV2Async(req))
@@ -355,6 +366,7 @@ SetLobbyStateRequest req = new SetLobbyStateRequest() {
         State = "<value>",
     },
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 

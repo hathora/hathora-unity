@@ -34,6 +34,7 @@ var sdk = new HathoraCloudSDK(
 
 CreateProcessRequest req = new CreateProcessRequest() {
     Region = Region.SaoPaulo,
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -59,7 +60,8 @@ using(var res = await sdk.ProcessesV3.CreateProcessAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 402, 404, 422, 429, 500            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 402, 404, 422, 429                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetLatestProcesses
@@ -81,7 +83,9 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-GetLatestProcessesRequest req = new GetLatestProcessesRequest() {};
+GetLatestProcessesRequest req = new GetLatestProcessesRequest() {
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
 
 
 using(var res = await sdk.ProcessesV3.GetLatestProcessesAsync(req))
@@ -129,6 +133,7 @@ var sdk = new HathoraCloudSDK(
 
 GetProcessRequest req = new GetProcessRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -178,6 +183,7 @@ var sdk = new HathoraCloudSDK(
 
 GetProcessMetricsRequest req = new GetProcessMetricsRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -203,7 +209,8 @@ using(var res = await sdk.ProcessesV3.GetProcessMetricsAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetProcessesCountExperimental
@@ -225,7 +232,9 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-GetProcessesCountExperimentalRequest req = new GetProcessesCountExperimentalRequest() {};
+GetProcessesCountExperimentalRequest req = new GetProcessesCountExperimentalRequest() {
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
 
 
 using(var res = await sdk.ProcessesV3.GetProcessesCountExperimentalAsync(req))
@@ -273,6 +282,7 @@ var sdk = new HathoraCloudSDK(
 
 StopProcessRequest req = new StopProcessRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -298,5 +308,6 @@ using(var res = await sdk.ProcessesV3.StopProcessAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

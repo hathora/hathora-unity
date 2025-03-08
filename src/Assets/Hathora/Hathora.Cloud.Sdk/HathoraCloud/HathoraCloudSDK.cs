@@ -79,7 +79,7 @@ namespace HathoraCloud
         public IManagementV1 ManagementV1 { get; }
 
         /// <summary>
-        /// Operations to get metrics by <a href="https://hathora.dev/docs/concepts/hathora-entities#process">process</a>. We store 72 hours of metrics data.
+        /// Deprecated. Use <a href="https://hathora.dev/api#tag/ProcessesV3/operation/GetProcessMetrics">ProcessesV3#GetProcessMetrics</a> to fetch metrics about a specific process.
         /// </summary>
         public IMetricsV1 MetricsV1 { get; }
         public IOrganizationsV1 OrganizationsV1 { get; }
@@ -115,7 +115,7 @@ namespace HathoraCloud
         /// </summary>
         public static readonly string[] ServerList = {
             "https://api.hathora.dev",
-            "https:///",
+            "/",
         };
 
         public string serverUrl = "";
@@ -141,10 +141,10 @@ namespace HathoraCloud
         public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _target = "unity";
-        private const string _sdkVersion = "0.30.1";
-        private const string _sdkGenVersion = "2.481.0";
+        private const string _sdkVersion = "0.30.2";
+        private const string _sdkGenVersion = "2.545.2";
         private const string _openapiDocVersion = "0.0.1";
-        private const string _userAgent = "speakeasy-sdk/unity 0.30.1 2.481.0 0.0.1 HathoraCloud";
+        private const string _userAgent = "speakeasy-sdk/unity 0.30.2 2.545.2 0.0.1 HathoraCloud";
         private string _serverUrl = "";
         private int _serverIndex = 0;
         private ISpeakeasyHttpClient _defaultClient;

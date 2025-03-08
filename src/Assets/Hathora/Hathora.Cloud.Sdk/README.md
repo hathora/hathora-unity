@@ -100,7 +100,7 @@ using(var res = await sdk.AppsV2.CreateAppAsync(req))
 
 ### [BillingV1](docs/sdks/billingv1/README.md)
 
-* [GetBalance](docs/sdks/billingv1/README.md#getbalance) - GetBalance
+* [~~GetBalance~~](docs/sdks/billingv1/README.md#getbalance) - GetBalance :warning: **Deprecated**
 * [GetInvoices](docs/sdks/billingv1/README.md#getinvoices) - GetInvoices
 * [GetPaymentMethod](docs/sdks/billingv1/README.md#getpaymentmethod) - GetPaymentMethod
 * [GetUpcomingInvoiceItems](docs/sdks/billingv1/README.md#getupcominginvoiceitems) - GetUpcomingInvoiceItems
@@ -260,6 +260,7 @@ using(var res = await sdk.AppsV2.CreateAppAsync(req))
 * [GetConnectionInfo](docs/sdks/roomsv2/README.md#getconnectioninfo) - GetConnectionInfo
 * [GetInactiveRoomsForProcess](docs/sdks/roomsv2/README.md#getinactiveroomsforprocess) - GetInactiveRoomsForProcess
 * [GetRoomInfo](docs/sdks/roomsv2/README.md#getroominfo) - GetRoomInfo
+* [ResumeRoom](docs/sdks/roomsv2/README.md#resumeroom) - ResumeRoom
 * [~~SuspendRoomV2Deprecated~~](docs/sdks/roomsv2/README.md#suspendroomv2deprecated) - SuspendRoomV2Deprecated :warning: **Deprecated**
 * [UpdateRoomConfig](docs/sdks/roomsv2/README.md#updateroomconfig) - UpdateRoomConfig
 
@@ -331,10 +332,10 @@ using(var res = await sdk.AppsV2.CreateAppAsync(req))
 
 You can override the default server globally by passing a server index to the `serverIndex: int` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
 
-| #   | Server                    |
-| --- | ------------------------- |
-| 0   | `https://api.hathora.dev` |
-| 1   | `https:///`               |
+| #   | Server                    | Description |
+| --- | ------------------------- | ----------- |
+| 0   | `https://api.hathora.dev` |             |
+| 1   | `/`                       |             |
 
 #### Example
 
@@ -416,10 +417,11 @@ By default, an API error will raise a `HathoraCloud.Models.Errors.SDKException` 
 
 When custom error responses are specified for an operation, the SDK may also throw their associated exception. You can refer to respective *Errors* tables in SDK docs for more details on possible exception types for each operation. For example, the `CreateAppAsync` method throws the following exceptions:
 
-| Error Type                              | Status Code             | Content Type     |
-| --------------------------------------- | ----------------------- | ---------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500 | application/json |
-| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                | \*/\*            |
+| Error Type                              | Status Code        | Content Type     |
+| --------------------------------------- | ------------------ | ---------------- |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429 | application/json |
+| HathoraCloud.Models.Errors.ApiError     | 500                | application/json |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX           | \*/\*            |
 
 ### Example
 
@@ -454,6 +456,10 @@ try
 catch (Exception ex)
 {
     if (ex is ApiError)
+    {
+        // handle exception
+    }
+    else if (ex is ApiError)
     {
         // handle exception
     }
@@ -524,6 +530,7 @@ CreateLobbyRequest req = new CreateLobbyRequest() {
         RoomConfig = "{\"name\":\"my-room\"}",
         Visibility = LobbyVisibility.Private,
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
     ShortCode = "LFG4",
 };

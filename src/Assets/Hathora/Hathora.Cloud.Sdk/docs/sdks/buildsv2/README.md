@@ -37,6 +37,7 @@ CreateBuildV2DeprecatedRequest req = new CreateBuildV2DeprecatedRequest() {
     CreateBuildParams = new CreateBuildParams() {
         BuildTag = "0.1.14-14c793",
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -62,7 +63,8 @@ using(var res = await sdk.BuildsV2.CreateBuildV2DeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~CreateBuildWithUploadUrlV2Deprecated~~
@@ -89,6 +91,7 @@ CreateBuildWithUploadUrlV2DeprecatedRequest req = new CreateBuildWithUploadUrlV2
     CreateBuildParams = new CreateBuildParams() {
         BuildTag = "0.1.14-14c793",
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -114,7 +117,8 @@ using(var res = await sdk.BuildsV2.CreateBuildWithUploadUrlV2DeprecatedAsync(req
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~CreateWithMultipartUploadsV2Deprecated~~
@@ -143,6 +147,7 @@ CreateWithMultipartUploadsV2DeprecatedRequest req = new CreateWithMultipartUploa
         BuildSizeInBytes = 3146.66D,
         BuildTag = "0.1.14-14c793",
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -168,7 +173,8 @@ using(var res = await sdk.BuildsV2.CreateWithMultipartUploadsV2DeprecatedAsync(r
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 422, 429, 500            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 422, 429                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~DeleteBuildV2Deprecated~~
@@ -193,6 +199,7 @@ var sdk = new HathoraCloudSDK(
 
 DeleteBuildV2DeprecatedRequest req = new DeleteBuildV2DeprecatedRequest() {
     BuildId = 1,
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -218,7 +225,8 @@ using(var res = await sdk.BuildsV2.DeleteBuildV2DeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## ~~GetBuildInfoV2Deprecated~~
@@ -243,6 +251,7 @@ var sdk = new HathoraCloudSDK(
 
 GetBuildInfoV2DeprecatedRequest req = new GetBuildInfoV2DeprecatedRequest() {
     BuildId = 1,
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -291,7 +300,9 @@ var sdk = new HathoraCloudSDK(
     appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
 
-GetBuildsV2DeprecatedRequest req = new GetBuildsV2DeprecatedRequest() {};
+GetBuildsV2DeprecatedRequest req = new GetBuildsV2DeprecatedRequest() {
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
 
 
 using(var res = await sdk.BuildsV2.GetBuildsV2DeprecatedAsync(req))
@@ -342,6 +353,7 @@ var sdk = new HathoraCloudSDK(
 RunBuildV2DeprecatedRequest req = new RunBuildV2DeprecatedRequest() {
     RequestBody = new RunBuildV2DeprecatedRequestBody() {},
     BuildId = 1,
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -367,5 +379,6 @@ using(var res = await sdk.BuildsV2.RunBuildV2DeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

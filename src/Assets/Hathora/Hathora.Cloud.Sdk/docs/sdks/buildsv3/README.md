@@ -34,7 +34,7 @@ var sdk = new HathoraCloudSDK(
 CreateBuildRequest req = new CreateBuildRequest() {
     CreateMultipartBuildParams = new CreateMultipartBuildParams() {
         BuildId = "bld-6d4c6a71-2d75-4b42-94e1-f312f57f33c5",
-        BuildSizeInBytes = 5387.84D,
+        BuildSizeInBytes = 5387.85D,
         BuildTag = "0.1.14-14c793",
     },
 };
@@ -62,7 +62,8 @@ using(var res = await sdk.BuildsV3.CreateBuildAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 422, 429, 500            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 422, 429                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## DeleteBuild
@@ -112,7 +113,8 @@ using(var res = await sdk.BuildsV3.DeleteBuildAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetBuild
@@ -254,5 +256,6 @@ using(var res = await sdk.BuildsV3.RunBuildAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 404, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

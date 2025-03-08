@@ -7,16 +7,18 @@
 
 ### Available Operations
 
-* [GetBalance](#getbalance) - GetBalance
+* [~~GetBalance~~](#getbalance) - GetBalance :warning: **Deprecated**
 * [GetInvoices](#getinvoices) - GetInvoices
 * [GetPaymentMethod](#getpaymentmethod) - GetPaymentMethod
 * [GetUpcomingInvoiceItems](#getupcominginvoiceitems) - GetUpcomingInvoiceItems
 * [GetUpcomingInvoiceTotal](#getupcominginvoicetotal) - GetUpcomingInvoiceTotal
 * [InitStripeCustomerPortalUrl](#initstripecustomerportalurl) - InitStripeCustomerPortalUrl
 
-## GetBalance
+## ~~GetBalance~~
 
 GetBalance
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -58,6 +60,7 @@ using(var res = await sdk.BillingV1.GetBalanceAsync(req))
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
 | HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetInvoices
@@ -149,7 +152,8 @@ using(var res = await sdk.BillingV1.GetPaymentMethodAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetUpcomingInvoiceItems
@@ -196,6 +200,7 @@ using(var res = await sdk.BillingV1.GetUpcomingInvoiceItemsAsync(req))
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
 | HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetUpcomingInvoiceTotal
@@ -242,6 +247,7 @@ using(var res = await sdk.BillingV1.GetUpcomingInvoiceTotalAsync(req))
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
 | HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## InitStripeCustomerPortalUrl
@@ -292,4 +298,5 @@ using(var res = await sdk.BillingV1.InitStripeCustomerPortalUrlAsync(req))
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
 | HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |

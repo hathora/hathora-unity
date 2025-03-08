@@ -11,6 +11,7 @@
 * [GetConnectionInfo](#getconnectioninfo) - GetConnectionInfo
 * [GetInactiveRoomsForProcess](#getinactiveroomsforprocess) - GetInactiveRoomsForProcess
 * [GetRoomInfo](#getroominfo) - GetRoomInfo
+* [ResumeRoom](#resumeroom) - ResumeRoom
 * [~~SuspendRoomV2Deprecated~~](#suspendroomv2deprecated) - SuspendRoomV2Deprecated :warning: **Deprecated**
 * [UpdateRoomConfig](#updateroomconfig) - UpdateRoomConfig
 
@@ -42,6 +43,7 @@ CreateRoomRequest req = new CreateRoomRequest() {
         Region = Region.Dallas,
         RoomConfig = "{\"name\":\"my-room\"}",
     },
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
     RoomId = "2swovpy1fnunu",
 };
 
@@ -68,7 +70,8 @@ using(var res = await sdk.RoomsV2.CreateRoomAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429, 500       | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## DestroyRoom
@@ -91,6 +94,7 @@ var sdk = new HathoraCloudSDK(
 
 DestroyRoomRequest req = new DestroyRoomRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -116,7 +120,8 @@ using(var res = await sdk.RoomsV2.DestroyRoomAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetActiveRoomsForProcess
@@ -139,6 +144,7 @@ var sdk = new HathoraCloudSDK(
 
 GetActiveRoomsForProcessRequest req = new GetActiveRoomsForProcessRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -184,6 +190,7 @@ var sdk = new HathoraCloudSDK(
 
 GetConnectionInfoRequest req = new GetConnectionInfoRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -209,7 +216,8 @@ using(var res = await sdk.RoomsV2.GetConnectionInfoAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 400, 402, 404, 422, 429, 500            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 400, 402, 404, 422, 429                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## GetInactiveRoomsForProcess
@@ -232,6 +240,7 @@ var sdk = new HathoraCloudSDK(
 
 GetInactiveRoomsForProcessRequest req = new GetInactiveRoomsForProcessRequest() {
     ProcessId = "cbfcddd2-0006-43ae-996c-995fff7bed2e",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -280,6 +289,7 @@ var sdk = new HathoraCloudSDK(
 
 GetRoomInfoRequest req = new GetRoomInfoRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -308,6 +318,56 @@ using(var res = await sdk.RoomsV2.GetRoomInfoAsync(req))
 | HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
+## ResumeRoom
+
+ResumeRoom
+
+### Example Usage
+
+```csharp
+using HathoraCloud;
+using HathoraCloud.Models.Shared;
+using HathoraCloud.Models.Operations;
+
+var sdk = new HathoraCloudSDK(
+    security: new Security() {
+        HathoraDevToken = "<YOUR_BEARER_TOKEN_HERE>",
+    },
+    appId: "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+    orgId: "org-6f706e83-0ec1-437a-9a46-7d4281eb2f39");
+
+ResumeRoomRequest req = new ResumeRoomRequest() {
+    RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
+};
+
+
+using(var res = await sdk.RoomsV2.ResumeRoomAsync(req))
+{
+    // handle response
+}
+
+
+```
+
+### Parameters
+
+| Parameter                                                         | Type                                                              | Required                                                          | Description                                                       |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `request`                                                         | [ResumeRoomRequest](../../Models/Operations/ResumeRoomRequest.md) | :heavy_check_mark:                                                | The request object to use for the request.                        |
+
+### Response
+
+**[ResumeRoomResponse](../../Models/Operations/ResumeRoomResponse.md)**
+
+### Errors
+
+| Error Type                              | Status Code                             | Content Type                            |
+| --------------------------------------- | --------------------------------------- | --------------------------------------- |
+| HathoraCloud.Models.Errors.ApiError     | 400, 401, 402, 404, 422, 429            | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
+| HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
+
 ## ~~SuspendRoomV2Deprecated~~
 
 Suspend a [room](https://hathora.dev/docs/concepts/hathora-entities#room). The room is unallocated from the process but can be rescheduled later using the same `roomId`.
@@ -330,6 +390,7 @@ var sdk = new HathoraCloudSDK(
 
 SuspendRoomV2DeprecatedRequest req = new SuspendRoomV2DeprecatedRequest() {
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -355,7 +416,8 @@ using(var res = await sdk.RoomsV2.SuspendRoomV2DeprecatedAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429, 500                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 429                           | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
 
 ## UpdateRoomConfig
@@ -381,6 +443,7 @@ UpdateRoomConfigRequest req = new UpdateRoomConfigRequest() {
         RoomConfig = "{\"name\":\"my-room\"}",
     },
     RoomId = "2swovpy1fnunu",
+    AppId = "app-af469a92-5b45-4565-b3c4-b79878de67d2",
 };
 
 
@@ -406,5 +469,6 @@ using(var res = await sdk.RoomsV2.UpdateRoomConfigAsync(req))
 
 | Error Type                              | Status Code                             | Content Type                            |
 | --------------------------------------- | --------------------------------------- | --------------------------------------- |
-| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429, 500                 | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 401, 404, 422, 429                      | application/json                        |
+| HathoraCloud.Models.Errors.ApiError     | 500                                     | application/json                        |
 | HathoraCloud.Models.Errors.SDKException | 4XX, 5XX                                | \*/\*                                   |
